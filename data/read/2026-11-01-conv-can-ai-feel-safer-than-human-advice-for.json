@@ -1,0 +1,781 @@
+{
+ "id": "2026-11-01-conv-can-ai-feel-safer-than-human-advice-for",
+ "title": "Can AI feel safer than human advice for consumers who face discrimination?",
+ "url": "https://theconversation.com/can-ai-feel-safer-than-human-advice-for-consumers-who-face-discrimination-293761",
+ "source": "The Conversation",
+ "author": "Arash Talebi, Sylvain Riffe-Stern",
+ "published": "2026-10-14",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "KEY TAKEAWAYS",
+  "A study highlights that consumers who have experienced discrimination are more likely to turn to AI-based recommendations rather than human advice.",
+  "The fear of being judged or feeling embarrassed can lead people to use AI.",
+  "If AI systems are themselves biased, they risk exacerbating the very discrimination that consumers were trying to escape.",
+  "What should you cook for dinner on a budget of 20 euros when you have a guest with a gluten intolerance? A shopper might ask a shop assistant for advice or consult, for example, Hopla, the AI-powered shopping assistant launched by French supermarket chain Carrefour. Behind this very ordinary everyday choice lies a broader question: when faced with a recommendation, who do we trust more? A human being or an AI?",
+  "Recent research – on decision-making processes, the impact of errors, etc. – has highlighted a clear and well-established trend: people tend to prefer other people (as opposed to AI systems). This phenomenon, known as “algorithm aversion”, has been widely documented, even when algorithms objectively demonstrate better performance.",
+  "However, this preference is not universal. Our research highlights that it can be reversed in a common context: in facing discrimination on platforms and offline in services ranging from car dealership to financial consultancy. More specifically, consumers who are victims of discrimination – particularly in public places – are significantly more likely to turn to AI-based recommendations rather than human advice even in a subsequent domain fully independent of the discrimination domain!",
+  "What is the emotional mechanism behind this shift? Embarrassment. When people feel socially judged or treated unfairly because of an irrelevant personal attribute, they seek refuge in systems perceived as “neutral and free from bias”.",
+  "How does this mechanism work? What does this mean for the organisations concerned? And what does it reveal about the hidden drivers behind the adoption of AI?",
+  "Implicit discrimination",
+  "Discrimination in consumer contexts is by no means rare. Studies show that certain groups face less favourable conditions than others when it comes to similar services, for example in terms of access to credit or insurance. Beyond their economic consequences, these experiences have significant psychological repercussions. They increase stress, undermine the sense of fairness, and influence future behaviour.",
+  "It is important to clarify what discrimination means in a market context. A market, in the broadest sense, refers to any setting where consumers interact with service providers, be it a car dealership, a restaurant, a bank or a healthcare platform. Within these spaces, differential treatment is not inherently discriminatory. For example, a VIP customer receiving premium service is treated differently on the basis of a relevant commercial criterion.",
+  "Discrimination, however, occurs when the factor used to differentiate is irrelevant and illegitimate, such as skin colour, ethnic origin, or gender. What makes it particularly insidious is that it can be hidden, implicit or even unintentional, whilst causing real psychological harm to those who suffer it.",
+  "An AI system ‘devoid of emotions’",
+  "As part of a field studywe conducted under real-world conditions, “agents” – who were in fact people involved in the research project (i.e. confederates) – assessed loan applications on a university campus using almost identical questionnaires; almost because one version of the questionnaire included an additional question asking participants to self-assess their skin colour (an element by design to evoke discriminatory feelings).",
+  "All applicants were subsequently rejected; those who had been asked the question about skin colour reported feeling that they had been discriminated against (phase 1). During the follow-up data collection, carried out at a later date, all participants were offered the choice between a human assessor and an AI assessor (phase 2).",
+  "A significantly higher proportion of those who felt they had been discriminated against in the first phase (compared with those who did not feel they had been discriminated against in that same phase) chose, in the second phase, to be assessed by the AI system, perceived to be “devoid of emotions and biases”.",
+  "Feeling of embarrassment",
+  "Consumers who have experienced discrimination appear significantly more likely to rely on AI-based recommendations than on human advice. In other words, aversion to algorithms can turn into a preference for them, also known as “algorithm appreciation”. This shift can be explained by a specific psychological mechanism: embarrassment. This social emotion arises when individuals feel they are being judged negatively by others.",
+  "In our experiments, participants exposed to discriminatory situations reported higher levels of embarrassment, and this emotion directly influenced their subsequent choices. The more embarrassed they felt, the more they sought to limit human interactions.",
+  "In this context, AI appears to be a safer alternative.",
+  "Compared to human beings, algorithmic systems are perceived as more neutral, more objective and less prone to bias or prejudice.",
+  "The reality is more complex. Algorithms can be biased, depending on the data and training they receive. Yet many people continue to regard them as neutral and objective. In this context, it is these perceptions that matter most. Opting for AI allows consumers to reduce the risk of feeling that they are once again being judged or treated unfairly. This effect depends on the context in which decisions are made. We find that it is particularly pronounced in public situations, when choices are visible to others. By contrast, when decisions are made in private, this effect (i.e. preference for AI systems vs. human ones) weakens considerably.",
+  "Previous social experiments",
+  "These findings shed new light on the adoption of AI. They suggest that the use of automated systems is driven not only by considerations of efficiency or performance, but also by psychological needs shaped by past social experiences.",
+  "For businesses, the implications are significant. In sectors where interactions may be perceived as sensitive – such as banking, healthcare, or customer service in general – offering AI-based alternatives can help some consumers feel more at ease. For these individuals, AI is not merely a technological tool; it becomes a means of escaping social judgement and regaining control following negative experiences.",
+  "At the same time, these findings come with an important caveat: if AI systems are themselves biased – trained on biased data or designed without regard for equity – they risk reproducing, or even amplifying, the very discrimination that consumers were trying to escape. Even more seriously, this type of discrimination often goes unnoticed because it is hidden and difficult to detect. The roll-out of AI as a “safe” alternative only makes sense if that safety is real, and not merely perceived.",
+  "As AI becomes increasingly integrated into everyday life, understanding these mechanisms will be essential for designing more inclusive and adaptive customer experiences."
+ ],
+ "level": "C1",
+ "minutes": 6,
+ "words": 1085,
+ "gloss": {
+  "exacerbating": {
+   "w": "exacerbate",
+   "pos": "동사",
+   "ko": "악화시키다",
+   "en": "to make a bad situation worse",
+   "ex": "Skipping sleep before a deadline only exacerbates the stress.",
+   "ipa": "/ɪɡˈzæsərbeɪtɪŋ/"
+  },
+  "exacerbate": {
+   "w": "exacerbate",
+   "pos": "동사",
+   "ko": "악화시키다",
+   "en": "to make a bad situation worse",
+   "ex": "Skipping sleep before a deadline only exacerbates the stress.",
+   "ipa": "/ɪɡˈzæsərbeɪt/"
+  },
+  "discrimination": {
+   "w": "discrimination",
+   "pos": "명사",
+   "ko": "차별",
+   "en": "unfair treatment of people because of who they are",
+   "ex": "The company introduced new training to prevent discrimination in hiring.",
+   "ipa": "/dɪˌskrɪmɪˈneɪʃn/"
+  },
+  "turn to": {
+   "w": "turn to",
+   "pos": "구",
+   "ko": "~에 의지하다, ~을 찾다",
+   "en": "to go to someone or something for help",
+   "ex": "When the pattern didn't fit, she turned to an experienced tailor for advice.",
+   "ipa": "/tɜːn tuː/"
+  },
+  "embarrassed": {
+   "w": "embarrassed",
+   "pos": "형용사",
+   "ko": "당황한, 창피한",
+   "en": "feeling uncomfortable or ashamed in front of others",
+   "ex": "He felt embarrassed when his card was declined at the till.",
+   "ipa": "/ɪmˈbærəst/"
+  },
+  "embarrassment": {
+   "w": "embarrassment",
+   "pos": "명사",
+   "ko": "당혹감, 창피함",
+   "en": "the feeling of being uncomfortable or ashamed in front of others",
+   "ex": "To avoid embarrassment, she practised her presentation several times.",
+   "ipa": "/ɪmˈbærəsmənt/"
+  },
+  "gluten intolerance": {
+   "w": "gluten intolerance",
+   "pos": "구",
+   "ko": "글루텐 불내증",
+   "en": "a condition in which the body reacts badly to gluten",
+   "ex": "Because of her gluten intolerance, she always checks bread labels carefully.",
+   "ipa": "/ˈɡluːtn ɪnˈtɒlərəns/"
+  },
+  "consult": {
+   "w": "consult",
+   "pos": "동사",
+   "ko": "상담하다, 참고하다",
+   "en": "to go to a person or source for information or advice",
+   "ex": "You should consult a pharmacist before mixing these medicines.",
+   "ipa": "/kənˈsʌlt/"
+  },
+  "algorithm aversion": {
+   "w": "algorithm aversion",
+   "pos": "구",
+   "ko": "알고리즘 기피 현상",
+   "en": "the tendency to trust human judgement more than computer systems",
+   "ex": "Algorithm aversion explains why some patients ignore accurate app-based diagnoses.",
+   "ipa": "/ˈælɡərɪðəm əˈvɜːʃn/"
+  },
+  "objectively": {
+   "w": "objectively",
+   "pos": "부사",
+   "ko": "객관적으로",
+   "en": "in a way based on facts, not feelings",
+   "ex": "Objectively, the cheaper fabric performed just as well in the wash test.",
+   "ipa": "/əbˈdʒektɪvli/"
+  },
+  "well-established": {
+   "w": "well-established",
+   "pos": "형용사",
+   "ko": "확고히 자리 잡은",
+   "en": "accepted and known for a long time",
+   "ex": "It is a well-established fact that exercise improves mood.",
+   "ipa": "/ˌwel ɪˈstæblɪʃt/"
+  },
+  "reversed": {
+   "w": "reverse",
+   "pos": "동사",
+   "ko": "뒤집다, 반전시키다",
+   "en": "to change something to its opposite",
+   "ex": "The new manager reversed the decision to close the store.",
+   "ipa": "/rɪˈvɜːst/"
+  },
+  "reverse": {
+   "w": "reverse",
+   "pos": "동사",
+   "ko": "뒤집다, 반전시키다",
+   "en": "to change something to its opposite",
+   "ex": "The new manager reversed the decision to close the store.",
+   "ipa": "/rɪˈvɜːs/"
+  },
+  "subsequent": {
+   "w": "subsequent",
+   "pos": "형용사",
+   "ko": "그 다음의, 이후의",
+   "en": "happening after something else",
+   "ex": "The first sample was poor, but subsequent versions were much better.",
+   "ipa": "/ˈsʌbsɪkwənt/"
+  },
+  "seek refuge in": {
+   "w": "seek refuge in",
+   "pos": "구",
+   "ko": "~에서 피난처를 찾다",
+   "en": "to look for safety or comfort in something",
+   "ex": "After a stressful week, she sought refuge in her sketchbook.",
+   "ipa": "/siːk ˈrefjuːdʒ ɪn/"
+  },
+  "attribute": {
+   "w": "attribute",
+   "pos": "명사",
+   "ko": "속성, 특성",
+   "en": "a quality or feature of a person or thing",
+   "ex": "Patience is an important attribute for any teacher.",
+   "ipa": "/ˈætrɪbjuːt/"
+  },
+  "implicit": {
+   "w": "implicit",
+   "pos": "형용사",
+   "ko": "암묵적인, 드러나지 않는",
+   "en": "suggested or present but not stated directly",
+   "ex": "There was an implicit expectation that everyone would work late.",
+   "ipa": "/ɪmˈplɪsɪt/"
+  },
+  "by no means": {
+   "w": "by no means",
+   "pos": "구",
+   "ko": "결코 ~이 아닌",
+   "en": "not at all",
+   "ex": "The exam is by no means impossible if you prepare well.",
+   "ipa": "/baɪ nəʊ miːnz/"
+  },
+  "repercussions": {
+   "w": "repercussion",
+   "pos": "명사",
+   "ko": "(좋지 않은) 여파, 영향",
+   "en": "an unwanted effect that follows an action or event",
+   "ex": "The factory closure had serious repercussions for the local town.",
+   "ipa": "/ˌriːpəˈkʌʃnz/"
+  },
+  "repercussion": {
+   "w": "repercussion",
+   "pos": "명사",
+   "ko": "(좋지 않은) 여파, 영향",
+   "en": "an unwanted effect that follows an action or event",
+   "ex": "The factory closure had serious repercussions for the local town.",
+   "ipa": "/ˌriːpəˈkʌʃn/"
+  },
+  "undermine": {
+   "w": "undermine",
+   "pos": "동사",
+   "ko": "약화시키다, 훼손하다",
+   "en": "to gradually make something weaker or less effective",
+   "ex": "Constant criticism can undermine a junior designer's confidence.",
+   "ipa": "/ˌʌndəˈmaɪn/"
+  },
+  "inherently": {
+   "w": "inherently",
+   "pos": "부사",
+   "ko": "본질적으로, 원래",
+   "en": "as a basic or natural part of something",
+   "ex": "Online shopping is not inherently risky if you use secure sites.",
+   "ipa": "/ɪnˈhɪərəntli/"
+  },
+  "differential treatment": {
+   "w": "differential treatment",
+   "pos": "구",
+   "ko": "차등 대우",
+   "en": "treating people or groups differently",
+   "ex": "Loyalty programmes are a common form of differential treatment in retail.",
+   "ipa": "/ˌdɪfəˈrenʃl ˈtriːtmənt/"
+  },
+  "criterion": {
+   "w": "criterion",
+   "pos": "명사",
+   "ko": "기준",
+   "en": "a standard used to judge or decide something",
+   "ex": "Price was the main criterion when we chose a supplier.",
+   "ipa": "/kraɪˈtɪəriən/"
+  },
+  "illegitimate": {
+   "w": "illegitimate",
+   "pos": "형용사",
+   "ko": "부당한, 정당하지 않은",
+   "en": "not allowed by law or not fair and reasonable",
+   "ex": "Refusing a job applicant because of their age is an illegitimate reason.",
+   "ipa": "/ˌɪləˈdʒɪtəmət/"
+  },
+  "insidious": {
+   "w": "insidious",
+   "pos": "형용사",
+   "ko": "서서히 해를 끼치는, 교묘한",
+   "en": "harmful in a slow or hidden way",
+   "ex": "Burnout is insidious because it builds up without obvious warning signs.",
+   "ipa": "/ɪnˈsɪdiəs/"
+  },
+  "unintentional": {
+   "w": "unintentional",
+   "pos": "형용사",
+   "ko": "의도하지 않은",
+   "en": "not done on purpose",
+   "ex": "The error in the invoice was unintentional, and they fixed it quickly.",
+   "ipa": "/ˌʌnɪnˈtenʃənl/"
+  },
+  "devoid of": {
+   "w": "devoid of",
+   "pos": "구",
+   "ko": "~이 전혀 없는",
+   "en": "completely without something",
+   "ex": "The hotel room was clean but devoid of any personality.",
+   "ipa": "/dɪˈvɔɪd əv/"
+  },
+  "confederates": {
+   "w": "confederate",
+   "pos": "명사",
+   "ko": "(실험의) 공모자, 협력자",
+   "en": "a person who secretly helps researchers in an experiment",
+   "ex": "In the study, a confederate pretended to be another customer.",
+   "ipa": "/kənˈfedərəts/"
+  },
+  "confederate": {
+   "w": "confederate",
+   "pos": "명사",
+   "ko": "(실험의) 공모자, 협력자",
+   "en": "a person who secretly helps researchers in an experiment",
+   "ex": "In the study, a confederate pretended to be another customer.",
+   "ipa": "/kənˈfedərət/"
+  },
+  "evoke": {
+   "w": "evoke",
+   "pos": "동사",
+   "ko": "불러일으키다",
+   "en": "to bring a feeling or memory into the mind",
+   "ex": "The colours in the collection evoke a summer in the south of France.",
+   "ipa": "/ɪˈvəʊk/"
+  },
+  "proportion": {
+   "w": "proportion",
+   "pos": "명사",
+   "ko": "비율",
+   "en": "a part of a total, compared with the whole",
+   "ex": "A large proportion of our customers now shop on mobile phones.",
+   "ipa": "/prəˈpɔːʃn/"
+  },
+  "assessor": {
+   "w": "assessor",
+   "pos": "명사",
+   "ko": "평가자, 심사자",
+   "en": "a person or system that judges quality or eligibility",
+   "ex": "The assessor checked every application against the same checklist.",
+   "ipa": "/əˈsesə(r)/"
+  },
+  "rely on": {
+   "w": "rely on",
+   "pos": "구",
+   "ko": "~에 의존하다",
+   "en": "to depend on someone or something",
+   "ex": "Many small brands rely on social media for most of their sales.",
+   "ipa": "/rɪˈlaɪ ɒn/"
+  },
+  "prone to": {
+   "w": "prone to",
+   "pos": "구",
+   "ko": "~하기 쉬운, ~의 경향이 있는",
+   "en": "likely to do or suffer from something",
+   "ex": "Silk is prone to creasing, so pack it carefully.",
+   "ipa": "/prəʊn tuː/"
+  },
+  "prejudice": {
+   "w": "prejudice",
+   "pos": "명사",
+   "ko": "편견",
+   "en": "an unfair opinion formed without good reason",
+   "ex": "The campaign aimed to reduce prejudice against older workers.",
+   "ipa": "/ˈpredʒudɪs/"
+  },
+  "regard as": {
+   "w": "regard ... as",
+   "pos": "구",
+   "ko": "~을 …로 여기다",
+   "en": "to think of someone or something in a particular way",
+   "ex": "Many people regard vintage clothing as more sustainable.",
+   "ipa": "/rɪˈɡɑːd æz/"
+  },
+  "opting for": {
+   "w": "opt for",
+   "pos": "구",
+   "ko": "~을 선택하다",
+   "en": "to choose something from several options",
+   "ex": "More travellers are opting for trains instead of short flights.",
+   "ipa": "/ˈɒptɪŋ fɔː(r)/"
+  },
+  "opt for": {
+   "w": "opt for",
+   "pos": "구",
+   "ko": "~을 선택하다",
+   "en": "to choose something from several options",
+   "ex": "More travellers are opting for trains instead of short flights.",
+   "ipa": "/ɒpt fɔː(r)/"
+  },
+  "pronounced": {
+   "w": "pronounced",
+   "pos": "형용사",
+   "ko": "뚜렷한, 두드러진",
+   "en": "very noticeable or strong",
+   "ex": "The difference in quality was more pronounced after several washes.",
+   "ipa": "/prəˈnaʊnst/"
+  },
+  "considerably": {
+   "w": "considerably",
+   "pos": "부사",
+   "ko": "상당히",
+   "en": "by a large amount",
+   "ex": "Rents in the city centre have risen considerably this year.",
+   "ipa": "/kənˈsɪdərəbli/"
+  },
+  "shed new light on": {
+   "w": "shed new light on",
+   "pos": "구",
+   "ko": "~을 새롭게 조명하다, 새로이 밝히다",
+   "en": "to help explain something in a new way",
+   "ex": "The interview shed new light on the designer's early career.",
+   "ipa": "/ʃed njuː laɪt ɒn/"
+  },
+  "drivers": {
+   "w": "driver",
+   "pos": "명사",
+   "ko": "원동력, 동인",
+   "en": "a factor that causes something to happen",
+   "ex": "Price is still the main driver of consumer choice.",
+   "ipa": "/ˈdraɪvəz/"
+  },
+  "driver": {
+   "w": "driver",
+   "pos": "명사",
+   "ko": "원동력, 동인",
+   "en": "a factor that causes something to happen",
+   "ex": "Price is still the main driver of consumer choice.",
+   "ipa": "/ˈdraɪvə(r)/"
+  },
+  "implications": {
+   "w": "implication",
+   "pos": "명사",
+   "ko": "(예상되는) 영향, 함의",
+   "en": "a possible effect or result of something",
+   "ex": "The new law has major implications for online sellers.",
+   "ipa": "/ˌɪmplɪˈkeɪʃnz/"
+  },
+  "implication": {
+   "w": "implication",
+   "pos": "명사",
+   "ko": "(예상되는) 영향, 함의",
+   "en": "a possible effect or result of something",
+   "ex": "The new law has major implications for online sellers.",
+   "ipa": "/ˌɪmplɪˈkeɪʃn/"
+  },
+  "at ease": {
+   "w": "at ease",
+   "pos": "구",
+   "ko": "편안한, 마음 놓이는",
+   "en": "relaxed and comfortable",
+   "ex": "The friendly staff made first-time visitors feel at ease.",
+   "ipa": "/ət iːz/"
+  },
+  "caveat": {
+   "w": "caveat",
+   "pos": "명사",
+   "ko": "단서, 주의 사항",
+   "en": "a warning that something is limited or conditional",
+   "ex": "The offer is generous, with one caveat: it ends on Friday.",
+   "ipa": "/ˈkæviæt/"
+  },
+  "equity": {
+   "w": "equity",
+   "pos": "명사",
+   "ko": "공정성, 형평성",
+   "en": "the quality of being fair to everyone",
+   "ex": "The school reviewed its admissions policy to improve equity.",
+   "ipa": "/ˈekwəti/"
+  },
+  "amplifying": {
+   "w": "amplify",
+   "pos": "동사",
+   "ko": "증폭시키다, 키우다",
+   "en": "to make something stronger or larger",
+   "ex": "Social media can amplify a small complaint into a major crisis.",
+   "ipa": "/ˈæmplɪfaɪɪŋ/"
+  },
+  "amplify": {
+   "w": "amplify",
+   "pos": "동사",
+   "ko": "증폭시키다, 키우다",
+   "en": "to make something stronger or larger",
+   "ex": "Social media can amplify a small complaint into a major crisis.",
+   "ipa": "/ˈæmplɪfaɪ/"
+  },
+  "goes unnoticed": {
+   "w": "go unnoticed",
+   "pos": "구",
+   "ko": "눈에 띄지 않고 넘어가다",
+   "en": "to not be seen or noticed by anyone",
+   "ex": "Small stitching errors often go unnoticed until the garment is worn.",
+   "ipa": "/ɡəʊz ʌnˈnəʊtɪst/"
+  },
+  "go unnoticed": {
+   "w": "go unnoticed",
+   "pos": "구",
+   "ko": "눈에 띄지 않고 넘어가다",
+   "en": "to not be seen or noticed by anyone",
+   "ex": "Small stitching errors often go unnoticed until the garment is worn.",
+   "ipa": "/ɡəʊ ʌnˈnəʊtɪst/"
+  },
+  "roll-out": {
+   "w": "roll-out",
+   "pos": "명사",
+   "ko": "(신제품·서비스의) 도입, 출시",
+   "en": "the introduction of a new product or service to many people",
+   "ex": "The roll-out of the new app was delayed because of bugs.",
+   "ipa": "/ˈrəʊl aʊt/"
+  },
+  "integrated": {
+   "w": "integrate",
+   "pos": "형용사",
+   "ko": "통합된, 녹아든",
+   "en": "combined with other things to form a whole",
+   "ex": "Contactless payment is now fully integrated into daily life.",
+   "ipa": "/ˈɪntɪɡreɪtɪd/"
+  },
+  "integrate": {
+   "w": "integrate",
+   "pos": "동사",
+   "ko": "통합하다, 녹아들게 하다",
+   "en": "to combine something with other things so they work together",
+   "ex": "We need to integrate customer feedback into the design process.",
+   "ipa": "/ˈɪntɪɡreɪt/"
+  },
+  "inclusive": {
+   "w": "inclusive",
+   "pos": "형용사",
+   "ko": "포용적인, 모두를 아우르는",
+   "en": "including and welcoming all kinds of people",
+   "ex": "The brand launched an inclusive size range from XXS to 4XL.",
+   "ipa": "/ɪnˈkluːsɪv/"
+  },
+  "adaptive": {
+   "w": "adaptive",
+   "pos": "형용사",
+   "ko": "적응형의, 상황에 맞춰 변하는",
+   "en": "able to change to suit different situations",
+   "ex": "The website uses an adaptive layout for phones and tablets.",
+   "ipa": "/əˈdæptɪv/"
+  },
+  "in terms of": {
+   "w": "in terms of",
+   "pos": "구",
+   "ko": "~의 측면에서",
+   "en": "when talking about a particular aspect",
+   "ex": "In terms of price, the second hotel is a better deal.",
+   "ipa": "/ɪn tɜːmz əv/"
+  },
+  "phenomenon": {
+   "w": "phenomenon",
+   "pos": "명사",
+   "ko": "현상",
+   "en": "something that happens or exists and can be observed",
+   "ex": "Fast fashion is a relatively recent phenomenon.",
+   "ipa": "/fəˈnɒmɪnən/"
+  }
+ },
+ "vocab": [
+  "exacerbate",
+  "undermine",
+  "insidious",
+  "repercussions",
+  "devoid of",
+  "prone to",
+  "caveat",
+  "shed new light on",
+  "inherently",
+  "subsequent",
+  "implicit",
+  "amplify",
+  "seek refuge in"
+ ],
+ "quiz": [
+  {
+   "q": "People often prefer human advice to algorithms even when the algorithms perform better.",
+   "a": "TRUE",
+   "why": "‘algorithm aversion’이 알고리즘이 객관적으로 더 나은 성과를 보여도 나타난다고 명시함."
+  },
+  {
+   "q": "The preference for AI among people who felt discriminated against becomes stronger when decisions are made in private.",
+   "a": "FALSE",
+   "why": "사적인 상황에서는 이 효과가 ‘상당히 약해진다(weakens considerably)’고 함."
+  },
+  {
+   "q": "Applicants who were asked about their skin colour had a higher chance of getting their loan approved.",
+   "a": "FALSE",
+   "why": "모든 신청자가 거절되었다(All applicants were subsequently rejected)고 함."
+  },
+  {
+   "q": "Most of the participants in the field study were university students.",
+   "a": "NOT GIVEN",
+   "why": "실험 장소가 대학 캠퍼스였다는 말만 있고, 참가자가 누구였는지는 나오지 않음."
+  }
+ ],
+ "para": [
+  {
+   "simple": "they look for safety in systems they believe are",
+   "article": "they seek refuge in systems perceived as"
+  },
+  {
+   "simple": "Unfair treatment of shoppers is actually quite common.",
+   "article": "Discrimination in consumer contexts is by no means rare."
+  },
+  {
+   "simple": "They make people more stressed, damage their belief that things are fair, and change how they act later.",
+   "article": "They increase stress, undermine the sense of fairness, and influence future behaviour."
+  },
+  {
+   "simple": "The stronger their embarrassment, the more they avoided dealing with people.",
+   "article": "The more embarrassed they felt, the more they sought to limit human interactions."
+  },
+  {
+   "simple": "this kind of unfair treatment is often not spotted",
+   "article": "this type of discrimination often goes unnoticed"
+  }
+ ],
+ "summary": "Research shows that consumers who have been treated unfairly often choose AI over human advisers to avoid the embarrassment of being judged again, but this only helps if the AI itself is genuinely free from bias.",
+ "gist": "차별을 겪은 소비자는 ‘또 평가받는’ 창피함을 피하려고 사람 대신 AI 추천을 택한다는 연구 소개.\n다만 AI 자체가 편향되어 있으면 오히려 차별을 키울 수 있다는 경고도 함께 담음.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Studies have found that people favour human advice even when an algorithm performs better.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "6단락 \"has been widely documented, even when algorithms objectively demonstrate better performance\" — 성능이 더 좋아도 사람을 선호함"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "Carrefour's Hopla assistant was created mainly to help shoppers with food allergies.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "5단락은 Hopla를 \"the AI-powered shopping assistant launched by ... Carrefour\"라고만 소개하고, 만든 목적은 말하지 않음"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "People who have faced discrimination prefer AI more strongly when they make their decisions in private.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "23단락 \"particularly pronounced in public situations ... when decisions are made in private, this effect ... weakens considerably\" — 혼자 결정할 때는 오히려 약해짐"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Presenting AI as a safe option is only reasonable if it is genuinely free of bias.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "27단락 \"only makes sense if that safety is real, and not merely perceived\" — 필자의 주장과 일치"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "Discrimination by AI systems is generally easier to detect than discrimination by humans.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "27단락 \"this type of discrimination often goes unnoticed because it is hidden and difficult to detect\" — 필자는 오히려 찾아내기 어렵다고 봄"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 11",
+    "options": [
+     "i  The hidden cost of unequal treatment beyond money",
+     "ii  How AI systems come to be trained on biased data",
+     "iii  Legitimate reasons for treating customers differently",
+     "iv  Customer frustration with automated assistants",
+     "v  Belief versus reality, and the role of visibility"
+    ],
+    "answer": "i",
+    "why": "\"Beyond their economic consequences, these experiences have significant psychological repercussions\" — 돈 문제를 넘어선 심리적 피해"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 12",
+    "options": [
+     "i  The hidden cost of unequal treatment beyond money",
+     "ii  How AI systems come to be trained on biased data",
+     "iii  Legitimate reasons for treating customers differently",
+     "iv  Customer frustration with automated assistants",
+     "v  Belief versus reality, and the role of visibility"
+    ],
+    "answer": "iii",
+    "why": "\"differential treatment is not inherently discriminatory ... on the basis of a relevant commercial criterion\" — 정당한 차등 대우"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 23",
+    "options": [
+     "i  The hidden cost of unequal treatment beyond money",
+     "ii  How AI systems come to be trained on biased data",
+     "iii  Legitimate reasons for treating customers differently",
+     "iv  Customer frustration with automated assistants",
+     "v  Belief versus reality, and the role of visibility"
+    ],
+    "answer": "v",
+    "why": "\"The reality is more complex ... it is these perceptions that matter most\" + \"particularly pronounced in public situations\" — 실제보다 인식이 중요하고, 남의 눈에 띄는지 여부도 영향을 줌"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions examples of personal characteristics that are unfair grounds for treating people differently?",
+    "options": [
+     "11",
+     "13",
+     "15",
+     "27"
+    ],
+    "answer": "13",
+    "why": "13단락 \"irrelevant and illegitimate, such as skin colour, ethnic origin, or gender\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions a digital tool introduced by a retailer?",
+    "options": [
+     "5",
+     "8",
+     "19",
+     "26"
+    ],
+    "answer": "5",
+    "why": "5단락 \"Hopla, the AI-powered shopping assistant launched by French supermarket chain Carrefour\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "Why did one version of the questionnaire include a question about skin colour?",
+    "options": [
+     "A to collect background information on the applicants",
+     "B to make some participants feel discriminated against",
+     "C to decide which applications would be approved",
+     "D to compare the accuracy of human and AI assessors"
+    ],
+    "answer": "B",
+    "why": "15단락 \"an element by design to evoke discriminatory feelings\" — 차별받는 느낌을 일부러 일으키려는 장치"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "According to the writer, embarrassment occurs when people",
+    "options": [
+     "A make poor financial decisions in public",
+     "B discover that an AI system has made an error",
+     "C believe others are judging them unfavourably",
+     "D are given too many options to choose from"
+    ],
+    "answer": "C",
+    "why": "19단락 \"This social emotion arises when individuals feel they are being judged negatively by others\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "The well-documented tendency to trust people rather than algorithms is known as ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "algorithm aversion"
+    ],
+    "why": "6단락 \"This phenomenon, known as 'algorithm aversion'\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Participants who felt discriminated against were more likely to pick the AI assessor, which they believed was free of ____ and biases.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "emotions"
+    ],
+    "why": "17단락 \"perceived to be 'devoid of emotions and biases'\" — devoid of = ~이 없는"
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "What kind of applications did the researchers' confederates assess in the field study?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "loan applications"
+    ],
+    "why": "15단락 \"assessed loan applications on a university campus\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    10,
+    11,
+    22
+   ]
+  }
+ }
+}

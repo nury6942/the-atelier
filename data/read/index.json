@@ -1,6 +1,34 @@
 {
- "updated": "2026-10-30T22:11:32.629Z",
+ "updated": "2026-10-31T22:11:28.699Z",
  "items": [
+  {
+   "id": "2026-11-01-conv-australia-is-cracking-down-on-e-bikes",
+   "date": "2026-11-01",
+   "source": "The Conversation",
+   "title": "Australia is cracking down on e-bikes and e-scooters. But is that what the public actually wants?",
+   "url": "https://theconversation.com/australia-is-cracking-down-on-e-bikes-and-e-scooters-but-is-that-what-the-public-actually-wants-293825",
+   "author": "Milad Haghani, Abbas Rajabifard, Iman Taheri Sarteshnizi, Neema Nassir",
+   "minutes": 5,
+   "level": "B2+",
+   "words": 910,
+   "topic": "환경",
+   "gist": "호주에서 전기자전거·전동킥보드 규제가 들쭉날쭉한데, 2,000여 명을 조사해 보니 사람들은 두 기기를 비슷하게 보고 전면 금지보다 벌금 같은 맞춤형 규제를 원했다는 연구 글.\n장기적으로는 여론보다 실증 연구가 규제의 기준이 되어야 한다고 주장한다.",
+   "file": "data/read/2026-11-01-conv-australia-is-cracking-down-on-e-bikes.json"
+  },
+  {
+   "id": "2026-11-01-conv-can-ai-feel-safer-than-human-advice-for",
+   "date": "2026-11-01",
+   "source": "The Conversation",
+   "title": "Can AI feel safer than human advice for consumers who face discrimination?",
+   "url": "https://theconversation.com/can-ai-feel-safer-than-human-advice-for-consumers-who-face-discrimination-293761",
+   "author": "Arash Talebi, Sylvain Riffe-Stern",
+   "minutes": 6,
+   "level": "C1",
+   "words": 1085,
+   "topic": "경제",
+   "gist": "차별을 겪은 소비자는 ‘또 평가받는’ 창피함을 피하려고 사람 대신 AI 추천을 택한다는 연구 소개.\n다만 AI 자체가 편향되어 있으면 오히려 차별을 키울 수 있다는 경고도 함께 담음.",
+   "file": "data/read/2026-11-01-conv-can-ai-feel-safer-than-human-advice-for.json"
+  },
   {
    "id": "2026-10-31-conv-are-american-voters-actually-gloomy",
    "date": "2026-10-31",
@@ -260,6 +288,12 @@
    "date": "2026-10-31"
   },
   {
+   "source": "BBC Future",
+   "title": "Why humans may have run hotter two centuries ago",
+   "url": "https://www.bbc.com/future/article/20261030-why-humans-maybe-ran-hotter-two-centuries-ago",
+   "date": "2026-10-31"
+  },
+  {
    "source": "BoF",
    "title": "Inside the Battle for Luxury’s Million-Dollar Salespeople",
    "url": "https://www.businessoffashion.com/articles/workplace-talent/the-battle-for-luxurys-million-dollar-salespeople/",
@@ -413,12 +447,6 @@
    "source": "BoF",
    "title": "Cardi B’s Plan to Win Haircare: the Beauty Supply Store",
    "url": "https://www.businessoffashion.com/articles/beauty/cardi-b-grow-good-beauty-supply-retail-launch/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "Fashion’s Next Growth Opportunity Isn’t Gen Z",
-   "url": "https://www.businessoffashion.com/articles/retail/fashion-retail-older-shoppers-multigenerational-marketing/",
    "date": "2026-10-25"
   }
  ]

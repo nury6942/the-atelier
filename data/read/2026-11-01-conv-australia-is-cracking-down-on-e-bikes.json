@@ -1,0 +1,816 @@
+{
+ "id": "2026-11-01-conv-australia-is-cracking-down-on-e-bikes",
+ "title": "Australia is cracking down on e-bikes and e-scooters. But is that what the public actually wants?",
+ "url": "https://theconversation.com/australia-is-cracking-down-on-e-bikes-and-e-scooters-but-is-that-what-the-public-actually-wants-293825",
+ "source": "The Conversation",
+ "author": "Milad Haghani, Abbas Rajabifard, Iman Taheri Sarteshnizi, Neema Nassir",
+ "published": "2026-10-28",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "When was the last time you heard of a parliamentary inquiry into the road rules for cars in Australia? They’re not common.",
+  "But it’s a different story when it comes to e-bikes and e-scooters. These devices have become very popular, very quickly. But their rapid uptake has challenged regulators over where they should be ridden, who should be allowed to use them and how fast they can travel.",
+  "While the two devices serve similar purposes, they have often been treated differently under Australian road rules.",
+  "Authorities in Queensland and NSW have seized hundreds of non-compliant ebikes including devices with motors exceeding legal power limits or modified to travel at speeds beyond those permitted under e-bike regulations. Rising injury rates have fuelled public backlash. At times, this has prompted crackdowns or bans, such as the City of Melbourne’s 2024 decision to ban rental e-scooters, while continuing to allow rental e-bikes.",
+  "To find out what Australians actually think about e-bikes and e-scooters, we surveyed more than 2,000 people. As our new research shows, they gave some surprising answers.",
+  "How do we make good regulations?",
+  "When it comes to cars, there are internationally accepted regulatory standards supported by the World Health Organization. These draw on decades of research into how to make driving safer.",
+  "But we don’t have similarly well-established standards for e-bikes and e-scooters, because there’s not yet a large enough body of evidence to draw on.",
+  "As a result, public opinion carries considerable weight. A public vote in Paris in 2023 led to a ban on shared rental e-scooters.",
+  "In Australia, regulation has often been contentious, reactive or ad hoc.",
+  "Over the past two years, New South Wales, Queensland and Western Australia have held public inquiries into e-bikes and e-scooters.",
+  "Hundreds of people have made submissions to these inquiries, acting as a form of public opinion. But because it takes time and effort to put together a submission, it’s likely people with strong views are overrepresented.",
+  "The risk here is that policymakers may channel what they think the public wants – while actual public opinion may be more nuanced.",
+  "What does the public actually want?",
+  "To find out what Australians actually think about e-bikes and e-scooters, we surveyed 2,052 Australians. We wanted to know how they felt about these devices and which regulations they support.",
+  "We also wanted to know whether their attitudes differed between the two devices, and how easily those attitudes could be influenced.",
+  "We divided respondents into four equal groups. One group answered questions about e-bikes and another answered identical questions about e-scooters.",
+  "These responses showed Australians don’t view e-bikes and e-scooters all that differently. Neither had a clear advantage in public acceptance.",
+  "We showed respondents a series of fictional images depicting potentially annoying or unsafe situations, such as an e-bike or e-scooter obstructing a wheelchair user. Neither device consistently generated greater negative feelings.",
+  "We asked what level of regulation people would back for e-bikes and e-scooters, using a scale from 0 (strongly oppose) to 10 (strongly support).",
+  "The two devices received very similar ratings.",
+  "Support for outright bans was quite weak, averaging 5.0 out of ten for e-bikes and 4.8 for e-scooters. Banning them from public transport also attracted relatively weak support.",
+  "What Australians did favour was targeted regulations. Heavy fines for improper or illegal use received the strongest support, averaging 7.9 for e-bikes and 7.8 for e-scooters. Restrictions on riders under 16 followed closely, at 7.6 and 7.5.",
+  "For the other half of our respondents, we repeated the survey – with one important difference. Before answering, respondents were exposed to ten negative news headlines about the device they were being asked to evaluate.",
+  "These covered reports on issues such as rider injuries or deaths, pedestrian collisions, footpath obstruction, rule-breaking or battery fires.",
+  "Exposure to negative headlines was associated with a fall in favourable attitudes towards both devices. But the effect was significantly stronger for e-scooters.",
+  "Why does this matter?",
+  "Around Australia, stricter rules often apply to e-scooters rather than e-bikes.",
+  "In NSW, compliant e-bikes are permitted on public roads and paths, while privately owned e-scooters are not.",
+  "In Victoria, e-scooter riders must be at least 16, but there is no equivalent minimum age for compliant e-bikes.",
+  "We don’t know why these differences exist. One reason might be because e-bikes resemble bicycles, a well-established transport form with their own advocacy groups.",
+  "But as our research shows, Australians don’t distinguish much between the two devices when it comes to public acceptance or regulations.",
+  "New evidence from the United States and Europe also suggests both devices have very similar safety risks.",
+  "We will need a bigger evidence base before we can authoritatively say what good regulations look like for e-bikes, e-scooters and other types of e-mobility. But this overseas evidence suggests a case for removing some distinctions between e-bikes and e-scooters in Australian laws.",
+  "Which way forward?",
+  "Ultimately, the best foundation for e-mobility regulation is empirical evidence, not public opinion.",
+  "After all, authorities didn’t set the legal blood alcohol limits for drivers by asking people their views. These limits are informed by decades of research.",
+  "It will take time to build the same body of evidence for e-bikes and e-scooters. While we wait, public opinion can help inform the decisions policymakers make.",
+  "What our survey shows is that public opinion is often more nuanced than some recent regulatory responses, such as outright bans. If we’re going to rely on public opinion, it’s important we capture what the broader public actually think."
+ ],
+ "level": "B2+",
+ "minutes": 5,
+ "words": 910,
+ "gloss": {
+  "parliamentary inquiry": {
+   "w": "parliamentary inquiry",
+   "pos": "구",
+   "ko": "의회 조사",
+   "en": "an official investigation carried out by a parliament",
+   "ex": "The government launched a parliamentary inquiry into rising rents.",
+   "ipa": "/ˌpɑːləˈmentri ɪnˈkwaɪəri/"
+  },
+  "inquiry": {
+   "w": "inquiry",
+   "pos": "명사",
+   "ko": "(공식) 조사",
+   "en": "an official process to find out the facts about something",
+   "ex": "An inquiry found that the factory had ignored safety rules.",
+   "ipa": "/ɪnˈkwaɪəri/"
+  },
+  "inquiries": {
+   "w": "inquiry",
+   "pos": "명사",
+   "ko": "(공식) 조사",
+   "en": "an official process to find out the facts about something",
+   "ex": "An inquiry found that the factory had ignored safety rules.",
+   "ipa": "/ɪnˈkwaɪəriz/"
+  },
+  "uptake": {
+   "w": "uptake",
+   "pos": "명사",
+   "ko": "(새로운 것의) 수용, 확산",
+   "en": "the rate at which people start using something new",
+   "ex": "The uptake of online shopping grew sharply during the pandemic.",
+   "ipa": "/ˈʌpteɪk/"
+  },
+  "regulators": {
+   "w": "regulator",
+   "pos": "명사",
+   "ko": "규제 기관",
+   "en": "an official body that controls an activity or industry",
+   "ex": "Regulators asked the bank to explain its new fees.",
+   "ipa": "/ˈreɡjuleɪtəz/"
+  },
+  "regulator": {
+   "w": "regulator",
+   "pos": "명사",
+   "ko": "규제 기관",
+   "en": "an official body that controls an activity or industry",
+   "ex": "Regulators asked the bank to explain its new fees.",
+   "ipa": "/ˈreɡjuleɪtə/"
+  },
+  "non-compliant": {
+   "w": "non-compliant",
+   "pos": "형용사",
+   "ko": "규정에 맞지 않는",
+   "en": "not following the required rules or standards",
+   "ex": "The shop had to remove all non-compliant toys from its shelves.",
+   "ipa": "/ˌnɒn kəmˈplaɪənt/"
+  },
+  "compliant": {
+   "w": "compliant",
+   "pos": "형용사",
+   "ko": "규정에 맞는",
+   "en": "following the required rules or standards",
+   "ex": "Our new fabric labels are fully compliant with EU law.",
+   "ipa": "/kəmˈplaɪənt/"
+  },
+  "seized": {
+   "w": "seize",
+   "pos": "동사",
+   "ko": "압수하다",
+   "en": "to take something officially, often by force",
+   "ex": "Customs officers seized thousands of fake designer bags.",
+   "ipa": "/siːzd/"
+  },
+  "seize": {
+   "w": "seize",
+   "pos": "동사",
+   "ko": "압수하다",
+   "en": "to take something officially, often by force",
+   "ex": "Customs officers seized thousands of fake designer bags.",
+   "ipa": "/siːz/"
+  },
+  "exceeding": {
+   "w": "exceed",
+   "pos": "동사",
+   "ko": "초과하다",
+   "en": "to be more than a limit or amount",
+   "ex": "Bags exceeding 23 kilograms will be charged extra.",
+   "ipa": "/ɪkˈsiːdɪŋ/"
+  },
+  "exceed": {
+   "w": "exceed",
+   "pos": "동사",
+   "ko": "초과하다",
+   "en": "to be more than a limit or amount",
+   "ex": "Bags exceeding 23 kilograms will be charged extra.",
+   "ipa": "/ɪkˈsiːd/"
+  },
+  "permitted": {
+   "w": "permit",
+   "pos": "동사",
+   "ko": "허용하다",
+   "en": "to officially allow something",
+   "ex": "Photography is not permitted inside the gallery.",
+   "ipa": "/pəˈmɪtɪd/"
+  },
+  "permit": {
+   "w": "permit",
+   "pos": "동사",
+   "ko": "허용하다",
+   "en": "to officially allow something",
+   "ex": "Photography is not permitted inside the gallery.",
+   "ipa": "/pəˈmɪt/"
+  },
+  "fuelled": {
+   "w": "fuel",
+   "pos": "동사",
+   "ko": "부채질하다, 부추기다",
+   "en": "to make a feeling or situation stronger",
+   "ex": "Social media posts fuelled rumours about the brand closing.",
+   "ipa": "/ˈfjuːəld/"
+  },
+  "fuel": {
+   "w": "fuel",
+   "pos": "동사",
+   "ko": "부채질하다, 부추기다",
+   "en": "to make a feeling or situation stronger",
+   "ex": "Social media posts fuelled rumours about the brand closing.",
+   "ipa": "/ˈfjuːəl/"
+  },
+  "backlash": {
+   "w": "backlash",
+   "pos": "명사",
+   "ko": "(대중의) 강한 반발",
+   "en": "a strong negative reaction from many people",
+   "ex": "The company faced a backlash after raising prices overnight.",
+   "ipa": "/ˈbæklæʃ/"
+  },
+  "prompted": {
+   "w": "prompt",
+   "pos": "동사",
+   "ko": "촉발하다, ~하게 만들다",
+   "en": "to cause something to happen",
+   "ex": "The heatwave prompted the city to open cooling centres.",
+   "ipa": "/ˈprɒmptɪd/"
+  },
+  "prompt": {
+   "w": "prompt",
+   "pos": "동사",
+   "ko": "촉발하다, ~하게 만들다",
+   "en": "to cause something to happen",
+   "ex": "The heatwave prompted the city to open cooling centres.",
+   "ipa": "/prɒmpt/"
+  },
+  "crackdowns": {
+   "w": "crackdown",
+   "pos": "명사",
+   "ko": "단속, 엄중 단속",
+   "en": "strong official action to stop illegal or unwanted behaviour",
+   "ex": "Police announced a crackdown on illegal parking near schools.",
+   "ipa": "/ˈkrækdaʊnz/"
+  },
+  "crackdown": {
+   "w": "crackdown",
+   "pos": "명사",
+   "ko": "단속, 엄중 단속",
+   "en": "strong official action to stop illegal or unwanted behaviour",
+   "ex": "Police announced a crackdown on illegal parking near schools.",
+   "ipa": "/ˈkrækdaʊn/"
+  },
+  "cracking down on": {
+   "w": "crack down on",
+   "pos": "구",
+   "ko": "~을 엄중 단속하다",
+   "en": "to start dealing with something much more strictly",
+   "ex": "The council is cracking down on littering in the park.",
+   "ipa": "/ˈkrækɪŋ daʊn ɒn/"
+  },
+  "crack down on": {
+   "w": "crack down on",
+   "pos": "구",
+   "ko": "~을 엄중 단속하다",
+   "en": "to start dealing with something much more strictly",
+   "ex": "The council is cracking down on littering in the park.",
+   "ipa": "/kræk daʊn ɒn/"
+  },
+  "draw on": {
+   "w": "draw on",
+   "pos": "구",
+   "ko": "~을 활용하다, ~에 기반하다",
+   "en": "to use knowledge or experience as a source",
+   "ex": "She drew on her years in Paris to design the new collection.",
+   "ipa": "/drɔː ɒn/"
+  },
+  "body of evidence": {
+   "w": "body of evidence",
+   "pos": "구",
+   "ko": "축적된 증거",
+   "en": "a large collection of evidence on a subject",
+   "ex": "A growing body of evidence links poor sleep to stress.",
+   "ipa": "/ˈbɒdi əv ˈevɪdəns/"
+  },
+  "carries considerable weight": {
+   "w": "carry weight",
+   "pos": "구",
+   "ko": "상당한 영향력이 있다",
+   "en": "to be important and influence decisions",
+   "ex": "Her opinion carries considerable weight in the design team.",
+   "ipa": "/ˈkæriz kənˈsɪdərəbl weɪt/"
+  },
+  "carry weight": {
+   "w": "carry weight",
+   "pos": "구",
+   "ko": "영향력이 있다, 중요하게 여겨지다",
+   "en": "to be important and influence decisions",
+   "ex": "Customer reviews carry real weight with online shoppers.",
+   "ipa": "/ˈkæri weɪt/"
+  },
+  "contentious": {
+   "w": "contentious",
+   "pos": "형용사",
+   "ko": "논란이 많은",
+   "en": "likely to cause disagreement or argument",
+   "ex": "Working from home remains a contentious issue in many offices.",
+   "ipa": "/kənˈtenʃəs/"
+  },
+  "reactive": {
+   "w": "reactive",
+   "pos": "형용사",
+   "ko": "(사후) 대응적인",
+   "en": "acting only after something happens, not planning ahead",
+   "ex": "Our marketing has been too reactive; we need a long-term plan.",
+   "ipa": "/riˈæktɪv/"
+  },
+  "ad hoc": {
+   "w": "ad hoc",
+   "pos": "형용사",
+   "ko": "임시방편의, 그때그때의",
+   "en": "done only when needed, without a general plan",
+   "ex": "Staff training happens on an ad hoc basis.",
+   "ipa": "/ˌæd ˈhɒk/"
+  },
+  "submissions": {
+   "w": "submission",
+   "pos": "명사",
+   "ko": "제출 의견서",
+   "en": "a formal document or opinion given to an official body",
+   "ex": "Residents have until Friday to make submissions on the plan.",
+   "ipa": "/səbˈmɪʃnz/"
+  },
+  "submission": {
+   "w": "submission",
+   "pos": "명사",
+   "ko": "제출 의견서",
+   "en": "a formal document or opinion given to an official body",
+   "ex": "Residents have until Friday to make submissions on the plan.",
+   "ipa": "/səbˈmɪʃn/"
+  },
+  "overrepresented": {
+   "w": "overrepresented",
+   "pos": "형용사",
+   "ko": "과대 대표된",
+   "en": "present in larger numbers than is fair or typical",
+   "ex": "Young people are overrepresented in online surveys.",
+   "ipa": "/ˌəʊvəˌreprɪˈzentɪd/"
+  },
+  "policymakers": {
+   "w": "policymaker",
+   "pos": "명사",
+   "ko": "정책 입안자",
+   "en": "a person who decides government policy",
+   "ex": "Policymakers are debating how to tax fast fashion.",
+   "ipa": "/ˈpɒləsiˌmeɪkəz/"
+  },
+  "policymaker": {
+   "w": "policymaker",
+   "pos": "명사",
+   "ko": "정책 입안자",
+   "en": "a person who decides government policy",
+   "ex": "Policymakers are debating how to tax fast fashion.",
+   "ipa": "/ˈpɒləsiˌmeɪkə/"
+  },
+  "channel": {
+   "w": "channel",
+   "pos": "동사",
+   "ko": "(생각·감정을) 대변하다, 반영하다",
+   "en": "to express or reflect ideas or feelings, often of others",
+   "ex": "The new campaign channels the mood of 1990s street style.",
+   "ipa": "/ˈtʃænl/"
+  },
+  "nuanced": {
+   "w": "nuanced",
+   "pos": "형용사",
+   "ko": "미묘한 차이가 있는, 복합적인",
+   "en": "showing small but important differences; not simple",
+   "ex": "The report gives a more nuanced picture of consumer habits.",
+   "ipa": "/ˈnjuːɑːnst/"
+  },
+  "respondents": {
+   "w": "respondent",
+   "pos": "명사",
+   "ko": "응답자",
+   "en": "a person who answers a survey",
+   "ex": "Over half of the respondents said they shop secondhand.",
+   "ipa": "/rɪˈspɒndənts/"
+  },
+  "respondent": {
+   "w": "respondent",
+   "pos": "명사",
+   "ko": "응답자",
+   "en": "a person who answers a survey",
+   "ex": "Over half of the respondents said they shop secondhand.",
+   "ipa": "/rɪˈspɒndənt/"
+  },
+  "depicting": {
+   "w": "depict",
+   "pos": "동사",
+   "ko": "묘사하다, 그리다",
+   "en": "to show or represent something in a picture or story",
+   "ex": "The mural depicts the history of the town's textile mills.",
+   "ipa": "/dɪˈpɪktɪŋ/"
+  },
+  "depict": {
+   "w": "depict",
+   "pos": "동사",
+   "ko": "묘사하다, 그리다",
+   "en": "to show or represent something in a picture or story",
+   "ex": "The mural depicts the history of the town's textile mills.",
+   "ipa": "/dɪˈpɪkt/"
+  },
+  "obstructing": {
+   "w": "obstruct",
+   "pos": "동사",
+   "ko": "가로막다, 방해하다",
+   "en": "to block a path or prevent movement",
+   "ex": "A delivery van was obstructing the fire exit.",
+   "ipa": "/əbˈstrʌktɪŋ/"
+  },
+  "obstruct": {
+   "w": "obstruct",
+   "pos": "동사",
+   "ko": "가로막다, 방해하다",
+   "en": "to block a path or prevent movement",
+   "ex": "A delivery van was obstructing the fire exit.",
+   "ipa": "/əbˈstrʌkt/"
+  },
+  "obstruction": {
+   "w": "obstruction",
+   "pos": "명사",
+   "ko": "방해물, 통행 방해",
+   "en": "something that blocks a way, or the act of blocking it",
+   "ex": "The fallen tree caused an obstruction on the main road.",
+   "ipa": "/əbˈstrʌkʃn/"
+  },
+  "outright": {
+   "w": "outright",
+   "pos": "형용사",
+   "ko": "전면적인, 완전한",
+   "en": "complete and total, with no exceptions",
+   "ex": "Some cities are considering an outright ban on plastic bags.",
+   "ipa": "/ˈaʊtraɪt/"
+  },
+  "targeted": {
+   "w": "targeted",
+   "pos": "형용사",
+   "ko": "표적화된, 특정 대상을 겨냥한",
+   "en": "aimed at a specific group or problem",
+   "ex": "The brand used targeted ads to reach younger customers.",
+   "ipa": "/ˈtɑːɡɪtɪd/"
+  },
+  "improper": {
+   "w": "improper",
+   "pos": "형용사",
+   "ko": "부적절한, 부당한",
+   "en": "not correct, suitable or allowed",
+   "ex": "Improper washing can ruin a wool coat.",
+   "ipa": "/ɪmˈprɒpə/"
+  },
+  "exposed to": {
+   "w": "be exposed to",
+   "pos": "구",
+   "ko": "~에 노출되다",
+   "en": "to experience or be shown something",
+   "ex": "Children are exposed to thousands of ads every year.",
+   "ipa": "/ɪkˈspəʊzd tuː/"
+  },
+  "favourable": {
+   "w": "favourable",
+   "pos": "형용사",
+   "ko": "호의적인, 긍정적인",
+   "en": "showing approval or a positive opinion",
+   "ex": "The new collection received favourable reviews in Milan.",
+   "ipa": "/ˈfeɪvərəbl/"
+  },
+  "favour": {
+   "w": "favour",
+   "pos": "동사",
+   "ko": "선호하다, 지지하다",
+   "en": "to prefer or support one option over others",
+   "ex": "Most staff favour a four-day working week.",
+   "ipa": "/ˈfeɪvə/"
+  },
+  "equivalent": {
+   "w": "equivalent",
+   "pos": "형용사",
+   "ko": "동등한, 상응하는",
+   "en": "equal in value, amount or function",
+   "ex": "There is no equivalent word for this in Korean.",
+   "ipa": "/ɪˈkwɪvələnt/"
+  },
+  "resemble": {
+   "w": "resemble",
+   "pos": "동사",
+   "ko": "닮다, 비슷하다",
+   "en": "to look like or be similar to something",
+   "ex": "The new handbag closely resembles a famous vintage design.",
+   "ipa": "/rɪˈzembl/"
+  },
+  "advocacy groups": {
+   "w": "advocacy group",
+   "pos": "구",
+   "ko": "옹호 단체, 이익 대변 단체",
+   "en": "organisations that publicly support a cause or group",
+   "ex": "Advocacy groups are pushing for fairer pay for garment workers.",
+   "ipa": "/ˈædvəkəsi ɡruːps/"
+  },
+  "distinguish": {
+   "w": "distinguish",
+   "pos": "동사",
+   "ko": "구별하다",
+   "en": "to recognise the difference between things",
+   "ex": "It is hard to distinguish real leather from good imitations.",
+   "ipa": "/dɪˈstɪŋɡwɪʃ/"
+  },
+  "authoritatively": {
+   "w": "authoritatively",
+   "pos": "부사",
+   "ko": "권위 있게, 확신을 갖고",
+   "en": "in a way that is reliable and can be trusted as correct",
+   "ex": "No one can authoritatively predict next year's trends.",
+   "ipa": "/ɔːˈθɒrətətɪvli/"
+  },
+  "empirical": {
+   "w": "empirical",
+   "pos": "형용사",
+   "ko": "실증적인, 경험적인",
+   "en": "based on observation or experiment, not theory",
+   "ex": "There is little empirical data on how long these fabrics last.",
+   "ipa": "/ɪmˈpɪrɪkl/"
+  },
+  "foundation": {
+   "w": "foundation",
+   "pos": "명사",
+   "ko": "토대, 기반",
+   "en": "the basic idea or principle something is built on",
+   "ex": "Good pattern-making is the foundation of a well-fitting garment.",
+   "ipa": "/faʊnˈdeɪʃn/"
+  },
+  "ultimately": {
+   "w": "ultimately",
+   "pos": "부사",
+   "ko": "궁극적으로, 결국",
+   "en": "in the end; most importantly",
+   "ex": "Ultimately, the customer decides whether a product succeeds.",
+   "ipa": "/ˈʌltɪmətli/"
+  },
+  "informed by": {
+   "w": "be informed by",
+   "pos": "구",
+   "ko": "~에 근거하다, ~의 영향을 받다",
+   "en": "to be based on or guided by something",
+   "ex": "Her designs are informed by traditional Korean craft.",
+   "ipa": "/ɪnˈfɔːmd baɪ/"
+  },
+  "inform": {
+   "w": "inform",
+   "pos": "동사",
+   "ko": "(결정 등에) 영향을 주다, 근거가 되다",
+   "en": "to influence or guide a decision or opinion",
+   "ex": "Customer feedback will inform our next product line.",
+   "ipa": "/ɪnˈfɔːm/"
+  },
+  "well-established": {
+   "w": "well-established",
+   "pos": "형용사",
+   "ko": "확고히 자리 잡은",
+   "en": "having existed for a long time and widely accepted",
+   "ex": "Seoul has a well-established fashion week.",
+   "ipa": "/ˌwel ɪˈstæblɪʃt/"
+  },
+  "a case for": {
+   "w": "a case for",
+   "pos": "구",
+   "ko": "~해야 할 근거",
+   "en": "a set of reasons supporting an idea or action",
+   "ex": "There is a strong case for reducing plastic packaging.",
+   "ipa": "/ə keɪs fɔː/"
+  },
+  "when it comes to": {
+   "w": "when it comes to",
+   "pos": "구",
+   "ko": "~에 관해서라면",
+   "en": "used to introduce a specific topic",
+   "ex": "When it comes to colour, she always chooses navy.",
+   "ipa": "/wen ɪt kʌmz tuː/"
+  }
+ },
+ "vocab": [
+  "uptake",
+  "backlash",
+  "crackdown",
+  "contentious",
+  "reactive",
+  "overrepresented",
+  "nuanced",
+  "outright",
+  "empirical",
+  "resemble",
+  "draw on",
+  "carry weight",
+  "when it comes to"
+ ],
+ "quiz": [
+  {
+   "q": "In 2024 the City of Melbourne banned both rental e-scooters and rental e-bikes.",
+   "a": "FALSE",
+   "why": "멜버른은 대여 전동킥보드만 금지하고 대여 전기자전거는 계속 허용했다."
+  },
+  {
+   "q": "Respondents supported heavy fines for misuse more strongly than outright bans.",
+   "a": "TRUE",
+   "why": "벌금은 평균 7.9/7.8점, 전면 금지는 5.0/4.8점이었다."
+  },
+  {
+   "q": "Most of the people surveyed owned an e-bike or an e-scooter themselves.",
+   "a": "NOT GIVEN",
+   "why": "응답자가 기기를 가지고 있었는지는 글에 나오지 않는다."
+  },
+  {
+   "q": "Negative headlines changed attitudes towards e-bikes more than attitudes towards e-scooters.",
+   "a": "FALSE",
+   "why": "부정적 헤드라인의 효과는 전동킥보드 쪽에서 훨씬 더 컸다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "so many people started using them so fast that rule-makers struggled",
+   "article": "their rapid uptake has challenged regulators"
+  },
+  {
+   "simple": "More people getting hurt has made the public angry.",
+   "article": "Rising injury rates have fuelled public backlash."
+  },
+  {
+   "simple": "Australian rules have often been argued over, made in a rush, or made without a plan.",
+   "article": "In Australia, regulation has often been contentious, reactive or ad hoc."
+  },
+  {
+   "simple": "people who feel very strongly probably have too loud a voice",
+   "article": "it’s likely people with strong views are overrepresented"
+  },
+  {
+   "simple": "rules should be based mainly on research data, not on what people think",
+   "article": "the best foundation for e-mobility regulation is empirical evidence, not public opinion"
+  }
+ ],
+ "summary": "A survey of over 2,000 Australians found they see e-bikes and e-scooters as similar and prefer targeted rules like fines to bans, so the authors argue that until there is more research, lawmakers should listen to broad, nuanced public opinion and not just the loudest voices.",
+ "gist": "호주에서 전기자전거·전동킥보드 규제가 들쭉날쭉한데, 2,000여 명을 조사해 보니 사람들은 두 기기를 비슷하게 보고 전면 금지보다 벌금 같은 맞춤형 규제를 원했다는 연구 글.\n장기적으로는 여론보다 실증 연구가 규제의 기준이 되어야 한다고 주장한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "In 2024 the City of Melbourne stopped allowing both rental e-bikes and rental e-scooters.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "[4] 멜버른은 전동 킥보드 대여만 금지하고 'continuing to allow rental e-bikes' — 전기자전거 대여는 계속 허용함"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "The prohibition on shared e-scooters in Paris resulted from a decision made by voters.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "[9] 'A public vote in Paris in 2023 led to a ban on shared rental e-scooters' — 시민 투표로 금지가 결정됨"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "Most of the submissions made to the state inquiries called for e-scooters to be banned.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "[12] 'Hundreds of people have made submissions'라고만 하고, 제출 의견 중 금지 요구가 다수였는지는 나오지 않음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Rules for e-mobility should ultimately rest on research findings rather than on what the public thinks.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "[36] 'the best foundation for e-mobility regulation is empirical evidence, not public opinion' — 필자의 주장과 일치"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "Until more evidence is available, policymakers should disregard public opinion entirely.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "[38] 'While we wait, public opinion can help inform the decisions' — 필자는 그동안 여론을 참고할 수 있다고 봄"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 12",
+    "options": [
+     "i  Rising injury figures across Australian states",
+     "ii  Why inquiry submissions may give a distorted picture",
+     "iii  Media coverage shifts attitudes unevenly",
+     "iv  International safety standards for motor vehicles",
+     "v  Specific penalties win more approval than prohibition"
+    ],
+    "answer": "ii",
+    "why": "[12] 'people with strong views are overrepresented' — 의견서 제출자는 강한 의견을 가진 사람에 치우칠 수 있음"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 23",
+    "options": [
+     "i  Rising injury figures across Australian states",
+     "ii  Why inquiry submissions may give a distorted picture",
+     "iii  Media coverage shifts attitudes unevenly",
+     "iv  International safety standards for motor vehicles",
+     "v  Specific penalties win more approval than prohibition"
+    ],
+    "answer": "v",
+    "why": "[23] 'What Australians did favour was targeted regulations. Heavy fines… received the strongest support' — 전면 금지보다 표적 규제를 더 지지함"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 26",
+    "options": [
+     "i  Rising injury figures across Australian states",
+     "ii  Why inquiry submissions may give a distorted picture",
+     "iii  Media coverage shifts attitudes unevenly",
+     "iv  International safety standards for motor vehicles",
+     "v  Specific penalties win more approval than prohibition"
+    ],
+    "answer": "iii",
+    "why": "[26] 'Exposure to negative headlines… the effect was significantly stronger for e-scooters' — 부정적 기사의 영향이 기기마다 다르게 나타남"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a person with a disability?",
+    "options": [
+     "19",
+     "22",
+     "30",
+     "37"
+    ],
+    "answer": "19",
+    "why": "[19] 'an e-bike or e-scooter obstructing a wheelchair user' — 휠체어 이용자가 언급됨"
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions a rule for motorists that was not based on public consultation?",
+    "options": [
+     "7",
+     "9",
+     "33",
+     "37"
+    ],
+    "answer": "37",
+    "why": "[37] 'authorities didn't set the legal blood alcohol limits for drivers by asking people their views'"
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "What did the survey reveal about outright bans?",
+    "options": [
+     "A They were strongly supported for e-scooters but not for e-bikes.",
+     "B They received less support than heavy fines for misuse.",
+     "C They were more popular for public transport than for roads.",
+     "D E-bikes attracted far more support for a ban than e-scooters."
+    ],
+    "answer": "B",
+    "why": "[22]-[23] 금지 지지는 'averaging 5.0… and 4.8'로 약했고, 'Heavy fines… received the strongest support'(7.9/7.8)"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "According to the writers, why does public opinion currently carry so much weight in e-bike and e-scooter regulation?",
+    "options": [
+     "A The World Health Organization recommends consulting the public.",
+     "B There is not yet enough research to base standards on.",
+     "C State governments are legally required to hold inquiries.",
+     "D The Paris ban proved that public votes produce safer roads."
+    ],
+    "answer": "B",
+    "why": "[8]-[9] 'there's not yet a large enough body of evidence to draw on. As a result, public opinion carries considerable weight'"
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Before answering, half of the respondents were shown ten negative ____ about the device they were asked to assess.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "news headlines"
+    ],
+    "why": "[24] 'respondents were exposed to ten negative news headlines about the device'"
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Studies from the United States and Europe indicate that e-bikes and e-scooters have comparable ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "safety risks"
+    ],
+    "why": "[33] 'both devices have very similar safety risks'"
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Which group of riders was the target of the second most popular regulation?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "riders under 16"
+    ],
+    "why": "[23] 'Restrictions on riders under 16 followed closely, at 7.6 and 7.5' — 벌금 다음으로 높은 지지"
+   }
+  ],
+  "headings": {
+   "paras": [
+    11,
+    22,
+    25
+   ]
+  }
+ }
+}
