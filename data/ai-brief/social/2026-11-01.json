@@ -1,0 +1,301 @@
+{
+ "date": "2026-11-01",
+ "collectedAt": "2026-11-01T06:30:32+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@thedalbee",
+   "url": "https://www.threads.com/@thedalbee/post/DfHAD9foKLF",
+   "at": "2026-10-30T07:03:17.000Z",
+   "likes": 734,
+   "replies": 43,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "영상편집자가 클로드 코드에 편집 맡겨 업로드 주1회→주5회",
+   "points": [
+    "회사 유튜브 주 1회→5회, 개인 채널 주 0.5회→3회, 한 달 조회수 19만",
+    "녹화 중 말실수하면 한 템포 쉬고 다시 말하기 — AI가 무음으로 재테이크를 찾음",
+    "클로드 코드에 whisper large-v3 turbo를 깔게 한 뒤 무음 컷·반복 구간은 뒷부분만 살리게 지시",
+    "자막은 '넷플릭스 한국어 자막 지침'을 그대로 따르게, 모션은 HyperFrames, 효과음은 earshot 스킬"
+   ],
+   "try": "녹화 영상 하나를 클로드 코드에 주고 '무음 컷 + 넷플릭스 자막 지침대로 자막'만 먼저 시켜보기"
+  },
+  {
+   "src": "threads",
+   "author": "@nangman_muk",
+   "url": "https://www.threads.com/@nangman_muk/post/DfIwCE4gf4n",
+   "at": "2026-10-30T23:21:37.000Z",
+   "likes": 98,
+   "replies": 15,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 질문을 휴대폰 채팅으로 받아 답하는 Ovis",
+   "points": [
+    "클로드 코드·코덱스가 내 답을 기다릴 때 휴대폰·브라우저·맥 앱에서 채팅처럼 답함",
+    "실시간 터미널 화면, SSH로 다른 PC 연결, 웹 푸시 알림 지원(herdr 클라이언트)",
+    "맥은 Ovis.dmg 설치, 폰은 TestFlight/구글 플레이 베타 또는 웹 홈 화면 추가",
+    "컴퓨터·폰 양쪽 Tailscale 켜고 QR 스캔으로 연결 — 9월 나온 베타라 작성자도 미검증"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jk_shin81",
+   "url": "https://www.threads.com/@jk_shin81/post/DfJwAlmGOo7",
+   "at": "2026-10-31T08:40:35.000Z",
+   "likes": 195,
+   "replies": 10,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "직접 써본 클로드 스킬·도구 8가지 목록",
+   "points": [
+    "가장 추천은 모션그래픽용 Hyperframes",
+    "Taste(AI 티 안 나는 웹 디자인), Graphify(코드·파일 지도), Headroom(컨텍스트 압축)",
+    "OmniRoute(요청 라우팅), ECC(에이전트 하네스), Claude-video(유튜브 분석)",
+    "Ponytail — 시니어 개발자 페르소나로 페어 프로그래밍"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@gj.buffet",
+   "url": "https://www.threads.com/@gj.buffet/post/DfGicvsHXV0",
+   "at": "2026-10-30T02:44:30.000Z",
+   "likes": 67,
+   "replies": 7,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "클로드 스킬 설치 단계별 정리와 막힐 때 체크",
+   "points": [
+    "설정 → Capabilities → '코드 실행 및 파일 생성'을 켜야 Skills 메뉴가 보임",
+    "커뮤니티 스킬은 Customize → Skills → + → Upload a skill로 ZIP 업로드",
+    "SKILL.md 파일만 압축하면 실패 — 폴더째 압축, 폴더명=스킬명",
+    "클로드 코드는 ~/.claude/skills/ 에 폴더 넣고 앱 완전 종료 후 재실행"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfI-yf6gsmQ",
+   "at": "2026-10-31T01:30:30.000Z",
+   "likes": 106,
+   "replies": 12,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude 요금제 이름 변경: Max 5x→Max, Max 20x→Ultra",
+   "points": [
+    "가격은 월 100달러·200달러 그대로, 기존 구독자는 할 일 없음",
+    "인증된 Ultra 계정은 5시간 단위 사용량 제한이 없어짐",
+    "신규 계정은 인증 전까지 5시간 제한 유지, 주간 제한은 그대로"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfKG3RbCXTs",
+   "at": "2026-10-31T12:00:18.000Z",
+   "likes": 269,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "에이전트가 데스크톱 전체를 조작하는 agent-desktop 공개",
+   "points": [
+    "vercel-labs가 낸 오픈소스, agent-browser의 데스크톱판",
+    "macOS·Windows·Linux 지원, 사용자가 일하는 동안 백그라운드 실행",
+    "OS 접근성 트리로 앱 UI 구조를 읽어 조작, Rust로 작성",
+    "여러 에이전트가 각자 독립된 마우스 커서로 동시에 작업 가능"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@doitai_1",
+   "url": "https://www.threads.com/@doitai_1/post/DfHQ-ogn_vJ",
+   "at": "2026-10-30T09:31:05.000Z",
+   "likes": 146,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "MCP 내장 오픈소스 영상편집기 Concat — 에이전트가 직접 편집",
+   "points": [
+    "Rust로 만든 캡컷 대체 편집기, 깃허브 스타 1만 2천",
+    "자막은 로컬 Whisper가 달고 업로드·워터마크·로그인·구독료 없음",
+    "MCP 서버 내장 — 한 줄 설정이면 Claude가 영상을 직접 편집"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@vibe.itji",
+   "url": "https://www.threads.com/@vibe.itji/post/DfIcU42E_1M",
+   "at": "2026-10-30T20:29:21.000Z",
+   "likes": 185,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "바이브코딩 홈페이지용 디자인 레퍼런스 10곳 + 프롬프트",
+   "points": [
+    "찾기는 Awwwards·Landbook, 구현은 21st.dev·Uiverse 추천",
+    "그 외 Lapa Ninja, One Page Love, Recent, SiteInspire, Dribbble, Behance",
+    "레퍼런스 URL을 클로드 코드에 주고 레이아웃·타이포·색·여백·스크롤 효과를 분석시키기",
+    "프롬프트에 '로고·이미지·문구는 복제 금지, 모바일·PC 실제 브라우저 검증' 포함"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@sylvia.global",
+   "url": "https://www.threads.com/@sylvia.global/post/DfJ3dmYD3dE",
+   "at": "2026-10-31T09:45:43.000Z",
+   "likes": 67,
+   "replies": 3,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "뻔한 AI 디자인 피하려면 앤트로픽 frontend-design 스킬",
+   "points": [
+    "anthropics/skills 저장소 skills/frontend-design 폴더에 있는 공식 스킬",
+    "'뻔한 AI 느낌을 피하라'는 지시가 스킬 안에 들어 있음",
+    "mkdir -p .claude/skills/frontend-design 후 SKILL.md를 curl로 받아 넣기",
+    "클로드 코드에서 /frontend-design 으로 불러 쓰기"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@aburacadabra_",
+   "url": "https://x.com/aburacadabra_/status/2116566569841217767",
+   "at": "2026-10-31T16:22:48.000Z",
+   "likes": 97,
+   "replies": 2,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 파일 읽기는 Gemini Flash에 넘겨 사용량 절감",
+   "points": [
+    "클로드 코드는 코드 짜기 전 파일을 많이 읽고, 그 읽기에도 사용량이 그대로 깎임",
+    "스포티파이 직원이 shunt 플러그인으로 큰 파일 읽기를 Gemini Flash에 넘김",
+    "클로드는 Flash가 요약한 내용만 보고 코드를 작성",
+    "읽기 구간 사용량 82~94% 감소 — 전체가 90% 준 건 아님"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@smbluespace",
+   "url": "https://x.com/smbluespace/status/2115991075349533143",
+   "at": "2026-10-30T02:16:00.000Z",
+   "likes": 478,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 입문 첫 30분에 할 3가지",
+   "points": [
+    "설치하자마자 깃허브부터 연결",
+    "무슨 일을 하는지·원하는 것·성공 기준을 폴더 하나에 정리(맥락 폴더)",
+    "바로 만들게 하지 말고 플랜 모드로 계획을 받아 고친 뒤 실행"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HV1zT-maYAAxnrl.png"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@VibeEverything",
+   "url": "https://x.com/VibeEverything/status/2116431161887203760",
+   "at": "2026-10-31T07:24:45.000Z",
+   "likes": 395,
+   "replies": 23,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 영상은 720p로 뽑고 프레임 캡처 후 업스케일",
+   "points": [
+    "1080p 생성이 720p보다 2배 비싸 프레임 건지려고 고화질 생성은 낭비",
+    "720p로 만들고 마음에 드는 프레임을 캡처해 이미지 업스케일",
+    "인용글: 영상 프레임이 이미지 생성보다 피부 질감·빛이 실사에 가깝다"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2116424834041405440/img/NWFspPkFFjmh9lpc.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2116424834041405440/vid/avc1/640x360/w6Wz8sZr5762-WYi.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@fofrAI",
+   "url": "https://x.com/fofrAI/status/2116614355600994512",
+   "at": "2026-10-31T19:32:41.000Z",
+   "likes": 151,
+   "replies": 14,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "바이브코딩한 사이트를 크롬 앱으로 만들어 데스크톱 앱처럼",
+   "points": [
+    "에이전트에게 내 사이트를 크롬 앱(PWA)으로 만들어 달라고 요청",
+    "데스크톱·안드로이드 앱 껍데기가 공짜로 생김",
+    "작성자는 자잘한 바이브코딩 도구 전부 이렇게 쓰는 중"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@dopamine_crypto",
+   "url": "https://x.com/dopamine_crypto/status/2116447584969728098",
+   "at": "2026-10-31T08:30:00.000Z",
+   "likes": 248,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "웹소설 전 과정을 클로드 코드 스킬 13개로 쪼갠 oh-story",
+   "points": [
+    "랭킹 훑기 → 인기작 분석 → 장·단편 쓰기 → AI 티 빼기 → 표지 순서",
+    "인물 이름·능력·떡밥을 파일로 따로 적어 연속성을 계속 대조",
+    "중국 웹소설용이라 설명이 중국어·영어뿐, 코덱스·오픈코드에서도 동작",
+    "깃허브 zenstory-ai/oh-story-claudecode, MIT, 별 7,977"
+   ],
+   "try": "oh-story의 '인기작 분석' 단계만 떼어 리디 상위작 하나에 돌려보기",
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVeijy3bkAAeSST.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2116149986685538424",
+   "at": "2026-10-30T12:47:27.000Z",
+   "likes": 132,
+   "replies": 57,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude API 요청 최대 크기 32MB → 128MB",
+   "points": [
+    "Messages·Token Counting API 요청 한도가 4배로",
+    "긴 컴퓨터 사용 세션·큰 PDF처럼 이미지 많은 요청이 컨텍스트 남았는데 막히던 문제 해소",
+    "앤트로픽 공식 발표를 인용한 글"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2115922541269426176/img/-Q-IzAXT0PKMWGhi.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2115922541269426176/vid/avc1/640x360/Tt7jMcIF8NkGI2rd.mp4"
+    }
+   ]
+  }
+ ]
+}
