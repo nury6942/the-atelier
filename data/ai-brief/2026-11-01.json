@@ -1,0 +1,246 @@
+{
+ "date": "2026-11-01",
+ "generatedAt": "2026-11-01T07:20:00+09:00",
+ "sourcesNote": "웹 검색 20회 + 오늘 맥 수집(X·Threads 15개) + GitHub·npm 원본 확인 · 실행 환경에서 X·Threads·뉴스 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "tool",
+   "title": "에이전트가 내 컴퓨터 앱을 직접 누른다",
+   "url": "https://github.com/vercel-labs/agent-desktop",
+   "image": null,
+   "source": "GitHub vercel-labs · v1.0.2 · Apache-2.0",
+   "how": "화면 캡처 대신 앱의 버튼 구조를 읽어 조작",
+   "chips": [
+    "맥·윈도우·리눅스",
+    "npm 한 줄 설치",
+    "별 4.1천"
+   ],
+   "forMe": "브라우저 밖 프로그램(캐드·일러스트 툴)에서 반복하는 내보내기·이름 바꾸기 같은 클릭을 클로드에 맡겨 볼 수 있어요. 앱이 버튼 구조(접근성 정보)를 열어 두지 않으면 못 보고 웹페이지는 대상이 아니니, 쓰는 캐드 프로그램으로 먼저 시험해 보세요.",
+   "from": {
+    "label": "Threads @choi.openai · ♥269",
+    "url": "https://www.threads.com/@choi.openai/post/DfKG3RbCXTs"
+   }
+  },
+  {
+   "cat": "vibe",
+   "title": "웹소설 쓰기 전 과정을 스킬로 쪼갰다",
+   "url": "https://github.com/zenstory-ai/oh-story-claudecode",
+   "image": null,
+   "source": "GitHub zenstory-ai · MIT · X @dopamine_crypto ♥248",
+   "how": "랭킹 분석→집필→AI 티 빼기→표지 순서",
+   "chips": [
+    "스킬 14개",
+    "별 8.2천",
+    "설명은 중국어·영어"
+   ],
+   "forMe": "인물 이름·떡밥을 파일로 따로 적어 두고 쓸 때마다 대조하는 방식이 핵심이에요. 시즌 기획서(테마·컬러·로고 규칙)를 파일 하나로 두고 AI 작업마다 대조시키는 데 그대로 빌려 쓸 수 있습니다.",
+   "from": {
+    "label": "X @dopamine_crypto · ♥248",
+    "url": "https://x.com/dopamine_crypto/status/2116447584969728098"
+   }
+  },
+  {
+   "cat": "hack",
+   "title": "AI 영상은 720p로, 좋은 컷만 키우기",
+   "url": "https://x.com/VibeEverything/status/2116431161887203760",
+   "image": null,
+   "source": "X @VibeEverything · ♥395",
+   "how": "싼 화질로 뽑고 프레임 캡처 → 이미지 업스케일",
+   "examples": [
+    {
+     "title": "720p 영상에서 건진 프레임 시연",
+     "url": "https://x.com/VibeEverything/status/2116431161887203760",
+     "image": null
+    }
+   ],
+   "chips": [
+    "1080p 생성비 2배",
+    "영상 프레임이 피부·빛 더 실사 같다는 인용글"
+   ],
+   "forMe": "옷이 움직일 때 생기는 주름·핏을 보고 싶을 때, 이미지 한 장을 여러 번 뽑기보다 짧은 영상에서 마음에 드는 순간을 고르는 쪽이 싸고 자연스럽다는 얘기예요."
+  },
+  {
+   "cat": "hack",
+   "title": "바이브코딩한 사이트, 앱처럼 깔아 쓰기",
+   "url": "https://x.com/fofrAI/status/2116614355600994512",
+   "image": null,
+   "source": "X @fofrAI · ♥151",
+   "how": "에이전트에게 크롬 앱(PWA)으로 바꿔 달라고",
+   "chips": [
+    "데스크톱·안드로이드 둘 다",
+    "추가 비용 0"
+   ],
+   "forMe": "Atelier를 브라우저 탭이 아니라 독에 있는 앱으로 바로 띄울 수 있어요. 오늘 해볼 것 원픽으로 올려 뒀습니다."
+  },
+  {
+   "cat": "tool",
+   "title": "파일 읽기는 제미나이에, 사용량 82~94%↓",
+   "url": "https://x.com/aburacadabra_/status/2116566569841217767",
+   "image": null,
+   "source": "X @aburacadabra_ · ♥97 · 스포티파이 내부 플러그인 shunt",
+   "how": "큰 파일만 Gemini Flash가 요약해 클로드에 넘김",
+   "chips": [
+    "읽기 구간만 82~94% 절감",
+    "전체가 90% 준 건 아님",
+    "요약이 놓친 버그 사례도"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "Atelier를 맥 앱으로 설치하기",
+   "minutes": 20,
+   "why": "매일 쓰는 Atelier를 탭 찾지 않고 독에서 바로 여는 앱으로 만들 수 있어요. 파일 두어 개만 더하는 일이라 화면은 그대로이고, 결과가 바로 눈에 보입니다.",
+   "from": {
+    "label": "@fofrAI · ♥151",
+    "url": "https://x.com/fofrAI/status/2116614355600994512"
+   },
+   "steps": [
+    {
+     "text": "Atelier 열어 두기",
+     "url": "https://nury6942.github.io/the-atelier/"
+    },
+    {
+     "text": "이 주문 붙여넣기",
+     "copy": "이 사이트(index.html 기준)를 크롬에서 '앱으로 설치'할 수 있게 PWA로 만들어줘.\n- manifest.json: 이름 The Atelier, 바탕 #FFFFFF, 테마색 #1F4BD8, 직각 아이콘 192·512px\n- service worker는 설치 조건을 채우는 최소한만. 데이터가 옛날 것으로 보이면 안 되니 캐시하지 말고 항상 네트워크에서 받게 해\n- 다른 화면·스타일·데이터는 건드리지 마\n끝나면 바꾼 것을 BEFORE/AFTER로 보여줘."
+    },
+    {
+     "text": "주소창 설치 아이콘"
+    }
+   ]
+  },
+  {
+   "title": "앤트로픽 공식 디자인 스킬 깔기",
+   "minutes": 10,
+   "why": "앤트로픽이 직접 만든 화면 디자인 스킬로, '뻔한 AI 느낌을 피하라'는 지시가 들어 있어요. 한 번 깔아 두면 새 페이지 만들 때마다 불러 쓸 수 있습니다.",
+   "from": {
+    "label": "@sylvia.global · ♥67",
+    "url": "https://www.threads.com/@sylvia.global/post/DfJ3dmYD3dE"
+   },
+   "steps": [
+    {
+     "text": "스킬 원문 훑어보기",
+     "url": "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md"
+    },
+    {
+     "text": "터미널에 붙여넣기",
+     "copy": "mkdir -p ~/.claude/skills/frontend-design && curl -sL https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md -o ~/.claude/skills/frontend-design/SKILL.md"
+    },
+    {
+     "text": "/frontend-design 호출"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "비개발자가 고치는 리플릿 에이전트",
+   "url": "https://alphasignal.ai/news/replit-s-cloud-agents-let-non-engineers-ship-250-000-lines-to-production",
+   "image": null,
+   "source": "AlphaSignal · 10-27 · 디자인팀 6개월 25만 줄",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "일레븐랩스 효과음 SFX v3",
+   "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-october-30-2026/",
+   "image": null,
+   "source": "The Neuron · 10-30 · 여러 소리 한 번에",
+   "watching": true
+  },
+  {
+   "cat": "tool",
+   "title": "Kimi K3.1 Pro 가중치 11-04",
+   "url": "https://letsdatascience.com/news/moonshot-releases-kimi-k31-pro-api-open-weights-due-nov-4-786e160c",
+   "image": null,
+   "source": "Let's Data Science · 공개 약속일, 아직 미공개",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "미스트랄 Large 4, 독립 32위",
+   "url": "https://www.vals.ai/models/mistralai_mistral-large-4",
+   "image": null,
+   "source": "Vals AI · 44개 중 32위 · 48.05%",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "HyperFrames 클로드 커넥터",
+   "url": "https://claude.com/connectors/hyperframes-heygen",
+   "image": null,
+   "source": "HeyGen · HTML로 모션 영상 · 별 7.6만",
+   "from": {
+    "label": "Threads @jk_shin81 · ♥195",
+    "url": "https://www.threads.com/@jk_shin81/post/DfJwAlmGOo7"
+   },
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "shunt 해설과 한계",
+   "url": "https://byteiota.com/spotifys-shunt-plugin-cuts-claude-code-tokens-90/",
+   "image": null,
+   "source": "byteiota · 350줄 넘는 파일만 넘김",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Suno MCP (beta)",
+   "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
+   "date": "2026-10-28",
+   "note": "도움말상 무료 플랜도 지원 · 실사용 사례 아직 없음"
+  },
+  {
+   "name": "Runway Ads",
+   "url": "https://runway.com/news/company-news/runway-ads",
+   "date": "2026-10-27",
+   "note": "유료 플랜 전체 공개 · 사용자 사례 아직 없음"
+  },
+  {
+   "name": "Genie 4",
+   "url": "https://aiweekly.co/alerts/google-deepmind-debuts-genie-4-world-model-with-native-audio",
+   "date": "2026-10-27",
+   "note": "신뢰 테스터 한정 · 공개 사례 없음"
+  },
+  {
+   "name": "Gemini 4 Carbon",
+   "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+   "date": "2026-10-28",
+   "note": "파트너 한정 · 만든 사례 아직"
+  },
+  {
+   "name": "MAI-Image-2.7 Preview",
+   "url": "https://windowsreport.com/microsofts-new-mai-image-2-7-model-climbs-to-the-top-of-ai-image-editing-charts/",
+   "date": "2026-10-27",
+   "note": "편집 전용 미리보기 · 독립 실사용 후기 아직 없음"
+  },
+  {
+   "name": "GitHub Copilot Fusion",
+   "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion",
+   "date": "2026-10-28",
+   "note": "정식 공개 · 독립 후기 아직 없음"
+  },
+  {
+   "name": "Replit Cloud Agents",
+   "url": "https://alphasignal.ai/news/replit-s-cloud-agents-let-non-engineers-ship-250-000-lines-to-production",
+   "date": "2026-10-27",
+   "note": "Pro·Enterprise · 리플릿 자체 사례만"
+  },
+  {
+   "name": "ElevenLabs SFX v3",
+   "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-october-30-2026/",
+   "date": "2026-10-30",
+   "note": "ElevenCreative·API · 후기 아직"
+  }
+ ],
+ "weekly": {
+  "flow": [
+   "발표 러시: GPT-6.1 Terra(10-26)·Gemini 4 Carbon·Genie 4·Runway Ads·Suno MCP·Copilot Fusion(10-27~28) — Terra만 '같은 일 3분·300원' 실사용이 붙었고 나머지 5개는 한 주가 지나도 만든 사례 0",
+   "영상 편집을 에이전트에게: 편집 0번 다큐 1주 35만 조회, @thedalbee 업로드 주 1→5회(♥734), MCP 내장 무료 편집기 Concat — 이번 주 실사용 글이 가장 많았던 흐름",
+   "'AI 티 빼기'가 글·화면 양쪽으로: 글 티 지우는 스킬 16전 16승, 실사이트 DESIGN.md 모음·앤트로픽 frontend-design 스킬 공유가 이어짐"
+  ]
+ }
+}
