@@ -1,3 +1,11 @@
+## 2026-11-01 · 맥북 · 여행 = 모래색 (B안, cal-wb v38 · sw v1670)
+- 누리: 위젯 시안 A/B/C 중 B(여행만 모래) 선택
+- 토큰 --atl-sand #F0A647 · --atl-sand-ink #CC915C (홈 그림에서 뽑은 색) 추가
+- 적용: 달력 연차·여행 일정(코발트→모래, 글자는 진한 잉크) · Travel·Travel Budget 탭 밑줄 · 선택된 도시 칩(Schedule·Places)
+- 도시 칩은 아래쪽 옛 규칙(#travel-places-section …)에 밀려서 html #page-journey 를 앞에 붙여 이기게 함
+- 로컬에서 실제 계산된 색 확인(탭·칩·Places 칩 모두 #F0A647, 다른 페이지 탭은 코발트 그대로). 로그인한 실제 일정 화면은 아직 눈으로 못 봄
+- DESIGN.md 2장·6장·9장 갱신, 남은 여행 화면: Flight Deals·Checklist·Nomad Master
+
 ## 2026-11-01 · 맥북 · DESIGN.md 정본 만들기
 - 누리: AI 티 안 나게 디자인 md 를 만들자, 아뜰리에부터 → 남의 브랜드(getdesign.kr·refero) 를 입히지 않고 우리 규칙을 한 장으로
 - DESIGN.md: 얼굴(홈 그림 = 코발트 밤하늘 + 모래) · 색 토큰 · 글꼴 · 모양 · 부품 · 하지 말 것 · 별도 HTML 페이지 · 지금 어긋난 곳 · 다음 방향(제안)

@@ -319,7 +319,16 @@
       --atl-accent:#1F4BD8; --atl-accent-ink:#1A3FB5; --atl-accent-soft:#EEF2FD;
       --atl-line:#ECECF0; --atl-line-strong:#DCDCE3; --atl-surface:#F8F8FA;
       --atl-text:#16161A; --atl-text-2:#5B5B66; --atl-text-3:#8A8A95;
+      /* 모래 = 홈 그림의 볕 든 모래(#F0A647)·그늘(#CC915C). 여행 표시에만 점·선 크기로 (바탕 칠하기 금지, 위 글자는 --atl-text) */
+      --atl-sand:#F0A647; --atl-sand-ink:#CC915C;
     }
+    /* 여행 = 모래 (누리 B안 2026-11-01): Travel·Travel Budget 탭 밑줄, 선택된 도시 칩 */
+    #page-journey .trav-tab-active,#page-finance .trav-tab-active{border-bottom-color:var(--atl-sand) !important}
+    /*   아래쪽 옛 칩 규칙(#travel-places-section …)보다 뒤에 있어도 이기도록 html #page-journey 를 앞에 붙임 */
+    html #page-journey .spot-citytab.is-active,html #page-journey #travel-places-section .spot-citytab.is-active{background:var(--atl-sand);border-color:var(--atl-sand);color:var(--atl-text)}
+    html #page-journey .spot-citytab.is-active i{background:rgba(22,22,26,.12);color:var(--atl-text)}
+    html #page-journey .spot-citytab.is-active em{color:var(--atl-text)}
+    html #page-journey .spot-citytab:not(.is-active):hover{border-color:var(--atl-sand-ink)}
     /* 모든 칸 직각 (누리: 둥근 모서리 금지). 로딩 스피너만 원형 유지 */
     *,*::before,*::after{border-radius:0 !important}
     .animate-spin,.animate-spin::before,.animate-spin::after{border-radius:9999px !important}
@@ -17360,7 +17369,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=37" defer></script>
+<script src="js/cal-wb.js?v=38" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
