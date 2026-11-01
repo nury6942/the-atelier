@@ -1,0 +1,821 @@
+{
+ "id": "2026-11-02-conv-nzs-resource-management-rules-have-been",
+ "title": "NZ’s resource management rules have been rewritten. What happens after the election?",
+ "url": "https://theconversation.com/nzs-resource-management-rules-have-been-rewritten-what-happens-after-the-election-294046",
+ "source": "The Conversation",
+ "author": "Steve Urlich, Hamish Rennie",
+ "published": "2026-11-01",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "As each new environmental assessment shows, the impacts on New Zealand’s natural and urban areas are only compounding.",
+  "The government’s most recent national snapshot describes polluted rivers and coastal waters, declining biodiversity, poor air quality in some communities and greenhouse gas emissions that remain high by international standards.",
+  "Increasingly extreme weather is exposing the consequences of how we manage our land. Flooding and landslides have devastated communities, while damage caused by forestry slash during storms have brought heavy costs for people and property.",
+  "Meanwhile, New Zealand faces ever-growing demands for housing, infrastructure and economic development. Yet the regulatory system meant to manage it remains unsettled.",
+  "The previous Labour government passed legislation to replace the Resource Management Act (RMA), only for the National-led coalition to repeal it and introduce its own Planning Act and Natural Environment Act.",
+  "The new system promises to make development easier, reduce costs and delays, and improve environmental management. But environment groups warn it could weaken protections for nature and leave communities facing even greater risks.",
+  "Although the new legislation has passed, most of the changes will come into effect over the next four years. The outcome of this election, of course, may see the rulebook rewritten yet again.",
+  "A transformed policy landscape",
+  "Few areas of New Zealand’s environmental policy landscape have been untouched by the past three years of reform. But we point to key changes that have prioritised development over addressing issues outlined in successive environmental reports.",
+  "Consider safeguards for our degraded freshwater ecosystems. Following earlier court decisions requiring tighter controls on diffuse pollution from farms, the government amended the RMA to allow activities with significant adverse effects on water quality to continue, provided gradual improvements are made.",
+  "Rather than impose immediate changes that could prove costly or difficult to implement, this change aimed to give farmers and councils more time to tackle pollution. Still, it hinges on voluntary action and accurate nutrient modelling that has its own significant limitations.",
+  "In introducing its Fast-track Approvals Act to speed up consenting, the government talked of ending “a culture of no”. But while there’d been criticisms over unnecessary delays and costs for large projects, between 92% and 96% of resource consents had been granted annually over the preceding decade.",
+  "The scheme has also proved controversial for its inclusion of subdivisions and earlier declined “zombie projects”.",
+  "Environmental decision-making has become more centralised in other important areas.",
+  "The new resource management laws give ministers greater powers to override environmental limits when setting national direction. While this might help provide more consistent rules across the country, limits can change with successive governments, creating uncertainty for businesses and communities, and increasing risks to the environment.",
+  "The government has also removed some regulatory powers from regional councils to protect marine biodiversity and concentrated responsibility within the Ministry for Primary Industries, despite concerns over a long-time failure to prevent damage to ocean habitats. This could well become a focal point for post-election coalition negotiations.",
+  "Other reforms affect how costs of improving the environment are shared between landowners, councils and communities.",
+  "In Tairāwhiti, for example, highly erodible land and plantation forestry have contributed to serious damage during storms. The government has declined to fund proposed changes to land use aimed at reducing future landslides, while ministers have urged councils to consider the costs of enforcing environmental rules on forestry companies and their directors.",
+  "The damage caused by forestry and erosion in Tairāwhiti reflects land-use decisions made by successive governments. But without significant investment in changing how vulnerable land is used, communities may continue to bear the costs through flooding, landslides and environmental damage.",
+  "The Planning Act also expands provisions for regulatory relief, which could require councils to compensate landowners when planning restrictions significantly affect “reasonable land use”.",
+  "Contrary to the RMA’s “polluter pays” model, its principle is that individual landowners should not necessarily bear the full cost of restrictions introduced to restore our waterways for example. Such compensation requirements could also make environmental protection more expensive for councils.",
+  "The government’s proposed cap on council rate increases would place further limits on how councils could fund these costs, while the prospect of council amalgamations adds more uncertainty.",
+  "Meanwhile, the new Natural Environment Act favours voluntary action plans in some circumstances where environmental limits are breached or need to be restored. Some primary sector groups have welcomed the new framework, arguing it will cut unnecessary regulation and consenting costs.",
+  "While government analysis also suggests there will be less need for resource consents, we question whether environmental management will necessarily become simpler for landowners. National forestry regulations, for instance, require extensive documentation to justify why resource consent is not needed.",
+  "It’s notable to us that even the legal definition of the natural environment has changed. The RMA recognised the relationship between people and the natural world, including responsibilities to future generations. The Natural Environment Act, by contrast, explicitly excludes “humans” from its definition of ecosystems.",
+  "The new law still includes biodiversity protection among its objectives. Whether it delivers that protection will depend on the environmental limits set by ministers, how they are enforced and the resources councils have to carry out their responsibilities.",
+  "What parties are pitching",
+  "Perhaps the most significant change concerns the place of Te Tiriti o Waitangi in environmental management. The coalition has sought to reduce its role in government decision-making, including in the management of natural resources.",
+  "Yet our experience as researchers working on coastal areas, native and plantation forests, and rural and urban environments shows the value of relational te ao Māori approaches that recognise the relationships between people, land and water. We see these as essential to restoring damaged environments and helping communities withstand the effects of climate change.",
+  "So, what are parties bringing to the table in the environment space this election?",
+  "National has promised loans of up to $300 million to help farmers store water and would ban ring-net fishing in high-protection areas of the Hauraki Gulf. ACT wants to remove Te Mana o te Wai from resource consenting, reducing the priority given to freshwater health in those decisions.",
+  "The Greens, meanwhile, are proposing tighter environmental limits, stronger protection for the Hauraki Gulf and a phase-out of bottom trawling. Opportunity also wants to phase out bottom trawling, expand marine protected areas and move towards fisheries management based on the health of whole ecosystems.",
+  "Labour, meanwhile, has said it would amend rather than repeal the coalition’s new resource management laws, including restoring agreements that provide for iwi participation in environmental decision-making.",
+  "As New Zealanders weigh these competing approaches, there’s value in considering the Māori kaupapa of tūpuna pono – or being “good ancestors” to future generations. A healthy relationship with the natural world remains at the core of this."
+ ],
+ "level": "C1",
+ "minutes": 7,
+ "words": 1118,
+ "gloss": {
+  "compounding": {
+   "w": "compound",
+   "pos": "동사",
+   "ko": "악화되다, 가중되다",
+   "en": "to become worse or greater by adding to an existing problem",
+   "ex": "Late deliveries compounded the stress of launching the new collection.",
+   "ipa": "/kəmˈpaʊnd/"
+  },
+  "compound": {
+   "w": "compound",
+   "pos": "동사",
+   "ko": "악화되다, 가중되다",
+   "en": "to become worse or greater by adding to an existing problem",
+   "ex": "Late deliveries compounded the stress of launching the new collection.",
+   "ipa": "/kəmˈpaʊnd/"
+  },
+  "snapshot": {
+   "w": "snapshot",
+   "pos": "명사",
+   "ko": "현황 요약, 한눈에 보는 모습",
+   "en": "a brief view of a situation at a particular time",
+   "ex": "The monthly report gives a quick snapshot of our online sales.",
+   "ipa": "/ˈsnæpʃɒt/"
+  },
+  "biodiversity": {
+   "w": "biodiversity",
+   "pos": "명사",
+   "ko": "생물 다양성",
+   "en": "the variety of plant and animal life in an area",
+   "ex": "Cotton farming that avoids pesticides can help protect local biodiversity.",
+   "ipa": "/ˌbaɪəʊdaɪˈvɜːsəti/"
+  },
+  "devastated": {
+   "w": "devastate",
+   "pos": "동사",
+   "ko": "황폐화하다, 큰 피해를 입히다",
+   "en": "to destroy or badly damage something",
+   "ex": "The fire devastated the small textile factory overnight.",
+   "ipa": "/ˈdevəsteɪt/"
+  },
+  "devastate": {
+   "w": "devastate",
+   "pos": "동사",
+   "ko": "황폐화하다, 큰 피해를 입히다",
+   "en": "to destroy or badly damage something",
+   "ex": "The fire devastated the small textile factory overnight.",
+   "ipa": "/ˈdevəsteɪt/"
+  },
+  "forestry slash": {
+   "w": "forestry slash",
+   "pos": "명사",
+   "ko": "벌채 잔재물 (나뭇가지·폐목)",
+   "en": "waste branches and logs left behind after trees are cut down",
+   "ex": "Heavy rain washed forestry slash onto the beach.",
+   "ipa": "/ˈfɒrɪstri slæʃ/"
+  },
+  "infrastructure": {
+   "w": "infrastructure",
+   "pos": "명사",
+   "ko": "기반 시설",
+   "en": "basic systems such as roads, water and power that a society needs",
+   "ex": "The city must upgrade its infrastructure before hosting fashion week.",
+   "ipa": "/ˈɪnfrəstrʌktʃə/"
+  },
+  "regulatory": {
+   "w": "regulatory",
+   "pos": "형용사",
+   "ko": "규제의, 규제 관련의",
+   "en": "relating to official rules and their control",
+   "ex": "New regulatory checks have slowed down fabric imports.",
+   "ipa": "/ˈreɡjələtəri/"
+  },
+  "unsettled": {
+   "w": "unsettled",
+   "pos": "형용사",
+   "ko": "불안정한, 확정되지 않은",
+   "en": "not yet decided or still likely to change",
+   "ex": "The launch date remains unsettled until the samples arrive.",
+   "ipa": "/ʌnˈsetld/"
+  },
+  "repeal": {
+   "w": "repeal",
+   "pos": "동사",
+   "ko": "(법을) 폐지하다",
+   "en": "to officially end a law",
+   "ex": "Parliament voted to repeal the outdated tax on imported silk.",
+   "ipa": "/rɪˈpiːl/"
+  },
+  "legislation": {
+   "w": "legislation",
+   "pos": "명사",
+   "ko": "법률, 입법",
+   "en": "a law or set of laws made by a government",
+   "ex": "New legislation requires brands to label recycled materials clearly.",
+   "ipa": "/ˌledʒɪsˈleɪʃn/"
+  },
+  "come into effect": {
+   "w": "come into effect",
+   "pos": "구",
+   "ko": "시행되다, 효력이 생기다",
+   "en": "to start to apply officially",
+   "ex": "The new packaging rules will come into effect next spring.",
+   "ipa": "/kʌm ˈɪntə ɪˈfekt/"
+  },
+  "policy landscape": {
+   "w": "policy landscape",
+   "pos": "구",
+   "ko": "정책 환경, 정책 지형",
+   "en": "the overall situation of policies in a particular area",
+   "ex": "The policy landscape for sustainable fashion has changed quickly in Europe.",
+   "ipa": "/ˈpɒləsi ˈlændskeɪp/"
+  },
+  "prioritised": {
+   "w": "prioritise",
+   "pos": "동사",
+   "ko": "우선시하다",
+   "en": "to treat something as more important than other things",
+   "ex": "Our team prioritised comfort over trend in this season's designs.",
+   "ipa": "/praɪˈɒrətaɪz/"
+  },
+  "prioritise": {
+   "w": "prioritise",
+   "pos": "동사",
+   "ko": "우선시하다",
+   "en": "to treat something as more important than other things",
+   "ex": "Our team prioritised comfort over trend in this season's designs.",
+   "ipa": "/praɪˈɒrətaɪz/"
+  },
+  "successive": {
+   "w": "successive",
+   "pos": "형용사",
+   "ko": "연이은, 잇따른",
+   "en": "following one after another",
+   "ex": "The brand has won the award for three successive years.",
+   "ipa": "/səkˈsesɪv/"
+  },
+  "safeguards": {
+   "w": "safeguard",
+   "pos": "명사",
+   "ko": "보호 장치, 안전장치",
+   "en": "a rule or measure that protects against harm",
+   "ex": "Strong contracts are an important safeguard for freelance designers.",
+   "ipa": "/ˈseɪfɡɑːd/"
+  },
+  "safeguard": {
+   "w": "safeguard",
+   "pos": "명사",
+   "ko": "보호 장치, 안전장치",
+   "en": "a rule or measure that protects against harm",
+   "ex": "Strong contracts are an important safeguard for freelance designers.",
+   "ipa": "/ˈseɪfɡɑːd/"
+  },
+  "degraded": {
+   "w": "degrade",
+   "pos": "동사",
+   "ko": "훼손하다, 질을 떨어뜨리다",
+   "en": "to make something worse in quality or condition",
+   "ex": "Harsh dyes can degrade natural fibres over time.",
+   "ipa": "/dɪˈɡreɪd/"
+  },
+  "degrade": {
+   "w": "degrade",
+   "pos": "동사",
+   "ko": "훼손하다, 질을 떨어뜨리다",
+   "en": "to make something worse in quality or condition",
+   "ex": "Harsh dyes can degrade natural fibres over time.",
+   "ipa": "/dɪˈɡreɪd/"
+  },
+  "diffuse pollution": {
+   "w": "diffuse pollution",
+   "pos": "구",
+   "ko": "비점오염 (여러 곳에서 퍼지는 오염)",
+   "en": "pollution that comes from many scattered sources rather than one point",
+   "ex": "Fertiliser runoff from many farms is a classic case of diffuse pollution.",
+   "ipa": "/dɪˈfjuːs pəˈluːʃn/"
+  },
+  "amended": {
+   "w": "amend",
+   "pos": "동사",
+   "ko": "(법·문서를) 개정하다",
+   "en": "to make changes to a law or document",
+   "ex": "We amended the contract to include a later delivery date.",
+   "ipa": "/əˈmend/"
+  },
+  "amend": {
+   "w": "amend",
+   "pos": "동사",
+   "ko": "(법·문서를) 개정하다",
+   "en": "to make changes to a law or document",
+   "ex": "We amended the contract to include a later delivery date.",
+   "ipa": "/əˈmend/"
+  },
+  "adverse effects": {
+   "w": "adverse effects",
+   "pos": "구",
+   "ko": "악영향, 부작용",
+   "en": "harmful or negative results",
+   "ex": "Fast fashion has serious adverse effects on water supplies.",
+   "ipa": "/ˈædvɜːs ɪˈfekts/"
+  },
+  "impose": {
+   "w": "impose",
+   "pos": "동사",
+   "ko": "부과하다, 강요하다",
+   "en": "to force a rule, tax or condition on someone",
+   "ex": "The government may impose a fee on plastic shopping bags.",
+   "ipa": "/ɪmˈpəʊz/"
+  },
+  "implement": {
+   "w": "implement",
+   "pos": "동사",
+   "ko": "시행하다, 실행하다",
+   "en": "to put a plan or decision into action",
+   "ex": "It took months to implement the new sizing system across all stores.",
+   "ipa": "/ˈɪmplɪment/"
+  },
+  "tackle": {
+   "w": "tackle",
+   "pos": "동사",
+   "ko": "(문제를) 다루다, 해결에 나서다",
+   "en": "to make a determined effort to deal with a problem",
+   "ex": "The studio is trying to tackle fabric waste by reusing offcuts.",
+   "ipa": "/ˈtækl/"
+  },
+  "hinges on": {
+   "w": "hinge on",
+   "pos": "구",
+   "ko": "~에 달려 있다",
+   "en": "to depend completely on something",
+   "ex": "The success of the show hinges on the models arriving on time.",
+   "ipa": "/hɪndʒ ɒn/"
+  },
+  "hinge on": {
+   "w": "hinge on",
+   "pos": "구",
+   "ko": "~에 달려 있다",
+   "en": "to depend completely on something",
+   "ex": "The success of the show hinges on the models arriving on time.",
+   "ipa": "/hɪndʒ ɒn/"
+  },
+  "voluntary": {
+   "w": "voluntary",
+   "pos": "형용사",
+   "ko": "자발적인",
+   "en": "done by choice, not because of a law or rule",
+   "ex": "Joining the recycling programme is voluntary for all suppliers.",
+   "ipa": "/ˈvɒləntri/"
+  },
+  "resource consent": {
+   "w": "resource consent",
+   "pos": "명사",
+   "ko": "자원 사용 허가 (뉴질랜드 개발 인허가)",
+   "en": "official permission in New Zealand to use land or natural resources",
+   "ex": "The developer applied for a resource consent to build near the river.",
+   "ipa": "/rɪˈzɔːs kənˈsent/"
+  },
+  "annually": {
+   "w": "annually",
+   "pos": "부사",
+   "ko": "해마다, 매년",
+   "en": "once every year",
+   "ex": "The design competition is held annually in Seoul.",
+   "ipa": "/ˈænjuəli/"
+  },
+  "preceding": {
+   "w": "preceding",
+   "pos": "형용사",
+   "ko": "이전의, 앞선",
+   "en": "happening just before something else",
+   "ex": "Sales were much higher than in the preceding quarter.",
+   "ipa": "/prɪˈsiːdɪŋ/"
+  },
+  "controversial": {
+   "w": "controversial",
+   "pos": "형용사",
+   "ko": "논란이 많은",
+   "en": "causing a lot of public disagreement",
+   "ex": "The campaign's use of real fur proved highly controversial.",
+   "ipa": "/ˌkɒntrəˈvɜːʃl/"
+  },
+  "centralised": {
+   "w": "centralise",
+   "pos": "동사",
+   "ko": "중앙집중화하다",
+   "en": "to bring control under one central authority",
+   "ex": "The company centralised all purchasing decisions at head office.",
+   "ipa": "/ˈsentrəlaɪz/"
+  },
+  "centralise": {
+   "w": "centralise",
+   "pos": "동사",
+   "ko": "중앙집중화하다",
+   "en": "to bring control under one central authority",
+   "ex": "The company centralised all purchasing decisions at head office.",
+   "ipa": "/ˈsentrəlaɪz/"
+  },
+  "override": {
+   "w": "override",
+   "pos": "동사",
+   "ko": "무효로 하다, ~보다 우선하다",
+   "en": "to use authority to cancel or ignore a decision or rule",
+   "ex": "The creative director can override the team's colour choices.",
+   "ipa": "/ˌəʊvəˈraɪd/"
+  },
+  "focal point": {
+   "w": "focal point",
+   "pos": "명사",
+   "ko": "초점, 핵심 쟁점",
+   "en": "the centre of attention or discussion",
+   "ex": "The embroidered collar is the focal point of the jacket.",
+   "ipa": "/ˈfəʊkl pɔɪnt/"
+  },
+  "erodible": {
+   "w": "erodible",
+   "pos": "형용사",
+   "ko": "침식되기 쉬운",
+   "en": "easily worn away by wind, water or weather",
+   "ex": "Farmers planted grass to protect the erodible hillside.",
+   "ipa": "/ɪˈrəʊdəbl/"
+  },
+  "enforcing": {
+   "w": "enforce",
+   "pos": "동사",
+   "ko": "(법·규칙을) 집행하다, 시행하다",
+   "en": "to make sure that people obey a rule or law",
+   "ex": "The mall is strict about enforcing its no-smoking policy.",
+   "ipa": "/ɪnˈfɔːs/"
+  },
+  "enforce": {
+   "w": "enforce",
+   "pos": "동사",
+   "ko": "(법·규칙을) 집행하다, 시행하다",
+   "en": "to make sure that people obey a rule or law",
+   "ex": "The mall is strict about enforcing its no-smoking policy.",
+   "ipa": "/ɪnˈfɔːs/"
+  },
+  "vulnerable": {
+   "w": "vulnerable",
+   "pos": "형용사",
+   "ko": "취약한, 피해를 입기 쉬운",
+   "en": "easily harmed or damaged",
+   "ex": "Small boutiques are especially vulnerable to rising rents.",
+   "ipa": "/ˈvʌlnərəbl/"
+  },
+  "bear the costs": {
+   "w": "bear the cost",
+   "pos": "구",
+   "ko": "비용을 부담하다",
+   "en": "to pay for something or suffer its negative results",
+   "ex": "Customers usually bear the costs when shipping prices rise.",
+   "ipa": "/beə ðə kɒsts/"
+  },
+  "compensate": {
+   "w": "compensate",
+   "pos": "동사",
+   "ko": "보상하다",
+   "en": "to pay someone for a loss or damage",
+   "ex": "The courier agreed to compensate us for the lost samples.",
+   "ipa": "/ˈkɒmpenseɪt/"
+  },
+  "polluter pays": {
+   "w": "polluter pays",
+   "pos": "구",
+   "ko": "오염자 부담 원칙",
+   "en": "the principle that whoever causes pollution should pay to fix it",
+   "ex": "Under the polluter pays rule, the dye factory had to clean the river.",
+   "ipa": "/pəˈluːtə peɪz/"
+  },
+  "cap": {
+   "w": "cap",
+   "pos": "명사",
+   "ko": "상한선, 한도",
+   "en": "an upper limit on an amount",
+   "ex": "There is a cap on how many items you can return each month.",
+   "ipa": "/kæp/"
+  },
+  "amalgamations": {
+   "w": "amalgamation",
+   "pos": "명사",
+   "ko": "합병, 통합",
+   "en": "the joining of two or more organisations into one",
+   "ex": "The amalgamation of the two labels created a much larger brand.",
+   "ipa": "/əˌmælɡəˈmeɪʃn/"
+  },
+  "amalgamation": {
+   "w": "amalgamation",
+   "pos": "명사",
+   "ko": "합병, 통합",
+   "en": "the joining of two or more organisations into one",
+   "ex": "The amalgamation of the two labels created a much larger brand.",
+   "ipa": "/əˌmælɡəˈmeɪʃn/"
+  },
+  "breached": {
+   "w": "breach",
+   "pos": "동사",
+   "ko": "(규칙·한도를) 위반하다, 넘어서다",
+   "en": "to break a rule, agreement or limit",
+   "ex": "The supplier breached the contract by using cheaper fabric.",
+   "ipa": "/briːtʃ/"
+  },
+  "breach": {
+   "w": "breach",
+   "pos": "동사",
+   "ko": "(규칙·한도를) 위반하다, 넘어서다",
+   "en": "to break a rule, agreement or limit",
+   "ex": "The supplier breached the contract by using cheaper fabric.",
+   "ipa": "/briːtʃ/"
+  },
+  "framework": {
+   "w": "framework",
+   "pos": "명사",
+   "ko": "틀, 체계",
+   "en": "a set of rules or ideas used to make decisions",
+   "ex": "We created a simple framework for choosing sustainable materials.",
+   "ipa": "/ˈfreɪmwɜːk/"
+  },
+  "justify": {
+   "w": "justify",
+   "pos": "동사",
+   "ko": "정당화하다, 이유를 설명하다",
+   "en": "to give a good reason for something",
+   "ex": "It is hard to justify such a high price for a plain T-shirt.",
+   "ipa": "/ˈdʒʌstɪfaɪ/"
+  },
+  "explicitly": {
+   "w": "explicitly",
+   "pos": "부사",
+   "ko": "명시적으로, 분명히",
+   "en": "in a clear and direct way",
+   "ex": "The brief explicitly said the dress must be knee-length.",
+   "ipa": "/ɪkˈsplɪsɪtli/"
+  },
+  "excludes": {
+   "w": "exclude",
+   "pos": "동사",
+   "ko": "제외하다, 배제하다",
+   "en": "to deliberately leave something out",
+   "ex": "The sale price excludes shipping and taxes.",
+   "ipa": "/ɪkˈskluːd/"
+  },
+  "exclude": {
+   "w": "exclude",
+   "pos": "동사",
+   "ko": "제외하다, 배제하다",
+   "en": "to deliberately leave something out",
+   "ex": "The sale price excludes shipping and taxes.",
+   "ipa": "/ɪkˈskluːd/"
+  },
+  "withstand": {
+   "w": "withstand",
+   "pos": "동사",
+   "ko": "견뎌내다, 버티다",
+   "en": "to survive or resist something strong or harmful",
+   "ex": "This waterproof coat can withstand heavy rain.",
+   "ipa": "/wɪðˈstænd/"
+  },
+  "bringing to the table": {
+   "w": "bring to the table",
+   "pos": "구",
+   "ko": "(제안·능력 등을) 내놓다, 제시하다",
+   "en": "to offer something useful in a discussion or situation",
+   "ex": "Each new designer brings fresh ideas to the table.",
+   "ipa": "/brɪŋ tə ðə ˈteɪbl/"
+  },
+  "bring to the table": {
+   "w": "bring to the table",
+   "pos": "구",
+   "ko": "(제안·능력 등을) 내놓다, 제시하다",
+   "en": "to offer something useful in a discussion or situation",
+   "ex": "Each new designer brings fresh ideas to the table.",
+   "ipa": "/brɪŋ tə ðə ˈteɪbl/"
+  },
+  "phase-out": {
+   "w": "phase-out",
+   "pos": "명사",
+   "ko": "단계적 폐지",
+   "en": "the gradual ending of something over a period of time",
+   "ex": "The brand announced a phase-out of plastic hangers by 2028.",
+   "ipa": "/ˈfeɪz aʊt/"
+  },
+  "weigh": {
+   "w": "weigh",
+   "pos": "동사",
+   "ko": "따져 보다, 저울질하다",
+   "en": "to consider something carefully before deciding",
+   "ex": "She weighed the pros and cons of moving her studio to Milan.",
+   "ipa": "/weɪ/"
+  },
+  "competing": {
+   "w": "competing",
+   "pos": "형용사",
+   "ko": "상충하는, 경쟁하는",
+   "en": "different and unable to all be chosen at the same time",
+   "ex": "The team had to balance competing demands for speed and quality.",
+   "ipa": "/kəmˈpiːtɪŋ/"
+  },
+  "at the core of": {
+   "w": "at the core of",
+   "pos": "구",
+   "ko": "~의 핵심에",
+   "en": "at the most central and important part of something",
+   "ex": "Craftsmanship is at the core of the brand's identity.",
+   "ipa": "/ət ðə kɔːr əv/"
+  },
+  "notable": {
+   "w": "notable",
+   "pos": "형용사",
+   "ko": "주목할 만한",
+   "en": "important or interesting enough to deserve attention",
+   "ex": "A notable feature of the collection is its use of hanji paper.",
+   "ipa": "/ˈnəʊtəbl/"
+  }
+ },
+ "vocab": [
+  "compound",
+  "repeal",
+  "successive",
+  "safeguard",
+  "degrade",
+  "adverse effects",
+  "impose",
+  "hinge on",
+  "controversial",
+  "override",
+  "vulnerable",
+  "compensate",
+  "withstand",
+  "weigh"
+ ],
+ "quiz": [
+  {
+   "q": "In the ten years before the Fast-track Approvals Act, the large majority of resource consent applications were approved.",
+   "a": "TRUE",
+   "why": "지난 10년간 매년 자원 사용 허가의 92~96%가 승인되었다고 나온다."
+  },
+  {
+   "q": "The Natural Environment Act defines ecosystems as including humans.",
+   "a": "FALSE",
+   "why": "새 법은 생태계 정의에서 '인간'을 명시적으로 제외한다고 했다."
+  },
+  {
+   "q": "The government has agreed to pay for land-use changes in Tairāwhiti to reduce future landslides.",
+   "a": "FALSE",
+   "why": "정부는 산사태를 줄이기 위한 토지 이용 변경 비용 지원을 거절했다고 나온다."
+  },
+  {
+   "q": "Most farmers support National's proposed water storage loans.",
+   "a": "NOT GIVEN",
+   "why": "3억 달러 대출 공약은 나오지만 농민들이 이를 지지하는지는 언급이 없다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "More severe storms are showing the results of the way we use our land",
+   "article": "Increasingly extreme weather is exposing the consequences of how we manage our land"
+  },
+  {
+   "simple": "But the rules that are supposed to control this are still not fixed",
+   "article": "Yet the regulatory system meant to manage it remains unsettled"
+  },
+  {
+   "simple": "it depends on people choosing to act and on reliable pollution models",
+   "article": "it hinges on voluntary action and accurate nutrient modelling"
+  },
+  {
+   "simple": "In some other key areas, the central government now makes more of the environmental decisions",
+   "article": "Environmental decision-making has become more centralised in other important areas"
+  },
+  {
+   "simple": "local people may keep paying the price as floods, slips and environmental harm continue",
+   "article": "communities may continue to bear the costs through flooding, landslides and environmental damage"
+  }
+ ],
+ "summary": "New Zealand's coalition government has replaced the RMA with new planning and environment laws that make development easier but, according to the authors, risk weakening environmental protection, and the coming election could change the rules once more.",
+ "gist": "뉴질랜드 정부가 자원관리법(RMA)을 없애고 개발이 쉬운 새 법으로 바꾼 내용과 그에 따른 환경 위험을 짚는 글.\n선거를 앞두고 각 정당의 환경 공약을 비교하며, 미래 세대를 위한 '좋은 조상'이 되자고 제안한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Most of the changes in the new resource management legislation will not take full effect for several years.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "7번 단락 \"most of the changes will come into effect over the next four years\" — 대부분의 변화가 앞으로 4년에 걸쳐 시행됨"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "In the ten years before the Fast-track Approvals Act, fewer than nine out of ten resource consent applications were approved each year.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "12번 단락 \"between 92% and 96% of resource consents had been granted annually\" — 90%를 넘었으므로 진술과 반대"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "Labour's earlier replacement for the Resource Management Act was strongly supported by farming groups.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "5번 단락은 \"The previous Labour government passed legislation to replace the Resource Management Act\"라고만 하고 농업 단체의 반응은 언급하지 않음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "The writers consider relational te ao Māori approaches to be vital for repairing damaged environments.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "29번 단락 \"We see these as essential to restoring damaged environments\" — 필자들이 필수적이라고 봄"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The writers are confident that the new laws will make environmental management easier for landowners.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "24번 단락 \"we question whether environmental management will necessarily become simpler for landowners\" — 필자들은 오히려 의문을 제기함"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 12",
+    "options": [
+     "i  A narrower legal meaning of nature",
+     "ii  Challenging the claim of a culture of refusal",
+     "iii  Public funding withheld from a storm-damaged region",
+     "iv  Ministers gain power over national limits",
+     "v  Loans to help farmers store water"
+    ],
+    "answer": "ii",
+    "why": "12번 단락은 정부의 \"a culture of no\" 주장과 달리 \"92% and 96% of resource consents had been granted\"였다고 반박함"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 18",
+    "options": [
+     "i  A narrower legal meaning of nature",
+     "ii  Challenging the claim of a culture of refusal",
+     "iii  Public funding withheld from a storm-damaged region",
+     "iv  Ministers gain power over national limits",
+     "v  Loans to help farmers store water"
+    ],
+    "answer": "iii",
+    "why": "18번 단락 \"The government has declined to fund proposed changes to land use\" — 태풍 피해 지역 Tairāwhiti에 대한 지원 거부"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 25",
+    "options": [
+     "i  A narrower legal meaning of nature",
+     "ii  Challenging the claim of a culture of refusal",
+     "iii  Public funding withheld from a storm-damaged region",
+     "iv  Ministers gain power over national limits",
+     "v  Loans to help farmers store water"
+    ],
+    "answer": "i",
+    "why": "25번 단락 \"even the legal definition of the natural environment has changed\" 및 \"explicitly excludes 'humans'\" — 자연의 법적 정의가 좁아짐"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a proposed restriction on how much councils can increase rates?",
+    "options": [
+     "16",
+     "20",
+     "22",
+     "26"
+    ],
+    "answer": "22",
+    "why": "22번 단락 \"The government's proposed cap on council rate increases\" — 지방세 인상 상한 제안"
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions a party that wants fisheries to be managed according to the condition of entire ecosystems?",
+    "options": [
+     "23",
+     "31",
+     "32",
+     "33"
+    ],
+    "answer": "32",
+    "why": "32번 단락 Opportunity가 \"fisheries management based on the health of whole ecosystems\"를 원함"
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the article, the government's change to freshwater rules for farms depends partly on",
+    "options": [
+     "A immediate compulsory reductions in farm pollution.",
+     "B voluntary action and nutrient modelling.",
+     "C stricter court-imposed controls.",
+     "D new government funding for councils."
+    ],
+    "answer": "B",
+    "why": "11번 단락 \"it hinges on voluntary action and accurate nutrient modelling\" — 자발적 조치와 영양분 모델링에 달려 있음"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "How does the Planning Act's approach to regulatory relief differ from the RMA?",
+    "options": [
+     "A It requires polluters to cover the full cost of restoring waterways.",
+     "B It removes councils' responsibility for environmental protection.",
+     "C It holds that individual landowners need not always pay the whole cost of restrictions.",
+     "D It prevents councils from placing any restrictions on land use."
+    ],
+    "answer": "C",
+    "why": "21번 단락 \"individual landowners should not necessarily bear the full cost of restrictions\" — RMA의 \"polluter pays\"와 대조"
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Environment groups are concerned that the new system might reduce ____ for the natural world.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "protections"
+    ],
+    "why": "6번 단락 \"it could weaken protections for nature\" — 자연 보호 장치가 약해질 수 있다는 우려"
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "The fast-track scheme attracted controversy for covering subdivisions and previously rejected ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "zombie projects"
+    ],
+    "why": "13번 단락 \"its inclusion of subdivisions and earlier declined 'zombie projects'\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Which Māori concept does the article recommend keeping in mind while comparing the parties' policies?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "tūpuna pono",
+     "good ancestors"
+    ],
+    "why": "34번 단락 \"the Māori kaupapa of tūpuna pono – or being 'good ancestors'\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    11,
+    17,
+    24
+   ]
+  }
+ }
+}
