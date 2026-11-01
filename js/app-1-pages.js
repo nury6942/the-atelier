@@ -16854,6 +16854,7 @@
     "nomad-master": { "title": "Nomad Master" },
     "vault": { "title": "Vault" },
     "income": { "title": "Money" },
+    "tax": { "title": "Money" },
     "planner": { "title": "Calendar" },
     "packing": { "title": "Travel" },
     "reference": { "title": "Memo" },
@@ -21781,6 +21782,7 @@
     if (tab === 'asset') navigate('finance-hub');
     else if (tab === 'ledger') navigate('ledger');
     else if (tab === 'sidejobs') navigate('income');
+    else if (tab === 'tax') navigate('tax');
   }
   if (typeof window !== 'undefined') window.switchMoneyTab = switchMoneyTab;
 
@@ -21916,7 +21918,7 @@
     // Year Matrix는 Calendar 사이드바 (nav-planner) 활성 처리
     if (pageId === 'matrix') activeNavId = 'planner';
     // Daily Ledger / Side Jobs는 Money 사이드바 (nav-finance-hub) 활성 처리
-    if (pageId === 'ledger' || pageId === 'income') activeNavId = 'finance-hub';
+    if (pageId === 'ledger' || pageId === 'income' || pageId === 'tax') activeNavId = 'finance-hub';
     const a = document.getElementById('nav-'+activeNavId);
     if(a) {
       a.classList.add('is-active');
@@ -21941,6 +21943,7 @@
     if(pageId==='finance') { if(typeof loadFinance==='function') loadFinance(); }
     if(pageId==='finance-hub') { if(typeof loadHub==='function') loadHub(); }
     if(pageId==='ledger') { if(typeof loadLedger==='function') loadLedger(); }
+    if(pageId==='tax') { if(typeof loadTax==='function') loadTax(); }
     if(pageId==='planner') { if(typeof loadPlanner==='function') loadPlanner(); }
     if(pageId==='packing') { if(typeof pkInit==='function') pkInit(); }
     if(pageId==='reference') { if(typeof loadReference==='function') loadReference(); }

@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=405" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=406" as="script">
   <link rel="preload" href="js/app-2-init.js?v=188" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -14064,6 +14064,28 @@
     </div>
   </div>
 
+  <div id="page-tax" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+        <div class="atl-tabs">
+          <button onclick="switchMoneyTab('asset')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="asset">
+            Assets
+          </button>
+          <button onclick="switchMoneyTab('ledger')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="ledger">
+            Ledger
+          </button>
+          <button onclick="switchMoneyTab('sidejobs')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="sidejobs">
+            Side Jobs
+          </button>
+          <button onclick="switchMoneyTab('tax')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="tax">
+            Tax
+          </button>
+        </div>
+      </div>
+      <div class="tx-head"><h2 class="atelier-page-h2">Tax 2026</h2><p>2026년 소득으로 내는 세금 세 번 · 단위 만원</p></div>
+      <div id="tax-root"></div>
+    </div>
+  </div>
   <div id="page-finance-hub" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
@@ -14078,6 +14100,9 @@
           </button>
           <button onclick="switchMoneyTab('sidejobs')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="sidejobs">
             Side Jobs
+          </button>
+          <button onclick="switchMoneyTab('tax')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="tax">
+            Tax
           </button>
         </div>
       </div>
@@ -14414,6 +14439,9 @@
           </button>
           <button onclick="switchMoneyTab('sidejobs')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="sidejobs">
             Side Jobs
+          </button>
+          <button onclick="switchMoneyTab('tax')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="tax">
+            Tax
           </button>
         </div>
       </div>
@@ -15731,6 +15759,9 @@
           <button onclick="switchMoneyTab('sidejobs')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="sidejobs">
             Side Jobs
           </button>
+          <button onclick="switchMoneyTab('tax')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="tax">
+            Tax
+          </button>
         </div>
       </div>
 
@@ -16490,7 +16521,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=405" defer></script>
+<script src="js/app-1-pages.js?v=406" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17377,6 +17408,7 @@
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=172" defer></script>
 <script src="js/app-7-mirror.js?v=85" defer></script>
+<script src="js/money-tax.js?v=1" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
 <script src="js/english-study.js?v=26" defer></script>
 <script src="js/english-read.js?v=2" defer></script>
