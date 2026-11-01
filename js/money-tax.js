@@ -35,7 +35,7 @@
       '#page-tax .tx-net b{font-variant-numeric:tabular-nums}',
       // 카드
       '#page-tax .tx-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}',
-      '@media (max-width:900px){#page-tax .tx-grid,#page-tax .tx-line{grid-template-columns:1fr}#page-tax .tx-stop+.tx-stop{border-left:0;border-top:1px solid var(--tx-line);padding-left:0}#page-tax .tx-stop+.tx-stop:before{left:0}}',
+      '@media (max-width:900px){#page-tax .tx-grid,#page-tax .tx-line{grid-template-columns:1fr!important}#page-tax .tx-stop+.tx-stop{border-left:0;border-top:1px solid var(--tx-line);padding-left:0}#page-tax .tx-stop+.tx-stop:before{left:0}}',
       '#page-tax .tx-card{border:1px solid var(--tx-line);padding:24px;background:#fff}',
       '#page-tax .tx-card h3{font-size:16px;font-weight:700;color:var(--tx-ink)}',
       '#page-tax .tx-card .tx-k{font-size:12px;color:var(--tx-sub);margin-top:2px}',
@@ -76,6 +76,15 @@
       '#page-tax .tx-flag .material-symbols-outlined{font-size:20px}',
       '#page-tax .tx-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}',
       '#page-tax .tx-foot .atl-chip{color:var(--tx-sub)}',
+      '#page-tax .tx-dl{margin-top:16px;border-top:1px solid var(--tx-line)}',
+      '#page-tax .tx-dl-row{display:grid;grid-template-columns:72px 1fr 64px;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--tx-line)}',
+      '#page-tax .tx-dl-date{font-size:11.5px;color:var(--tx-sub);line-height:1.2}',
+      '#page-tax .tx-dl-date b{display:block;font-size:20px;color:var(--tx-ink);font-variant-numeric:tabular-nums}',
+      '#page-tax .tx-dl-title{font-size:14px;font-weight:700;color:var(--tx-ink)}',
+      '#page-tax .tx-dl-left{text-align:right;font-size:13px;font-weight:700;color:var(--tx-sub);font-variant-numeric:tabular-nums}',
+      '#page-tax .tx-dl-row.is-soon .tx-dl-left{color:#fff;background:#1F4BD8;padding:4px 8px;justify-self:end}',
+      '#page-tax .tx-dl-row.is-soon .tx-dl-date b{color:#1F4BD8}',
+      '#page-tax .tx-dl-row.is-past{opacity:.55}',
       '#page-tax .tx-empty{border:1px dashed var(--atl-line-strong,#DCDCE3);padding:40px;text-align:center;color:var(--tx-sub);font-size:14px}'
     ].join('\n');
     var st = document.createElement('style'); st.id = 'tax-style'; st.textContent = css;
@@ -97,25 +106,44 @@
     }
     var y = t.y2026, r = t.retirement || {}, ye = y.yearEnd, co = y.comprehensive;
     var refund = ye.refund + ye.localRefund;
-    var may = co.extra + co.local;
-    var net = refund - may;
+    var interim = co.interim || 0;          // 11월 중간예납(소득세분) — 5월에 그만큼 덜 냄
+    var may = co.extra + co.local - interim;
+    var net = refund - may - interim;
 
     var h = '';
-    // ── 세 번의 정산 ──
-    h += '<div class="tx-line">';
-    h += '<div class="tx-stop is-next"><div class="tx-when">2027. 02</div><div class="tx-what">연말정산</div>' +
+    // ── 정산 타임라인 ──
+    var stops = [];
+    if (interim) stops.push('<div class="tx-stop is-next"><div class="tx-when">2026. 11. 30</div><div class="tx-what">중간예납</div>' +
+         '<div class="tx-big down"><i class="tx-tri">▼</i>' + man(interim) + '<small>만</small></div>' +
+         '<div class="tx-note">5월 세금의 절반을 미리 내는 것</div></div>');
+    stops.push('<div class="tx-stop' + (interim ? '' : ' is-next') + '"><div class="tx-when">2027. 02</div><div class="tx-what">연말정산</div>' +
          '<div class="tx-big up"><i class="tx-tri">▲</i>' + man(refund) + '<small>만</small></div>' +
-         '<div class="tx-note">회사가 미리 뗀 세금 중 돌려받는 돈</div></div>';
-    h += '<div class="tx-stop"><div class="tx-when">2027. 05</div><div class="tx-what">종합소득세</div>' +
+         '<div class="tx-note">회사가 미리 뗀 세금 중 돌려받는 돈</div></div>');
+    stops.push('<div class="tx-stop"><div class="tx-when">2027. 05. 31</div><div class="tx-what">종합소득세</div>' +
          '<div class="tx-big down"><i class="tx-tri">▼</i>' + man(may) + '<small>만</small></div>' +
-         '<div class="tx-note">포타 수입 때문에 더 내는 돈 (지방세 포함)</div></div>';
-    h += '<div class="tx-stop"><div class="tx-when">' + esc(r.whenLabel || '2028. 02') + '</div><div class="tx-what">퇴직금</div>' +
+         '<div class="tx-note">' + (interim ? '중간예납 빼고 남은 몫 (지방세 포함)' : '포타 수입 때문에 더 내는 돈 (지방세 포함)') + '</div></div>');
+    stops.push('<div class="tx-stop"><div class="tx-when">' + esc(r.whenLabel || '2028. 02') + '</div><div class="tx-what">퇴직금</div>' +
          '<div class="tx-big">' + man(r.net) + '<small>만</small></div>' +
-         '<div class="tx-note">세금 ' + man(r.tax + r.local) + '만 빼고 손에 쥐는 돈</div></div>';
-    h += '</div>';
+         '<div class="tx-note">세금 ' + man(r.tax + r.local) + '만 빼고 손에 쥐는 돈</div></div>');
+    h += '<div class="tx-line" style="grid-template-columns:repeat(' + stops.length + ',1fr)">' + stops.join('') + '</div>';
     h += '<div class="tx-net"><span class="material-symbols-outlined" style="font-size:18px;color:#1F4BD8;vertical-align:-4px;margin-right:8px">savings</span>' +
-         '2월 환급 <b class="up">' + signed(refund) + '</b>에서 5월 세금 <b class="down">' + signed(-may) + '</b>을 내면 남는 돈 ' +
+         '2월 환급 <b class="up">' + signed(refund) + '</b>에서 ' + (interim ? '11월·5월 세금 <b class="down">' + signed(-(may + interim)) + '</b>' : '5월 세금 <b class="down">' + signed(-may) + '</b>') + '을 빼면 ' +
          '<b>' + signed(net) + '</b> · 환급은 5월까지 묶어 두기</div>';
+
+    // ── 신고 달력 ──
+    if (t.deadlines && t.deadlines.length) {
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      h += '<div class="tx-card" style="margin-bottom:24px"><h3>Deadlines</h3><div class="tx-k">사업자(저술가·면세)로 해야 하는 신고 · 아이폰 미리알림 \'세금\' 목록에 알림 있음</div><div class="tx-dl">';
+      t.deadlines.forEach(function (d) {
+        var dt = new Date(d.date + 'T00:00:00'), left = Math.round((dt - today) / 864e5);
+        var past = left < 0;
+        h += '<div class="tx-dl-row' + (past ? ' is-past' : '') + (left >= 0 && left <= 30 ? ' is-soon' : '') + '">' +
+             '<div class="tx-dl-date">' + d.date.slice(0, 4) + '<b>' + d.date.slice(5).replace('-', '.') + '</b></div>' +
+             '<div class="tx-dl-body"><div class="tx-dl-title">' + esc(d.title) + '</div><div class="tx-k">' + esc(d.note || '') + '</div></div>' +
+             '<div class="tx-dl-left">' + (past ? '지남' : left === 0 ? '오늘' : 'D-' + left) + '</div></div>';
+      });
+      h += '</div></div>';
+    }
 
     // ── 연말정산 / 종소세 ──
     var maxW = Math.max(ye.withheld, ye.decided);
@@ -142,7 +170,7 @@
            '<div class="tx-band" style="left:' + (5000 / 8800 * 100) + '%;width:' + (3800 / 8800 * 100) + '%;background:#FECDD3"><span>24% · 5,000만~</span></div>' +
            '<div class="tx-pin" style="left:' + pos + '%"><b>과표 ' + man(co.base) + '만</b></div>' +
          '</div>' +
-         '<div class="tx-eq"><span>세금 ' + man(co.computed) + '</span><i>− 공제 ' + man(co.computed - co.decided) + '</i><i>=</i><span>' + man(co.decided) + '</span><i>− 연말정산 ' + man(ye.decided) + '</i><i>+ 지방세</i><span class="end">' + man(may) + '만</span></div>' +
+         '<div class="tx-eq"><span>세금 ' + man(co.computed) + '</span><i>− 공제 ' + man(co.computed - co.decided) + '</i><i>=</i><span>' + man(co.decided) + '</span><i>− 연말정산 ' + man(ye.decided) + '</i><i>+ 지방세</i><span class="end">' + man(co.extra + co.local) + '만</span>' + (interim ? '<i>= 11월 ' + man(interim) + ' + 5월 ' + man(may) + '</i>' : '') + '</div>' +
          '<div class="tx-k" style="margin-top:10px">24% 구간까지 ' + man(5000e4 - co.base) + '만 남음. 포타가 더 크면 넘어가요.</div></div>';
     h += '</div>';
 
@@ -187,11 +215,12 @@
     var amt = Number(v) * 1e4;
     var credit = Math.min(Math.min(amt, 900e4) * 0.12, co.decided);
     var save = credit * 1.1;
-    var may = co.extra + co.local - save;
+    var base = co.extra + co.local - (co.interim || 0);
+    var may = base - save;
     var a = document.getElementById('tx-pension-in'), b = document.getElementById('tx-pension-out'), c = document.getElementById('tx-pension-may');
     if (a) a.textContent = man(amt) + '만 넣으면';
     if (b) b.innerHTML = man(save) + '<small>만</small>';
-    if (c) c.innerHTML = amt ? '5월 종소세 <b class="down">' + man(co.extra + co.local) + '만</b> → <b>' + (may >= 0 ? man(may) + '만' : '환급 ' + man(-may) + '만') + '</b>' : '연금저축은 55세 전에 꺼내면 공제받은 세금을 도로 내요. 독일 가서도 계좌는 유지 가능.';
+    if (c) c.innerHTML = amt ? '5월 종소세 <b class="down">' + man(base) + '만</b> → <b>' + (may >= 0 ? man(may) + '만' : '환급 ' + man(-may) + '만') + '</b>' : '연금저축은 55세 전에 꺼내면 공제받은 세금을 도로 내요. 독일 가서도 계좌는 유지 가능.';
   }
 
   function loadTax() {
