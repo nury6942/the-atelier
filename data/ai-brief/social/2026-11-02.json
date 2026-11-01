@@ -1,0 +1,314 @@
+{
+ "date": "2026-11-02",
+ "collectedAt": "2026-11-02T06:31:30+09:00",
+ "skipped": [
+  "x-search·threads-search: 후보가 충분해 생략"
+ ],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@karpathy",
+   "url": "https://x.com/karpathy/status/2116957135661945283",
+   "at": "2026-11-01T18:14:46Z",
+   "likes": 19000,
+   "replies": 894,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "카파시, HN 댓글 4300만 개로 유튜브 추천 사이트 2시간 만에",
+   "points": [
+    "HN 20년치 댓글 4300만 개를 Claude로 걸러 자꾸 추천되는 영상 6,454개만 남김",
+    "Claude Code 데스크톱 + Opus 5.5 Medium, 손댄 건 API 키·VPS·도메인 구매뿐",
+    "서버 IP만 주고 '업데이트·보안·배포·최적화'를 통째로 맡김",
+    "썸네일은 영상 중간 프레임, 로그인 없이 브라우저에 상태 저장",
+    "분석 데이터 zip 공개 — 내 Claude에 주고 내 버전 만들기 가능"
+   ],
+   "try": "hackertube.org 들어가 보고, 데이터 zip을 받아 Claude에 '내 취향 버전' 만들어 달라고 해보기",
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HWDnuuCaIAA__wa.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@levelsio",
+   "url": "https://x.com/levelsio/status/2116959423117857026",
+   "at": "2026-11-01T18:23:52Z",
+   "likes": 780,
+   "replies": 63,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "레벨스, 10분 브이로그 편집을 Claude Code에 통째로 맡김",
+   "points": [
+    "DJI 영상 폴더에서 Claude Code 열고 '10분 브이로그로 편집해줘' 한 줄",
+    "mlx-whisper로 맥 GPU에서 말 전부 받아쓰기",
+    "몇 초마다 프레임을 격자 이미지로 뽑아 Claude가 화면 내용 파악",
+    "SpeechBrain으로 본인 목소리 구분, OpenCV로 썸네일, 편집은 JSON 컷 목록",
+    "본인은 조금만 손봄 — 'AI 없으면 브이로그 안 했을 것'"
+   ],
+   "try": "영상 클립 폴더에서 Claude Code 열고 같은 한 줄 요청 넣어보기",
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@lucian__03",
+   "url": "https://x.com/lucian__03/status/2116581832116589024",
+   "at": "2026-10-31T17:23:27Z",
+   "likes": 215,
+   "replies": 28,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "GPT-6.1 Terra로 3D 모션그래픽 1시간 만에",
+   "points": [
+    "구글 TPU 칩을 회로→원자 단위까지 줌인했다 줌아웃하는 3D 모션그래픽",
+    "수정 몇 번만 시키고 1시간 만에 완성",
+    "Terra는 값이 싼데 3D 모션 구현력이 특히 좋다는 평가",
+    "결과물은 첨부 영상에서 확인"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2116581640025808896/img/x4ZmReH31iaMsjLR.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2116581640025808896/vid/avc1/640x360/pGCyoi-6J-pwkRlB.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@lucian__03",
+   "url": "https://x.com/lucian__03/status/2116869662621536635",
+   "at": "2026-11-01T12:27:11Z",
+   "likes": 36,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Code 클라우드 무료 크레딧, 11월 5일 오후 5시 소멸",
+   "points": [
+    "Pro $100 · Max $250 — 이미 받은 사람만 해당(신규 신청은 10/8 종료)",
+    "클라우드 세션 전용 크레딧",
+    "한국시간 11월 5일 오후 4시 59분까지 써야 함",
+    "claude.ai/code/claim-credit 페이지에서 받았는지 확인"
+   ],
+   "try": "claude.ai 설정 > 사용량에서 남은 크레딧 확인",
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HWChjRvbcAAjU8P.png"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@VibeEverything",
+   "url": "https://x.com/VibeEverything/status/2116834057334222935",
+   "at": "2026-11-01T10:05:42Z",
+   "likes": 47,
+   "replies": 20,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "힉스필드 'Playable' — 아이디어 한 줄로 플레이 가능한 게임·광고",
+   "points": [
+    "게임 아이디어나 레퍼런스 영상만 주면 바로 플레이되는 게임 생성",
+    "슈터·러너·퍼즐·시뮬레이션 장르, 2D/3D 선택",
+    "앱 속 체험형 게임 광고(플레이어블 광고)도 제작",
+    "작성자: 양산형 쏟아지겠지만 아이디어 좋으면 대박 가능"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2116829435290865664/img/jK1X8646DN646JgC.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2116829435290865664/vid/avc1/548x360/MOkWXw-SpmQZcQwp.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@withbeno",
+   "url": "https://www.threads.com/@withbeno/post/DfMuUw5EtdZ",
+   "at": "2026-11-01T12:23:35Z",
+   "likes": 181,
+   "replies": 17,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "숏폼 자동화 열흘 — 인스타 +1800, 유튜브 +511",
+   "points": [
+    "Aside 루틴으로 매일 9시 인스타·스레드·유튜브 AI 인기글 수집(좋아요 300+ 등 기준)",
+    "소재는 '아는 도구 + 출처 있는 숫자 + 바로 따라 할 것' 셋 다 갖춘 것만",
+    "틀 고정: 40~55초, 손해 문장으로 시작, 실제 캡처에 박스 하나",
+    "대본→내 목소리 AI 낭독→렌더 한 번에, 쇼츠·릴스 동시 업로드",
+    "조회 97%가 모르는 사람 — 도구 소개 영상이 개념 설명보다 10배"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@native_jeong",
+   "url": "https://www.threads.com/@native_jeong/post/DfMNMkkGfaR",
+   "at": "2026-11-01T07:34:07Z",
+   "likes": 54,
+   "replies": 7,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "Claude Code '/model opusplan' — 계획은 Opus, 실행은 Sonnet",
+   "points": [
+    "/model opusplan 한 번 쳐두면 간단한 작업은 Sonnet으로 자동 전환",
+    "머리는 Opus, 손은 Sonnet인 구조",
+    "Opus급 결과에 더 빠르고 토큰도 덜 든다는 후기"
+   ],
+   "try": "Claude Code에서 /model opusplan 쳐보기"
+  },
+  {
+   "src": "threads",
+   "author": "@_henryoh",
+   "url": "https://www.threads.com/@_henryoh/post/DfLWMeGAHNs",
+   "at": "2026-10-31T23:33:34Z",
+   "likes": 179,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "앤트로픽 디자인 플러그인으로 시안 셀프 검수",
+   "points": [
+    "시안 캡처 넣고 명령어 하나",
+    "/critique 디자인 채점 · /ux-copy 버튼·문구 수정 · /accessibility 가독성 검사",
+    "피그마 연결 없이도 사용 가능",
+    "상세페이지·브랜드 게시물 올리기 전 한 번 돌려보기 추천"
+   ],
+   "try": "아뜰리에 화면 캡처 넣고 /critique 돌려보기"
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfKG3RbCXTs",
+   "at": "2026-10-31T12:00:18Z",
+   "likes": 471,
+   "replies": 14,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "vercel-labs 'agent-desktop' — 에이전트가 PC 전체를 조작",
+   "points": [
+    "agent-browser의 데스크톱판, 브라우저 넘어 모든 앱 조작",
+    "macOS·Windows·Linux, 사용 중에도 백그라운드 실행",
+    "에이전트마다 독립 마우스 커서로 동시 작업",
+    "Rust로 만들고 OS 접근성 트리로 실제 UI 구조를 읽음"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfLt2YziRvw",
+   "at": "2026-11-01T03:00:12Z",
+   "likes": 173,
+   "replies": 9,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "AnyScene — 이미지 한 장으로 Blender 3D 공간 자동 제작",
+   "points": [
+    "참고 이미지·설명 → 에이전트가 필요한 소품 파악",
+    "Tripo H3.1·Meshy 7.1로 각각 3D 생성 후 나은 쪽 선택",
+    "배치·충돌 검사·조명·카메라·색보정까지 처리",
+    "라멘 가게 예시, 장면당 약 150달러 / Claude Code·Codex에서 사용"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@bestoj",
+   "url": "https://www.threads.com/@bestoj/post/DfLk4zBjs3Y",
+   "at": "2026-11-01T01:41:56Z",
+   "likes": 48,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Claude Code 한 줄로 인스타 카드뉴스 — instagram-card-news",
+   "points": [
+    "주제 입력 → 리서치→팩트체크→카피 토론→렌더→시각 검토 자동",
+    "카피 작가·후킹 전문가가 후킹 점수 7점 넘을 때까지 토론",
+    "템플릿 8종·슬라이드 14종, 1080×1350 PNG 출력",
+    "자동 발행은 없음 — 검수 후 직접 올림, MIT 라이선스"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@solostack11",
+   "url": "https://www.threads.com/@solostack11/post/DfKedJIDLNs",
+   "at": "2026-10-31T15:26:32Z",
+   "likes": 42,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "크레딧 끝나기 전 Claude Code 클라우드 셋업해 두기",
+   "points": [
+    "① GitHub 비공개 저장소 → ② 쓰던 규칙·템플릿 넣기 → ③ 세션 시작 때 저장소 선택",
+    "키·토큰은 저장소 말고 환경 설정에",
+    "별도 VM이라 노트북 닫아도 계속 돌아감",
+    "크레딧 다 쓰면 요금제 사용량에서 차감, 소멸 시각은 설정 > 사용량"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jk_shin81",
+   "url": "https://www.threads.com/@jk_shin81/post/DfJwAlmGOo7",
+   "at": "2026-10-31T08:40:35Z",
+   "likes": 412,
+   "replies": 21,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "직접 써본 클로드 스킬·도구 8가지",
+   "points": [
+    "Hyperframes(모션그래픽) 가장 추천",
+    "Taste(AI 티 안 나는 웹 디자인)·Graphify(코드·파일 검색)",
+    "Headroom(컨텍스트 압축으로 토큰 절약)·Claude-video(유튜브 분석)",
+    "OmniRoute·ECC·Ponytail(시니어 개발자 페르소나)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@maengle.lab",
+   "url": "https://www.threads.com/@maengle.lab/post/DfM7DK0CRkr",
+   "at": "2026-11-01T14:14:47Z",
+   "likes": 68,
+   "replies": 30,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 회사 공식 무료 프롬프트 모음 4곳",
+   "points": [
+    "OpenAI Academy 직장인 팩 — 챗GPT에서 바로 실행",
+    "구글 Gemini 가이드 — 전부 한국어, 직군 11개",
+    "MS Copilot 갤러리 — 로그인 없이, 업무용 60개+",
+    "Claude Code 프롬프트 라이브러리 — 공식 52개, 마케팅 태그도"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@vibe.itji",
+   "url": "https://www.threads.com/@vibe.itji/post/DfM2L62Dzsc",
+   "at": "2026-11-01T13:32:17Z",
+   "likes": 18,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "SNS 자료를 옵시디언에 AI 요약 저장하는 도구 4개",
+   "points": [
+    "kepano/obsidian-skills — Claude Code·Codex로 노트 생성·태그·내부 링크",
+    "Obsidian Web Clipper — 공식 확장, 클릭 한 번 저장",
+    "toy-crane/obsidian-skills — X·유튜브·웹 여러 URL 한꺼번에",
+    "추천 조합: Web Clipper + Obsidian Skills"
+   ],
+   "try": "웹노벨 볼트에 kepano/obsidian-skills 붙여보기"
+  }
+ ]
+}
