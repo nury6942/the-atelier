@@ -1,0 +1,292 @@
+{
+ "date": "2026-11-02",
+ "generatedAt": "2026-11-02T07:15:00+09:00",
+ "sourcesNote": "웹 검색 22회 + 오늘 맥 수집(X·Threads 15개) + GitHub 검색 API로 저장소 별·생성일 확인 · 실행 환경에서 X·HN·개별 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "카파시, 2시간 만에 '쓰레기 없는 유튜브'",
+   "url": "https://hackertube.org/",
+   "image": null,
+   "source": "X @karpathy · ♥1.9만",
+   "how": "HN 댓글 4300만 개를 클로드가 걸러 영상만 추림",
+   "examples": [
+    {
+     "title": "같은 데이터로 만든 안드로이드 TV 앱 hackertube.tv",
+     "url": "https://github.com/ephraimduncan/hackertube.tv",
+     "image": null
+    }
+   ],
+   "reviews": [
+    {
+     "say": "개인화 없이도 내 관심사에 딱 맞더라",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50319510",
+     "tone": "good"
+    },
+    {
+     "say": "끝없는 저질 영상이 없는 유튜브",
+     "who": "X @texashedge17154",
+     "url": "https://x.com/texashedge17154/status/2116609375980650575",
+     "tone": "good"
+    },
+    {
+     "say": "결국 HN 사람 취향, 원치 않는 영상도",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50319510",
+     "tone": "bad"
+    },
+    {
+     "say": "더 낫다는 사용자 데이터는 아직 없음",
+     "who": "Toksick Magazine",
+     "url": "https://toksickmagazine.com/internet-culture/hackertube-youtube-built-from-videos-recommended-by-hn/",
+     "tone": "bad"
+    }
+   ],
+   "chips": [
+    "댓글 4300만 → 영상 6,454개",
+    "주제 150개",
+    "약 2시간"
+   ],
+   "forMe": "로그인 없이 브라우저에 상태를 저장하는 방식이 Atelier와 같아요. 분석 데이터가 공개돼 있어 '디자인·패션 영상만' 같은 내 버전을 클로드에 시켜 볼 수 있습니다.",
+   "from": {
+    "label": "X @karpathy · ♥1.9만",
+    "url": "https://x.com/karpathy/status/2116957135661945283"
+   }
+  },
+  {
+   "cat": "tool",
+   "title": "AI 티 나는 화면을 디자인된 화면으로",
+   "url": "https://github.com/heydamir/unslop",
+   "image": null,
+   "source": "GitHub heydamir · CC BY 4.0 · 10-29 공개",
+   "how": "보라 그라데이션·이모지·들쭉날쭉 간격 찾아 고침",
+   "chips": [
+    "별 4.7천 (나흘)",
+    "React·Vue·HTML",
+    "Claude Code·Codex"
+   ],
+   "forMe": "점검 항목이 Atelier DESIGN.md의 '하지 말 것'과 거의 겹쳐요. index.html 스타일을 못 받는 별도 페이지(job-hunt·ai-brief 등)의 어긋난 곳을 찾는 데 바로 쓸 수 있습니다. 오늘 해볼 것 원픽.",
+   "from": {
+    "label": "X @DataChaz",
+    "url": "https://x.com/DataChaz/status/2116427882381885442"
+   }
+  },
+  {
+   "cat": "hack",
+   "title": "브이로그 10분 편집을 한 줄로 맡겼다",
+   "url": "https://x.com/levelsio/status/2116959423117857026",
+   "image": null,
+   "source": "X @levelsio · ♥780",
+   "how": "받아쓰기+몇 초마다 프레임 격자로 화면 파악",
+   "chips": [
+    "맥 GPU 받아쓰기(mlx-whisper)",
+    "본인 목소리 구분",
+    "편집은 JSON 컷 목록"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "문단 하나로 블렌더 실사 공간을",
+   "url": "https://github.com/apekshik/anyscene",
+   "image": null,
+   "source": "GitHub apekshik · MIT · Threads @choi.openai ♥173",
+   "how": "소품마다 3D 두 개 뽑아 고르고 배치·조명·카메라",
+   "chips": [
+    "장면당 약 $150 · 약 21만 원",
+    "별 171",
+    "Claude Code·Codex"
+   ],
+   "forMe": "저지 컬렉션을 걸어 둘 매장·팝업 공간을 사진 한 장으로 미리 세워 보는 용도예요. 장면당 비용이 커서 지금은 구경만 권합니다.",
+   "from": {
+    "label": "Threads @choi.openai · ♥173",
+    "url": "https://www.threads.com/@choi.openai/post/DfLt2YziRvw"
+   }
+  },
+  {
+   "cat": "tool",
+   "title": "픽셀 효과 244개, 스킬로 새로 만들기",
+   "url": "https://github.com/patch-gg/pixelfx",
+   "image": null,
+   "source": "GitHub patch-gg · MIT · 10-30 공개",
+   "how": "효과마다 짧은 코드 · 그리기→보기→고치기 반복",
+   "chips": [
+    "별 2.5천",
+    "미리보기 사이트 있음",
+    "플러그인 설치 한 줄"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "unslop으로 내 페이지 점검받기",
+   "minutes": 20,
+   "why": "새로 만든 페이지가 DESIGN.md 규칙에서 어디 어긋났는지 한 번에 짚어 줘요. 고치기 전에 진단만 받아 보는 거라 화면이 망가질 걱정이 없습니다.",
+   "from": {
+    "label": "@DataChaz",
+    "url": "https://x.com/DataChaz/status/2116427882381885442"
+   },
+   "steps": [
+    {
+     "text": "저장소 훑어보기",
+     "url": "https://github.com/heydamir/unslop"
+    },
+    {
+     "text": "터미널에 붙여넣기",
+     "copy": "git clone https://github.com/heydamir/unslop /tmp/unslop && mkdir -p ~/.claude/skills && cp -r /tmp/unslop/skills/unslop ~/.claude/skills/"
+    },
+    {
+     "text": "점검 주문 넣기",
+     "copy": "/unslop ai-brief.html 을 점검해줘. 단, 디자인 방향은 이 리포의 DESIGN.md 가 정본이야(흰 바탕, 직각, 코발트 #1F4BD8 하나, Pretendard, 그림자 없음). 아직 고치지 말고 어긋난 곳 목록과 고칠 안만 먼저 보여줘."
+    }
+   ]
+  },
+  {
+   "title": "계획은 Opus, 손은 Sonnet",
+   "minutes": 5,
+   "why": "한 번 쳐 두면 계획 짤 때만 Opus를 쓰고 실제 고치는 일은 Sonnet이 해서 사용량이 덜 듭니다.",
+   "from": {
+    "label": "@native_jeong · ♥54",
+    "url": "https://www.threads.com/@native_jeong/post/DfMNMkkGfaR"
+   },
+   "steps": [
+    {
+     "text": "Claude Code 열기"
+    },
+    {
+     "text": "모델 바꾸기",
+     "copy": "/model opusplan"
+    },
+    {
+     "text": "평소처럼 작업하기"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "tool",
+   "title": "클라우드 크레딧 11-04 전에",
+   "url": "https://bleepingcomputer.com/news/artificial-intelligence/anthropic-rolls-out-up-to-250-in-free-claude-code-credits-but-only-for-cloud-sessions",
+   "image": null,
+   "source": "소멸일 11-04·05로 출처마다 다름 · 안전하게 4일",
+   "watching": false
+  },
+  {
+   "cat": "release",
+   "title": "이미지→영상 Mischief 1",
+   "url": "https://officechai.com/ai/the-biological-computing-co-launches-mischief-1-an-ai-video-model-trained-on-lessons-from-living-neurons",
+   "image": null,
+   "source": "OfficeChai · 10-31 · fal·OpenRouter",
+   "watching": true
+  },
+  {
+   "cat": "tool",
+   "title": "한 줄로 게임, 힉스필드",
+   "url": "https://higgsfield.ai/playable-intro",
+   "image": null,
+   "source": "Higgsfield · 10-26 · 게임 품질 평가 아직",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "AI 여성복 참고 이미지 1407장",
+   "url": "https://github.com/paipiange/nvzhuang",
+   "image": null,
+   "source": "GitHub · MIT · 가상 착용 사이트 · 별 1.9천",
+   "watching": false
+  },
+  {
+   "cat": "vibe",
+   "title": "PhotoCraft 작가의 새 저장소",
+   "url": "https://github.com/storytold/craft-anything",
+   "image": null,
+   "source": "GitHub storytold · 소프트웨어 뜯어보고 내 것 만들기 · 별 829",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "애니메이션 프레임째 따라 만들기",
+   "url": "https://github.com/NiazMorshed2007/reanimate",
+   "image": null,
+   "source": "GitHub · MIT · Claude Code 스킬 · 별 721",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "기계를 3D로 분해해 보기",
+   "url": "https://github.com/elvarofficial/teardown",
+   "image": null,
+   "source": "GitHub · MIT · Claude Code 스킬 · 별 890",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "인스타 카드뉴스 자동 제작",
+   "url": "https://github.com/junghwaYang/instagram-card-news",
+   "image": null,
+   "source": "GitHub · 1080×1350 PNG · 별 51",
+   "from": {
+    "label": "Threads @bestoj · ♥48",
+    "url": "https://www.threads.com/@bestoj/post/DfLk4zBjs3Y"
+   },
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Suno MCP (beta)",
+   "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
+   "date": "2026-10-28",
+   "note": "도움말상 무료 플랜도 지원 · 실사용 사례 아직 없음"
+  },
+  {
+   "name": "Runway Ads",
+   "url": "https://runway.com/news/company-news/runway-ads",
+   "date": "2026-10-27",
+   "note": "유료 플랜 전체 공개 · 사용자 사례 아직 없음"
+  },
+  {
+   "name": "Genie 4",
+   "url": "https://aiweekly.co/alerts/google-deepmind-debuts-genie-4-world-model-with-native-audio",
+   "date": "2026-10-27",
+   "note": "신뢰 테스터 한정 · 공개 사례 없음"
+  },
+  {
+   "name": "Gemini 4 Carbon",
+   "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+   "date": "2026-10-28",
+   "note": "파트너 한정 · 만든 사례 아직"
+  },
+  {
+   "name": "MAI-Image-2.7 Preview",
+   "url": "https://windowsreport.com/microsofts-new-mai-image-2-7-model-climbs-to-the-top-of-ai-image-editing-charts/",
+   "date": "2026-10-27",
+   "note": "편집 전용 미리보기 · 독립 실사용 후기 아직 없음"
+  },
+  {
+   "name": "GitHub Copilot Fusion",
+   "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion",
+   "date": "2026-10-28",
+   "note": "정식 공개 · 독립 후기 아직 없음"
+  },
+  {
+   "name": "Replit Cloud Agents",
+   "url": "https://alphasignal.ai/news/replit-s-cloud-agents-let-non-engineers-ship-250-000-lines-to-production",
+   "date": "2026-10-27",
+   "note": "Pro·Enterprise · 리플릿 자체 사례만"
+  },
+  {
+   "name": "ElevenLabs SFX v3",
+   "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-october-30-2026/",
+   "date": "2026-10-30",
+   "note": "ElevenCreative·API · 후기 아직"
+  },
+  {
+   "name": "Mischief 1",
+   "url": "https://officechai.com/ai/the-biological-computing-co-launches-mischief-1-an-ai-video-model-trained-on-lessons-from-living-neurons",
+   "date": "2026-10-31",
+   "note": "fal·OpenRouter 공개 · 실사용 사례 아직"
+  }
+ ]
+}
