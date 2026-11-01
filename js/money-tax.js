@@ -125,6 +125,9 @@
          bar('실제 세금', ye.decided, maxW, '') +
          bar('돌려받음', ye.refund, maxW, 'gap', '+' + man(ye.refund) + '만') +
          '</div><div class="tx-eq"><span>총급여 ' + man(y.wage.gross) + '만</span><i>→ 과세표준</i><span>' + man(ye.base) + '만</span><i>→ 15% 구간</i></div>' +
+         (y.card ? '<div class="tx-k" style="margin-top:18px;color:#16161A;font-weight:700">카드 공제 ' + man(y.card.deduction) + '만' + (y.card.deduction >= y.card.cap ? ' · 한도 꽉 참' : '') + '</div>' +
+           '<div class="tx-stack" style="height:14px;margin-top:6px"><div style="width:' + (y.card.threshold / y.card.used * 100) + '%;background:#DCDCE3"></div><div style="width:' + (100 - y.card.threshold / y.card.used * 100) + '%;background:#1F4BD8"></div></div>' +
+           '<div class="tx-k" style="margin-top:4px">카드 ' + man(y.card.used) + '만 중 문턱 ' + man(y.card.threshold) + '만(총급여 25%)을 넘은 몫만 공제. ' + esc(y.card.note || '') + '</div>' : '') +
          '<div class="tx-k" style="margin-top:10px">상여 달(4·10월)에 간이세액표로 많이 떼여서 돌려받는 구조. 지방세 ' + man(ye.localRefund) + '만 더.</div></div>';
 
     var inc = y.wage.earnedIncome + y.biz.income;
