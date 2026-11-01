@@ -14,7 +14,7 @@
     {
      "title": "같은 데이터로 만든 안드로이드 TV 앱 hackertube.tv",
      "url": "https://github.com/ephraimduncan/hackertube.tv",
-     "image": null
+     "image": "https://opengraph.githubassets.com/1/ephraimduncan/hackertube.tv"
     }
    ],
    "reviews": [
@@ -58,7 +58,7 @@
    "cat": "tool",
    "title": "AI 티 나는 화면을 디자인된 화면으로",
    "url": "https://github.com/heydamir/unslop",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/heydamir/unslop",
    "source": "GitHub heydamir · CC BY 4.0 · 10-29 공개",
    "how": "보라 그라데이션·이모지·들쭉날쭉 간격 찾아 고침",
    "chips": [
@@ -89,7 +89,7 @@
    "cat": "vibe",
    "title": "문단 하나로 블렌더 실사 공간을",
    "url": "https://github.com/apekshik/anyscene",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/apekshik/anyscene",
    "source": "GitHub apekshik · MIT · Threads @choi.openai ♥173",
    "how": "소품마다 3D 두 개 뽑아 고르고 배치·조명·카메라",
    "chips": [
@@ -107,7 +107,7 @@
    "cat": "tool",
    "title": "픽셀 효과 244개, 스킬로 새로 만들기",
    "url": "https://github.com/patch-gg/pixelfx",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/patch-gg/pixelfx",
    "source": "GitHub patch-gg · MIT · 10-30 공개",
    "how": "효과마다 짧은 코드 · 그리기→보기→고치기 반복",
    "chips": [
@@ -168,7 +168,7 @@
    "cat": "tool",
    "title": "클라우드 크레딧 11-04 전에",
    "url": "https://bleepingcomputer.com/news/artificial-intelligence/anthropic-rolls-out-up-to-250-in-free-claude-code-credits-but-only-for-cloud-sessions",
-   "image": null,
+   "image": "https://www.bleepstatic.com/content/hl-images/2026/05/07/ClaudeChats.png",
    "source": "소멸일 11-04·05로 출처마다 다름 · 안전하게 4일",
    "watching": false
   },
@@ -176,7 +176,7 @@
    "cat": "release",
    "title": "이미지→영상 Mischief 1",
    "url": "https://officechai.com/ai/the-biological-computing-co-launches-mischief-1-an-ai-video-model-trained-on-lessons-from-living-neurons",
-   "image": null,
+   "image": "http://officechai.com/wp-content/uploads/2026/10/1000443598-scaled.jpg",
    "source": "OfficeChai · 10-31 · fal·OpenRouter",
    "watching": true
   },
@@ -184,7 +184,7 @@
    "cat": "tool",
    "title": "한 줄로 게임, 힉스필드",
    "url": "https://higgsfield.ai/playable-intro",
-   "image": null,
+   "image": "https://static.higgsfield.ai/playable/og/landscape-light.webp",
    "source": "Higgsfield · 10-26 · 게임 품질 평가 아직",
    "watching": false
   },
@@ -192,7 +192,7 @@
    "cat": "free",
    "title": "AI 여성복 참고 이미지 1407장",
    "url": "https://github.com/paipiange/nvzhuang",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/paipiange/nvzhuang",
    "source": "GitHub · MIT · 가상 착용 사이트 · 별 1.9천",
    "watching": false
   },
@@ -200,7 +200,7 @@
    "cat": "vibe",
    "title": "PhotoCraft 작가의 새 저장소",
    "url": "https://github.com/storytold/craft-anything",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/storytold/craft-anything",
    "source": "GitHub storytold · 소프트웨어 뜯어보고 내 것 만들기 · 별 829",
    "watching": false
   },
@@ -208,7 +208,7 @@
    "cat": "tool",
    "title": "애니메이션 프레임째 따라 만들기",
    "url": "https://github.com/NiazMorshed2007/reanimate",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/NiazMorshed2007/reanimate",
    "source": "GitHub · MIT · Claude Code 스킬 · 별 721",
    "watching": false
   },
@@ -216,7 +216,7 @@
    "cat": "tool",
    "title": "기계를 3D로 분해해 보기",
    "url": "https://github.com/elvarofficial/teardown",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/elvarofficial/teardown",
    "source": "GitHub · MIT · Claude Code 스킬 · 별 890",
    "watching": false
   },
@@ -224,7 +224,7 @@
    "cat": "free",
    "title": "인스타 카드뉴스 자동 제작",
    "url": "https://github.com/junghwaYang/instagram-card-news",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/junghwaYang/instagram-card-news",
    "source": "GitHub · 1080×1350 PNG · 별 51",
    "from": {
     "label": "Threads @bestoj · ♥48",
