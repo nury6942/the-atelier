@@ -1,0 +1,278 @@
+{
+ "date": "2026-11-03",
+ "collectedAt": "2026-11-03T06:31:44+09:00",
+ "skipped": [
+  "x-search·threads-search: 후보가 충분해 생략"
+ ],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@levelsio",
+   "url": "https://x.com/levelsio/status/2117361943938031845",
+   "at": "2026-11-02T21:03:20Z",
+   "likes": 32,
+   "replies": 27,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "에이전트에 MCP 붙여놔도 거의 안 쓴다는 실사용 관찰",
+   "points": [
+    "인용글 작성자: 앱마다 MCP를 넣었지만 자기 에이전트는 거의 안 고름",
+    "세팅은 Claude Code 세션마다 프로젝트 폴더 + 필요한 키를 담은 .env",
+    "레벨스: 결국 MCP와 API는 키·OAuth 둘 다 받는 하나로 합쳐질 것",
+    "그래도 사람들이 기대하니 자기 사이트엔 MCP를 붙이는 중"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@OpenAI",
+   "url": "https://x.com/OpenAI/status/2117307611338997846",
+   "at": "2026-11-02T17:27:26Z",
+   "likes": 4100,
+   "replies": 458,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "오픈AI, 생활 비서 능력 재는 벤치마크 LifeVal 공개",
+   "points": [
+    "ChatGPT 사용자 수천 명이 '도움받고 싶은 일'을 꼽은 걸로 설계",
+    "예: 아이 돌봄 찾기, 관공서 업무, 개인 재정 관리",
+    "지난 1년간 이 지표로 모델의 일상 업무 처리를 측정·개선해 왔다고",
+    "자세한 내용은 openai.com/index/lifeval"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2117307511820754944/img/KAscj7SLp6lhMJr9.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2117307511820754944/vid/avc1/640x360/slERm3CIFEDg43j3.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@emollick",
+   "url": "https://x.com/emollick/status/2117338116185035004",
+   "at": "2026-11-02T19:28:39Z",
+   "likes": 152,
+   "replies": 29,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "미국 기업 AI 도입률, 여전히 오르는 중",
+   "points": [
+    "미 인구조사국 장기 설문 기준 그래프(사진) — 도입률 상승세 지속",
+    "작년 여름 '도입 줄었다'던 해석은 틀렸다는 지적",
+    "조사 방식 변경은 사이먼 윌리슨 글(simonwillison.net)에 정리"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HWJLy2LWsAAcKgN.jpg"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@hippy_on_street",
+   "url": "https://www.threads.com/@hippy_on_street/post/DfPf-ErEmDp",
+   "at": "2026-11-02T14:17:00Z",
+   "likes": 218,
+   "replies": 26,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code로 영상 API 없이 지브리풍 2D 애니 HTML",
+   "points": [
+    "Claude Code + Opus 5.5, 힉스필드 같은 영상 API는 안 씀",
+    "결과물은 독립형 HTML 파일 하나",
+    "두 번째 글에 전체 프롬프트: 지브리 스타일 참조, 사람 없는 거대 로봇 장면",
+    "'3D를 써도 되지만 결과는 100% 손그림 2D처럼' 조건을 박아둔 게 핵심"
+   ],
+   "try": "두 번째 글 프롬프트를 Claude Code에 그대로 넣어 HTML 하나 뽑아보기"
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfPCvmLka0E",
+   "at": "2026-11-02T10:00:30Z",
+   "likes": 591,
+   "replies": 45,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Fable 5.5, HTML 코드만으로 극장판급 2D 애니",
+   "points": [
+    "이미지·영상 생성 모델과 외부 이미지 파일 없이 코드만 사용",
+    "프롬프트 한 번으로 완성했다는 제작자 설명",
+    "Opus 5.5·Fable 5.1로는 품질이 크게 떨어졌다고",
+    "결과물: chetaslua.github.io 'The Moss Keeper'"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfKG3RbCXTs",
+   "at": "2026-10-31T12:00:18Z",
+   "likes": 497,
+   "replies": 14,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "컴퓨터 전체를 조작하는 에이전트 CLI agent-desktop",
+   "points": [
+    "vercel-labs가 공개한 오픈소스 — agent-browser의 데스크톱판",
+    "macOS·Windows·Linux 지원, 내가 딴 일 하는 동안 백그라운드 실행",
+    "에이전트 여러 개가 각자 다른 마우스 커서로 동시 작업",
+    "github.com/vercel-labs/agent-desktop"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@hoodi_ux",
+   "url": "https://www.threads.com/@hoodi_ux/post/DfN6oHEjOJh",
+   "at": "2026-11-01T23:30:20Z",
+   "likes": 189,
+   "replies": 18,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 화면이 슬롭 같은 이유는 글꼴 — 작업 전 이 4줄",
+   "points": [
+    "글꼴 Pretendard, 자간 -3%",
+    "크기는 짝수값만, 최소 12",
+    "두 줄 이상이면 행간 150%, 한 줄이면 auto",
+    "AI 작업 시작 전에 프롬프트로 먼저 고정"
+   ],
+   "try": "다음 Atelier 화면 수정 때 이 4줄을 프롬프트 맨 앞에 붙이기"
+  },
+  {
+   "src": "threads",
+   "author": "@maesil_24",
+   "url": "https://www.threads.com/@maesil_24/post/DfMYS4zCTS5",
+   "at": "2026-11-01T09:11:06Z",
+   "likes": 147,
+   "replies": 25,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "코딩 몰라도 Claude 아티팩트로 독서 기록장",
+   "points": [
+    "읽은 책은 점 하나, 장르별 색",
+    "완독하면 그달 책장에 한 권씩 꽂힘",
+    "원서는 읽은 만큼 책등이 차오르게",
+    "화면 모습은 원문 사진에"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@native_jeong",
+   "url": "https://www.threads.com/@native_jeong/post/DfMNMkkGfaR",
+   "at": "2026-11-01T07:34:07Z",
+   "likes": 78,
+   "replies": 11,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "Claude Code /model opusplan — 계획은 Opus, 실행은 Sonnet",
+   "points": [
+    "/model opusplan 한 번 쳐두면 간단한 작업은 Sonnet으로 자동 전환",
+    "계획은 Opus가 짜서 결과 품질은 Opus급",
+    "대기 시간·토큰이 줄어든다는 후기"
+   ],
+   "try": "Claude Code에서 /model opusplan 쳐보기"
+  },
+  {
+   "src": "threads",
+   "author": "@joo__life",
+   "url": "https://www.threads.com/@joo__life/post/DfOJV7BEvad",
+   "at": "2026-11-02T01:38:55Z",
+   "likes": 35,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code가 헛소리 시작할 때 5단계",
+   "points": [
+    "/context로 얼마나 찼는지 먼저 확인",
+    "70% 넘으면 /compact로 줄이기",
+    "큰 작업은 /plan으로 계획부터 받고 따져본 뒤 진행",
+    "CLAUDE.md는 /init으로 만들고 150줄 안으로, 수락 전 diff 확인"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@cut.the.loops",
+   "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg",
+   "at": "2026-11-02T12:36:10Z",
+   "likes": 81,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "X 디자인 헤드의 무료 스킬 Stageshow — 가짜 UI를 진짜처럼",
+   "points": [
+    "벤지 테일러가 자기 디자인 감각을 에이전트 스킬로 공개",
+    "설치: npx skills add benjitaylor/skills --skill stageshow",
+    "Claude Code·Codex·Gemini 등에서 사용, 결과는 React 컴포넌트",
+    "한 번에 완벽하진 않아 피드백 몇 번 필요"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@ai_onepage",
+   "url": "https://www.threads.com/@ai_onepage/post/DfPT3-qD4z3",
+   "at": "2026-11-02T12:30:11Z",
+   "likes": 20,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "'AI 티' 지우는 Claude 스킬 unslop, 나흘 만에 별 4.9천",
+   "points": [
+    "보라 그라데이션·글로우·이모지 라벨·들쭉날쭉 간격부터 찾아냄",
+    "간격→색→아이콘→문구→글꼴→레이아웃 순으로 한 번씩 수정",
+    "skills 폴더에 복사 후 '/unslop this dashboard'처럼 지시, 코덱스도 가능",
+    "수정 전후 10초 영상 기능은 Playwright·ffmpeg 필요"
+   ],
+   "try": "github.com/heydamir/unslop 받아 Atelier 화면 하나에 돌려보기"
+  },
+  {
+   "src": "threads",
+   "author": "@starlight_korean",
+   "url": "https://www.threads.com/@starlight_korean/post/DfPdwV0n1YO",
+   "at": "2026-11-02T13:56:32Z",
+   "likes": 17,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "앤트로픽 공식 금융 저장소, 월결산용 스킬 5개",
+   "points": [
+    "clean-data-xls: 공백·텍스트 숫자·중복 정리",
+    "gl-recon: 원장↔보조원장 대조, 어긋난 건 분류",
+    "accrual-schedule: 발생비용 계산 + 분개 초안",
+    "variance-commentary 증감 사유, audit-xls 수식·대차 검수 — 결과는 초안"
+   ],
+   "try": "SA 전표 정산 때 gl-recon으로 대조 초안 받아보기"
+  },
+  {
+   "src": "threads",
+   "author": "@claudeai",
+   "url": "https://www.threads.com/@claudeai/post/DfQEROqIB9x",
+   "at": "2026-11-02T19:33:04Z",
+   "likes": 89,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Duet — 먼저 연락해 주는 Claude, 연구 미리보기",
+   "points": [
+    "하루 일정을 챙기고 신경 쓸 일이 생기면 메시지로 알려줌",
+    "보내기·결제·서명 전에는 꼭 물어봄",
+    "미국 Pro·Max 구독자 대상, 대기 명단(claude.com)",
+    "앤트로픽 팀 사용 모습은 원문 영상에"
+   ]
+  }
+ ]
+}
