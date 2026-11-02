@@ -1,258 +1,258 @@
 {
-  "date": "2026-11-03",
-  "generatedAt": "2026-11-03T07:20:00+09:00",
-  "sourcesNote": "웹 검색 20회 + 오늘 맥 수집(X·Threads 14개) + GitHub 검색 API로 저장소 별·생성일 확인 · 실행 환경에서 X·Threads·HN·개별 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
-  "cards": [
+ "date": "2026-11-03",
+ "generatedAt": "2026-11-03T07:20:00+09:00",
+ "sourcesNote": "웹 검색 20회 + 오늘 맥 수집(X·Threads 14개) + GitHub 검색 API로 저장소 별·생성일 확인 · 실행 환경에서 X·Threads·HN·개별 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "hack",
+   "title": "영상 모델 없이 코드로 지브리풍 애니",
+   "url": "https://www.threads.com/@hippy_on_street/post/DfPf-ErEmDp",
+   "image": null,
+   "source": "Threads @hippy_on_street · ♥218",
+   "how": "Claude Code에 손그림 2D 조건 박고 HTML 한 장",
+   "examples": [
     {
-      "cat": "hack",
-      "title": "영상 모델 없이 코드로 지브리풍 애니",
-      "url": "https://www.threads.com/@hippy_on_street/post/DfPf-ErEmDp",
-      "image": null,
-      "source": "Threads @hippy_on_street · ♥218",
-      "how": "Claude Code에 손그림 2D 조건 박고 HTML 한 장",
-      "examples": [
-        {
-          "title": "같은 발상을 스킬로: 2D 캐릭터 애니 쇼츠 (three.js·Remotion)",
-          "url": "https://github.com/mromidev/claude-animated-shorts",
-          "image": null
-        }
-      ],
-      "chips": [
-        "영상 API 0개",
-        "결과는 HTML 파일 하나",
-        "프롬프트 전문 공개"
-      ],
-      "forMe": "프린트 시안을 움직이는 짧은 무드 영상으로 보여줄 때 쓸 만해요. 핵심은 '3D를 써도 결과는 100% 손그림 2D처럼'이라는 조건 한 줄입니다.",
-      "from": {
-        "label": "Threads @hippy_on_street · ♥218",
-        "url": "https://www.threads.com/@hippy_on_street/post/DfPf-ErEmDp"
-      }
-    },
-    {
-      "cat": "tool",
-      "title": "X 디자인 헤드의 '진짜 같은 가짜 UI' 스킬",
-      "url": "https://github.com/benjitaylor/skills/tree/main/stageshow",
-      "image": null,
-      "source": "GitHub benjitaylor · 10-31 공개",
-      "how": "React 부품 키트+커서 연출, 녹화해 스스로 검수",
-      "reviews": [
-        {
-          "say": "손그림 UI 라이브러리 데모 영상을 이걸로",
-          "who": "X @kevin_t_ngo",
-          "url": "https://x.com/kevin_t_ngo/status/2116743334735851819",
-          "tone": "good"
-        },
-        {
-          "say": "UI 키트 보여주기에 딱 좋은 방식",
-          "who": "X @SataEricUX",
-          "url": "https://x.com/SataEricUX/status/2116599483421360294",
-          "tone": "good"
-        },
-        {
-          "say": "한 번에 완벽하진 않아 몇 번 고쳐야",
-          "who": "Threads @cut.the.loops",
-          "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg",
-          "tone": "bad"
-        }
-      ],
-      "chips": [
-        "별 832",
-        "화풍 9종",
-        "Figma·Linear 사례 포함"
-      ],
-      "forMe": "Atelier·VectorCraft 화면을 이직 포트폴리오용 제품 소개 컷이나 커서 시연 영상으로 바꿀 때 바로 쓸 수 있어요. 오늘 해볼 것 원픽.",
-      "from": {
-        "label": "Threads @cut.the.loops · ♥81",
-        "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg"
-      }
-    },
-    {
-      "cat": "hack",
-      "title": "AI 화면이 촌스러운 건 글꼴 탓, 4줄로",
-      "url": "https://www.threads.com/@hoodi_ux/post/DfN6oHEjOJh",
-      "image": null,
-      "source": "Threads @hoodi_ux · ♥189",
-      "how": "작업 전 글꼴·자간·크기·행간 규칙을 먼저 고정",
-      "chips": [
-        "Pretendard · 자간 -3%",
-        "짝수 크기 · 최소 12",
-        "두 줄 이상 행간 150%"
-      ],
-      "forMe": "Atelier DESIGN.md가 이미 Pretendard 하나로 정해 둬서 그대로 맞물려요. 자간·크기·행간 세 줄만 DESIGN.md에 없으니 다음 화면 수정 때 붙여 보세요.",
-      "from": {
-        "label": "Threads @hoodi_ux · ♥189",
-        "url": "https://www.threads.com/@hoodi_ux/post/DfN6oHEjOJh"
-      }
-    },
-    {
-      "cat": "vibe",
-      "title": "코딩 없이 아티팩트로 만든 독서 책장",
-      "url": "https://www.threads.com/@maesil_24/post/DfMYS4zCTS5",
-      "image": null,
-      "source": "Threads @maesil_24 · ♥147",
-      "how": "읽은 책은 장르색 점, 완독하면 그달 책장에 꽂힘",
-      "chips": [
-        "Claude 아티팩트",
-        "원서는 읽은 만큼 책등 차오름",
-        "코딩 경험 없음"
-      ],
-      "forMe": "기록을 숫자 대신 물건 모양으로 쌓는 방식이라 Atelier 영어 레슨·Growth 탭 시각화에 참고할 만해요.",
-      "from": {
-        "label": "Threads @maesil_24 · ♥147",
-        "url": "https://www.threads.com/@maesil_24/post/DfMYS4zCTS5"
-      }
-    },
-    {
-      "cat": "tool",
-      "title": "한 문장으로 로고 박힌 구성도",
-      "url": "https://github.com/caru-ini/stack-diagram",
-      "image": null,
-      "source": "GitHub caru-ini · MIT · 11-01 공개",
-      "how": "쓰는 서비스를 말하면 공식 로고로 구조도 그림",
-      "chips": [
-        "별 1.1천 (이틀)",
-        "에이전트 스킬",
-        "사이트 stacks.caru.moe"
-      ],
-      "forMe": "Atelier가 GitHub Pages·Firebase·Actions로 어떻게 엮였는지 포트폴리오용 그림 한 장으로 뽑을 수 있어요."
+     "title": "같은 발상을 스킬로: 2D 캐릭터 애니 쇼츠 (three.js·Remotion)",
+     "url": "https://github.com/mromidev/claude-animated-shorts",
+     "image": "https://opengraph.githubassets.com/1/mromidev/claude-animated-shorts"
     }
-  ],
-  "tryToday": [
+   ],
+   "chips": [
+    "영상 API 0개",
+    "결과는 HTML 파일 하나",
+    "프롬프트 전문 공개"
+   ],
+   "forMe": "프린트 시안을 움직이는 짧은 무드 영상으로 보여줄 때 쓸 만해요. 핵심은 '3D를 써도 결과는 100% 손그림 2D처럼'이라는 조건 한 줄입니다.",
+   "from": {
+    "label": "Threads @hippy_on_street · ♥218",
+    "url": "https://www.threads.com/@hippy_on_street/post/DfPf-ErEmDp"
+   }
+  },
+  {
+   "cat": "tool",
+   "title": "X 디자인 헤드의 '진짜 같은 가짜 UI' 스킬",
+   "url": "https://github.com/benjitaylor/skills/tree/main/stageshow",
+   "image": "https://opengraph.githubassets.com/1/benjitaylor/skills",
+   "source": "GitHub benjitaylor · 10-31 공개",
+   "how": "React 부품 키트+커서 연출, 녹화해 스스로 검수",
+   "reviews": [
     {
-      "title": "Stageshow로 Atelier 소개 컷 한 장",
-      "minutes": 25,
-      "why": "만든 도구를 '진짜 제품처럼' 보여주는 그림은 이직 포트폴리오에서 바로 쓰입니다. 무료이고 Claude Code만 있으면 돼요.",
-      "from": {
-        "label": "@cut.the.loops · ♥81",
-        "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg"
-      },
-      "steps": [
-        {
-          "text": "예시부터 훑어보기",
-          "url": "https://github.com/benjitaylor/skills/tree/main/stageshow"
-        },
-        {
-          "text": "터미널에 설치",
-          "copy": "npx skills add benjitaylor/skills --skill stageshow"
-        },
-        {
-          "text": "소개 컷 주문하기",
-          "copy": "stageshow 스킬로 내 Atelier 의 AI Brief 화면(ai-brief.html)을 제품 소개용 정지 컷 한 장으로 만들어줘. 흰 바탕, 모든 모서리 직각, 포인트 색은 코발트 #1F4BD8 하나, 글꼴 Pretendard, 그림자 없음. 실제 화면 구조를 따르되 데이터는 예시로 채우고, 완성되면 PNG 로 저장해줘."
-        }
-      ]
+     "say": "손그림 UI 라이브러리 데모 영상을 이걸로",
+     "who": "X @kevin_t_ngo",
+     "url": "https://x.com/kevin_t_ngo/status/2116743334735851819",
+     "tone": "good"
     },
     {
-      "title": "글꼴 4줄 규칙 붙여 보기",
-      "minutes": 5,
-      "why": "다음에 AI한테 화면을 맡길 때 맨 앞에 붙이기만 하면 됩니다. 결과가 덜 'AI 같아' 보이는지 비교해 보세요.",
-      "from": {
-        "label": "@hoodi_ux · ♥189",
-        "url": "https://www.threads.com/@hoodi_ux/post/DfN6oHEjOJh"
-      },
-      "steps": [
-        {
-          "text": "Claude Code 열기"
-        },
-        {
-          "text": "규칙 먼저 붙여넣기",
-          "copy": "이번 작업의 글자 규칙: 글꼴은 Pretendard, 자간 -3%. 글자 크기는 짝수값만, 최소 12px. 두 줄 이상인 글은 행간 150%, 한 줄은 auto. 이 규칙을 먼저 지키고 작업해줘."
-        },
-        {
-          "text": "전후 화면 비교하기"
-        }
-      ]
+     "say": "UI 키트 보여주기에 딱 좋은 방식",
+     "who": "X @SataEricUX",
+     "url": "https://x.com/SataEricUX/status/2116599483421360294",
+     "tone": "good"
+    },
+    {
+     "say": "한 번에 완벽하진 않아 몇 번 고쳐야",
+     "who": "Threads @cut.the.loops",
+     "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg",
+     "tone": "bad"
     }
-  ],
-  "pickup": [
+   ],
+   "chips": [
+    "별 832",
+    "화풍 9종",
+    "Figma·Linear 사례 포함"
+   ],
+   "forMe": "Atelier·VectorCraft 화면을 이직 포트폴리오용 제품 소개 컷이나 커서 시연 영상으로 바꿀 때 바로 쓸 수 있어요. 오늘 해볼 것 원픽.",
+   "from": {
+    "label": "Threads @cut.the.loops · ♥81",
+    "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg"
+   }
+  },
+  {
+   "cat": "hack",
+   "title": "AI 화면이 촌스러운 건 글꼴 탓, 4줄로",
+   "url": "https://www.threads.com/@hoodi_ux/post/DfN6oHEjOJh",
+   "image": null,
+   "source": "Threads @hoodi_ux · ♥189",
+   "how": "작업 전 글꼴·자간·크기·행간 규칙을 먼저 고정",
+   "chips": [
+    "Pretendard · 자간 -3%",
+    "짝수 크기 · 최소 12",
+    "두 줄 이상 행간 150%"
+   ],
+   "forMe": "Atelier DESIGN.md가 이미 Pretendard 하나로 정해 둬서 그대로 맞물려요. 자간·크기·행간 세 줄만 DESIGN.md에 없으니 다음 화면 수정 때 붙여 보세요.",
+   "from": {
+    "label": "Threads @hoodi_ux · ♥189",
+    "url": "https://www.threads.com/@hoodi_ux/post/DfN6oHEjOJh"
+   }
+  },
+  {
+   "cat": "vibe",
+   "title": "코딩 없이 아티팩트로 만든 독서 책장",
+   "url": "https://www.threads.com/@maesil_24/post/DfMYS4zCTS5",
+   "image": null,
+   "source": "Threads @maesil_24 · ♥147",
+   "how": "읽은 책은 장르색 점, 완독하면 그달 책장에 꽂힘",
+   "chips": [
+    "Claude 아티팩트",
+    "원서는 읽은 만큼 책등 차오름",
+    "코딩 경험 없음"
+   ],
+   "forMe": "기록을 숫자 대신 물건 모양으로 쌓는 방식이라 Atelier 영어 레슨·Growth 탭 시각화에 참고할 만해요.",
+   "from": {
+    "label": "Threads @maesil_24 · ♥147",
+    "url": "https://www.threads.com/@maesil_24/post/DfMYS4zCTS5"
+   }
+  },
+  {
+   "cat": "tool",
+   "title": "한 문장으로 로고 박힌 구성도",
+   "url": "https://github.com/caru-ini/stack-diagram",
+   "image": "https://opengraph.githubassets.com/1/caru-ini/stack-diagram",
+   "source": "GitHub caru-ini · MIT · 11-01 공개",
+   "how": "쓰는 서비스를 말하면 공식 로고로 구조도 그림",
+   "chips": [
+    "별 1.1천 (이틀)",
+    "에이전트 스킬",
+    "사이트 stacks.caru.moe"
+   ],
+   "forMe": "Atelier가 GitHub Pages·Firebase·Actions로 어떻게 엮였는지 포트폴리오용 그림 한 장으로 뽑을 수 있어요."
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "Stageshow로 Atelier 소개 컷 한 장",
+   "minutes": 25,
+   "why": "만든 도구를 '진짜 제품처럼' 보여주는 그림은 이직 포트폴리오에서 바로 쓰입니다. 무료이고 Claude Code만 있으면 돼요.",
+   "from": {
+    "label": "@cut.the.loops · ♥81",
+    "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg"
+   },
+   "steps": [
     {
-      "cat": "release",
-      "title": "딥시크, 알아서 일하는 에이전트",
-      "url": "https://github.com/deepseek-ai/dsh-superagent-prototype",
-      "image": null,
-      "source": "GitHub · MIT · 10-31 · 별 1.3만 · 연구용 시제품",
-      "from": {
-        "label": "X @kimmonismus",
-        "url": "https://x.com/kimmonismus/status/2116905923109089285"
-      },
-      "watching": true
+     "text": "예시부터 훑어보기",
+     "url": "https://github.com/benjitaylor/skills/tree/main/stageshow"
     },
     {
-      "cat": "free",
-      "title": "2D 캐릭터 옷·머리·포즈 사전",
-      "url": "https://github.com/sleepy-zone/char-db-cn",
-      "image": null,
-      "source": "GitHub · 중국어 · 별 310 · 웹 sleepyzone.online",
-      "watching": false
+     "text": "터미널에 설치",
+     "copy": "npx skills add benjitaylor/skills --skill stageshow"
     },
     {
-      "cat": "vibe",
-      "title": "브라우저 포토샵 대체 Reoo",
-      "url": "https://github.com/sheikhminds/reoo",
-      "image": null,
-      "source": "GitHub · MIT · 레이어·선택·PSD 입출력 · 막 공개(별 2)",
-      "watching": false
-    },
-    {
-      "cat": "free",
-      "title": "AI 웹툰 기획부터 콘티까지 스킬",
-      "url": "https://github.com/zhanghao123vip/ai-manju-skills",
-      "image": null,
-      "source": "GitHub · MIT · 장르 21종 · 별 454",
-      "watching": false
-    },
-    {
-      "cat": "tool",
-      "title": "라이트룸에 Claude 붙이기(윈도우)",
-      "url": "https://github.com/Denvolatos/lightroom-mcp-win",
-      "image": null,
-      "source": "GitHub · MIT · Lightroom Classic 플러그인 · 막 공개",
-      "watching": false
-    },
-    {
-      "cat": "free",
-      "title": "디자인 사례 4곳 뜯어본 예시",
-      "url": "https://github.com/benjitaylor/skills",
-      "image": null,
-      "source": "GitHub · Figma·Linear·Slack·Raycast 화면 재현 예시",
-      "watching": false
+     "text": "소개 컷 주문하기",
+     "copy": "stageshow 스킬로 내 Atelier 의 AI Brief 화면(ai-brief.html)을 제품 소개용 정지 컷 한 장으로 만들어줘. 흰 바탕, 모든 모서리 직각, 포인트 색은 코발트 #1F4BD8 하나, 글꼴 Pretendard, 그림자 없음. 실제 화면 구조를 따르되 데이터는 예시로 채우고, 완성되면 PNG 로 저장해줘."
     }
-  ],
-  "watching": [
+   ]
+  },
+  {
+   "title": "글꼴 4줄 규칙 붙여 보기",
+   "minutes": 5,
+   "why": "다음에 AI한테 화면을 맡길 때 맨 앞에 붙이기만 하면 됩니다. 결과가 덜 'AI 같아' 보이는지 비교해 보세요.",
+   "from": {
+    "label": "@hoodi_ux · ♥189",
+    "url": "https://www.threads.com/@hoodi_ux/post/DfN6oHEjOJh"
+   },
+   "steps": [
     {
-      "name": "DeepSeek Super-agent (연구 시제품)",
-      "url": "https://github.com/deepseek-ai/dsh-superagent-prototype",
-      "date": "2026-10-31",
-      "note": "MIT 공개 · 독립 실사용은 cellcog 블로그 하나뿐"
+     "text": "Claude Code 열기"
     },
     {
-      "name": "Suno MCP (beta)",
-      "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
-      "date": "2026-10-28",
-      "note": "만든 곡 사례 아직 없음"
+     "text": "규칙 먼저 붙여넣기",
+     "copy": "이번 작업의 글자 규칙: 글꼴은 Pretendard, 자간 -3%. 글자 크기는 짝수값만, 최소 12px. 두 줄 이상인 글은 행간 150%, 한 줄은 auto. 이 규칙을 먼저 지키고 작업해줘."
     },
     {
-      "name": "Gemini 4 Carbon",
-      "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
-      "date": "2026-10-28",
-      "note": "파트너 한정 · 만든 사례 아직"
-    },
-    {
-      "name": "GitHub Copilot Fusion",
-      "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion",
-      "date": "2026-10-28",
-      "note": "정식 공개 · 독립 후기 아직 없음"
-    },
-    {
-      "name": "ElevenLabs SFX v3",
-      "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-october-30-2026/",
-      "date": "2026-10-30",
-      "note": "ElevenCreative·API · 후기 아직"
-    },
-    {
-      "name": "Mischief 1",
-      "url": "https://officechai.com/ai/the-biological-computing-co-launches-mischief-1-an-ai-video-model-trained-on-lessons-from-living-neurons",
-      "date": "2026-10-31",
-      "note": "fal·OpenRouter 공개 · 실사용 사례 아직"
+     "text": "전후 화면 비교하기"
     }
-  ]
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "딥시크, 알아서 일하는 에이전트",
+   "url": "https://github.com/deepseek-ai/dsh-superagent-prototype",
+   "image": "https://opengraph.githubassets.com/1/deepseek-ai/dsh-superagent-prototype",
+   "source": "GitHub · MIT · 10-31 · 별 1.3만 · 연구용 시제품",
+   "from": {
+    "label": "X @kimmonismus",
+    "url": "https://x.com/kimmonismus/status/2116905923109089285"
+   },
+   "watching": true
+  },
+  {
+   "cat": "free",
+   "title": "2D 캐릭터 옷·머리·포즈 사전",
+   "url": "https://github.com/sleepy-zone/char-db-cn",
+   "image": "https://opengraph.githubassets.com/1/sleepy-zone/char-db-cn",
+   "source": "GitHub · 중국어 · 별 310 · 웹 sleepyzone.online",
+   "watching": false
+  },
+  {
+   "cat": "vibe",
+   "title": "브라우저 포토샵 대체 Reoo",
+   "url": "https://github.com/sheikhminds/reoo",
+   "image": "https://opengraph.githubassets.com/840f9c0b921cb92f6508ac1675f938c2127705f9a00dc53660ef4321327d9f97/sheikhminds/reoo",
+   "source": "GitHub · MIT · 레이어·선택·PSD 입출력 · 막 공개(별 2)",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "AI 웹툰 기획부터 콘티까지 스킬",
+   "url": "https://github.com/zhanghao123vip/ai-manju-skills",
+   "image": "https://opengraph.githubassets.com/1/zhanghao123vip/ai-manju-skills",
+   "source": "GitHub · MIT · 장르 21종 · 별 454",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "라이트룸에 Claude 붙이기(윈도우)",
+   "url": "https://github.com/Denvolatos/lightroom-mcp-win",
+   "image": "https://opengraph.githubassets.com/1/Denvolatos/lightroom-mcp-win",
+   "source": "GitHub · MIT · Lightroom Classic 플러그인 · 막 공개",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "디자인 사례 4곳 뜯어본 예시",
+   "url": "https://github.com/benjitaylor/skills",
+   "image": "https://opengraph.githubassets.com/1/benjitaylor/skills",
+   "source": "GitHub · Figma·Linear·Slack·Raycast 화면 재현 예시",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "DeepSeek Super-agent (연구 시제품)",
+   "url": "https://github.com/deepseek-ai/dsh-superagent-prototype",
+   "date": "2026-10-31",
+   "note": "MIT 공개 · 독립 실사용은 cellcog 블로그 하나뿐"
+  },
+  {
+   "name": "Suno MCP (beta)",
+   "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
+   "date": "2026-10-28",
+   "note": "만든 곡 사례 아직 없음"
+  },
+  {
+   "name": "Gemini 4 Carbon",
+   "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+   "date": "2026-10-28",
+   "note": "파트너 한정 · 만든 사례 아직"
+  },
+  {
+   "name": "GitHub Copilot Fusion",
+   "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion",
+   "date": "2026-10-28",
+   "note": "정식 공개 · 독립 후기 아직 없음"
+  },
+  {
+   "name": "ElevenLabs SFX v3",
+   "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-october-30-2026/",
+   "date": "2026-10-30",
+   "note": "ElevenCreative·API · 후기 아직"
+  },
+  {
+   "name": "Mischief 1",
+   "url": "https://officechai.com/ai/the-biological-computing-co-launches-mischief-1-an-ai-video-model-trained-on-lessons-from-living-neurons",
+   "date": "2026-10-31",
+   "note": "fal·OpenRouter 공개 · 실사용 사례 아직"
+  }
+ ]
 }
