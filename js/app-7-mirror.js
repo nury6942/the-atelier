@@ -1318,3 +1318,23 @@ window.ldgImportBanksalChunks = function() {
   window.ldgImportBanksal(JSON.parse(new TextDecoder().decode(bytes)));
   return 'started';
 };
+// 뱅샐현황 잔액 → 자산 탭 통장 칸 (내보낸 날의 달 칸에). bal = {asOf:'YYYY-MM-DD', set:{'OK파킹': 원, ...}} (누리 2026-11-04)
+// 손으로 적는 칸만 고친다 — 거래로 계산하는 '자동' 칸은 안 건드림
+window.ldgSetBalances = async function(bal) {
+  var put = function(o) { document.documentElement.dataset.bsBal = JSON.stringify(o); };
+  try {
+    var mi = +bal.asOf.slice(5, 7) - 1, ref = db.collection('appSettings').doc('ledgerData');
+    if (+bal.asOf.slice(0, 4) !== new Date().getFullYear()) { put({ state: 'skip', why: 'year' }); return; }
+    var a = ((await ref.get()).data() || {}).assets || {}, rows = a['현금자산'] || [], done = {};
+    await db.collection('ledgerBackups').doc(new Date().toISOString().replace(/[:.]/g, '-') + '_bs_balances').set({ assets: JSON.stringify(a), at: new Date().toISOString(), note: '뱅샐 잔액 넣기 전 ' + bal.asOf });
+    Object.keys(bal.set).forEach(function(k) {
+      var r = rows.filter(function(x) { return !x['자동'] && (x['소분류'] || '').indexOf(k) >= 0; })[0];
+      if (!r) return;
+      r['월별'] = r['월별'] || [null, null, null, null, null, null, null, null, null, null, null, null];
+      r['월별'][mi] = bal.set[k]; done[k] = bal.set[k];
+    });
+    if (Object.keys(done).length) await ref.update({ assets: a });
+    _ledgerData.assets = a; try { localStorage.setItem('atelier_ledger_assets', JSON.stringify(a)); } catch (e) {}
+    put({ state: 'done', month: mi + 1, set: done });
+  } catch (e) { put({ state: 'error', message: String(e && e.message || e) }); }
+};
