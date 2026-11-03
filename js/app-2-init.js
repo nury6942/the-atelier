@@ -2253,7 +2253,7 @@ function ldgRenderCatGrid() {
     var cmpLine = function(prevVal, label, tip) {
       if (totalAmt === 0 && prevVal === 0) return '';
       var d = totalAmt - prevVal;
-      var color = (d === 0) ? '#94a3b8' : (((d > 0) === isGoodUp) ? '#10b981' : '#ef4444');
+      var color = (d === 0) ? '#94a3b8' : (catName === '포인트') ? '#475569' : (((d > 0) === isGoodUp) ? '#10b981' : '#ef4444');  // 포인트는 많이 써도 나쁜 게 아님 → 중립색
       var arrow = d > 0 ? '▲' : (d < 0 ? '▼' : '');
       var txt = (d === 0) ? (label + ' ─') : (arrow + ' ' + label + ' ' + (d > 0 ? '+' : '') + d.toLocaleString('ko-KR'));
       return '<p class="text-[10px] text-right mt-0.5" style="color:' + color + ';font-feature-settings:\'tnum\'" title="' + tip + '">' + txt + '</p>';
