@@ -1,3 +1,12 @@
+## 2026-11-03 · 맥북 · English › Mistakes 실수 장부 + Oliver 목표·발음·되말하기 (english-ledger v1 · app-1-pages v407 · tutorMemory · sw v1675)
+- 누리: 스레드 "클로드 과외쌤" 글 보고 → 우리 영어 탭은 다 있는데 실수가 다섯 군데 흩어져 다시 꺼내 쓰는 순간이 없음 → ① 장부 하나로 ② 수업 끝 되말하기 ③ Oliver 발음 메모
+- 새 탭 **Mistakes**(Annie 다음): 원본은 그대로 두고 읽어서 합침 — englishSessions.upgrades(Annie·Oliver 고쳐 말하기) · tutorSessions.mistakes(자세한 리뷰 없는 Oliver 수업만)·pron · englishStudy 검수 points(대충·놓침). 같은 고친 문장은 한 줄(n번 나옴)
+- 내 기록 englishLedger/state { marks:{id:{hit,miss,last,status}}, targets[3] } · 한국어만 보고 말하기/쓰기 → 단어 일치 75%↑ 맞힘, 맞힘 2번(마지막 맞힘)이면 내 것 · 한국어 뜻 없는 말하기 실수는 "틀린 문장 보고 고쳐 말하기"
+- **Oliver 목표 3개**: 장부가 자동으로 채움(☆로 바꿈) → tutorMemory profile 이 targets 를 같이 줌 → 시스템 프롬프트에 "이 표현이 필요한 질문으로 끌고 가기" → finish 가 targetCheck 판정, 썼으면 marks.hit +1(서버에서)
+- **발음**: Gemini Live 에 note_pronunciation 함수(모든 모드, 말 안 끊고 조용히) → tutorSessions.pron → 오늘의 정리 '발음 메모' + 장부 '발음'
+- 오늘의 정리 아래 '오늘 목표 표현 n/3' + **되말하기 5문제 버튼**(부모 창 ledgerQuizFromLesson → 그 수업 실수부터)
+- finish 실수에 betterKo(한국어 뜻) 추가 · functions 배포는 맥북에서 `npm install`(cheerio 빠져 있었음) 후 `firebase deploy --only functions:tutorMemory`
+
 ## 2026-11-01 · 맥북 · Money › Tax 탭 (money-tax.js v1 · app-1-pages v406 · sw v1671)
 - 누리: 연말정산·퇴직금·내년 5월 종소세를 아뜰리에에서 보고 싶음, 글 줄줄 말고 예쁘게
 - 계산은 korean-tax-calc MCP(업스테이지, 2016~2026년만)로 하고 결과만 넣음

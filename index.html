@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=406" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=407" as="script">
   <link rel="preload" href="js/app-2-init.js?v=188" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -15390,6 +15390,7 @@
       <!-- ══ ANNIE | STUDY 탭 ══ -->
       <div class="atl-tabs mb-6">
         <button id="eng-tab-annie" onclick="switchEngTab('annie')" class="travel-tab-btn">Annie</button>
+        <button id="eng-tab-ledger" onclick="switchEngTab('ledger')" class="travel-tab-btn">Mistakes</button>
         <button id="eng-tab-speak" onclick="switchEngTab('speak')" class="travel-tab-btn">Speak</button>
         <button id="eng-tab-study" onclick="switchEngTab('study')" class="travel-tab-btn">Listen</button>
         <button id="eng-tab-read" onclick="switchEngTab('read')" class="travel-tab-btn">Read</button>
@@ -15531,6 +15532,8 @@
       <!-- ══════════ WORK 뷰 (업무 영어 — js/work-english.js, 카드는 Firestore workEnglish/content) ══════════ -->
       <div id="eng-work-view" style="display:none"></div>
       <div id="eng-phrases-view" style="display:none"></div>
+      <!-- 실수 장부 (js/english-ledger.js) — Annie·Oliver·Listen 실수를 한곳에 + 되말하기 + Oliver 목표 -->
+      <div id="eng-ledger-view" style="display:none"></div>
 
       <!-- ══════════ STUDY 뷰 (콘텐츠 스터디 — 신규) ══════════ -->
       <div id="eng-study-view" style="display:none">
@@ -16521,7 +16524,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=406" defer></script>
+<script src="js/app-1-pages.js?v=407" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17425,6 +17428,7 @@
 <script src="js/ielts-app.js?v=14" defer></script>
 <script src="js/work-english.js?v=3" defer></script>
 <script src="js/english-phrases.js?v=2" defer></script>
+<script src="js/english-ledger.js?v=1" defer></script>
 <script src="js/listen-marks.js?v=1" defer></script>
 <script src="js/listen-practice.js?v=10" defer></script>
 

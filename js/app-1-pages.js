@@ -28360,7 +28360,7 @@
 
   // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
   window.switchEngTab = function(tab){
-    var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', work:'eng-work-view', tutor:'eng-tutor-view', phrases:'eng-phrases-view' };
+    var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', work:'eng-work-view', tutor:'eng-tutor-view', phrases:'eng-phrases-view', ledger:'eng-ledger-view' };
     // Speak = Work·AI Tutor 묶음 → 마지막에 본 쪽으로
     if (tab === 'speak'){ try { tab = localStorage.getItem('atelier_eng_speak') || 'work'; } catch(e){ tab = 'work'; } }
     if (!views[tab]) tab = 'annie';
@@ -28385,6 +28385,7 @@
     if (tab === 'read' && typeof window.renderEnglishRead === 'function') window.renderEnglishRead();
     if (tab === 'work' && typeof window.renderWorkEnglish === 'function') window.renderWorkEnglish();
     if (tab === 'phrases' && typeof window.renderEnglishPhrases === 'function') window.renderEnglishPhrases();
+    if (tab === 'ledger' && typeof window.renderEnglishLedger === 'function') window.renderEnglishLedger();
     if (tab !== 'work' && window.WORK_EN) window.WORK_EN.stop();
     if (tab !== 'read' && typeof window.stopEnglishRead === 'function') window.stopEnglishRead();
     var pe = document.getElementById('page-english');

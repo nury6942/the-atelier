@@ -448,6 +448,7 @@ function memoryBrief(p){
   if (p.recurringMistakes && p.recurringMistakes.length) out.push('- Mistakes she tends to repeat (listen for these and recast them gently): ' + p.recurringMistakes.map(function(m){ return m.pattern + ': "' + m.example + '" → "' + m.fix + '"'; }).join(' / '));
   if (p.vocabToReuse && p.vocabToReuse.length) out.push('- Phrases she is learning (create chances for her to use them): ' + p.vocabToReuse.map(function(v){ return v.phrase; }).join(', '));
   if (p.nextTime && p.nextTime.length) out.push('- Plans for this lesson: ' + p.nextTime.join(' / '));
+  if (sess.targets && sess.targets.length) out.push('- TODAY\'S TARGET EXPRESSIONS (from her mistake log — she got these wrong before): ' + sess.targets.map(function(t){ return '"' + t.fix + '"'; }).join(' / ') + '. Steer the conversation so she naturally needs each one: ask questions whose best answer uses it. If she says it wrongly, recast it once. Never read the list to her, quiz her, or mention a log.');
   out.push('Open the lesson like someone who remembers her — e.g. pick up a thread from last time — unless she brings her own topic.');
   return out.join('\n');
 }
@@ -467,6 +468,7 @@ function systemPrompt(mode, topic, profile){
     '- If she shares her camera or screen, refer to what you actually see when relevant. Never pretend to see something you cannot.',
     '- Always reply in English, unless she explicitly asks for a Korean explanation of a word.',
   ]).concat([
+    '- Pronunciation: you can hear her voice. When a word is mispronounced badly enough to confuse a listener, call note_pronunciation silently and carry on — never interrupt to correct pronunciation. At most about one note every two minutes; ignore a normal Korean accent.',
     '- During the lesson you may receive messages starting with [Lesson notes]: they summarise the earlier part of THIS lesson that you may no longer hear. Use them silently; never reply to them.',
     '',
     memoryBrief(profile)
@@ -491,6 +493,11 @@ function ieltsRules(topic){
     '- Messages in square brackets like [Preparation time is over] come from the test timer, not from her.'
   ];
 }
+// 발음 메모: 수업을 끊지 않고 조용히 남김 → 끝난 뒤 '오늘의 정리'와 실수 장부(발음)에
+var PRON_TOOL = { name: 'note_pronunciation', description: 'Silently log a word Nuri mispronounced in a way that could confuse a listener (not just an accent). Do not mention it aloud; keep talking normally.', parameters: { type: 'OBJECT', properties: {
+  word: { type: 'STRING', description: 'the word or short phrase she meant' },
+  heard: { type: 'STRING', description: 'roughly how it sounded, e.g. "pashion" or "WORK-out → walk-out"' },
+  tip: { type: 'STRING', description: 'one short tip in Korean on how to say it (stress, vowel, ending)' } }, required: ['word', 'tip'] } };
 var IELTS_TOOLS = [{ functionDeclarations: [
   { name: 'set_part', description: 'Tell the screen which IELTS Speaking part is starting.', parameters: { type: 'OBJECT', properties: { part: { type: 'INTEGER', description: '1, 2 or 3' } }, required: ['part'] } },
   { name: 'show_cue_card', description: 'Show the IELTS Part 2 cue card on the candidate screen and start the 1-minute preparation timer.', parameters: { type: 'OBJECT', properties: { topic: { type: 'STRING', description: 'e.g. "Describe a place you visited that you would like to go back to"' }, points: { type: 'ARRAY', items: { type: 'STRING' }, description: '4 prompts; the last one starts with "and explain"' } }, required: ['topic', 'points'] } },
@@ -728,7 +735,7 @@ function finishMemory(item){
   var box = document.createElement('div');
   box.className = 'review loading'; box.textContent = 'Oliver가 오늘 대화를 정리하고 기억하는 중… (20초쯤 걸려요)';
   $('lines').appendChild(box); $('lines').scrollTop = $('lines').scrollHeight;
-  memoryCall('finish', { lines: item.lines, mode: item.mode, topic: item.topic, sec: item.sec, startedAt: item.at }, 170000)
+  memoryCall('finish', { lines: item.lines, mode: item.mode, topic: item.topic, sec: item.sec, startedAt: item.at, targets: item.targets, pron: item.pron }, 170000)
     .then(function(j){
       if (j.profile) cacheProfile(j.profile);
       if (j.session){
@@ -736,20 +743,40 @@ function finishMemory(item){
         list.forEach(function(h){ if (h.at === item.at) h.review = j.session; });
         saveHist(list);
       }
-      var el = reviewEl(j.session);
+      var el = reviewEl(j.session, item);
       box.replaceWith(el);
       if (item.lines.filter(function(l){ return l.who === 'me'; }).length >= 4) startAnnieReview(item, el);   // 너무 짧은 대화는 자세한 리뷰 생략
       $('lines').scrollTop = $('lines').scrollHeight;
     })
     .catch(function(e){ box.textContent = '정리하지 못했어요: ' + e.message; });
 }
-function reviewEl(r){
+function reviewEl(r, item){
   var d = document.createElement('div'); d.className = 'review';
   var h = document.createElement('h4'); h.textContent = '오늘의 정리'; d.appendChild(h);
   if (!r){ d.appendChild(document.createTextNode('기억했어요.')); return d; }
   if (r.ielts) d.appendChild(bandsEl(r.ielts));
   var p = document.createElement('p'); p.textContent = r.summary || ''; d.appendChild(p);
   if (r.mistakes && r.mistakes.length) d.appendChild(mistakeList(r.mistakes.map(function(m){ return { k: '', bad: m.said, good: m.better, why: m.why }; })));
+  var tg = (item && item.targets) || [];
+  if (tg.length){
+    var used = {}; (r.targetCheck || []).forEach(function(c){ if (c.used) used[c.id] = c.said || true; });
+    var t = document.createElement('div'); t.className = 'psec'; t.style.padding = '12px 0 0'; t.style.border = '0';
+    t.appendChild(listEl(tg.map(function(x){ return (used[x.id] ? '✓ 썼어요 — ' : '– 이번엔 못 씀 — ') + x.fix; })));
+    var th = document.createElement('div'); th.style.cssText = 'font-weight:700;margin-top:12px'; th.textContent = '오늘 목표 표현 ' + Object.keys(used).length + ' / ' + tg.length;
+    d.appendChild(th); d.appendChild(t);
+  }
+  if (r.pron && r.pron.length){
+    var ph = document.createElement('div'); ph.style.cssText = 'font-weight:700;margin-top:12px'; ph.textContent = '발음 메모 ' + r.pron.length;
+    d.appendChild(ph);
+    d.appendChild(mistakeList(r.pron.map(function(p){ return { k: p.word, bad: p.heard ? '이렇게 들렸어요: ' + p.heard : '', good: '', why: p.tip }; })));
+  }
+  var fixes = (r.mistakes || []).map(function(m){ return m.better; }).concat(tg.map(function(x){ return x.fix; }));
+  if (fixes.length && window.parent !== window && window.parent.ledgerQuizFromLesson){
+    var qb = document.createElement('button'); qb.textContent = '되말하기 5문제 — 오늘 틀린 것부터 →';
+    qb.style.cssText = 'margin-top:14px;font-size:15px;font-weight:700;padding:12px 18px;background:#1F4BD8;color:#fff;border:0;cursor:pointer';
+    qb.onclick = function(){ window.parent.ledgerQuizFromLesson(fixes); };
+    d.appendChild(qb);
+  }
   if (r.good && r.good.length){
     var u = document.createElement('div'); u.className = 'psec'; u.style.padding = '12px 0 0'; u.style.border = '0';
     u.appendChild(listEl(r.good.map(function(g){ return '잘했어요 — ' + g; }))); d.appendChild(u);
@@ -1116,6 +1143,7 @@ function togglePause(){
 function onToolCall(calls){
   calls.forEach(function(f){
     var a = f.args || {};
+    if (f.name === 'note_pronunciation' && a.word){ sess.pron = sess.pron || []; if (sess.pron.length < 12) sess.pron.push({ word: String(a.word), heard: String(a.heard || ''), tip: String(a.tip || '') }); }
     if (f.name === 'set_part') setPart(a.part);
     if (f.name === 'show_cue_card') showCue(a.topic, a.points || []);
     if (f.name === 'end_test'){ setPart(0); hideCue(); setState('시험 끝 — 대화 마치기를 누르면 밴드 점수를 매겨요', 'live'); }
@@ -1233,7 +1261,7 @@ async function connect(){
       // 매 대답마다 지난 대화 전체를 다시 읽고 그만큼 청구됨(음성 1초 ≈ 25토큰) → 기억을 1만2천 토큰(~6분)으로 묶어
       // 대답 한 번 값이 계속 커지지 않게. 가장 큰 비용은 사진이 아니라 이 '음성 기억'이다
       contextWindowCompression: { triggerTokens: 12000, slidingWindow: { targetTokens: 6000 } },
-      tools: sess.mode === 'ielts' ? IELTS_TOOLS : undefined,
+      tools: sess.mode === 'ielts' ? [{ functionDeclarations: IELTS_TOOLS[0].functionDeclarations.concat(PRON_TOOL) }] : [{ functionDeclarations: [PRON_TOOL] }],
       sessionResumption: sess.resumeHandle ? { handle: sess.resumeHandle } : {}
     };
     send({ setup: setup });
@@ -1290,7 +1318,7 @@ async function startCall(){
   sess = {
     active: true, ready: false, greeted: false, micOn: true, reconnects: 0, resumeHandle: null,
     model: $('model').value, voice: $('voice').value, mode: state.mode, topic: $('topicInput').value.trim(),
-    lines: [], sources: [], playAt: 0, startedAt: Date.now(), usd: 0
+    lines: [], sources: [], playAt: 0, startedAt: Date.now(), usd: 0, pron: [], targets: []
   };
   showCost(0);
   breakCaption();
@@ -1318,7 +1346,7 @@ async function startCall(){
       ? withTimeout(startSimli(), 45000).catch(function(e){ console.warn('[tutor] simli', e); dropSimli(); if (sess.active) toast('움직이는 Oliver 를 못 불러왔어요 — 사진으로 할게요'); })
       : Promise.resolve();
     simliP = Promise.race([simliP, new Promise(function(ok){ setTimeout(ok, 8000); })]);
-    try { var pj = await memoryCall('profile', {}, 6000); sess.profile = pj.profile; cacheProfile(pj.profile); }
+    try { var pj = await memoryCall('profile', {}, 6000); sess.profile = pj.profile; sess.targets = pj.targets || []; cacheProfile(pj.profile); }
     catch(e){ sess.profile = cachedProfile(); console.warn('[tutor] profile', e); }   // 못 불러오면 마지막 사본으로
     await simliP;                                       // 첫인사부터 영상으로 나오게 Simli 준비를 기다림(최대 8초)
     if (!sess.active) return;
@@ -1340,7 +1368,7 @@ function endCall(){
   setMouth(0); setMicLevel(0); $('tileEmma').classList.remove('speaking'); $('tileMe').classList.remove('speaking');
   var lines = sess.lines.filter(function(l){ return l.text.trim(); }).map(function(l){ return { who: l.who, text: l.text.replace(/\s+/g, ' ').trim() }; });
   var sec = Math.round((Date.now() - sess.startedAt) / 1000);
-  var item = { at: sess.startedAt, sec: sec, mode: sess.mode, topic: sess.topic, model: sess.model, usd: sess.usd, lines: lines };
+  var item = { at: sess.startedAt, sec: sec, mode: sess.mode, topic: sess.topic, model: sess.model, usd: sess.usd, lines: lines, pron: sess.pron || [], targets: sess.targets || [] };
   if (lines.length || sess.usd){
     var list = loadHist();
     list.unshift(item);

@@ -712,8 +712,10 @@ exports.tutorMemory = onRequest(
 
     try {
       if (action === "profile") {
-        const snap = await profileRef.get();
-        return res.status(200).json({ profile: snap.exists ? snap.data() : null });
+        const [snap, led] = await Promise.all([profileRef.get(), db.collection("englishLedger").doc("state").get()]);
+        // 실수 장부(English › Mistakes)에서 고른 '다음 수업 목표' — Oliver 가 쓰게 유도한다
+        const targets = ((led.exists && led.data().targets) || []).slice(0, 3).map((t) => ({ id: t.id, fix: t.fix, ko: t.ko || "" }));
+        return res.status(200).json({ profile: snap.exists ? snap.data() : null, targets });
       }
 
       if (action === "notes") {
@@ -733,6 +735,8 @@ exports.tutorMemory = onRequest(
 
       if (action === "finish") {
         const { lines, mode, topic, sec, startedAt } = req.body;
+        const targets = (req.body.targets || []).slice(0, 3).filter((t) => t && t.id && t.fix);
+        const pron = (req.body.pron || []).slice(0, 12).filter((p) => p && p.word);
         const transcript = tutorTranscript(lines);
         if (!transcript) return res.status(400).json({ error: "empty transcript" });
         const snap = await profileRef.get();
@@ -750,17 +754,32 @@ exports.tutorMemory = onRequest(
           "\n\nReturn ONE JSON object with two keys:\n" +
           "\"profile\": the updated profile, merging today into the current one (keep what is still true, update counts, drop stale or minor items, keep each list within its limit; recentTopics newest first, max 10). Shape:\n" +
           TUTOR_PROFILE_SHAPE +
-          "\n\"session\": {\"summary\": \"오늘 대화 요약 2~3문장, 한국어\", \"mistakes\": [{\"said\": \"누리가 한 문장\", \"better\": \"더 자연스러운 문장\", \"why\": \"한 줄, 한국어\"}] (max 5), \"good\": [\"잘한 표현이나 점, 한국어\"] (max 3)" +
+          "\n\"session\": {\"summary\": \"오늘 대화 요약 2~3문장, 한국어\", \"mistakes\": [{\"said\": \"누리가 한 문장\", \"better\": \"더 자연스러운 문장\", \"betterKo\": \"better 문장의 자연스러운 한국어 뜻\", \"why\": \"한 줄, 한국어\"}] (max 5), \"good\": [\"잘한 표현이나 점, 한국어\"] (max 3)" +
           (isIelts
             ? ", \"ielts\": {\"fc\": 0, \"lr\": 0, \"gra\": 0, \"overall\": 0, \"fcNote\": \"\", \"lrNote\": \"\", \"graNote\": \"\", \"parts\": \"어느 Part 까지 했는지\", \"toBand\": [\"다음 밴드로 가려면 할 것 3가지\"]}" +
               " — this was an IELTS Speaking practice test: score it like a certified examiner using the public band descriptors, in 0.5 steps (fc = Fluency & Coherence, lr = Lexical Resource, gra = Grammatical Range & Accuracy; overall = their average rounded to the nearest 0.5). " +
               "Pronunciation can't be judged from a transcript, so leave it out. Notes in Korean, specific, quoting her words. Be realistic, not flattering."
+            : "") +
+          (targets.length
+            ? ", \"targetCheck\": [{\"id\": \"...\", \"used\": true, \"said\": \"her sentence that used it, or empty\"}] — one entry per TARGET below. used = true only if Nuri herself (not Oliver) produced the expression or a clearly equivalent correct form; a broken or Oliver-prompted copy doesn't count.\nTARGETS (id | expression):\n" +
+              targets.map((t) => t.id + " | " + t.fix).join("\n")
             : "") +
           "}\n" +
           "Output only the JSON.",
           "medium"
         );
         const out = tutorJson(reply);
+        // 실수 장부: 목표 표현을 수업에서 제대로 썼으면 맞힘 1번
+        const checks = ((out.session && out.session.targetCheck) || []).filter((c) => c && c.used && targets.some((t) => t.id === c.id));
+        if (checks.length) {
+          const upd = { updatedAt: new Date().toISOString() };
+          checks.forEach((c) => {
+            upd["marks." + c.id + ".hit"] = admin.firestore.FieldValue.increment(1);
+            upd["marks." + c.id + ".last"] = "hit";
+            upd["marks." + c.id + ".lastAt"] = new Date().toISOString();
+          });
+          await db.collection("englishLedger").doc("state").update(upd).catch((e) => logger.warn("ledger update", e.message));
+        }
         const ieltsLog = ((old && old.ieltsHistory) || []).slice(0, 19);
         const sc = out.session && out.session.ielts;
         if (isIelts && sc) ieltsLog.unshift({ date, fc: sc.fc, lr: sc.lr, gra: sc.gra, overall: sc.overall });
@@ -776,9 +795,11 @@ exports.tutorMemory = onRequest(
           mistakes: (out.session && out.session.mistakes) || [],
           good: (out.session && out.session.good) || [],
           ielts: (out.session && out.session.ielts) || null,
+          targetCheck: (out.session && out.session.targetCheck) || [],
+          pron,
           lines: (lines || []).slice(0, 400),
         });
-        return res.status(200).json({ profile, session: out.session || null });
+        return res.status(200).json({ profile, session: Object.assign({}, out.session || {}, { pron }) });
       }
 
       // ANNIE 와 같은 프롬프트로 자세한 수업 리뷰 → English 탭(englishSessions)에 "Oliver" 수업으로 저장
