@@ -1,3 +1,9 @@
+## 2026-11-03 · 맥북 · 가계부 포인트를 지출에서 빼기
+
+- 네이버페이 포인트 결제는 내 돈이 아님(구매 적립 포인트). 대부분 화면은 이미 뺐지만 세 곳이 지출로 더하고 있었음
+- 고친 곳: 가계부 도넛(ldgRenderDonuts), 홈 이번 달 요약(app-1-pages), 내보내기 _isExpense(app-5-ledger-export)
+- 다음 할 일: 없음
+
 ## 2026-11-03 · 맥북 · English › Mistakes 실수 장부 + Oliver 목표·발음·되말하기 (english-ledger v1 · app-1-pages v407 · tutorMemory · sw v1675)
 - 누리: 스레드 "클로드 과외쌤" 글 보고 → 우리 영어 탭은 다 있는데 실수가 다섯 군데 흩어져 다시 꺼내 쓰는 순간이 없음 → ① 장부 하나로 ② 수업 끝 되말하기 ③ Oliver 발음 메모
 - 새 탭 **Mistakes**(Annie 다음): 원본은 그대로 두고 읽어서 합침 — englishSessions.upgrades(Annie·Oliver 고쳐 말하기) · tutorSessions.mistakes(자세한 리뷰 없는 Oliver 수업만)·pron · englishStudy 검수 points(대충·놓침). 같은 고친 문장은 한 줄(n번 나옴)

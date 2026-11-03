@@ -122,7 +122,7 @@
 
   // "지출 판별" — _ledgerData.categories의 수입/저축 외 모든 대분류는 지출로 본다
   function _isExpense(t) {
-    return t && t['대분류'] !== '수입' && t['대분류'] !== '저축';
+    return t && t['대분류'] !== '수입' && t['대분류'] !== '저축' && t['대분류'] !== '포인트';
   }
 
   // 최근 N개월 YYYY-MM 키 배열 (오름차순). baseDate 없으면 오늘 기준

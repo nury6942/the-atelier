@@ -11969,7 +11969,7 @@
       var amt = parseFloat(t['금액'] || 0) || 0;
       var major = t['대분류'] || '';
       if (major === '수입') income += amt;
-      else if (major !== '저축') expense += amt; // 저축은 내부 이동이라 지출 아님
+      else if (major !== '저축' && major !== '포인트') expense += amt; // 저축은 내부 이동, 포인트는 내 돈이 아님
     });
     // 원 → 만으로 변환 후 포맷 (1억 이상이면 X억, 그 미만이면 X만)
     function fmtKRWFromWon(won) {

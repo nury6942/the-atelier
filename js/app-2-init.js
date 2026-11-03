@@ -1896,7 +1896,7 @@ function ldgRenderDonuts() {
     if (t['대분류'] === '수입') {
       var sub = t['소분류'] || '기타';
       incomeByCategory[sub] = (incomeByCategory[sub] || 0) + t['금액'];
-    } else if (t['대분류'] !== '저축') {
+    } else if (t['대분류'] !== '저축' && t['대분류'] !== '포인트') {  // 포인트로 낸 건 내 돈이 아님
       var cat = t['대분류'] || '기타';
       expenseByCategory[cat] = (expenseByCategory[cat] || 0) + t['금액'];
     }
