@@ -118,7 +118,7 @@
          '<div class="tx-note">5월 세금의 절반을 미리 내는 것</div></div>');
     stops.push('<div class="tx-stop' + (interim ? '' : ' is-next') + '"><div class="tx-when">2027. 02</div><div class="tx-what">연말정산</div>' +
          '<div class="tx-big up"><i class="tx-tri">▲</i>' + man(refund) + '<small>만</small></div>' +
-         '<div class="tx-note">회사가 미리 뗀 세금 중 돌려받는 돈</div></div>');
+         '<div class="tx-note">회사가 미리 뗀 세금 중 돌려받는 돈' + (t.y2025 && t.y2025.refundFeb ? ' · 작년 2월 ' + man(t.y2025.refundFeb) + '만' : '') + '</div></div>');
     stops.push('<div class="tx-stop"><div class="tx-when">2027. 05. 31</div><div class="tx-what">종합소득세</div>' +
          '<div class="tx-big down"><i class="tx-tri">▼</i>' + man(may) + '<small>만</small></div>' +
          '<div class="tx-note">' + (interim ? '중간예납 빼고 남은 몫 (지방세 포함)' : '포타 수입 때문에 더 내는 돈 (지방세 포함)') + '</div></div>');
