@@ -7,7 +7,7 @@
    "cat": "vibe",
    "title": "새 1만 1천 종을 AI로 한 장씩 그렸다",
    "url": "https://github.com/alchaincyf/huashu-bird-sticker",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/alchaincyf/huashu-bird-sticker",
    "source": "GitHub @alchaincyf · 별 617 · 10-30",
    "how": "사진 보고 GPT-image로 그림, 채점 AI가 재작업",
    "chips": [
@@ -21,7 +21,7 @@
    "cat": "tool",
    "title": "포즈 1,439장·옷 1,407벌 무료 도감",
    "url": "https://github.com/HRuiCcc/RuiC-PoseAtlas",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/HRuiCcc/RuiC-PoseAtlas",
    "source": "GitHub @HRuiCcc · 별 1,127 · 10-28",
    "how": "AI가 그린 마네킹 선화를 5방향으로, 검색·필터",
    "chips": [
@@ -42,7 +42,7 @@
     {
      "title": "원래 실험 전체 기록: GPT-6 Astra가 신경망 숫자를 읽고 고치기",
      "url": "https://github.com/RikiyaT/lm_understand-logs",
-     "image": null
+     "image": "https://opengraph.githubassets.com/1/RikiyaT/lm_understand-logs"
     }
    ],
    "chips": [
@@ -141,7 +141,7 @@
    "cat": "release",
    "title": "피카 영상+소리 모델 가중치",
    "url": "https://github.com/Pika-Labs/Pika-H3-Flex",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/Pika-Labs/Pika-H3-Flex",
    "source": "GitHub · 10-29 · 별 1,266 · 33B · 로컬 480p/768p",
    "watching": true
   },
@@ -149,7 +149,7 @@
    "cat": "vibe",
    "title": "AI 둘이 토론해 만든 바다",
    "url": "https://github.com/Humpalumps/Ultra-Water",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/Humpalumps/Ultra-Water",
    "source": "GitHub · MIT · three.js · 별 617",
    "watching": false
   },
@@ -157,7 +157,7 @@
    "cat": "free",
    "title": "3D 과학 실험 수업 54개",
    "url": "https://github.com/smithjohn78390/tongjiang-lab",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/smithjohn78390/tongjiang-lab",
    "source": "GitHub · CC BY-NC · HTML 한 파일씩 · 별 1,524",
    "watching": false
   },
@@ -165,7 +165,7 @@
    "cat": "free",
    "title": "맥에서 도는 무료 받아쓰기",
    "url": "https://github.com/anomalyco/hex",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/anomalyco/hex",
    "source": "GitHub · MIT · 맥·윈도우·리눅스 · 별 4,517",
    "watching": false
   },
@@ -173,7 +173,7 @@
    "cat": "tool",
    "title": "에이전트가 지난 세션 기억",
    "url": "https://github.com/thedotmack/claude-mem",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/thedotmack/claude-mem",
    "source": "GitHub 트렌딩 · 오늘 별 1,138 · 누적 11만",
    "watching": false
   },
@@ -181,7 +181,7 @@
    "cat": "tool",
    "title": "사진 한 장으로 애니 머리카락",
    "url": "https://github.com/hyz317/HairDeck",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/hyz317/HairDeck",
    "source": "GitHub · Apache-2.0 · 별 776",
    "watching": false
   },
@@ -189,7 +189,7 @@
    "cat": "tool",
    "title": "사진 한 장을 3D로, Idol",
    "url": "https://github.com/speridlabs/idol-sdk",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/speridlabs/idol-sdk",
    "source": "GitHub · Apache-2.0 · 별 720",
    "watching": false
   }
