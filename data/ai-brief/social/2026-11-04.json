@@ -1,0 +1,269 @@
+{
+ "date": "2026-11-04",
+ "collectedAt": "2026-11-04T06:30:29+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@simonw",
+   "url": "https://x.com/simonw/status/2117655816581071203",
+   "at": "2026-11-03T16:31:05Z",
+   "likes": 2500,
+   "replies": 230,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "노트북 Qwen 3.8 27B도 가중치만 보고 게임 맞힘",
+   "points": [
+    "GPT-6 Astra가 모델 가중치(숫자 덩어리)를 직접 해석한다는 논문 예제를 로컬에서 재현",
+    "LM Studio에 Qwen 3.8 27B(17GB) 띄우고 llm -f <prompt.txt URL> 로 실행, 기본 8192 컨텍스트는 오류라 늘림",
+    "도구 없이 46분·추론 토큰 4.3만 개 끝에 팩맨을 신뢰도 72%로 맞힘, 퐁도 1시간 5분 만에 정답",
+    "같은 문제를 Kimi K3.1 Pro는 9분 41초에 브레이크아웃으로 맞힘"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@bcherny",
+   "url": "https://x.com/bcherny/status/2117693181651542387",
+   "at": "2026-11-03T18:59:33Z",
+   "likes": 915,
+   "replies": 105,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude, 회사 플러그인에 자동 로그인 연결",
+   "points": [
+    "팀·엔터프라이즈 관리자가 플러그인을 설정해 두면 팀원은 처음 쓸 때 자동 연결",
+    "플러그인마다 하나씩 로그인하던 번거로움이 사라짐",
+    "Claude를 신뢰 발급자로 받는 MCP 서버여야 동작 — 플러그인 제작자는 이 지원을 추가하라는 안내"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2117680108706140161/img/W7IjAqq94Q6lFVOo.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2117680108706140161/vid/avc1/640x360/MffNW1bFvuppcIBS.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@emollick",
+   "url": "https://x.com/emollick/status/2117659011373756509",
+   "at": "2026-11-03T16:43:47Z",
+   "likes": 186,
+   "replies": 121,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "내 논문을 GPT-6 Pro·Opus 5.5에 리뷰시켜 보라",
+   "points": [
+    "학계에서 AI 논문 심사 활용을 두고 논쟁 중이라는 맥락",
+    "GPT-6 Pro 또는 Opus 5.5 High에 본인 논문을 주고 '도움 되는 실질적 피드백'을 요청해 보라는 제안",
+    "제대로 쓰면 꽤 통찰력 있는 지적이 나온다는 걸 직접 확인해 보라는 것"
+   ],
+   "try": "쓰고 있는 기획서 하나를 Opus에 넣고 실질적 피드백만 달라고 해 보기",
+   "media_items": []
+  },
+  {
+   "src": "threads",
+   "author": "@ai_onepage",
+   "url": "https://www.threads.com/@ai_onepage/post/DfPT3-qD4z3",
+   "at": "2026-11-02T12:30:11Z",
+   "likes": 97,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "'AI 티' 지우는 클로드 스킬 unslop, 별 4,900개",
+   "points": [
+    "보라 그라데이션·번지는 글로우·이모지 라벨·외치는 문구·들쭉날쭉 간격부터 찾아냄",
+    "방향을 먼저 제안하고 간격→색→아이콘→문구→글꼴→레이아웃 순으로 고침",
+    "skills 폴더에 복사 후 '/unslop this dashboard'처럼 지시, 코덱스에서도 동작",
+    "수정 전후 10초 영상 기능은 Playwright·ffmpeg 필요, CC BY 4.0(github.com/heydamir/unslop)"
+   ],
+   "try": "아뜰리에 화면 하나에 /unslop 돌려 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfQVH9eETdE",
+   "at": "2026-11-02T22:00:21Z",
+   "likes": 605,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "X 디자인 책임자의 스킬 Stageshow 무료 공개",
+   "points": [
+    "Benji Taylor가 제품 소개용 UI 이미지·애니메이션·벤토 그리드를 잘 만들게 하는 스킬을 공개",
+    "디자인 방향·화면 구성을 먼저 계획하고, 결과를 영상으로 녹화해 문제를 찾아 고치는 과정 포함",
+    "Figma·Gmail 화면 재현 테스트에서 스킬 쓴 쪽이 더 좋았다고 함",
+    "설치: npx skills add benjitaylor/skills --skill stageshow"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@heytanzil",
+   "url": "https://www.threads.com/@heytanzil/post/DfSGeHSlMoN",
+   "at": "2026-11-03T14:30:59Z",
+   "likes": 309,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 디자인 슬롭 막는 레퍼런스 사이트 5곳",
+   "points": [
+    "jiro.build: 디자인 1,400개+를 MCP로 에이전트가 직접 끌어옴",
+    "designspells.com 마이크로 인터랙션, styles.refero.design 실제 색·글꼴 시스템",
+    "supahero.io 히어로 섹션, mobbin.com 실제 앱 흐름",
+    "좋은 레퍼런스를 줘야 결과물이 좋아진다는 요지"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@dhdbtkd",
+   "url": "https://www.threads.com/@dhdbtkd/post/DfRUrypGtFJ",
+   "at": "2026-11-03T07:16:18Z",
+   "likes": 151,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "'캐러셀' 말고 모양 이름을 말하면 AI가 정확히 만든다",
+   "points": [
+    "shadcnblocks 커버플로 블록 41종 미리보기에서 모양을 고르고 이름·움직임을 AI에 그대로 전달",
+    "예: Album Cover Flow(바닥 반사+3D 회전), 3D Image Ring(원통형, 끌면 회전), Tower Helix(나선 자동 회전)",
+    "Vinyl Record(커버가 비키고 LP 굴러나옴), Tunnel(터널 안쪽으로 작아짐)",
+    "코드는 Pro 유료(149달러), 미리보기는 누구나 볼 수 있어 레퍼런스로만 써도 됨"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@dhdbtkd",
+   "url": "https://www.threads.com/@dhdbtkd/post/DfR6dGJiUxF",
+   "at": "2026-11-03T12:46:20Z",
+   "likes": 52,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "영상 생성기 없이 1분 애니 쇼츠 뽑는 클로드 스킬",
+   "points": [
+    "주제만 주면 클로드 코드가 대본·장면 계획·렌더링까지, three.js+Remotion 코드로 그림",
+    "~/.claude/skills/cartoon-3d-short/ 에 받고 'cartoon short 스킬로 ○○ 쇼츠 만들어 줘'",
+    "Remotion·Node·파이썬3·ffmpeg 필요, 내레이션은 직접 녹음, 배경음은 파이썬으로 합성",
+    "67초 최종본 렌더 약 10분, 작업 폴더 1.3GB / Remotion은 4인 이상 회사면 유료"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@ssaengcho",
+   "url": "https://www.threads.com/@ssaengcho/post/DfR9BR1k2Ow",
+   "at": "2026-11-03T13:27:37Z",
+   "likes": 77,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Opus 5.5가 코드로만 그린 인터랙티브 은하",
+   "points": [
+    "이미지·영상 생성 없이 three.js 코드만으로 그려 형태·질감 수정과 마우스 조작이 가능",
+    "프롬프트: index.html 한 파일, three@0.160.0 CDN, 점 16만 개 4갈래 나선 은하·차등 회전",
+    "성운·배경 별 9천 개, 블룸 세기 0.55·반경 0.25·임계값 0.32, 행성 3개와 반짝이는 별 30개",
+    "마우스가 닿으면 별이 소용돌이치며 무지갯빛으로 출렁 — 전체 프롬프트는 댓글에"
+   ],
+   "try": "댓글 프롬프트 그대로 Claude에 붙여 index.html 만들어 열어 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@joo__life",
+   "url": "https://www.threads.com/@joo__life/post/DfOJV7BEvad",
+   "at": "2026-11-02T01:38:55Z",
+   "likes": 48,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드가 헛소리 시작할 때 5단계",
+   "points": [
+    "/context로 컨텍스트가 얼마나 찼는지 먼저 확인",
+    "70% 넘으면 /compact로 줄이기",
+    "큰 작업은 /plan으로 계획부터 받고 따져 본 뒤 진행",
+    "CLAUDE.md는 /init으로 만들고 150줄 이내, 수락 전 diff 꼭 확인"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@official.jay",
+   "url": "https://www.threads.com/@official.jay/post/DfRYBMNkrIM",
+   "at": "2026-11-03T07:44:53Z",
+   "likes": 18,
+   "replies": 5,
+   "image": null,
+   "media": false,
+   "tag": "만든 것",
+   "summary": "부부가 매일 쓰는 가족 LLM 위키 설계서 공개",
+   "points": [
+    "빈 폴더에서 Claude Code에 설계서를 주고 '이대로 가족 위키 생성해줘' 하면 끝",
+    "아이 성장·병원·접종, 가전 AS, 차 정비, 생신·기일, 장보기까지 한곳에",
+    "핵심은 지어내지 않기 규칙: 없으면 '아직 없어요', 모르면 '확인 필요', 나이는 생일로 계산",
+    "배우자는 메신저 봇에 말로 부탁, 봇도 같은 규칙 파일을 따름"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@gogo_post_it",
+   "url": "https://www.threads.com/@gogo_post_it/post/DfR2bp5k-AN",
+   "at": "2026-11-03T12:10:38Z",
+   "likes": 19,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "클로드로 쇼츠 콘티, 제미나이로 실사화 해봄",
+   "points": [
+    "클로드에 코드로만 10초 드라마 콘티를 뽑게 함",
+    "프롬프트: '10초 분량 짧은 드라마 만들어줘, 그래픽은 제미나이로 실사화할 거니 뼈대만 있어도 돼'",
+    "나온 콘티를 제미나이에 넣어 실사 그래픽을 입힘(좌우 비교 영상)",
+    "프롬프트를 더 자세히 주면 콘티 품질이 올라갈 것 같다는 소감"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@joyday_0912",
+   "url": "https://www.threads.com/@joyday_0912/post/DfQb88zEvr1",
+   "at": "2026-11-02T23:00:06Z",
+   "likes": 529,
+   "replies": 7,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "서류 23번 탈락 뒤 GPT 프롬프트만 바꿔 통과",
+   "points": [
+    "경력 요약을 '바로 실무 투입 가능한 사람'처럼 다시 쓰게 함",
+    "공고를 붙여넣고 반복 키워드 3개를 경력 설명에 자연스럽게 녹이게 함",
+    "숫자·성과 없는 문장을 전부 찾아 현실적인 지표를 제안받음",
+    "마지막엔 '채용 담당자가 10초 안에 떨어뜨릴 이유'를 찾아 고치게 함"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@sangbo98",
+   "url": "https://www.threads.com/@sangbo98/post/DfQiq1TkxBg",
+   "at": "2026-11-02T23:58:42Z",
+   "likes": 717,
+   "replies": 22,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "유료 강의 대신 빅테크 공식 무료 AI 아카데미 5곳",
+   "points": [
+    "클로드 아카데미(academy.claude.com/ko): 4시간, 한국어 지원",
+    "OpenAI 아카데미: 1시간 기초 + 수료 배지, 구글 스킬스(skills.google): 짧은 모듈",
+    "Elements of AI(헬싱키대): 비전공자용 원리",
+    "DeepLearning.AI: 1시간 안팎 숏코스, 에이전트·RAG 최신"
+   ]
+  }
+ ]
+}
