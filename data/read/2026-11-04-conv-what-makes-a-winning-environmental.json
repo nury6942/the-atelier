@@ -1,0 +1,770 @@
+{
+ "id": "2026-11-04-conv-what-makes-a-winning-environmental",
+ "title": "What makes a winning environmental campaign? We studied six decades of activism to find out",
+ "url": "https://theconversation.com/what-makes-a-winning-environmental-campaign-we-studied-six-decades-of-activism-to-find-out-294669",
+ "source": "The Conversation",
+ "author": "Robyn Gulliver, Tracy Schultz",
+ "published": "2026-10-27",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "Before the High Court handed down its recent controversial decision on the proposed expansion of a New South Wales coal mine, many environmentalists were bracing for a loss. Time and again, courts have given coal and gas projects the green light over environmental concerns.",
+  "But not this time. With a split three-two judgement, the court ruled the approval for the Mount Pleasant mine expansion invalid, declaring that NSW planning authorities failed to properly consider the overseas emissions the project would generate.",
+  "The win capped a four-year campaign by a community group from NSW’s Upper Hunter region. However, the decision goes beyond this one mine, directly affecting the 17 other coal proposals in the NSW planning pipeline.",
+  "But it was not all good news. Critics argue the NSW government is trying to bypass the court ruling by pledging to change the law to allow the mining company to keep producing coal at its expanded rate of 16.5 million tonnes a year until 2032.",
+  "This begs the question: was this outcome a win or not?",
+  "Partial wins are the norm",
+  "It’s tempting to see environmental campaigns as wins or losses: either a mine is stopped or it isn’t, a law is passed or it isn’t.",
+  "Our latest research suggests most campaigns end up somewhere in between.",
+  "Our new study is the first to measure what an entire environmental movement achieves. We screened more than 3,700 environmental groups to build a database of 2,139 named campaigns, dating back to the 1960s.",
+  "For each campaign, we recorded the goal, the target and when it began and ended. We then checked published evidence, such as government decisions and news reports, to see whether each goal was fully achieved, partly achieved or not achieved at all.",
+  "Partial success was the most common outcome. Almost two thirds (62.5%) of the campaigns made at least some progress towards their goal. Only one in five fully achieved it.",
+  "However, the campaign to end native forest logging in Victoria shows these partial wins can add up. Beginning with anti-woodchipping activism in the early 1990s, campaigners won protections one forest at a time, from the rugged Wongungarra Valley to the rainforests of the Otways.",
+  "In 2023, the government announced native timber harvesting in state forests would end the following year, citing ongoing “litigation processes and increasingly severe bushfires” as the main reasons for its decision.",
+  "No single win ended native logging. Thirty years of partial gains eventually did.",
+  "What makes campaigns more likely to succeed?",
+  "Campaigns come in every shape and size. Some aim for a single, concrete decision, like the demand to ban dumping dredge spoil – organic matter removed during dredging, including sand, soil and debris – in the Great Barrier Reef.",
+  "Others aim to change how people live, from eating less meat to growing beards or braids to fund tree planting.",
+  "Our research suggests there are two key factors that influence if a campaign achieves its main goal.",
+  "Clear and specific goals",
+  "Campaigns against mines and fossil fuel projects usually name a specific goal, such as ending fracking in Queensland’s Lake Eyre basin, so their outcomes are easy to measure. We could measure the success of 93% of the mining campaigns studied.",
+  "In contrast, sustainability campaigns often set broad goals, such as helping residents save energy. But a win that can’t be clearly measured is much harder to celebrate.",
+  "Examples of clear, specific goals for a conservation campaign are the protection of a specific forest or the declaration of a new national park.",
+  "Among the campaigns we could verify, 78% of conservation campaigns achieved at least some success, compared with 66% of climate campaigns. This was largely because climate campaigns more often pursue systemic goals, such as cutting national emissions by 75% before 2030. Such sweeping goals are difficult to achieve, with only 17% of verifiable climate campaigns achieving their goal in full.",
+  "The target matters",
+  "Campaigns aimed at banks were the most successful of those we studied, with 28 of 30 achieving some success.",
+  "For example, NAB stopped lending to Whitehaven Coal after campaigners put pressure on the bank by dropping into local NAB branches, sending emails and making phone calls.",
+  "Campaigns targeting superannuation funds, such as the pressure on HESTA to divest from fossil fuels, did nearly as well, with 16 of 19 achieving some success.",
+  "Campaigns aimed at politicians fared worse. Only 39% achieved their goal in part or in full, compared with 56% of campaigns aimed at government bodies such as departments, agencies or councils.",
+  "Small wins can make a difference",
+  "The world faces a triple planetary crisis of climate change, biodiversity loss and pollution. Environmental campaigns offer communities a way to come together and demand change.",
+  "But such change requires more of us to get involved. Research shows people are more likely to act when they believe action works. That’s why it’s crucial to celebrate every win, no matter how small or incremental.",
+  "The Mount Pleasant decision reminds us what a well-designed environmental campaign looks like: a clear goal, a specific decision to challenge and a community willing to stay the course. No single campaign will solve the planetary crisis. But win by win, even partial ones, environmental campaigners are proving change is possible."
+ ],
+ "level": "B2+",
+ "minutes": 5,
+ "words": 869,
+ "gloss": {
+  "handed down": {
+   "w": "hand down",
+   "pos": "구",
+   "ko": "(판결을) 내리다",
+   "en": "to officially announce a decision or sentence",
+   "ex": "The judge handed down a ruling in favour of the small textile workshop.",
+   "ipa": "/ˈhændɪd daʊn/"
+  },
+  "hand down": {
+   "w": "hand down",
+   "pos": "구",
+   "ko": "(판결을) 내리다",
+   "en": "to officially announce a decision or sentence",
+   "ex": "The judge handed down a ruling in favour of the small textile workshop.",
+   "ipa": "/hænd daʊn/"
+  },
+  "controversial": {
+   "w": "controversial",
+   "pos": "형용사",
+   "ko": "논란이 많은",
+   "en": "causing a lot of public disagreement",
+   "ex": "The brand's controversial ad campaign was pulled within a week.",
+   "ipa": "/ˌkɒntrəˈvɜːʃl/"
+  },
+  "bracing for": {
+   "w": "brace for",
+   "pos": "구",
+   "ko": "(나쁜 일에) 대비하다, 각오하다",
+   "en": "to prepare yourself for something unpleasant",
+   "ex": "Retailers are bracing for a slow winter season.",
+   "ipa": "/ˈbreɪsɪŋ fɔː/"
+  },
+  "brace for": {
+   "w": "brace for",
+   "pos": "구",
+   "ko": "(나쁜 일에) 대비하다, 각오하다",
+   "en": "to prepare yourself for something unpleasant",
+   "ex": "Retailers are bracing for a slow winter season.",
+   "ipa": "/breɪs fɔː/"
+  },
+  "time and again": {
+   "w": "time and again",
+   "pos": "구",
+   "ko": "몇 번이고, 거듭",
+   "en": "repeatedly; many times",
+   "ex": "Time and again, customers asked for the coat in a darker shade.",
+   "ipa": "/taɪm ənd əˈɡen/"
+  },
+  "green light": {
+   "w": "green light",
+   "pos": "명사",
+   "ko": "허가, 승인",
+   "en": "official permission to start something",
+   "ex": "The director finally gave the new collection the green light.",
+   "ipa": "/ˌɡriːn ˈlaɪt/"
+  },
+  "split": {
+   "w": "split",
+   "pos": "형용사",
+   "ko": "(의견이) 갈린",
+   "en": "divided, with people disagreeing",
+   "ex": "The jury reached a split decision on the best young designer.",
+   "ipa": "/splɪt/"
+  },
+  "judgement": {
+   "w": "judgement",
+   "pos": "명사",
+   "ko": "판결; 판단",
+   "en": "an official decision made by a court",
+   "ex": "The judgement will affect how all factories report their waste.",
+   "ipa": "/ˈdʒʌdʒmənt/"
+  },
+  "invalid": {
+   "w": "invalid",
+   "pos": "형용사",
+   "ko": "(법적으로) 무효인",
+   "en": "not legally or officially acceptable",
+   "ex": "My visa was declared invalid because of a missing stamp.",
+   "ipa": "/ɪnˈvælɪd/"
+  },
+  "emissions": {
+   "w": "emission",
+   "pos": "명사",
+   "ko": "배출(량)",
+   "en": "gas or other substances sent into the air",
+   "ex": "Shipping by sea produces lower emissions than air freight.",
+   "ipa": "/iˈmɪʃnz/"
+  },
+  "emission": {
+   "w": "emission",
+   "pos": "명사",
+   "ko": "배출(량)",
+   "en": "gas or other substances sent into the air",
+   "ex": "Shipping by sea produces lower emissions than air freight.",
+   "ipa": "/iˈmɪʃn/"
+  },
+  "generate": {
+   "w": "generate",
+   "pos": "동사",
+   "ko": "만들어 내다, 발생시키다",
+   "en": "to produce or create something",
+   "ex": "The pop-up store generated more sales than expected.",
+   "ipa": "/ˈdʒenəreɪt/"
+  },
+  "capped": {
+   "w": "cap",
+   "pos": "동사",
+   "ko": "(성공적으로) 마무리하다, 장식하다",
+   "en": "to be the final, often best, part of something",
+   "ex": "The award capped a remarkable first year for the label.",
+   "ipa": "/kæpt/"
+  },
+  "cap": {
+   "w": "cap",
+   "pos": "동사",
+   "ko": "(성공적으로) 마무리하다, 장식하다",
+   "en": "to be the final, often best, part of something",
+   "ex": "The award capped a remarkable first year for the label.",
+   "ipa": "/kæp/"
+  },
+  "pipeline": {
+   "w": "pipeline",
+   "pos": "명사",
+   "ko": "(진행·검토 중인) 단계, 대기 목록",
+   "en": "a system through which plans move before being completed",
+   "ex": "We have three new fabric suppliers in the pipeline.",
+   "ipa": "/ˈpaɪplaɪn/"
+  },
+  "bypass": {
+   "w": "bypass",
+   "pos": "동사",
+   "ko": "우회하다, 피해 가다",
+   "en": "to avoid a rule or process by going around it",
+   "ex": "Some sellers bypass customs checks by labelling goods as gifts.",
+   "ipa": "/ˈbaɪpɑːs/"
+  },
+  "pledging": {
+   "w": "pledge",
+   "pos": "동사",
+   "ko": "약속하다, 서약하다",
+   "en": "to make a serious public promise",
+   "ex": "The company is pledging to use only recycled packaging.",
+   "ipa": "/ˈpledʒɪŋ/"
+  },
+  "pledge": {
+   "w": "pledge",
+   "pos": "동사",
+   "ko": "약속하다, 서약하다",
+   "en": "to make a serious public promise",
+   "ex": "The company is pledging to use only recycled packaging.",
+   "ipa": "/pledʒ/"
+  },
+  "begs the question": {
+   "w": "beg the question",
+   "pos": "구",
+   "ko": "(자연스럽게) ~라는 의문을 낳다",
+   "en": "to make people want to ask a particular question",
+   "ex": "The price rise begs the question of whether quality has improved.",
+   "ipa": "/beɡz ðə ˈkwestʃən/"
+  },
+  "beg the question": {
+   "w": "beg the question",
+   "pos": "구",
+   "ko": "(자연스럽게) ~라는 의문을 낳다",
+   "en": "to make people want to ask a particular question",
+   "ex": "The price rise begs the question of whether quality has improved.",
+   "ipa": "/beɡ ðə ˈkwestʃən/"
+  },
+  "norm": {
+   "w": "norm",
+   "pos": "명사",
+   "ko": "일반적인 것, 표준",
+   "en": "the usual or expected situation",
+   "ex": "Working from home has become the norm in many design studios.",
+   "ipa": "/nɔːm/"
+  },
+  "tempting": {
+   "w": "tempting",
+   "pos": "형용사",
+   "ko": "솔깃한, ~하고 싶어지는",
+   "en": "attractive and making you want to do or believe it",
+   "ex": "It is tempting to buy cheap fabric, but it rarely lasts.",
+   "ipa": "/ˈtemptɪŋ/"
+  },
+  "screened": {
+   "w": "screen",
+   "pos": "동사",
+   "ko": "선별하다, 걸러 내다",
+   "en": "to check people or things to choose suitable ones",
+   "ex": "We screened over 200 portfolios before the interviews.",
+   "ipa": "/skriːnd/"
+  },
+  "screen": {
+   "w": "screen",
+   "pos": "동사",
+   "ko": "선별하다, 걸러 내다",
+   "en": "to check people or things to choose suitable ones",
+   "ex": "We screened over 200 portfolios before the interviews.",
+   "ipa": "/skriːn/"
+  },
+  "verify": {
+   "w": "verify",
+   "pos": "동사",
+   "ko": "확인하다, 검증하다",
+   "en": "to check that something is true or correct",
+   "ex": "Please verify your address before we ship the order.",
+   "ipa": "/ˈverɪfaɪ/"
+  },
+  "verifiable": {
+   "w": "verifiable",
+   "pos": "형용사",
+   "ko": "검증 가능한",
+   "en": "able to be checked and proved true",
+   "ex": "The brand's eco claims should be based on verifiable data.",
+   "ipa": "/ˈverɪfaɪəbl/"
+  },
+  "add up": {
+   "w": "add up",
+   "pos": "구",
+   "ko": "(조금씩) 쌓여 커지다",
+   "en": "to gradually increase to a large amount or effect",
+   "ex": "Small daily savings add up over a year.",
+   "ipa": "/æd ʌp/"
+  },
+  "rugged": {
+   "w": "rugged",
+   "pos": "형용사",
+   "ko": "(지형이) 험한, 울퉁불퉁한",
+   "en": "rough, rocky and uneven",
+   "ex": "We hiked along the rugged coastline of Jeju.",
+   "ipa": "/ˈrʌɡɪd/"
+  },
+  "citing": {
+   "w": "cite",
+   "pos": "동사",
+   "ko": "(이유·근거로) 들다, 언급하다",
+   "en": "to mention something as a reason or example",
+   "ex": "She resigned, citing health problems.",
+   "ipa": "/ˈsaɪtɪŋ/"
+  },
+  "cite": {
+   "w": "cite",
+   "pos": "동사",
+   "ko": "(이유·근거로) 들다, 언급하다",
+   "en": "to mention something as a reason or example",
+   "ex": "She resigned, citing health problems.",
+   "ipa": "/saɪt/"
+  },
+  "litigation": {
+   "w": "litigation",
+   "pos": "명사",
+   "ko": "소송",
+   "en": "the process of taking legal action in court",
+   "ex": "The copyright dispute ended in years of costly litigation.",
+   "ipa": "/ˌlɪtɪˈɡeɪʃn/"
+  },
+  "severe": {
+   "w": "severe",
+   "pos": "형용사",
+   "ko": "극심한, 심각한",
+   "en": "very serious or harmful",
+   "ex": "Severe flooding delayed deliveries from the factory.",
+   "ipa": "/sɪˈvɪə/"
+  },
+  "dredging": {
+   "w": "dredging",
+   "pos": "명사",
+   "ko": "준설(물 밑 흙을 파내는 작업)",
+   "en": "removing mud or sand from the bottom of a river, harbour or sea",
+   "ex": "Dredging keeps the harbour deep enough for cargo ships.",
+   "ipa": "/ˈdredʒɪŋ/"
+  },
+  "debris": {
+   "w": "debris",
+   "pos": "명사",
+   "ko": "잔해, 부스러기",
+   "en": "broken pieces left after something is destroyed or removed",
+   "ex": "Volunteers cleared plastic debris from the beach.",
+   "ipa": "/ˈdebriː/"
+  },
+  "concrete": {
+   "w": "concrete",
+   "pos": "형용사",
+   "ko": "구체적인",
+   "en": "clear, specific and real rather than general",
+   "ex": "Can you give me a concrete example of your design process?",
+   "ipa": "/ˈkɒŋkriːt/"
+  },
+  "fossil fuel": {
+   "w": "fossil fuel",
+   "pos": "명사",
+   "ko": "화석 연료",
+   "en": "fuel such as coal, oil or gas formed from ancient plants and animals",
+   "ex": "Polyester is made from fossil fuels.",
+   "ipa": "/ˈfɒsl ˌfjuːəl/"
+  },
+  "fracking": {
+   "w": "fracking",
+   "pos": "명사",
+   "ko": "수압 파쇄(가스 채굴법)",
+   "en": "forcing liquid into rock to release gas or oil",
+   "ex": "Residents protested against fracking near their farmland.",
+   "ipa": "/ˈfrækɪŋ/"
+  },
+  "sustainability": {
+   "w": "sustainability",
+   "pos": "명사",
+   "ko": "지속 가능성",
+   "en": "the ability to continue without harming the environment",
+   "ex": "Sustainability is now a key part of every fashion brief.",
+   "ipa": "/səˌsteɪnəˈbɪləti/"
+  },
+  "in contrast": {
+   "w": "in contrast",
+   "pos": "구",
+   "ko": "그에 반해, 대조적으로",
+   "en": "used to show a clear difference",
+   "ex": "Summer sales rose sharply; in contrast, winter sales fell.",
+   "ipa": "/ɪn ˈkɒntrɑːst/"
+  },
+  "conservation": {
+   "w": "conservation",
+   "pos": "명사",
+   "ko": "(자연) 보호, 보존",
+   "en": "protecting nature, wildlife or natural resources",
+   "ex": "Part of the profits go to wildlife conservation.",
+   "ipa": "/ˌkɒnsəˈveɪʃn/"
+  },
+  "systemic": {
+   "w": "systemic",
+   "pos": "형용사",
+   "ko": "체계 전반의, 구조적인",
+   "en": "affecting a whole system rather than one part",
+   "ex": "Low wages in garment factories are a systemic problem.",
+   "ipa": "/sɪˈstemɪk/"
+  },
+  "sweeping": {
+   "w": "sweeping",
+   "pos": "형용사",
+   "ko": "전면적인, 광범위한",
+   "en": "affecting many things or people in a big way",
+   "ex": "The new CEO announced sweeping changes to the team.",
+   "ipa": "/ˈswiːpɪŋ/"
+  },
+  "pursue": {
+   "w": "pursue",
+   "pos": "동사",
+   "ko": "추구하다, 밀고 나가다",
+   "en": "to try to achieve something over time",
+   "ex": "She moved to London to pursue a career in menswear.",
+   "ipa": "/pəˈsjuː/"
+  },
+  "divest": {
+   "w": "divest",
+   "pos": "동사",
+   "ko": "(투자를) 회수하다, 처분하다",
+   "en": "to sell investments in a company or industry",
+   "ex": "The university agreed to divest from tobacco companies.",
+   "ipa": "/daɪˈvest/"
+  },
+  "superannuation": {
+   "w": "superannuation",
+   "pos": "명사",
+   "ko": "(호주) 퇴직연금",
+   "en": "money saved through work for retirement, especially in Australia",
+   "ex": "My employer pays into my superannuation fund every month.",
+   "ipa": "/ˌsuːpərˌænjuˈeɪʃn/"
+  },
+  "fared": {
+   "w": "fare",
+   "pos": "동사",
+   "ko": "(결과가) ~하게 되다, 해내다",
+   "en": "to perform or progress in a particular way",
+   "ex": "How did you fare in your first IELTS mock test?",
+   "ipa": "/feəd/"
+  },
+  "fare": {
+   "w": "fare",
+   "pos": "동사",
+   "ko": "(결과가) ~하게 되다, 해내다",
+   "en": "to perform or progress in a particular way",
+   "ex": "How did you fare in your first IELTS mock test?",
+   "ipa": "/feə/"
+  },
+  "biodiversity": {
+   "w": "biodiversity",
+   "pos": "명사",
+   "ko": "생물 다양성",
+   "en": "the variety of plants and animals in an area",
+   "ex": "Cotton farming without pesticides can protect local biodiversity.",
+   "ipa": "/ˌbaɪəʊdaɪˈvɜːsəti/"
+  },
+  "incremental": {
+   "w": "incremental",
+   "pos": "형용사",
+   "ko": "점진적인, 조금씩 늘어나는",
+   "en": "happening in small steps over time",
+   "ex": "My speaking score showed incremental improvement each month.",
+   "ipa": "/ˌɪŋkrəˈmentl/"
+  },
+  "stay the course": {
+   "w": "stay the course",
+   "pos": "구",
+   "ko": "끝까지 버티다, 포기하지 않다",
+   "en": "to continue until the end despite difficulties",
+   "ex": "Learning a language is hard, but you just need to stay the course.",
+   "ipa": "/steɪ ðə kɔːs/"
+  },
+  "crucial": {
+   "w": "crucial",
+   "pos": "형용사",
+   "ko": "매우 중요한, 결정적인",
+   "en": "extremely important",
+   "ex": "Good lighting is crucial for product photos.",
+   "ipa": "/ˈkruːʃl/"
+  },
+  "partial": {
+   "w": "partial",
+   "pos": "형용사",
+   "ko": "부분적인",
+   "en": "not complete; only part",
+   "ex": "The client gave us a partial payment upfront.",
+   "ipa": "/ˈpɑːʃl/"
+  },
+  "ongoing": {
+   "w": "ongoing",
+   "pos": "형용사",
+   "ko": "계속 진행 중인",
+   "en": "continuing to exist or happen",
+   "ex": "There is an ongoing debate about fast fashion.",
+   "ipa": "/ˈɒnɡəʊɪŋ/"
+  },
+  "put pressure on": {
+   "w": "put pressure on",
+   "pos": "구",
+   "ko": "~에 압력을 가하다",
+   "en": "to try hard to make someone do something",
+   "ex": "Shoppers put pressure on the brand to reveal its factories.",
+   "ipa": "/pʊt ˈpreʃər ɒn/"
+  },
+  "make a difference": {
+   "w": "make a difference",
+   "pos": "구",
+   "ko": "변화를 가져오다, 영향을 주다",
+   "en": "to have a noticeable, usually good, effect",
+   "ex": "Even one second-hand purchase can make a difference.",
+   "ipa": "/meɪk ə ˈdɪfrəns/"
+  },
+  "expansion": {
+   "w": "expansion",
+   "pos": "명사",
+   "ko": "확장, 확대",
+   "en": "the process of becoming larger",
+   "ex": "The brand's expansion into Japan was a success.",
+   "ipa": "/ɪkˈspænʃn/"
+  },
+  "outcome": {
+   "w": "outcome",
+   "pos": "명사",
+   "ko": "결과",
+   "en": "the final result of an action or process",
+   "ex": "We are still waiting for the outcome of the interview.",
+   "ipa": "/ˈaʊtkʌm/"
+  }
+ },
+ "vocab": [
+  "controversial",
+  "brace for",
+  "time and again",
+  "bypass",
+  "beg the question",
+  "norm",
+  "litigation",
+  "in contrast",
+  "systemic",
+  "sweeping",
+  "divest",
+  "fare",
+  "incremental",
+  "stay the course"
+ ],
+ "quiz": [
+  {
+   "q": "All the judges in the High Court agreed that the Mount Pleasant approval was invalid.",
+   "a": "FALSE",
+   "why": "'split three-two judgement'라고 했으므로 판사 의견이 3 대 2로 갈렸다."
+  },
+  {
+   "q": "Around 20 percent of the campaigns studied fully achieved their goal.",
+   "a": "TRUE",
+   "why": "'Only one in five fully achieved it' — 다섯 중 하나, 즉 약 20%다."
+  },
+  {
+   "q": "The Upper Hunter community group received funding from overseas environmental organisations.",
+   "a": "NOT GIVEN",
+   "why": "이 단체의 자금 출처는 글에 전혀 나오지 않는다."
+  },
+  {
+   "q": "The Victorian government mentioned bushfires as one reason for ending native timber harvesting.",
+   "a": "TRUE",
+   "why": "정부가 'increasingly severe bushfires'를 주요 이유로 들었다고 나온다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "many environmental activists expected to lose",
+   "article": "many environmentalists were bracing for a loss"
+  },
+  {
+   "simple": "Most often, campaigns succeeded only partly.",
+   "article": "Partial success was the most common outcome."
+  },
+  {
+   "simple": "It wasn't one victory that stopped native logging.",
+   "article": "No single win ended native logging."
+  },
+  {
+   "simple": "Campaigns that targeted politicians did less well.",
+   "article": "Campaigns aimed at politicians fared worse."
+  },
+  {
+   "simple": "people who are ready to keep going until the end",
+   "article": "a community willing to stay the course"
+  }
+ ],
+ "summary": "A study of more than 2,000 Australian environmental campaigns found that most succeed only partially, but those with clear, specific goals and targets such as banks tend to do best, and small wins can build into major change over time.",
+ "gist": "60여 년간의 호주 환경 운동 2,139건을 분석해 보니 대부분은 '부분 성공'이었고, 목표가 구체적이고 대상(은행·연금 등)을 잘 고른 캠페인이 더 잘 성공했다는 연구 소개 글.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "All of the High Court judges agreed that the approval for the Mount Pleasant mine expansion was invalid.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "판결은 만장일치가 아니라 3대 2였음 — \"With a split three-two judgement\""
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "The court's decision has consequences for coal projects other than Mount Pleasant.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "다른 석탄 사업 17건에도 직접 영향을 줌 — \"directly affecting the 17 other coal proposals in the NSW planning pipeline\""
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The Upper Hunter community group received financial support from national environmental organisations.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "\"a four-year campaign by a community group from NSW's Upper Hunter region\"라고만 하고 자금 출처는 언급하지 않음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Every success should be recognised, however minor it may be.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "필자는 작은 승리도 축하해야 한다고 주장함 — \"it's crucial to celebrate every win, no matter how small or incremental\""
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "One well-designed campaign could be enough to resolve the planetary crisis.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "필자는 이 생각을 분명히 부정함 — \"No single campaign will solve the planetary crisis\""
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 10",
+    "options": [
+     "i  How each campaign's outcome was checked",
+     "ii  The cost of taking legal action",
+     "iii  Gradual gains in one state's forests",
+     "iv  Elected officials as a weaker target",
+     "v  Campaigns aimed at changing lifestyles"
+    ],
+    "answer": "i",
+    "why": "목표·대상·기간을 기록하고 근거 자료로 결과를 확인한 방법을 설명함 — \"checked published evidence ... to see whether each goal was fully achieved\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 12",
+    "options": [
+     "i  How each campaign's outcome was checked",
+     "ii  The cost of taking legal action",
+     "iii  Gradual gains in one state's forests",
+     "iv  Elected officials as a weaker target",
+     "v  Campaigns aimed at changing lifestyles"
+    ],
+    "answer": "iii",
+    "why": "빅토리아주에서 숲 하나씩 보호를 얻어낸 과정 — \"campaigners won protections one forest at a time\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 28",
+    "options": [
+     "i  How each campaign's outcome was checked",
+     "ii  The cost of taking legal action",
+     "iii  Gradual gains in one state's forests",
+     "iv  Elected officials as a weaker target",
+     "v  Campaigns aimed at changing lifestyles"
+    ],
+    "answer": "iv",
+    "why": "정치인을 겨냥한 캠페인의 성과가 더 낮았음 — \"Campaigns aimed at politicians fared worse\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a fundraising activity connected to personal appearance?",
+    "options": [
+     "12",
+     "16",
+     "17",
+     "22"
+    ],
+    "answer": "17",
+    "why": "나무 심기 기금 마련을 위해 수염이나 땋은 머리를 기름 — \"growing beards or braids to fund tree planting\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions natural disasters as part of an official justification?",
+    "options": [
+     "4",
+     "13",
+     "23",
+     "30"
+    ],
+    "answer": "13",
+    "why": "정부가 결정의 이유로 산불을 들었음 — \"increasingly severe bushfires\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the study, what proportion of all campaigns completely achieved their goal?",
+    "options": [
+     "A almost two thirds",
+     "B 62.5%",
+     "C one in five",
+     "D 17%"
+    ],
+    "answer": "C",
+    "why": "목표를 완전히 이룬 캠페인은 다섯 중 하나 — \"Only one in five fully achieved it\" (62.5%는 '일부라도' 진전한 비율, 17%는 기후 캠페인만의 비율)"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "Why were climate campaigns less successful than conservation campaigns?",
+    "options": [
+     "A They rarely targeted financial institutions.",
+     "B They tended to aim for wide-ranging, systemic change.",
+     "C They attracted fewer community members.",
+     "D Their results were reported less often in the news."
+    ],
+    "answer": "B",
+    "why": "기후 캠페인은 시스템 전체를 바꾸는 목표를 더 자주 세움 — \"climate campaigns more often pursue systemic goals\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "To assess outcomes, the researchers relied on published sources including government decisions and ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "news reports"
+    ],
+    "why": "결과 확인에 쓴 근거 자료 — \"such as government decisions and news reports\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Campaigners persuaded NAB to stop lending to Whitehaven Coal by visiting local branches, sending emails and making ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "phone calls"
+    ],
+    "why": "NAB에 압박을 가한 방법 — \"sending emails and making phone calls\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "How many named campaigns did the researchers' database contain?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "2,139"
+    ],
+    "why": "데이터베이스에 담긴 캠페인 수 — \"a database of 2,139 named campaigns\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    9,
+    11,
+    27
+   ]
+  }
+ }
+}

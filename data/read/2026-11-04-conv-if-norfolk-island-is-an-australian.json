@@ -1,0 +1,805 @@
+{
+ "id": "2026-11-04-conv-if-norfolk-island-is-an-australian",
+ "title": "If Norfolk Island is an Australian territory, why is doing business there so complicated?",
+ "url": "https://theconversation.com/if-norfolk-island-is-an-australian-territory-why-is-doing-business-there-so-complicated-295543",
+ "source": "The Conversation",
+ "author": "Rod McNaughton",
+ "published": "2026-11-02",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "Norfolk Island is, legally speaking, part of Australia. But running a business in this remote Pacific territory, home to around 2,100 residents, can be very different from on the mainland.",
+  "Government forms can reject local telephone numbers and banking services can be difficult to access. Even routine changes to internet services can leave businesses disconnected.",
+  "This speaks to its geographic challenges – Norfolk lies some 1,500km from the Australian mainland – as well as some unique complexities stemming from its unusual political and administrative history.",
+  "In 1856, following the closure of its British penal settlements, Norfolk became home to descendants of the HMS Bounty mutineers and Tahitians from Pitcairn Island. The Pitcairn community brought its own traditions and governing practices, which helped shape Norfolk’s distinctive identity long before it became an Australian territory in 1914.",
+  "Norfolk gained a substantial degree of self-government in 1979, before Canberra abolished the arrangement in 2015. Australian taxation, employment laws, Medicare and social security followed, bringing benefits alongside new obligations. The island’s regional council has been under administration since 2021, while disputes over its governance continue.",
+  "Now, a new survey of Norfolk Island businesses examines the difficulties they face, from freight and insurance costs to navigating laws and commercial systems designed for mainland Australia.",
+  "An unusual economy, under pressure",
+  "The Business Council of Norfolk Island received responses from 103 of 239 businesses contacted, with nearly half reporting worsening conditions over the past year. Long-established businesses were particularly affected, with 27 of 42 reporting deterioration, compared with four of 21 established in the past three years.",
+  "Freight was the biggest concern, identified by 70% of respondents who answered the question, followed by insurance at 45%. Other concerns included visitor spending, telecommunications and air services.",
+  "Norfolk has no conventional deep-water port. Cargo ships anchor offshore while cranes lower goods into smaller vessels, known as lighters. These shuttle to the pier, where freight is lifted ashore. Heavy seas can interrupt unloading, while biosecurity requirements complicate imports.",
+  "New Commonwealth-funded cargo-transfer vessels have been introduced, but freight still requires specialised handling. Changes to shipping connections with New Zealand have complicated supply arrangements, while air freight provides a more frequent but expensive alternative.",
+  "Businesses must plan orders around shipping schedules, allow for delays and find alternative supplies when deliveries are disrupted. While some costs are unavoidable, managing these disruptions takes considerable time and effort. Other difficulties arise from government and commercial systems that don’t accommodate the island’s circumstances.",
+  "Norfolk’s five-digit telephone numbers don’t always fit online forms designed for mainland Australia. A 2023 parliamentary inquiry heard of online forms rejecting local numbers, including during Australian Business Number applications.",
+  "Two-factor authentication creates further problems when banking and software services cannot send verification codes to local numbers. Some businesses maintain separate Australian mobile services simply to access everyday services.",
+  "Even the island’s postcode, 2899, is assigned to New South Wales by Australia Post, although Norfolk is legally an external territory, creating confusion in commercial systems.",
+  "Last month, local users reported Starlink services being suspended following an apparent change in how the company recognised service locations, disrupting businesses reliant on satellite internet.",
+  "The incident illustrates how a seemingly minor change in a global provider’s systems can have significant consequences for an isolated community, leaving local businesses to resolve problems they had no part in creating.",
+  "The burden of changing rules",
+  "Norfolk’s older businesses developed their practices and commercial relationships under different taxation, employment and administrative arrangements. Newer enterprises have operated within the post-2016 system from the outset.",
+  "Established businesses may therefore face additional costs adapting longstanding arrangements to newer requirements. This could help explain why older businesses reported worsening conditions more often, although sector, size and market conditions may also play a part.",
+  "Norfolk’s legal arrangements add another complication. Businesses operate under a mixture of Commonwealth law, selected state legislation and laws retained from the former Norfolk government. Determining which requirements apply can require specialist advice that’s difficult to obtain locally.",
+  "The latest survey found a similar divide between employers and sole operators. Among respondents, 41% of businesses with employees reported adverse effects from laws, regulations or policies, compared with 7% of sole operators.",
+  "Employers must manage payroll, workplace conditions, safety and reporting obligations. These provide important protections, but compliance requires time, resources and expertise that can be difficult to access on the island.",
+  "My current research examines how Norfolk Island businesses have adapted to the governance changes introduced a decade ago.",
+  "Businesses must plan around uncertain freight deliveries, navigate overlapping legal requirements and find ways to use digital systems that don’t always recognise where they operate. These efforts keep businesses running, but take time and money away from serving customers, improving services and growing their operations.",
+  "Norfolk Island illustrates a problem facing other small and remote communities. National and global systems can work efficiently for millions of people while leaving those outside their assumptions to resolve the exceptions themselves.",
+  "For Norfolk’s businesses, the difficulty is not simply operating far from the mainland, but the additional time and resources needed to make those systems work."
+ ],
+ "level": "B2+",
+ "minutes": 5,
+ "words": 839,
+ "gloss": {
+  "remote": {
+   "w": "remote",
+   "pos": "형용사",
+   "ko": "외딴, 멀리 떨어진",
+   "en": "far away from towns and cities",
+   "ex": "She grew up on a remote farm with no neighbours for miles.",
+   "ipa": "/rɪˈməʊt/"
+  },
+  "mainland": {
+   "w": "mainland",
+   "pos": "명사",
+   "ko": "본토",
+   "en": "the main land area of a country, not its islands",
+   "ex": "The ferry to the mainland leaves twice a day.",
+   "ipa": "/ˈmeɪnlænd/"
+  },
+  "speaks to": {
+   "w": "speak to",
+   "pos": "구",
+   "ko": "~을 보여주다, ~을 말해주다",
+   "en": "to show or be evidence of something",
+   "ex": "The long queue speaks to the brand's popularity.",
+   "ipa": "/spiːks tuː/"
+  },
+  "speak to": {
+   "w": "speak to",
+   "pos": "구",
+   "ko": "~을 보여주다, ~을 말해주다",
+   "en": "to show or be evidence of something",
+   "ex": "The long queue speaks to the brand's popularity.",
+   "ipa": "/spiːk tuː/"
+  },
+  "stemming from": {
+   "w": "stem from",
+   "pos": "구",
+   "ko": "~에서 비롯되다",
+   "en": "to be caused by or come from something",
+   "ex": "Many of her design ideas stem from childhood memories.",
+   "ipa": "/ˈstemɪŋ frɒm/"
+  },
+  "stem from": {
+   "w": "stem from",
+   "pos": "구",
+   "ko": "~에서 비롯되다",
+   "en": "to be caused by or come from something",
+   "ex": "Many of her design ideas stem from childhood memories.",
+   "ipa": "/stem frɒm/"
+  },
+  "penal settlements": {
+   "w": "penal settlement",
+   "pos": "명사",
+   "ko": "유형지, 죄수 정착지",
+   "en": "a place where prisoners were sent to live and work",
+   "ex": "The old penal settlement is now a popular museum.",
+   "ipa": "/ˈpiːnl ˈsetlmənts/"
+  },
+  "penal settlement": {
+   "w": "penal settlement",
+   "pos": "명사",
+   "ko": "유형지, 죄수 정착지",
+   "en": "a place where prisoners were sent to live and work",
+   "ex": "The old penal settlement is now a popular museum.",
+   "ipa": "/ˈpiːnl ˈsetlmənt/"
+  },
+  "descendants": {
+   "w": "descendant",
+   "pos": "명사",
+   "ko": "후손, 자손",
+   "en": "a person related to someone who lived long ago",
+   "ex": "He is a descendant of a famous tailor from Naples.",
+   "ipa": "/dɪˈsendənts/"
+  },
+  "descendant": {
+   "w": "descendant",
+   "pos": "명사",
+   "ko": "후손, 자손",
+   "en": "a person related to someone who lived long ago",
+   "ex": "He is a descendant of a famous tailor from Naples.",
+   "ipa": "/dɪˈsendənt/"
+  },
+  "mutineers": {
+   "w": "mutineer",
+   "pos": "명사",
+   "ko": "반란 선원, 반란자",
+   "en": "a sailor or soldier who rebels against those in command",
+   "ex": "The mutineers took control of the ship and sailed away.",
+   "ipa": "/ˌmjuːtəˈnɪəz/"
+  },
+  "mutineer": {
+   "w": "mutineer",
+   "pos": "명사",
+   "ko": "반란 선원, 반란자",
+   "en": "a sailor or soldier who rebels against those in command",
+   "ex": "The mutineers took control of the ship and sailed away.",
+   "ipa": "/ˌmjuːtəˈnɪə/"
+  },
+  "distinctive": {
+   "w": "distinctive",
+   "pos": "형용사",
+   "ko": "독특한, 특징적인",
+   "en": "easy to recognise because it is different",
+   "ex": "The label is known for its distinctive use of colour.",
+   "ipa": "/dɪˈstɪŋktɪv/"
+  },
+  "substantial": {
+   "w": "substantial",
+   "pos": "형용사",
+   "ko": "상당한",
+   "en": "large in amount or importance",
+   "ex": "The company made a substantial investment in new fabrics.",
+   "ipa": "/səbˈstænʃl/"
+  },
+  "self-government": {
+   "w": "self-government",
+   "pos": "명사",
+   "ko": "자치",
+   "en": "control of a region by its own people",
+   "ex": "The region has enjoyed self-government for decades.",
+   "ipa": "/ˌself ˈɡʌvənmənt/"
+  },
+  "abolished": {
+   "w": "abolish",
+   "pos": "동사",
+   "ko": "폐지하다",
+   "en": "to officially end a law, system or arrangement",
+   "ex": "The school abolished its strict uniform policy last year.",
+   "ipa": "/əˈbɒlɪʃt/"
+  },
+  "abolish": {
+   "w": "abolish",
+   "pos": "동사",
+   "ko": "폐지하다",
+   "en": "to officially end a law, system or arrangement",
+   "ex": "The school abolished its strict uniform policy last year.",
+   "ipa": "/əˈbɒlɪʃ/"
+  },
+  "obligations": {
+   "w": "obligation",
+   "pos": "명사",
+   "ko": "의무",
+   "en": "something you must do because of a law or rule",
+   "ex": "Employers have a legal obligation to provide safe workplaces.",
+   "ipa": "/ˌɒblɪˈɡeɪʃnz/"
+  },
+  "obligation": {
+   "w": "obligation",
+   "pos": "명사",
+   "ko": "의무",
+   "en": "something you must do because of a law or rule",
+   "ex": "Employers have a legal obligation to provide safe workplaces.",
+   "ipa": "/ˌɒblɪˈɡeɪʃn/"
+  },
+  "under administration": {
+   "w": "under administration",
+   "pos": "구",
+   "ko": "관리 체제 하에 있는 (외부 관리인이 운영)",
+   "en": "run by an official appointed from outside instead of its usual leaders",
+   "ex": "The football club went under administration after years of debt.",
+   "ipa": "/ˈʌndər ədˌmɪnɪˈstreɪʃn/"
+  },
+  "disputes": {
+   "w": "dispute",
+   "pos": "명사",
+   "ko": "분쟁, 논쟁",
+   "en": "a serious disagreement",
+   "ex": "The two brands are in a legal dispute over the logo.",
+   "ipa": "/dɪˈspjuːts/"
+  },
+  "dispute": {
+   "w": "dispute",
+   "pos": "명사",
+   "ko": "분쟁, 논쟁",
+   "en": "a serious disagreement",
+   "ex": "The two brands are in a legal dispute over the logo.",
+   "ipa": "/dɪˈspjuːt/"
+  },
+  "governance": {
+   "w": "governance",
+   "pos": "명사",
+   "ko": "통치, 운영 체계",
+   "en": "the way an organisation or place is controlled",
+   "ex": "Good governance helps small towns use their budgets wisely.",
+   "ipa": "/ˈɡʌvənəns/"
+  },
+  "navigating": {
+   "w": "navigate",
+   "pos": "동사",
+   "ko": "(복잡한 것을) 헤쳐 나가다",
+   "en": "to find your way through a difficult system or situation",
+   "ex": "New residents often struggle to navigate the visa process.",
+   "ipa": "/ˈnævɪɡeɪtɪŋ/"
+  },
+  "navigate": {
+   "w": "navigate",
+   "pos": "동사",
+   "ko": "(복잡한 것을) 헤쳐 나가다",
+   "en": "to find your way through a difficult system or situation",
+   "ex": "New residents often struggle to navigate the visa process.",
+   "ipa": "/ˈnævɪɡeɪt/"
+  },
+  "respondents": {
+   "w": "respondent",
+   "pos": "명사",
+   "ko": "응답자",
+   "en": "a person who answers a survey",
+   "ex": "Most respondents said they shop online at least once a week.",
+   "ipa": "/rɪˈspɒndənts/"
+  },
+  "respondent": {
+   "w": "respondent",
+   "pos": "명사",
+   "ko": "응답자",
+   "en": "a person who answers a survey",
+   "ex": "Most respondents said they shop online at least once a week.",
+   "ipa": "/rɪˈspɒndənt/"
+  },
+  "deterioration": {
+   "w": "deterioration",
+   "pos": "명사",
+   "ko": "악화",
+   "en": "the process of becoming worse",
+   "ex": "There has been a steady deterioration in air quality.",
+   "ipa": "/dɪˌtɪəriəˈreɪʃn/"
+  },
+  "conventional": {
+   "w": "conventional",
+   "pos": "형용사",
+   "ko": "일반적인, 전통적인",
+   "en": "of the usual or traditional type",
+   "ex": "She prefers natural dyes to conventional chemical ones.",
+   "ipa": "/kənˈvenʃənl/"
+  },
+  "anchor": {
+   "w": "anchor",
+   "pos": "동사",
+   "ko": "닻을 내리다, 정박하다",
+   "en": "to stop a boat in one place using a heavy weight",
+   "ex": "The yacht anchored in a quiet bay for the night.",
+   "ipa": "/ˈæŋkə/"
+  },
+  "offshore": {
+   "w": "offshore",
+   "pos": "부사",
+   "ko": "앞바다에, 해안에서 떨어져",
+   "en": "in the sea, away from the coast",
+   "ex": "Several fishing boats were waiting offshore for the storm to pass.",
+   "ipa": "/ˌɒfˈʃɔː/"
+  },
+  "shuttle": {
+   "w": "shuttle",
+   "pos": "동사",
+   "ko": "왕복하다",
+   "en": "to travel regularly back and forth between two places",
+   "ex": "Buses shuttle visitors between the car park and the venue.",
+   "ipa": "/ˈʃʌtl/"
+  },
+  "ashore": {
+   "w": "ashore",
+   "pos": "부사",
+   "ko": "물가로, 육지로",
+   "en": "onto the land from the sea",
+   "ex": "The passengers went ashore to explore the old town.",
+   "ipa": "/əˈʃɔː/"
+  },
+  "biosecurity": {
+   "w": "biosecurity",
+   "pos": "명사",
+   "ko": "생물 보안 (병해충 유입 방지)",
+   "en": "measures to stop harmful diseases, pests or plants entering an area",
+   "ex": "Strict biosecurity rules mean you cannot bring fresh fruit into the country.",
+   "ipa": "/ˌbaɪəʊsɪˈkjʊərəti/"
+  },
+  "specialised": {
+   "w": "specialised",
+   "pos": "형용사",
+   "ko": "전문적인, 특수한",
+   "en": "designed or trained for a particular purpose",
+   "ex": "Leather goods need specialised cleaning.",
+   "ipa": "/ˈspeʃəlaɪzd/"
+  },
+  "disrupted": {
+   "w": "disrupt",
+   "pos": "동사",
+   "ko": "방해하다, 지장을 주다",
+   "en": "to stop something from continuing normally",
+   "ex": "The strike disrupted train services across the city.",
+   "ipa": "/dɪsˈrʌptɪd/"
+  },
+  "disrupt": {
+   "w": "disrupt",
+   "pos": "동사",
+   "ko": "방해하다, 지장을 주다",
+   "en": "to stop something from continuing normally",
+   "ex": "The strike disrupted train services across the city.",
+   "ipa": "/dɪsˈrʌpt/"
+  },
+  "unavoidable": {
+   "w": "unavoidable",
+   "pos": "형용사",
+   "ko": "피할 수 없는",
+   "en": "impossible to prevent",
+   "ex": "Some delays are unavoidable during the holiday season.",
+   "ipa": "/ˌʌnəˈvɔɪdəbl/"
+  },
+  "considerable": {
+   "w": "considerable",
+   "pos": "형용사",
+   "ko": "상당한",
+   "en": "fairly large in size or amount",
+   "ex": "Building the collection took a considerable amount of time.",
+   "ipa": "/kənˈsɪdərəbl/"
+  },
+  "accommodate": {
+   "w": "accommodate",
+   "pos": "동사",
+   "ko": "(필요·사정을) 수용하다, 맞춰 주다",
+   "en": "to consider and adapt to someone's needs or situation",
+   "ex": "The new office layout accommodates staff who work part-time.",
+   "ipa": "/əˈkɒmədeɪt/"
+  },
+  "inquiry": {
+   "w": "inquiry",
+   "pos": "명사",
+   "ko": "(공식) 조사",
+   "en": "an official investigation into a problem",
+   "ex": "The council launched an inquiry into the rising rents.",
+   "ipa": "/ɪnˈkwaɪəri/"
+  },
+  "verification": {
+   "w": "verification",
+   "pos": "명사",
+   "ko": "인증, 확인",
+   "en": "the process of checking that something is true or correct",
+   "ex": "You will receive a verification email before your account is active.",
+   "ipa": "/ˌverɪfɪˈkeɪʃn/"
+  },
+  "suspended": {
+   "w": "suspend",
+   "pos": "동사",
+   "ko": "일시 중단하다",
+   "en": "to stop something for a period of time",
+   "ex": "The airline suspended all flights because of the volcano.",
+   "ipa": "/səˈspendɪd/"
+  },
+  "suspend": {
+   "w": "suspend",
+   "pos": "동사",
+   "ko": "일시 중단하다",
+   "en": "to stop something for a period of time",
+   "ex": "The airline suspended all flights because of the volcano.",
+   "ipa": "/səˈspend/"
+  },
+  "reliant on": {
+   "w": "reliant on",
+   "pos": "구",
+   "ko": "~에 의존하는",
+   "en": "needing something in order to function",
+   "ex": "Small shops are increasingly reliant on social media for sales.",
+   "ipa": "/rɪˈlaɪənt ɒn/"
+  },
+  "illustrates": {
+   "w": "illustrate",
+   "pos": "동사",
+   "ko": "(예로) 보여주다, 설명하다",
+   "en": "to show or explain something clearly by example",
+   "ex": "This case illustrates how quickly trends can change.",
+   "ipa": "/ˈɪləstreɪts/"
+  },
+  "illustrate": {
+   "w": "illustrate",
+   "pos": "동사",
+   "ko": "(예로) 보여주다, 설명하다",
+   "en": "to show or explain something clearly by example",
+   "ex": "This case illustrates how quickly trends can change.",
+   "ipa": "/ˈɪləstreɪt/"
+  },
+  "seemingly": {
+   "w": "seemingly",
+   "pos": "부사",
+   "ko": "겉보기에는",
+   "en": "appearing to be true, though maybe not",
+   "ex": "A seemingly simple dress can take weeks to make.",
+   "ipa": "/ˈsiːmɪŋli/"
+  },
+  "isolated": {
+   "w": "isolated",
+   "pos": "형용사",
+   "ko": "고립된",
+   "en": "far from other places or people",
+   "ex": "The village feels isolated during the winter months.",
+   "ipa": "/ˈaɪsəleɪtɪd/"
+  },
+  "burden": {
+   "w": "burden",
+   "pos": "명사",
+   "ko": "부담, 짐",
+   "en": "something difficult or tiring that you have to deal with",
+   "ex": "Rising rent is a heavy burden for young workers.",
+   "ipa": "/ˈbɜːdn/"
+  },
+  "from the outset": {
+   "w": "from the outset",
+   "pos": "구",
+   "ko": "처음부터",
+   "en": "from the very beginning",
+   "ex": "The project was well organised from the outset.",
+   "ipa": "/frəm ði ˈaʊtset/"
+  },
+  "longstanding": {
+   "w": "longstanding",
+   "pos": "형용사",
+   "ko": "오래된, 오랫동안 지속된",
+   "en": "having existed for a long time",
+   "ex": "The two companies have a longstanding partnership.",
+   "ipa": "/ˌlɒŋˈstændɪŋ/"
+  },
+  "play a part": {
+   "w": "play a part",
+   "pos": "구",
+   "ko": "한몫하다, 영향을 미치다",
+   "en": "to be one of the causes of something",
+   "ex": "Good lighting played a part in the success of the show.",
+   "ipa": "/pleɪ ə pɑːt/"
+  },
+  "retained": {
+   "w": "retain",
+   "pos": "동사",
+   "ko": "유지하다, 보유하다",
+   "en": "to keep or continue to have something",
+   "ex": "The building retained many of its original features.",
+   "ipa": "/rɪˈteɪnd/"
+  },
+  "retain": {
+   "w": "retain",
+   "pos": "동사",
+   "ko": "유지하다, 보유하다",
+   "en": "to keep or continue to have something",
+   "ex": "The building retained many of its original features.",
+   "ipa": "/rɪˈteɪn/"
+  },
+  "adverse": {
+   "w": "adverse",
+   "pos": "형용사",
+   "ko": "부정적인, 불리한",
+   "en": "harmful or negative",
+   "ex": "The heatwave had an adverse effect on crop yields.",
+   "ipa": "/ˈædvɜːs/"
+  },
+  "sole operators": {
+   "w": "sole operator",
+   "pos": "명사",
+   "ko": "1인 사업자",
+   "en": "a person who runs a business alone with no employees",
+   "ex": "As a sole operator, she handles design, sales and accounts herself.",
+   "ipa": "/səʊl ˈɒpəreɪtəz/"
+  },
+  "sole operator": {
+   "w": "sole operator",
+   "pos": "명사",
+   "ko": "1인 사업자",
+   "en": "a person who runs a business alone with no employees",
+   "ex": "As a sole operator, she handles design, sales and accounts herself.",
+   "ipa": "/səʊl ˈɒpəreɪtə/"
+  },
+  "compliance": {
+   "w": "compliance",
+   "pos": "명사",
+   "ko": "(법·규정) 준수",
+   "en": "the act of obeying a rule or law",
+   "ex": "Factories must show compliance with safety standards.",
+   "ipa": "/kəmˈplaɪəns/"
+  },
+  "expertise": {
+   "w": "expertise",
+   "pos": "명사",
+   "ko": "전문 지식",
+   "en": "special skill or knowledge in a particular area",
+   "ex": "We hired a consultant with expertise in textile recycling.",
+   "ipa": "/ˌekspɜːˈtiːz/"
+  },
+  "overlapping": {
+   "w": "overlapping",
+   "pos": "형용사",
+   "ko": "겹치는, 중복되는",
+   "en": "partly covering the same area or responsibility",
+   "ex": "The two departments have overlapping roles, which causes confusion.",
+   "ipa": "/ˌəʊvəˈlæpɪŋ/"
+  },
+  "assumptions": {
+   "w": "assumption",
+   "pos": "명사",
+   "ko": "가정, 전제",
+   "en": "something you accept as true without proof",
+   "ex": "The plan was based on the assumption that prices would stay low.",
+   "ipa": "/əˈsʌmpʃnz/"
+  },
+  "assumption": {
+   "w": "assumption",
+   "pos": "명사",
+   "ko": "가정, 전제",
+   "en": "something you accept as true without proof",
+   "ex": "The plan was based on the assumption that prices would stay low.",
+   "ipa": "/əˈsʌmpʃn/"
+  }
+ },
+ "vocab": [
+  "stem from",
+  "abolish",
+  "obligation",
+  "navigate",
+  "deterioration",
+  "conventional",
+  "disrupt",
+  "considerable",
+  "accommodate",
+  "reliant on",
+  "illustrate",
+  "longstanding",
+  "adverse",
+  "compliance"
+ ],
+ "quiz": [
+  {
+   "q": "More than half of the businesses contacted responded to the survey.",
+   "a": "FALSE",
+   "why": "239곳 중 103곳만 응답했으므로 절반이 안 된다."
+  },
+  {
+   "q": "Businesses set up in the last three years were less likely to report worsening conditions than long-established ones.",
+   "a": "TRUE",
+   "why": "오래된 업체는 42곳 중 27곳, 신생 업체는 21곳 중 4곳만 악화를 보고했다."
+  },
+  {
+   "q": "Freight was mentioned as a concern by more respondents than any other issue.",
+   "a": "TRUE",
+   "why": "화물이 70%로 가장 큰 걱정이었고 보험이 45%로 뒤를 이었다."
+  },
+  {
+   "q": "Starlink has since restored its service to all affected users on Norfolk Island.",
+   "a": "NOT GIVEN",
+   "why": "서비스 중단 사실만 나오고 복구 여부는 언급되지 않는다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "Even small updates to internet services can cut businesses off.",
+   "article": "Even routine changes to internet services can leave businesses disconnected."
+  },
+  {
+   "simple": "before the Australian government ended that system in 2015",
+   "article": "before Canberra abolished the arrangement in 2015"
+  },
+  {
+   "simple": "Rough waves can stop the unloading, and rules on pests and diseases make importing harder.",
+   "article": "Heavy seas can interrupt unloading, while biosecurity requirements complicate imports."
+  },
+  {
+   "simple": "The island's short phone numbers often aren't accepted by websites built for mainland users.",
+   "article": "Norfolk’s five-digit telephone numbers don’t always fit online forms designed for mainland Australia."
+  },
+  {
+   "simple": "so local firms have to fix problems that someone else caused",
+   "article": "leaving local businesses to resolve problems they had no part in creating"
+  }
+ ],
+ "summary": "Although Norfolk Island is legally Australian, its businesses face extra costs and effort because of its isolation, complex legal history and national and global systems that were not designed with the island in mind.",
+ "gist": "호주령 노퍽섬의 사업자들이 화물 운송, 보험, 복잡한 법 체계, 본토 기준의 디지털 시스템 때문에 겪는 어려움을 다룬 글.\n외딴 소규모 지역이 대규모 시스템의 '예외'를 스스로 감당해야 하는 문제를 지적한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Norfolk Island had already become an Australian territory when the Pitcairn community settled there.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "피트케언 공동체는 1856년에 왔고 호주령이 된 건 1914년이다 — \"long before it became an Australian territory in 1914\""
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "More than two-thirds of the businesses that responded to the question about concerns named freight as a problem.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "70%는 3분의 2를 넘는다 — \"Freight was the biggest concern, identified by 70% of respondents who answered the question\""
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The new cargo-transfer vessels have lowered freight costs for businesses on the island.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "새 배가 들어왔다고만 하고 비용이 줄었는지는 말하지 않는다 — \"New Commonwealth-funded cargo-transfer vessels have been introduced, but freight still requires specialised handling\""
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "The writer suggests that Norfolk businesses are often left to fix problems that were not of their own making.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "필자가 직접 그렇게 평가한다 — \"leaving local businesses to resolve problems they had no part in creating\""
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The writer believes Norfolk Island should be given back its former self-government.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "2015년 폐지 사실만 전하고 자치를 되돌려야 한다는 의견은 없다 — \"before Canberra abolished the arrangement in 2015\""
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 10",
+    "options": [
+     "i  Getting goods ashore without a proper harbour",
+     "ii  Government plans to build a new port",
+     "iii  A patchwork of laws from different sources",
+     "iv  Security checks that fail to reach the island",
+     "v  Rising tourist numbers boost local trade"
+    ],
+    "answer": "i",
+    "why": "깊은 항구가 없어 작은 배로 짐을 옮기는 과정 — \"Norfolk has no conventional deep-water port... lighters\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 14",
+    "options": [
+     "i  Getting goods ashore without a proper harbour",
+     "ii  Government plans to build a new port",
+     "iii  A patchwork of laws from different sources",
+     "iv  Security checks that fail to reach the island",
+     "v  Rising tourist numbers boost local trade"
+    ],
+    "answer": "iv",
+    "why": "2단계 인증 코드가 현지 번호로 오지 않는다 — \"cannot send verification codes to local numbers\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 21",
+    "options": [
+     "i  Getting goods ashore without a proper harbour",
+     "ii  Government plans to build a new port",
+     "iii  A patchwork of laws from different sources",
+     "iv  Security checks that fail to reach the island",
+     "v  Rising tourist numbers boost local trade"
+    ],
+    "answer": "iii",
+    "why": "연방법·주법·옛 노퍽 법이 섞여 있다 — \"a mixture of Commonwealth law, selected state legislation and laws retained from the former Norfolk government\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions an address code that links the island to the wrong part of Australia?",
+    "options": [
+     "13",
+     "15",
+     "16",
+     "21"
+    ],
+    "answer": "15",
+    "why": "우편번호가 뉴사우스웨일스로 배정돼 있다 — \"the island's postcode, 2899, is assigned to New South Wales by Australia Post\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions a satellite connection being cut off?",
+    "options": [
+     "9",
+     "11",
+     "16",
+     "25"
+    ],
+    "answer": "16",
+    "why": "스타링크 서비스가 중단됐다 — \"Starlink services being suspended\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the survey, which group was most likely to report that conditions had worsened?",
+    "options": [
+     "A businesses set up within the last three years",
+     "B businesses that had operated for a long time",
+     "C sole operators without employees",
+     "D businesses that rely on air freight"
+    ],
+    "answer": "B",
+    "why": "오래된 업체 42곳 중 27곳이 악화 응답 — \"Long-established businesses were particularly affected, with 27 of 42 reporting deterioration\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "Why do some Norfolk businesses keep a separate Australian mobile service?",
+    "options": [
+     "A It is cheaper than using local numbers.",
+     "B It is required under Australian employment law.",
+     "C It lets them receive codes needed to use everyday services.",
+     "D It allows them to contact suppliers in New Zealand."
+    ],
+    "answer": "C",
+    "why": "인증 코드를 받아 일상 서비스를 쓰려고 — \"Some businesses maintain separate Australian mobile services simply to access everyday services\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Cargo is transferred from ships at anchor onto smaller boats, called ____, which carry it to the pier.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "lighters"
+    ],
+    "why": "작은 배의 이름 — \"smaller vessels, known as lighters\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "After freight, the problem most often named by respondents was ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "insurance"
+    ],
+    "why": "화물 다음으로 45% — \"followed by insurance at 45%\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Which state does Australia Post assign Norfolk Island's postcode to?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "New South Wales"
+    ],
+    "why": "우편번호 배정 지역 — \"assigned to New South Wales by Australia Post\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    9,
+    13,
+    20
+   ]
+  }
+ }
+}

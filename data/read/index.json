@@ -1,6 +1,34 @@
 {
- "updated": "2026-11-02T22:11:43.489Z",
+ "updated": "2026-11-03T22:11:26.679Z",
  "items": [
+  {
+   "id": "2026-11-04-conv-if-norfolk-island-is-an-australian",
+   "date": "2026-11-04",
+   "source": "The Conversation",
+   "title": "If Norfolk Island is an Australian territory, why is doing business there so complicated?",
+   "url": "https://theconversation.com/if-norfolk-island-is-an-australian-territory-why-is-doing-business-there-so-complicated-295543",
+   "author": "Rod McNaughton",
+   "minutes": 5,
+   "level": "B2+",
+   "words": 839,
+   "topic": "경제",
+   "gist": "호주령 노퍽섬의 사업자들이 화물 운송, 보험, 복잡한 법 체계, 본토 기준의 디지털 시스템 때문에 겪는 어려움을 다룬 글.\n외딴 소규모 지역이 대규모 시스템의 '예외'를 스스로 감당해야 하는 문제를 지적한다.",
+   "file": "data/read/2026-11-04-conv-if-norfolk-island-is-an-australian.json"
+  },
+  {
+   "id": "2026-11-04-conv-what-makes-a-winning-environmental",
+   "date": "2026-11-04",
+   "source": "The Conversation",
+   "title": "What makes a winning environmental campaign? We studied six decades of activism to find out",
+   "url": "https://theconversation.com/what-makes-a-winning-environmental-campaign-we-studied-six-decades-of-activism-to-find-out-294669",
+   "author": "Robyn Gulliver, Tracy Schultz",
+   "minutes": 5,
+   "level": "B2+",
+   "words": 869,
+   "topic": "환경",
+   "gist": "60여 년간의 호주 환경 운동 2,139건을 분석해 보니 대부분은 '부분 성공'이었고, 목표가 구체적이고 대상(은행·연금 등)을 잘 고른 캠페인이 더 잘 성공했다는 연구 소개 글.",
+   "file": "data/read/2026-11-04-conv-what-makes-a-winning-environmental.json"
+  },
   {
    "id": "2026-11-03-conv-getting-a-big-head-start-on-holiday",
    "date": "2026-11-03",
@@ -327,6 +355,36 @@
  "links": [
   {
    "source": "BoF",
+   "title": "How Shanghai Became a Global Fashion Nexus",
+   "url": "https://www.businessoffashion.com/articles/china/shanghai-fashion-week-global-brands-two-way-gateway/",
+   "date": "2026-11-04"
+  },
+  {
+   "source": "BoF",
+   "title": "In Fragrance, Estée Lauder Finds a New Foothold",
+   "url": "https://www.businessoffashion.com/articles/beauty/estee-fragrance-growth/",
+   "date": "2026-11-04"
+  },
+  {
+   "source": "BoF",
+   "title": "How Wholesale Signals Are Reshaping Fashion Strategy",
+   "url": "https://www.businessoffashion.com/articles/retail/nuorder-lightspeed-wholesale-buyer-data-demand-signals/",
+   "date": "2026-11-04"
+  },
+  {
+   "source": "BoF",
+   "title": "Why Jude Bellingham Is Calvin Klein’s New Star",
+   "url": "https://www.businessoffashion.com/articles/marketing-pr/calvin-klein-jude-bellingham-campaign-interview/",
+   "date": "2026-11-04"
+  },
+  {
+   "source": "BoF",
+   "title": "Founders Must Have Influence, Too",
+   "url": "https://www.businessoffashion.com/articles/beauty/beauty-founders-have-to-be-influencers-now-too/",
+   "date": "2026-11-04"
+  },
+  {
+   "source": "BoF",
    "title": "Decoding the Enigma of David Sims",
    "url": "https://www.businessoffashion.com/articles/creative-class/david-sims-mop-foundation-exhibition-interview/",
    "date": "2026-11-03"
@@ -338,9 +396,27 @@
    "date": "2026-11-03"
   },
   {
+   "source": "BBC Future",
+   "title": "The orca brothers preying on great white sharks",
+   "url": "https://www.bbc.com/future/article/20261015-sharks-washed-up-one-after-another-after-another-why-orcas-are-hunting-great-whites",
+   "date": "2026-11-03"
+  },
+  {
+   "source": "Guardian Long Read",
+   "title": "‘I perfected deception’: My secret life as a relapsed alcoholic | Meghan O'Gieblyn",
+   "url": "https://www.theguardian.com/news/ng-interactive/2026/nov/03/my-secret-life-as-a-relapsed-alcoholic-addiction-sober",
+   "date": "2026-11-03"
+  },
+  {
    "source": "BoF",
    "title": "Introducing The BoF 500 Class of 2026",
    "url": "https://www.businessoffashion.com/articles/news-analysis/introducing-the-bof-500-class-of-2026/",
+   "date": "2026-11-02"
+  },
+  {
+   "source": "BBC Future",
+   "title": "The people who only need four hours' sleep",
+   "url": "https://www.bbc.com/future/article/20261029-the-people-who-only-need-four-hours-sleep",
    "date": "2026-11-02"
   },
   {
@@ -456,54 +532,6 @@
    "title": "What Buyers Really Want From Emerging Designers",
    "url": "https://www.businessoffashion.com/articles/retail/what-buyers-really-want-from-emerging-designers/",
    "date": "2026-10-27"
-  },
-  {
-   "source": "BoF",
-   "title": "Post-Exit Founders Are Racing to Their Second Acts",
-   "url": "https://www.businessoffashion.com/articles/beauty/post-exit-founders-race-to-launch-their-second-acts/",
-   "date": "2026-10-27"
-  },
-  {
-   "source": "BoF",
-   "title": "US Retailers Face Record Holiday Delivery Prices",
-   "url": "https://www.businessoffashion.com/articles/retail/us-retailers-face-record-holiday-delivery-prices/",
-   "date": "2026-10-27"
-  },
-  {
-   "source": "BoF",
-   "title": "Miuccia Prada: Future-Proofing a Fashion Dynasty",
-   "url": "https://www.businessoffashion.com/articles/luxury/miuccia-prada-future-proofing-a-fashion-dynasty/",
-   "date": "2026-10-27"
-  },
-  {
-   "source": "BBC Future",
-   "title": "How we can exercise more without even trying",
-   "url": "https://www.bbc.com/future/article/20261023-how-we-can-exercise-more-without-trying",
-   "date": "2026-10-27"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "Would you pay to have the ‘best baby’? Liberal eugenics and the troubling quest for human perfection",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/27/would-you-pay-to-have-the-best-baby-liberal-eugenics-and-the-troubling-quest-for-human-perfection",
-   "date": "2026-10-27"
-  },
-  {
-   "source": "BBC Future",
-   "title": "How solar became bigger than nuclear",
-   "url": "https://www.bbc.com/future/article/20261023-how-solar-became-bigger-than-nuclear",
-   "date": "2026-10-26"
-  },
-  {
-   "source": "BoF",
-   "title": "Cashing In on the Denim Boom Is Harder Than It Looks",
-   "url": "https://www.businessoffashion.com/articles/retail/challenges-of-entering-the-denim-market/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "10 Years of BoF Professional",
-   "url": "https://www.businessoffashion.com/articles/news-analysis/10-years-anniversary-bof-professional/",
-   "date": "2026-10-25"
   }
  ]
 }
