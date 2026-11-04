@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-04T19:38",
+ "generatedAt": "2026-11-05T07:38",
  "sites": [
   "KE",
   "OZ",
@@ -23,26 +23,15 @@
    "link": "https://www.koreanair.com/contents/promotion/list/2026/2611sydq4?pageNum=1",
    "firstSeen": "2026-11-02",
    "detail": {
-    "buy": {
-     "from": "2026-11-02",
-     "to": "2026-11-30"
-    },
-    "travel": [
-     {
-      "from": "2027-01-04",
-      "to": "2027-10-31"
-     }
-    ],
+    "buy": null,
+    "travel": [],
     "exclude": [],
     "discounts": [],
     "on": "운임",
-    "how": "예매 시 할인 운임 자동 적용 (쿠폰 불필요)",
+    "how": "할인 운임 자동 적용 (쿠폰·코드 없음)",
     "code": null,
     "conditions": [
-     "호주(시드니·브리즈번·멜버른) 출발 여정만, 한국 출발 미적용",
-     "일반석 스탠다드·세이버만",
-     "다구간·공동운항·마일리지 항공권 제외",
-     "성수기 제외"
+     "호주(시드니·브리즈번·멜버른) 출발 여정만 적용, 한국 출발 해당 없음"
     ],
     "fares": [],
     "url": "https://www.koreanair.com/contents/promotion/list/2026/2611sydq4?pageNum=1"
@@ -102,7 +91,7 @@
       "cities": [],
       "pct": 20,
       "amount": null,
-      "cabin": "이코노미·와이드 프리미엄 (코드 추가 할인)"
+      "cabin": "이코노미·와이드 프리미엄"
      }
     ],
     "on": "운임",
@@ -110,13 +99,13 @@
     "code": "BLKFRIGO",
     "conditions": [
      "에어프레미아 회원 로그인",
-     "일부 일자·운임은 코드 적용 제한",
-     "에어프레미아 쿠폰과 중복 불가",
-     "코드 조기 소진 가능"
+     "발행 쿠폰과 중복 불가",
+     "일부 일자·운임 적용 제한",
+     "조기 소진 가능"
     ],
     "fares": [
      {
-      "city": "뉴욕",
+      "city": "뉴욕(뉴어크)",
       "iata": "EWR",
       "price": 1287800
      },
@@ -153,10 +142,10 @@
      "back": "2026-12-03"
     },
     {
-     "slug": "san-francisco",
+     "slug": "los-angeles",
      "pct": 72,
      "region": "전 노선",
-     "google": 1167679,
+     "google": 1142000,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -181,22 +170,22 @@
      "final": 692600
     },
     {
-     "slug": "san-francisco",
-     "city": "샌프란시스코",
+     "slug": "los-angeles",
+     "city": "로스앤젤레스",
      "cc": "us",
      "region": "전 노선",
-     "out": null,
-     "back": null,
-     "price": 1167679,
-     "src": "google",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
+     "out": "2026-11-24",
+     "back": "2026-12-03",
+     "price": 1219900,
+     "src": "sky",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 72,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 334479,
-     "discount": 240800,
-     "final": 926879
+     "fare": 386700,
+     "discount": 278400,
+     "final": 941500
     }
    ]
   },
@@ -230,13 +219,13 @@
      }
     ],
     "on": "운임",
-    "how": "신규 회원 가입 후 항공권 검색 화면 하단 프로모션 코드 버튼에서 코드 입력",
+    "how": "항공권 검색 후 화면 하단 프로모션 코드 버튼에서 코드 입력",
     "code": "WELCOMEV",
     "conditions": [
      "에어프레미아 신규 회원 가입",
      "가입일로부터 14일 이내 사용",
-     "에어프레미아 발행 쿠폰과 중복 불가",
-     "일부 일자·운임은 코드 사용 불가"
+     "에어프레미아 쿠폰과 중복 불가",
+     "일부 일자·운임 적용 제외"
     ],
     "fares": [],
     "url": "https://www.airpremia.com/event/promotionDetail?detailId=370"
@@ -251,10 +240,10 @@
      "back": "2026-12-03"
     },
     {
-     "slug": "san-francisco",
+     "slug": "los-angeles",
      "pct": 5,
      "region": "전 노선",
-     "google": 1167679,
+     "google": 1142000,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -279,22 +268,22 @@
      "final": 907600
     },
     {
-     "slug": "san-francisco",
-     "city": "샌프란시스코",
+     "slug": "los-angeles",
+     "city": "로스앤젤레스",
      "cc": "us",
      "region": "전 노선",
-     "out": null,
-     "back": null,
-     "price": 1167679,
-     "src": "google",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
+     "out": "2026-11-24",
+     "back": "2026-12-03",
+     "price": 1219900,
+     "src": "sky",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 5,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 334479,
-     "discount": 16700,
-     "final": 1150979
+     "fare": 386700,
+     "discount": 19300,
+     "final": 1200600
     }
    ]
   }
