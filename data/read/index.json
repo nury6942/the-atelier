@@ -1,6 +1,34 @@
 {
- "updated": "2026-11-03T22:11:26.679Z",
+ "updated": "2026-11-04T22:11:37.947Z",
  "items": [
+  {
+   "id": "2026-11-05-conv-corporate-green-reports-do-independent",
+   "date": "2026-11-05",
+   "source": "The Conversation",
+   "title": "Corporate green reports: do independent checks really help companies deliver measurable action?",
+   "url": "https://theconversation.com/corporate-green-reports-do-independent-checks-really-help-companies-deliver-measurable-action-295282",
+   "author": "Rizwan Mushtaq, Ammar Ali Gull",
+   "minutes": 5,
+   "level": "C1",
+   "words": 920,
+   "topic": "환경",
+   "gist": "기업 지속가능성 보고서를 외부에서 검증하면 그린워싱이 줄고 실제 감축으로 이어지는지 다룬 연구 글.\n검증은 효과가 있지만 이해관계자 압력과 함께할 때 가장 잘 작동하며, 만능 해결책은 아니라고 결론짓는다.",
+   "file": "data/read/2026-11-05-conv-corporate-green-reports-do-independent.json"
+  },
+  {
+   "id": "2026-11-05-conv-what-makes-an-olympic-emblem-memorable",
+   "date": "2026-11-05",
+   "source": "The Conversation",
+   "title": "What makes an Olympic emblem memorable – and does Brisbane’s new design fit the bill?",
+   "url": "https://theconversation.com/what-makes-an-olympic-emblem-memorable-and-does-brisbanes-new-design-fit-the-bill-293810",
+   "author": "Nina Hillenberg",
+   "minutes": 5,
+   "level": "B2+",
+   "words": 782,
+   "topic": "디자인",
+   "gist": "브리즈번 2032 올림픽 엠블럼(분홍 앵무새 볏·성화·퀸즐랜드 지도)을 두고, 좋은 올림픽 엠블럼의 조건과 과거 성공·실패 사례를 비교한 글.\n상징을 너무 많이 담아 해외 관객에게는 잘 전달되지 않을 수 있다는 한계와, 도시 대신 자연·문화를 내세운 호주의 이미지 변화도 짚는다.",
+   "file": "data/read/2026-11-05-conv-what-makes-an-olympic-emblem-memorable.json"
+  },
   {
    "id": "2026-11-04-conv-if-norfolk-island-is-an-australian",
    "date": "2026-11-04",
@@ -355,6 +383,24 @@
  "links": [
   {
    "source": "BoF",
+   "title": "How Fashion Has ‘Turbocharged’ Its Diwali Marketing",
+   "url": "https://www.businessoffashion.com/articles/global-markets/fashion-diwali-marketing-india-diaspora/",
+   "date": "2026-11-05"
+  },
+  {
+   "source": "BoF",
+   "title": "How Santa Fe Became a Launchpad for Native Designers",
+   "url": "https://www.businessoffashion.com/articles/creative-class/how-santa-fe-became-a-launchpad-for-native-designers/",
+   "date": "2026-11-05"
+  },
+  {
+   "source": "BoF",
+   "title": "Why Everyone Is So Obsessed With ‘Messy’ Hair",
+   "url": "https://www.businessoffashion.com/articles/beauty/why-everyone-is-so-obsessed-with-messy-hair/",
+   "date": "2026-11-05"
+  },
+  {
+   "source": "BoF",
    "title": "How Shanghai Became a Global Fashion Nexus",
    "url": "https://www.businessoffashion.com/articles/china/shanghai-fashion-week-global-brands-two-way-gateway/",
    "date": "2026-11-04"
@@ -514,24 +560,6 @@
    "title": "Fashion Magazines Find New Momentum in Eastern Europe",
    "url": "https://www.businessoffashion.com/articles/global-markets/fashion-magazines-find-new-momentum-in-eastern-europe/",
    "date": "2026-10-28"
-  },
-  {
-   "source": "BoF",
-   "title": "How AI Is Reshaping the Modelling Industry",
-   "url": "https://www.businessoffashion.com/articles/workplace-talent/how-ai-is-reshaping-the-modeling-industry/",
-   "date": "2026-10-28"
-  },
-  {
-   "source": "BoF",
-   "title": "Decoding Italian Beauty’s Global Playbook",
-   "url": "https://www.businessoffashion.com/articles/beauty/made-in-italy-cosmetic-industry-strategy-panel-uk/",
-   "date": "2026-10-28"
-  },
-  {
-   "source": "BoF",
-   "title": "What Buyers Really Want From Emerging Designers",
-   "url": "https://www.businessoffashion.com/articles/retail/what-buyers-really-want-from-emerging-designers/",
-   "date": "2026-10-27"
   }
  ]
 }

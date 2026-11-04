@@ -1,0 +1,804 @@
+{
+ "id": "2026-11-05-conv-corporate-green-reports-do-independent",
+ "title": "Corporate green reports: do independent checks really help companies deliver measurable action?",
+ "url": "https://theconversation.com/corporate-green-reports-do-independent-checks-really-help-companies-deliver-measurable-action-295282",
+ "source": "The Conversation",
+ "author": "Rizwan Mushtaq, Ammar Ali Gull",
+ "published": "2026-11-04",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "KEY TAKEAWAYS",
+  "Corporate sustainability assurance carried out by independent auditors helps detect greenwashing.",
+  "The EU’s Omnibus reform is narrowing the scope of mandatory sustainability reporting, which means fewer companies will have to seek independent assurance of their environmental claims.",
+  "The association between external assurance and lower emissions is stronger among companies facing greater stakeholder pressure, suggesting that external scrutiny helps strengthen corporate accountability.",
+  "The European Union’s Omnibus reform has exempted most of the companies it once covered from mandatory sustainability reporting under the Corporate Sustainability Reporting Directive (CSRD). It has also dropped plans for tougher “reasonable” assurance checks on green claims, which come closer to a full audit.",
+  "Meanwhile, ISSA 5000, the new global standard for sustainability assurance, takes effect for reporting periods beginning on or after December 15, 2026, in jurisdictions that adopt it or issue a national equivalent, such as Hong Kong and Brazil. Timelines vary: Australia’s equivalent was applied in January 2025, while Canada’s (CSSA 5000) starts on December 15, 2027. At a time when companies have never been more vocal about their green credentials than they are today, is sustainability assurance considered red tape or a climate tool?",
+  "Calling out corporate greenwashing",
+  "The gap between what firms say and what they do has a name: greenwashing, and courts and regulators across Europe are increasingly calling it out.",
+  "One remedy is an independent verification of sustainability reports, known as “assurance”. An outside firm, often one of the Big Four accounting groups (Deloitte, EY, KPMG and PwC), checks a company’s sustainability report, just as auditors would check a company’s accounts. International standards now cover both what companies should report and how those reports should be checked.",
+  "Does verification go with lower emissions?",
+  "In our study, published in the Journal of Accounting Literature, we analysed data on large listed companies in 34 countries from 2002 to 2019, a period when sustainability reporting assurance was largely voluntary. We compared the greenhouse gas emissions of firms whose sustainability reports were independently verified with those firms whose reports were not. The most important finding concerns green promises. Many companies run programmes to cut emissions, but the results differ mainly by sustainability assurance. Among firms with verified reports, such initiatives were associated with greater emission reductions. Among firms whose reports were not independently checked, more initiatives were linked to higher emissions, a pattern consistent with greenwashing.",
+  "Without scrutiny, it seems, some climate action is more about image than impact. The pattern held when one of the Big Four did the verification.",
+  "Does stakeholder versus shareholder orientation matter?",
+  "The effect of assurance also depends on where a company operates. In “shareholder” systems, such as the US and the UK, companies are run first and foremost in the interest of their investors. In “stakeholder” systems, such as France and Germany, employees, communities and regulators have a stronger say. In both countries, employees even sit on company boards. The link between assurance and lower emissions was strongest among stakeholder economies.",
+  "In shareholder-first systems, the evidence was more mixed. Our interpretation is that a verified report carries more weight when many stakeholder groups are watching and able to act on it. Verification provides the facts; outside pressure gives them teeth.",
+  "Furthermore, the link was stronger in heavily polluting sectors such as mining and construction, and in countries with weaker environmental laws. This suggests independent verification can partly fill the gap left by lax regulation.",
+  "What recent cases show",
+  "Real cases show both the value and the limits of verification.",
+  "TotalEnergies’ sustainability report was verified by two of the Big Four firms, EY and PwC, appointed by shareholders in 2024. Yet in October 2025, a Paris court partly upheld a complaint by three NGOs (Greenpeace France, Friends of the Earth France and Notre Affaire à Tous). It ruled that the oil major had misled consumers about its ambition to reach carbon neutrality by 2050.",
+  "In Britain, PwC checked HSBC’s reported progress toward its goal of providing $750 billion to $1 trillion in sustainable finance. But in 2022, the Advertising Standards Authority banned two HSBC posters, one touting that goal, for omitting that the bank was still financing heavily polluting industries.",
+  "In Germany, asset manager DWS was fined €25 million in 2025 after prosecutors found that its claims of leadership in sustainable investing did not match reality. Its former head of sustainability, Desiree Fixler, had blown the whistle, and DWS admitted its past marketing was “sometimes exuberant”.",
+  "These cases echo our findings. Verification checks whether a report’s numbers are accurate, not whether a company’s marketing tells the whole story. And in each case, activists, NGOs or insiders raised the alarm.",
+  "In France, the law recognises such groups’ right to defend collective environmental interests in court. This is the kind of stakeholder pressure that, our study suggests, makes third party sustainability reporting assurance more worthwhile.",
+  "Red tape or climate tool?",
+  "Our evidence points to a climate tool, but not a silver bullet.",
+  "In our study, verified companies emitted less, and their green initiatives were more likely to deliver. Yet assurance appears to work best alongside stakeholder pressure, such as scrutiny by employees, communities, campaigners and courts. That matters for Europe. Exempting many companies from mandatory reporting means fewer firms will have their climate claims independently checked. Those outside the rules can still choose verification, a credible signal that they mean what they say. And as ISSA 5000 is adopted, it should make assurance more consistent. Assurance alone may not stop greenwashing. Without it, though, green promises are much harder to trust."
+ ],
+ "level": "C1",
+ "minutes": 5,
+ "words": 920,
+ "gloss": {
+  "assurance": {
+   "w": "assurance",
+   "pos": "명사",
+   "ko": "(외부 기관의) 검증, 인증",
+   "en": "an independent check that confirms information is reliable",
+   "ex": "The charity hired an outside firm to provide assurance on its annual figures.",
+   "ipa": "/əˈʃʊərəns/"
+  },
+  "greenwashing": {
+   "w": "greenwashing",
+   "pos": "명사",
+   "ko": "그린워싱, 위장 친환경",
+   "en": "making a company look more environmentally friendly than it really is",
+   "ex": "Shoppers are getting better at spotting greenwashing on clothing labels.",
+   "ipa": "/ˈɡriːnwɒʃɪŋ/"
+  },
+  "narrowing": {
+   "w": "narrow",
+   "pos": "동사",
+   "ko": "좁히다, 축소하다",
+   "en": "making something smaller in range or extent",
+   "ex": "The committee is narrowing its list of candidates to three.",
+   "ipa": "/ˈnærəʊɪŋ/"
+  },
+  "narrow": {
+   "w": "narrow",
+   "pos": "동사",
+   "ko": "좁히다, 축소하다",
+   "en": "to make something smaller in range or extent",
+   "ex": "We need to narrow the focus of the project before the deadline.",
+   "ipa": "/ˈnærəʊ/"
+  },
+  "mandatory": {
+   "w": "mandatory",
+   "pos": "형용사",
+   "ko": "의무적인, 강제의",
+   "en": "required by law or a rule",
+   "ex": "Wearing a helmet is mandatory on this construction site.",
+   "ipa": "/ˈmændətəri/"
+  },
+  "stakeholder": {
+   "w": "stakeholder",
+   "pos": "명사",
+   "ko": "이해관계자",
+   "en": "a person or group affected by or interested in an organisation",
+   "ex": "The designer met with every stakeholder before changing the brand logo.",
+   "ipa": "/ˈsteɪkhəʊldə(r)/"
+  },
+  "scrutiny": {
+   "w": "scrutiny",
+   "pos": "명사",
+   "ko": "면밀한 감시, 정밀 조사",
+   "en": "careful and critical examination",
+   "ex": "The new policy will come under close scrutiny from the media.",
+   "ipa": "/ˈskruːtəni/"
+  },
+  "accountability": {
+   "w": "accountability",
+   "pos": "명사",
+   "ko": "책임(성), 해명 책임",
+   "en": "the duty to explain and accept responsibility for your actions",
+   "ex": "Voters want more accountability from local government.",
+   "ipa": "/əˌkaʊntəˈbɪləti/"
+  },
+  "exempted": {
+   "w": "exempt",
+   "pos": "동사",
+   "ko": "면제했다",
+   "en": "freed someone from a rule or duty",
+   "ex": "Small shops were exempted from the new packaging tax.",
+   "ipa": "/ɪɡˈzemptɪd/"
+  },
+  "exempt": {
+   "w": "exempt",
+   "pos": "동사",
+   "ko": "면제하다",
+   "en": "to free someone from a rule or duty",
+   "ex": "The law exempts students from paying the fee.",
+   "ipa": "/ɪɡˈzempt/"
+  },
+  "exempting": {
+   "w": "exempt",
+   "pos": "동사",
+   "ko": "면제하는 것",
+   "en": "freeing someone from a rule or duty",
+   "ex": "Exempting older buildings from the rules could slow progress.",
+   "ipa": "/ɪɡˈzemptɪŋ/"
+  },
+  "credentials": {
+   "w": "credential",
+   "pos": "명사",
+   "ko": "자격, 이력, 평판",
+   "en": "qualities or achievements that show someone can be trusted",
+   "ex": "The brand keeps promoting its ethical credentials in every campaign.",
+   "ipa": "/krəˈdenʃlz/"
+  },
+  "credential": {
+   "w": "credential",
+   "pos": "명사",
+   "ko": "자격, 신임 근거",
+   "en": "a quality or record that proves someone is suitable or trustworthy",
+   "ex": "Her strongest credential is ten years of experience in textile sourcing.",
+   "ipa": "/krəˈdenʃl/"
+  },
+  "red tape": {
+   "w": "red tape",
+   "pos": "구",
+   "ko": "불필요한 행정 절차, 관료주의",
+   "en": "official rules and paperwork that seem unnecessary and slow things down",
+   "ex": "Opening a small café involved months of red tape.",
+   "ipa": "/ˌred ˈteɪp/"
+  },
+  "jurisdictions": {
+   "w": "jurisdiction",
+   "pos": "명사",
+   "ko": "관할 지역, 사법권",
+   "en": "areas where a particular legal authority applies",
+   "ex": "Tax rules differ across jurisdictions.",
+   "ipa": "/ˌdʒʊərɪsˈdɪkʃnz/"
+  },
+  "jurisdiction": {
+   "w": "jurisdiction",
+   "pos": "명사",
+   "ko": "관할 지역, 사법권",
+   "en": "an area where a particular legal authority applies",
+   "ex": "The case falls outside the court's jurisdiction.",
+   "ipa": "/ˌdʒʊərɪsˈdɪkʃn/"
+  },
+  "equivalent": {
+   "w": "equivalent",
+   "pos": "명사",
+   "ko": "(그에) 상응하는 것",
+   "en": "something that has the same value, purpose or effect",
+   "ex": "There is no exact English equivalent for this Korean word.",
+   "ipa": "/ɪˈkwɪvələnt/"
+  },
+  "takes effect": {
+   "w": "take effect",
+   "pos": "구",
+   "ko": "시행되다, 효력이 발생하다",
+   "en": "starts to apply officially",
+   "ex": "The new parking rule takes effect next Monday.",
+   "ipa": "/teɪks ɪˈfekt/"
+  },
+  "take effect": {
+   "w": "take effect",
+   "pos": "구",
+   "ko": "시행되다, 효력이 발생하다",
+   "en": "to start to apply officially",
+   "ex": "The price changes will take effect from January.",
+   "ipa": "/teɪk ɪˈfekt/"
+  },
+  "vocal": {
+   "w": "vocal",
+   "pos": "형용사",
+   "ko": "목소리를 높이는, 적극적으로 표현하는",
+   "en": "expressing opinions openly and strongly",
+   "ex": "Young customers are very vocal about animal welfare.",
+   "ipa": "/ˈvəʊkl/"
+  },
+  "calling out": {
+   "w": "call out",
+   "pos": "구",
+   "ko": "공개적으로 지적하다, 비판하다",
+   "en": "publicly criticising someone for wrong behaviour",
+   "ex": "Fans are calling out the singer for copying another artist.",
+   "ipa": "/ˈkɔːlɪŋ aʊt/"
+  },
+  "call out": {
+   "w": "call out",
+   "pos": "구",
+   "ko": "공개적으로 지적하다, 비판하다",
+   "en": "to publicly criticise someone for wrong behaviour",
+   "ex": "Journalists should call out misleading advertising.",
+   "ipa": "/ˌkɔːl ˈaʊt/"
+  },
+  "remedy": {
+   "w": "remedy",
+   "pos": "명사",
+   "ko": "해결책, 구제책",
+   "en": "a way of solving or correcting a problem",
+   "ex": "Better training is one remedy for the high number of mistakes.",
+   "ipa": "/ˈremədi/"
+  },
+  "verification": {
+   "w": "verification",
+   "pos": "명사",
+   "ko": "검증, 확인",
+   "en": "the process of checking that something is true or accurate",
+   "ex": "Your account will open after identity verification.",
+   "ipa": "/ˌverɪfɪˈkeɪʃn/"
+  },
+  "voluntary": {
+   "w": "voluntary",
+   "pos": "형용사",
+   "ko": "자발적인, 임의의",
+   "en": "done by choice, not because it is required",
+   "ex": "Attendance at the workshop is voluntary.",
+   "ipa": "/ˈvɒləntri/"
+  },
+  "listed companies": {
+   "w": "listed company",
+   "pos": "구",
+   "ko": "상장 기업",
+   "en": "companies whose shares are traded on a stock exchange",
+   "ex": "Listed companies must publish their results every quarter.",
+   "ipa": "/ˌlɪstɪd ˈkʌmpəniz/"
+  },
+  "emissions": {
+   "w": "emission",
+   "pos": "명사",
+   "ko": "배출(량)",
+   "en": "gases or substances released into the air",
+   "ex": "The factory cut its emissions by switching to solar power.",
+   "ipa": "/iˈmɪʃnz/"
+  },
+  "emission": {
+   "w": "emission",
+   "pos": "명사",
+   "ko": "배출",
+   "en": "the release of gas or other substances into the air",
+   "ex": "Emission levels in the city fall sharply on car-free days.",
+   "ipa": "/iˈmɪʃn/"
+  },
+  "initiatives": {
+   "w": "initiative",
+   "pos": "명사",
+   "ko": "(새로운) 계획, 사업",
+   "en": "new plans or actions to achieve a goal",
+   "ex": "The school launched several initiatives to reduce food waste.",
+   "ipa": "/ɪˈnɪʃətɪvz/"
+  },
+  "initiative": {
+   "w": "initiative",
+   "pos": "명사",
+   "ko": "(새로운) 계획, 사업",
+   "en": "a new plan or action to achieve a goal",
+   "ex": "The recycling initiative was started by two employees.",
+   "ipa": "/ɪˈnɪʃətɪv/"
+  },
+  "consistent with": {
+   "w": "consistent with",
+   "pos": "구",
+   "ko": "~와 일치하는, ~에 부합하는",
+   "en": "matching or in agreement with something",
+   "ex": "Her story is consistent with what the witnesses said.",
+   "ipa": "/kənˈsɪstənt wɪð/"
+  },
+  "first and foremost": {
+   "w": "first and foremost",
+   "pos": "구",
+   "ko": "무엇보다도, 우선적으로",
+   "en": "more than anything else; most importantly",
+   "ex": "First and foremost, a coat has to keep you warm.",
+   "ipa": "/ˌfɜːst ənd ˈfɔːməʊst/"
+  },
+  "have a say": {
+   "w": "have a say",
+   "pos": "구",
+   "ko": "발언권이 있다, 결정에 참여하다",
+   "en": "to have the right to influence a decision",
+   "ex": "Staff should have a say in how the office is designed.",
+   "ipa": "/hæv ə ˈseɪ/"
+  },
+  "interpretation": {
+   "w": "interpretation",
+   "pos": "명사",
+   "ko": "해석",
+   "en": "an explanation of what something means",
+   "ex": "There is more than one interpretation of the survey results.",
+   "ipa": "/ɪnˌtɜːprəˈteɪʃn/"
+  },
+  "carries more weight": {
+   "w": "carry weight",
+   "pos": "구",
+   "ko": "더 큰 영향력·무게를 갖다",
+   "en": "is more influential or taken more seriously",
+   "ex": "A recommendation from a former client carries more weight than an advert.",
+   "ipa": "/ˈkæriz mɔː ˈweɪt/"
+  },
+  "carry weight": {
+   "w": "carry weight",
+   "pos": "구",
+   "ko": "영향력이 있다, 중시되다",
+   "en": "to be influential or taken seriously",
+   "ex": "Her opinion carries weight because she has worked in the industry for years.",
+   "ipa": "/ˌkæri ˈweɪt/"
+  },
+  "gives them teeth": {
+   "w": "give teeth",
+   "pos": "구",
+   "ko": "실효성(강제력)을 부여하다",
+   "en": "makes rules or facts powerful enough to have a real effect",
+   "ex": "The new fines give the safety rules teeth.",
+   "ipa": "/ɡɪvz ðəm ˈtiːθ/"
+  },
+  "give teeth": {
+   "w": "give teeth",
+   "pos": "구",
+   "ko": "실효성(강제력)을 부여하다",
+   "en": "to make something powerful enough to have a real effect",
+   "ex": "Regular inspections give the policy teeth.",
+   "ipa": "/ˌɡɪv ˈtiːθ/"
+  },
+  "heavily polluting": {
+   "w": "heavily polluting",
+   "pos": "구",
+   "ko": "오염을 많이 일으키는",
+   "en": "causing a large amount of pollution",
+   "ex": "The city plans to ban heavily polluting trucks from the centre.",
+   "ipa": "/ˌhevɪli pəˈluːtɪŋ/"
+  },
+  "lax": {
+   "w": "lax",
+   "pos": "형용사",
+   "ko": "느슨한, 해이한",
+   "en": "not strict or careful enough",
+   "ex": "Lax security allowed the thieves to enter the warehouse.",
+   "ipa": "/læks/"
+  },
+  "upheld": {
+   "w": "uphold",
+   "pos": "동사",
+   "ko": "(주장·판결을) 인정했다, 지지했다",
+   "en": "officially agreed that a complaint or decision was correct",
+   "ex": "The tribunal upheld the worker's claim of unfair dismissal.",
+   "ipa": "/ʌpˈheld/"
+  },
+  "uphold": {
+   "w": "uphold",
+   "pos": "동사",
+   "ko": "(주장·판결을) 인정하다, 지지하다",
+   "en": "to officially agree that a complaint or decision is correct",
+   "ex": "The judge is expected to uphold the original verdict.",
+   "ipa": "/ʌpˈhəʊld/"
+  },
+  "misled": {
+   "w": "mislead",
+   "pos": "동사",
+   "ko": "오도했다, 잘못 믿게 했다",
+   "en": "caused someone to believe something untrue",
+   "ex": "The advert misled buyers about the size of the room.",
+   "ipa": "/ˌmɪsˈled/"
+  },
+  "mislead": {
+   "w": "mislead",
+   "pos": "동사",
+   "ko": "오도하다, 잘못 믿게 하다",
+   "en": "to cause someone to believe something untrue",
+   "ex": "Product photos should not mislead customers about colour.",
+   "ipa": "/ˌmɪsˈliːd/"
+  },
+  "carbon neutrality": {
+   "w": "carbon neutrality",
+   "pos": "구",
+   "ko": "탄소 중립",
+   "en": "a state in which net carbon emissions are zero",
+   "ex": "The airline says it will reach carbon neutrality within twenty years.",
+   "ipa": "/ˌkɑːbən njuːˈtræləti/"
+  },
+  "touting": {
+   "w": "tout",
+   "pos": "동사",
+   "ko": "(장점을) 내세우는, 홍보하는",
+   "en": "praising or promoting something loudly",
+   "ex": "The poster was touting the jacket as fully recyclable.",
+   "ipa": "/ˈtaʊtɪŋ/"
+  },
+  "tout": {
+   "w": "tout",
+   "pos": "동사",
+   "ko": "(장점을) 내세우다, 떠벌리다",
+   "en": "to praise or promote something loudly",
+   "ex": "Many brands tout their products as natural.",
+   "ipa": "/taʊt/"
+  },
+  "omitting": {
+   "w": "omit",
+   "pos": "동사",
+   "ko": "빠뜨리는, 생략하는",
+   "en": "leaving something out",
+   "ex": "He was criticised for omitting the risks from his presentation.",
+   "ipa": "/əˈmɪtɪŋ/"
+  },
+  "omit": {
+   "w": "omit",
+   "pos": "동사",
+   "ko": "빠뜨리다, 생략하다",
+   "en": "to leave something out",
+   "ex": "Please do not omit your phone number from the form.",
+   "ipa": "/əˈmɪt/"
+  },
+  "fined": {
+   "w": "fine",
+   "pos": "동사",
+   "ko": "벌금을 부과받았다",
+   "en": "made to pay money as a punishment",
+   "ex": "The restaurant was fined for breaking hygiene rules.",
+   "ipa": "/faɪnd/"
+  },
+  "fine": {
+   "w": "fine",
+   "pos": "동사",
+   "ko": "벌금을 부과하다",
+   "en": "to make someone pay money as a punishment",
+   "ex": "The council can fine drivers who park illegally.",
+   "ipa": "/faɪn/"
+  },
+  "prosecutors": {
+   "w": "prosecutor",
+   "pos": "명사",
+   "ko": "검사, 기소 담당자",
+   "en": "lawyers who bring criminal charges against someone",
+   "ex": "Prosecutors say they have new evidence in the fraud case.",
+   "ipa": "/ˈprɒsɪkjuːtəz/"
+  },
+  "prosecutor": {
+   "w": "prosecutor",
+   "pos": "명사",
+   "ko": "검사",
+   "en": "a lawyer who brings criminal charges against someone",
+   "ex": "The prosecutor asked the court for a longer sentence.",
+   "ipa": "/ˈprɒsɪkjuːtə(r)/"
+  },
+  "blown the whistle": {
+   "w": "blow the whistle",
+   "pos": "구",
+   "ko": "내부 고발을 했다",
+   "en": "told the public or authorities about wrongdoing inside an organisation",
+   "ex": "A junior accountant had blown the whistle on the false invoices.",
+   "ipa": "/bləʊn ðə ˈwɪsl/"
+  },
+  "blow the whistle": {
+   "w": "blow the whistle",
+   "pos": "구",
+   "ko": "내부 고발하다",
+   "en": "to tell the public or authorities about wrongdoing inside an organisation",
+   "ex": "Few employees dare to blow the whistle on their managers.",
+   "ipa": "/ˌbləʊ ðə ˈwɪsl/"
+  },
+  "exuberant": {
+   "w": "exuberant",
+   "pos": "형용사",
+   "ko": "지나치게 들뜬, 과장된",
+   "en": "full of energy and excitement, sometimes too much",
+   "ex": "The sales team gave an exuberant forecast that proved unrealistic.",
+   "ipa": "/ɪɡˈzjuːbərənt/"
+  },
+  "echo": {
+   "w": "echo",
+   "pos": "동사",
+   "ko": "(내용을) 되풀이하다, 반영하다",
+   "en": "to repeat or be similar to an earlier idea or result",
+   "ex": "The new survey results echo what we found last year.",
+   "ipa": "/ˈekəʊ/"
+  },
+  "raised the alarm": {
+   "w": "raise the alarm",
+   "pos": "구",
+   "ko": "경고했다, 문제를 알렸다",
+   "en": "warned people about a danger or problem",
+   "ex": "A neighbour raised the alarm when she saw smoke.",
+   "ipa": "/reɪzd ði əˈlɑːm/"
+  },
+  "raise the alarm": {
+   "w": "raise the alarm",
+   "pos": "구",
+   "ko": "경고하다, 문제를 알리다",
+   "en": "to warn people about a danger or problem",
+   "ex": "Scientists continue to raise the alarm about plastic in the ocean.",
+   "ipa": "/ˌreɪz ði əˈlɑːm/"
+  },
+  "worthwhile": {
+   "w": "worthwhile",
+   "pos": "형용사",
+   "ko": "가치 있는, 할 만한",
+   "en": "useful or important enough to justify the effort",
+   "ex": "Learning to sew was a worthwhile investment of my time.",
+   "ipa": "/ˌwɜːθˈwaɪl/"
+  },
+  "silver bullet": {
+   "w": "silver bullet",
+   "pos": "구",
+   "ko": "만능 해결책",
+   "en": "a simple solution that fixes a complicated problem completely",
+   "ex": "There is no silver bullet for reducing fashion waste.",
+   "ipa": "/ˌsɪlvə ˈbʊlɪt/"
+  },
+  "credible": {
+   "w": "credible",
+   "pos": "형용사",
+   "ko": "믿을 만한, 신뢰할 수 있는",
+   "en": "able to be believed or trusted",
+   "ex": "The report gives a credible explanation for the drop in sales.",
+   "ipa": "/ˈkredəbl/"
+  },
+  "measurable": {
+   "w": "measurable",
+   "pos": "형용사",
+   "ko": "측정 가능한, 눈에 띄는",
+   "en": "large or clear enough to be measured",
+   "ex": "The new layout led to a measurable increase in online orders.",
+   "ipa": "/ˈmeʒərəbl/"
+  }
+ },
+ "vocab": [
+  "assurance",
+  "greenwashing",
+  "mandatory",
+  "stakeholder",
+  "scrutiny",
+  "accountability",
+  "exempt",
+  "red tape",
+  "remedy",
+  "lax",
+  "mislead",
+  "tout",
+  "blow the whistle",
+  "silver bullet"
+ ],
+ "quiz": [
+  {
+   "q": "After the Omnibus reform, fewer companies are required to produce sustainability reports.",
+   "a": "TRUE",
+   "why": "Omnibus 개혁이 CSRD 대상 기업 대부분을 의무 보고에서 면제했다고 나온다."
+  },
+  {
+   "q": "Among firms without verified reports, running more emission-cutting programmes was linked to lower emissions.",
+   "a": "FALSE",
+   "why": "검증받지 않은 기업은 프로그램이 많을수록 오히려 배출량이 높았다고 한다."
+  },
+  {
+   "q": "DWS's former head of sustainability received financial compensation after reporting the problem.",
+   "a": "NOT GIVEN",
+   "why": "Desiree Fixler가 내부 고발했다는 내용만 있고 보상 이야기는 없다."
+  },
+  {
+   "q": "The link between assurance and lower emissions was stronger in countries with weaker environmental laws.",
+   "a": "TRUE",
+   "why": "환경법이 약한 나라에서 연관성이 더 강했다고 직접 언급한다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "When nobody checks, some green projects are just for show.",
+   "article": "Without scrutiny, it seems, some climate action is more about image than impact."
+  },
+  {
+   "simple": "Checks supply the information, but public pressure makes it actually matter.",
+   "article": "Verification provides the facts; outside pressure gives them teeth."
+  },
+  {
+   "simple": "Outside checking can partly make up for weak laws.",
+   "article": "independent verification can partly fill the gap left by lax regulation"
+  },
+  {
+   "simple": "Checking reports is useful for the climate, but it cannot solve everything.",
+   "article": "Our evidence points to a climate tool, but not a silver bullet."
+  },
+  {
+   "simple": "Checking reports by itself won't end fake green claims.",
+   "article": "Assurance alone may not stop greenwashing."
+  }
+ ],
+ "summary": "Research suggests that independent checks of corporate sustainability reports are linked to lower emissions and more effective green programmes, especially when stakeholders apply pressure, yet such checks cannot stop greenwashing on their own, so the EU's decision to reduce mandatory reporting is a concern.",
+ "gist": "기업 지속가능성 보고서를 외부에서 검증하면 그린워싱이 줄고 실제 감축으로 이어지는지 다룬 연구 글.\n검증은 효과가 있지만 이해관계자 압력과 함께할 때 가장 잘 작동하며, 만능 해결책은 아니라고 결론짓는다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "The researchers looked at a period when companies were mostly required by law to have their sustainability reports checked.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "연구 기간에는 검증이 주로 자율이었음 — \"a period when sustainability reporting assurance was largely voluntary\""
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "Canada's national version of the new assurance standard takes effect later than Australia's.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "호주는 2025년 1월, 캐나다는 2027년 12월 — \"Australia's equivalent was applied in January 2025, while Canada's (CSSA 5000) starts on December 15, 2027\""
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The NGOs that brought the case against TotalEnergies had earlier filed complaints against other energy companies.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "세 NGO가 \"partly upheld a complaint\"를 냈다는 내용만 있고, 다른 회사를 상대로 한 과거 소송 이야기는 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Independent assurance is enough on its own to put an end to greenwashing.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "글쓴이는 검증만으로는 부족하다고 봄 — \"not a silver bullet\", \"Assurance alone may not stop greenwashing\""
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The adoption of ISSA 5000 is likely to make sustainability assurance more uniform.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "글쓴이의 기대 — \"as ISSA 5000 is adopted, it should make assurance more consistent\""
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 11",
+    "options": [
+     "i  Stronger effects in polluting industries and weakly regulated countries",
+     "ii  The rising cost of hiring major accounting firms",
+     "iii  Checking the figures is not the same as checking the message",
+     "iv  Green programmes deliver more when reports are verified",
+     "v  Why investor-led economies reject verification"
+    ],
+    "answer": "iv",
+    "why": "검증받은 회사의 감축 활동이 더 큰 효과 — \"Among firms with verified reports, such initiatives were associated with greater emission reductions\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 16",
+    "options": [
+     "i  Stronger effects in polluting industries and weakly regulated countries",
+     "ii  The rising cost of hiring major accounting firms",
+     "iii  Checking the figures is not the same as checking the message",
+     "iv  Green programmes deliver more when reports are verified",
+     "v  Why investor-led economies reject verification"
+    ],
+    "answer": "i",
+    "why": "오염 업종과 규제가 약한 나라에서 효과가 더 큼 — \"stronger in heavily polluting sectors... and in countries with weaker environmental laws\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 22",
+    "options": [
+     "i  Stronger effects in polluting industries and weakly regulated countries",
+     "ii  The rising cost of hiring major accounting firms",
+     "iii  Checking the figures is not the same as checking the message",
+     "iv  Green programmes deliver more when reports are verified",
+     "v  Why investor-led economies reject verification"
+    ],
+    "answer": "iii",
+    "why": "검증은 숫자만 보고 마케팅은 보지 않음 — \"Verification checks whether a report's numbers are accurate, not whether a company's marketing tells the whole story\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a financial penalty imposed on a company?",
+    "options": [
+     "19",
+     "20",
+     "21",
+     "23"
+    ],
+    "answer": "21",
+    "why": "DWS가 벌금을 냄 — \"DWS was fined €25 million in 2025\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions workers having seats on corporate boards?",
+    "options": [
+     "11",
+     "14",
+     "15",
+     "26"
+    ],
+    "answer": "14",
+    "why": "프랑스·독일에서는 직원이 이사회에 들어감 — \"employees even sit on company boards\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "Why were HSBC's advertisements banned?",
+    "options": [
+     "A They exaggerated the size of the bank's sustainable finance target.",
+     "B They left out the fact that the bank still funded heavily polluting industries.",
+     "C Their claims had not been checked by an independent auditor.",
+     "D They misled consumers about a carbon neutrality goal for 2050."
+    ],
+    "answer": "B",
+    "why": "오염 산업 투자 사실을 뺐기 때문 — \"for omitting that the bank was still financing heavily polluting industries\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "According to the writers, why is assurance linked more strongly to lower emissions in stakeholder economies?",
+    "options": [
+     "A Environmental laws in those countries are stricter.",
+     "B The Big Four carry out most of the checks there.",
+     "C More groups are paying attention and can respond to verified information.",
+     "D Companies there publish more detailed sustainability reports."
+    ],
+    "answer": "C",
+    "why": "지켜보고 행동할 수 있는 이해관계자가 많아서 — \"a verified report carries more weight when many stakeholder groups are watching and able to act on it\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Among companies whose reports were not independently checked, running more emission-cutting programmes was linked to ____ emissions.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "higher"
+    ],
+    "why": "검증 없는 회사는 활동이 많을수록 배출이 더 많음 — \"more initiatives were linked to higher emissions\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "The findings suggest that independent verification can help make up, to some extent, for ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "lax regulation"
+    ],
+    "why": "검증이 느슨한 규제의 빈틈을 일부 메움 — \"independent verification can partly fill the gap left by lax regulation\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Who appointed EY and PwC to verify TotalEnergies' sustainability report?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "shareholders"
+    ],
+    "why": "주주가 선임함 — \"EY and PwC, appointed by shareholders in 2024\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    10,
+    15,
+    21
+   ]
+  }
+ }
+}
