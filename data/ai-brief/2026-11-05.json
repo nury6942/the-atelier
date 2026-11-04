@@ -7,7 +7,7 @@
    "cat": "vibe",
    "title": "흰 바탕 위 픽셀 섬, 브라우저 게임 5편",
    "url": "https://github.com/amirmushichge/pixel-plays",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/0010cd185ae77712bbe95a92e3547d0c6bdc843d4bae28693fec024b9f81ae97/amirmushichge/pixel-plays",
    "source": "GitHub @amirmushichge · 별 390 · 10-31",
    "how": "그림 파일 없이 JS 코드로만 그린 등각 픽셀",
    "examples": [
@@ -56,7 +56,7 @@
    "cat": "tool",
    "title": "영상 소스 없이 릴스 애니, 한 줄 주문",
    "url": "https://github.com/artemnovitckii/claude-animation-skills",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/artemnovitckii/claude-animation-skills",
    "source": "GitHub @artemnovitckii · 별 374 · 11-01",
    "how": "Claude Code 스킬이 맥에서 렌더·안전영역 검사",
    "chips": [
@@ -70,7 +70,7 @@
    "cat": "tool",
    "title": "영어 회의를 맥에서 실시간 자막·회의록",
    "url": "https://github.com/wquguru/cicada",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/wquguru/cicada",
    "source": "GitHub @wquguru · 별 1,096 · 11-01",
    "how": "맥 시스템 소리를 기기 안에서 받아 적고 번역",
    "chips": [
@@ -131,7 +131,7 @@
    "cat": "free",
    "title": "손그림 shadcn 부품 123개",
    "url": "https://github.com/kevintngo/looseleaf",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/de66be4b200c1e398a59f13fb3acc5f9c99991120ed26914619a240de69af102/kevintngo/looseleaf",
    "source": "GitHub · MIT · 블록 61개 · 손글씨 폰트 포함 · 별 377",
    "watching": false
   },
@@ -139,7 +139,7 @@
    "cat": "free",
    "title": "3D 웹사이트 만드는 스킬 8개",
    "url": "https://github.com/Moh4696/open-3d-skills",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/Moh4696/open-3d-skills",
    "source": "GitHub · MIT · three.js·스크롤 영상·분해도 · 별 245",
    "watching": false
   },
@@ -147,7 +147,7 @@
    "cat": "vibe",
    "title": "2MB짜리 맥 런처",
    "url": "https://github.com/justrach/nanolight",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/justrach/nanolight",
    "source": "GitHub · MIT · 맥·윈도우·리눅스 · 별 355",
    "watching": false
   },
@@ -155,7 +155,7 @@
    "cat": "tool",
    "title": "에이전트 전용 두 번째 맥",
    "url": "https://github.com/govijr/terminal-mac",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/govijr/terminal-mac",
    "source": "GitHub · MIT · 애플 칩 · 가상 맥을 터미널에서 · 별 1,449",
    "watching": false
   },
@@ -163,7 +163,7 @@
    "cat": "tool",
    "title": "막히면 묻는 백그라운드 에이전트",
    "url": "https://github.com/KKKKhazix/agent-autoloop",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/KKKKhazix/agent-autoloop",
    "source": "GitHub · MIT · 맥·리눅스 · 슬랙·데스크톱 알림 · 별 2,406",
    "watching": false
   }
