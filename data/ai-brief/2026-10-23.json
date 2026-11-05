@@ -14,7 +14,9 @@
     "파일 61KB",
     "엔진 없이 WebGPU",
     "크롬에서 바로"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/a822ca63f7eb24f0.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -28,7 +30,9 @@
     "하루 20편",
     "Claude Code·Codex"
    ],
-   "forMe": "MLB 신상 팬츠·집업 소개 30초 모션을 시안 단계에서 직접 뽑아볼 수 있습니다. 고칠 곳은 화면을 눌러 지시하면 돼서 디자이너 작업 방식과 맞습니다."
+   "forMe": "MLB 신상 팬츠·집업 소개 30초 모션을 시안 단계에서 직접 뽑아볼 수 있습니다. 고칠 곳은 화면을 눌러 지시하면 돼서 디자이너 작업 방식과 맞습니다.",
+   "thumb": "data/ai-brief/thumbs/b412447cbc10f4f7.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "vibe",
@@ -41,7 +45,9 @@
     "232개 TV 모델",
     "66개 브랜드",
     "한 줄 원상복구"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/ab0e470b36e49b22.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -67,7 +73,9 @@
     "Blender 5.2+",
     "Roblox·Unity·Unreal 내보내기",
     "9일 만에 ★413"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/1a44d03684b9dd58.jpg",
+   "thumb_src": "readme"
   }
  ],
  "tryToday": [
@@ -132,7 +140,9 @@
    "url": "https://github.com/reason-machines/reason-network",
    "image": "https://raw.githubusercontent.com/reason-machines/reason-network/HEAD/assets/reason-network-banner.png",
    "source": "GitHub reason-machines · ★1천",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/17bd4145ec305c23.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
@@ -140,7 +150,9 @@
    "url": "https://github.com/d-onworks/claude-3d-frog-office",
    "image": "https://raw.githubusercontent.com/d-onworks/claude-3d-frog-office/HEAD/docs/img/promo-ko.gif",
    "source": "GitHub d-onworks · MIT",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/1cf0a451181f4498.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -148,7 +160,9 @@
    "url": "https://github.com/OpenMOSS/MOSS-Image",
    "image": "https://raw.githubusercontent.com/OpenMOSS/MOSS-Image/HEAD/assets/lockup-light.svg",
    "source": "GitHub OpenMOSS · 5B · ★1.4천",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/bfc4e1509fcad720.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -174,7 +188,9 @@
    "url": "https://github.com/cranebeaker/coop-anything",
    "image": "https://opengraph.githubassets.com/1/cranebeaker/coop-anything",
    "source": "GitHub cranebeaker · ★838",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/daa98ecb15f376b1.jpg",
+   "thumb_src": "og"
   }
  ],
  "watching": [

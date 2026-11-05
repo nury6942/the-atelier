@@ -15,7 +15,9 @@
     "기준 통과 7,670장",
     "이름 43개 언어"
    ],
-   "forMe": "그래픽을 대량으로 뽑을 때 '그리는 AI + 원본과 비교해 점수 매기는 AI' 두 단계로 나누는 방식이 핵심이에요. MLB 프린트 시안 여러 장을 돌릴 때 그대로 빌려 쓸 수 있습니다."
+   "forMe": "그래픽을 대량으로 뽑을 때 '그리는 AI + 원본과 비교해 점수 매기는 AI' 두 단계로 나누는 방식이 핵심이에요. MLB 프린트 시안 여러 장을 돌릴 때 그대로 빌려 쓸 수 있습니다.",
+   "thumb": "data/ai-brief/thumbs/1706ad9a3fb07359.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -29,7 +31,9 @@
     "옷 8분류 · 태그 86개",
     "원본 다운로드"
    ],
-   "forMe": "착장 도식화나 핏 설명용 인체 선화가 필요할 때 정면·3/4·측면을 바로 골라 볼 수 있어요. 이미지는 재배포·판매 금지라 참고용으로만 쓰세요."
+   "forMe": "착장 도식화나 핏 설명용 인체 선화가 필요할 때 정면·3/4·측면을 바로 골라 볼 수 있어요. 이미지는 재배포·판매 금지라 참고용으로만 쓰세요.",
+   "thumb": "data/ai-brief/thumbs/c2e30b52380995ee.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -42,7 +46,9 @@
     {
      "title": "원래 실험 전체 기록: GPT-6 Astra가 신경망 숫자를 읽고 고치기",
      "url": "https://github.com/RikiyaT/lm_understand-logs",
-     "image": "https://opengraph.githubassets.com/1/RikiyaT/lm_understand-logs"
+     "image": "https://opengraph.githubassets.com/1/RikiyaT/lm_understand-logs",
+     "thumb": "data/ai-brief/thumbs/43c01fe550a00953.jpg",
+     "thumb_src": "og"
     }
    ],
    "chips": [
@@ -144,7 +150,9 @@
    "url": "https://github.com/Pika-Labs/Pika-H3-Flex",
    "image": "https://opengraph.githubassets.com/1/Pika-Labs/Pika-H3-Flex",
    "source": "GitHub · 10-29 · 별 1,266 · 33B · 로컬 480p/768p",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/fa656ed7d80892f8.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "vibe",
@@ -152,7 +160,9 @@
    "url": "https://github.com/Humpalumps/Ultra-Water",
    "image": "https://opengraph.githubassets.com/1/Humpalumps/Ultra-Water",
    "source": "GitHub · MIT · three.js · 별 617",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/ddf1276e8f5f5f78.jpg",
+   "thumb_src": "og"
   },
   {
    "cat": "free",
@@ -160,7 +170,9 @@
    "url": "https://github.com/smithjohn78390/tongjiang-lab",
    "image": "https://opengraph.githubassets.com/1/smithjohn78390/tongjiang-lab",
    "source": "GitHub · CC BY-NC · HTML 한 파일씩 · 별 1,524",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/d62d219b9364989a.jpg",
+   "thumb_src": "og"
   },
   {
    "cat": "free",
@@ -168,7 +180,9 @@
    "url": "https://github.com/anomalyco/hex",
    "image": "https://opengraph.githubassets.com/1/anomalyco/hex",
    "source": "GitHub · MIT · 맥·윈도우·리눅스 · 별 4,517",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0f4537518a872dde.jpg",
+   "thumb_src": "og"
   },
   {
    "cat": "tool",
@@ -176,7 +190,9 @@
    "url": "https://github.com/thedotmack/claude-mem",
    "image": "https://opengraph.githubassets.com/1/thedotmack/claude-mem",
    "source": "GitHub 트렌딩 · 오늘 별 1,138 · 누적 11만",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/b8da10635efbda0c.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -184,15 +200,19 @@
    "url": "https://github.com/hyz317/HairDeck",
    "image": "https://opengraph.githubassets.com/1/hyz317/HairDeck",
    "source": "GitHub · Apache-2.0 · 별 776",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/f0448cd3c7b28097.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
    "title": "사진 한 장을 3D로, Idol",
    "url": "https://github.com/speridlabs/idol-sdk",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/speridlabs/idol-sdk",
    "source": "GitHub · Apache-2.0 · 별 720",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/c84a62934d54f15c.jpg",
+   "thumb_src": "readme"
   }
  ],
  "watching": [

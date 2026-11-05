@@ -14,7 +14,9 @@
     "v0.7.0 · 10-14",
     "이펙트 24 · 가상 악기 3",
     "프리알파 · .ptx 못 엶"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/c8dc3fcafa6aeea5.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -28,7 +30,9 @@
     "공개 사진 755장 출처 표기",
     "audit 는 고치지 않고 보고만"
    ],
-   "forMe": "/hallmark audit 로 Atelier 페이지를 돌리면 '제목 위 작은 라벨', '한 단어만 색칠' 같은 AI 티를 목록으로 받아볼 수 있습니다."
+   "forMe": "/hallmark audit 로 Atelier 페이지를 돌리면 '제목 위 작은 라벨', '한 단어만 색칠' 같은 AI 티를 목록으로 받아볼 수 있습니다.",
+   "thumb": "data/ai-brief/thumbs/e2469c92ba3c15a3.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -42,7 +46,9 @@
     "localhost 페이지도",
     "v0.8.2"
    ],
-   "forMe": "Atelier 화면 문구·간격 수정을 '세 번째 카드의…'처럼 말로 설명하는 대신, 화면에서 직접 고치고 댓글 달아 Claude Code에 한 번에 넘길 수 있습니다."
+   "forMe": "Atelier 화면 문구·간격 수정을 '세 번째 카드의…'처럼 말로 설명하는 대신, 화면에서 직접 고치고 댓글 달아 Claude Code에 한 번에 넘길 수 있습니다.",
+   "thumb": "data/ai-brief/thumbs/82128de03fa1b80b.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -143,7 +149,9 @@
    "url": "https://github.com/AIEraDev/Clypra",
    "image": "https://raw.githubusercontent.com/AIEraDev/Clypra/HEAD/public/clypra.jpg",
    "source": "GitHub AIEraDev · MIT · Tauri",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/92044378f5b168e3.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
@@ -151,7 +159,9 @@
    "url": "https://github.com/genspark-ai/genoffice",
    "image": "https://raw.githubusercontent.com/genspark-ai/genoffice/HEAD/docs/assets/readme/hero.webp",
    "source": "GitHub genspark-ai · Apache-2.0 · 알파",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/49452062182371c8.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -168,7 +178,9 @@
    "url": "https://github.com/lappemic/awesome-ai-built-games",
    "image": "https://raw.githubusercontent.com/lappemic/awesome-ai-built-games/HEAD/public/og-image.png",
    "source": "GitHub lappemic · 바로 플레이",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/84cfe7f06d66fce6.jpg",
+   "thumb_src": "readme"
   }
  ],
  "watching": [

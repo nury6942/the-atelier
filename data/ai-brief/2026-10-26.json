@@ -99,14 +99,20 @@
     {
      "title": "대만 파나소닉 TV, 34개 꺼서 전후 비교",
      "url": "https://github.com/frank410394/panasonic-firetv-debloat",
-     "image": "https://raw.githubusercontent.com/frank410394/panasonic-firetv-debloat/HEAD/docs/images/dumbtv-home.png"
+     "image": "https://raw.githubusercontent.com/frank410394/panasonic-firetv-debloat/HEAD/docs/images/dumbtv-home.png",
+     "thumb": "data/ai-brief/thumbs/2734c3453e3b12f5.jpg",
+     "thumb_src": "readme"
     },
     {
      "title": "애플TV풍 홈에 날씨까지 붙인 갈래",
      "url": "https://github.com/carlom19/cinema-home-fire-tv",
-     "image": "https://raw.githubusercontent.com/carlom19/cinema-home-fire-tv/HEAD/cinema-launcher/assets/wallpaper.png"
+     "image": "https://raw.githubusercontent.com/carlom19/cinema-home-fire-tv/HEAD/cinema-launcher/assets/wallpaper.png",
+     "thumb": "data/ai-brief/thumbs/e95cde304b43b3c6.jpg",
+     "thumb_src": "og"
     }
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/a4403b6ae01371e7.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -120,7 +126,9 @@
     "6단계",
     "확인된 것만 보고서로"
    ],
-   "forMe": "Atelier는 Firebase에 개인 데이터가 있어서, 키·권한이 새는 곳이 없는지 한 번 돌려볼 가치가 있습니다. AI를 여러 개 띄우니 사용량이 많이 듭니다."
+   "forMe": "Atelier는 Firebase에 개인 데이터가 있어서, 키·권한이 새는 곳이 없는지 한 번 돌려볼 가치가 있습니다. AI를 여러 개 띄우니 사용량이 많이 듭니다.",
+   "thumb": "data/ai-brief/thumbs/6426decba2ef7b96.jpg",
+   "thumb_src": "og"
   },
   {
    "cat": "tool",
@@ -133,7 +141,9 @@
     "v0.2.0 · 10-18",
     "데스크톱 앱 · 브라우저",
     "10-25까지 매일 빌드"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/6080fb8b34b08ea3.jpg",
+   "thumb_src": "og"
   }
  ],
  "tryToday": [
@@ -207,7 +217,9 @@
    "url": "https://github.com/makecindy/cindy",
    "image": "https://raw.githubusercontent.com/makecindy/cindy/HEAD/.github/assets/hero-en.webp",
    "source": "GitHub makecindy · Apache-2.0 · 오늘 트렌딩 1위",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/7c213e5a7519af56.jpg",
+   "thumb_src": "og"
   },
   {
    "cat": "free",
@@ -215,7 +227,9 @@
    "url": "https://github.com/pollen-robotics/microduck",
    "image": "https://opengraph.githubassets.com/1/pollen-robotics/microduck",
    "source": "GitHub pollen-robotics · 25cm·800g",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/3f27b55d48448ec0.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",

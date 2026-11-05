@@ -229,7 +229,9 @@
    "url": "https://github.com/pbakaus/impeccable",
    "image": "https://opengraph.githubassets.com/1/pbakaus/impeccable",
    "source": "GitHub · 10월 트렌딩",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/fa4361846156ed46.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
@@ -237,7 +239,9 @@
    "url": "https://github.com/hugohe3/ppt-master",
    "image": "https://opengraph.githubassets.com/1/hugohe3/ppt-master",
    "source": "GitHub · MIT",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/94ee2482679fd927.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "vibe",

@@ -29,7 +29,9 @@
     "맥·윈도·리눅스·웹",
     "얼리 알파"
    ],
-   "forMe": "MLB 프린트 PSD를 구독 없이 열어볼 수 있는지 시험해볼 후보. 단, 제작진도 아직 실무용은 아니라고 밝힘"
+   "forMe": "MLB 프린트 PSD를 구독 없이 열어볼 수 있는지 시험해볼 후보. 단, 제작진도 아직 실무용은 아니라고 밝힘",
+   "thumb": "data/ai-brief/thumbs/b8fd5df0452fdaad.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -148,7 +150,9 @@
    "url": "https://github.com/knowsuchagency/mcp2cli",
    "image": "https://opengraph.githubassets.com/fdf319f72acaf85529ce3e0ebcd6a437238e1511093ea755c93f5e4472fbd9f6/knowsuchagency/mcp2cli",
    "source": "GitHub · 도구 설명 토큰 96~99% 절약(제작자 주장)",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/2951803e398f2e35.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",

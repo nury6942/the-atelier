@@ -139,7 +139,9 @@
     {
      "title": "가상피팅 오픈소스 연동",
      "url": "https://github.com/tryonlabs/opentryon/issues/115",
-     "image": "https://opengraph.githubassets.com/1/tryonlabs/opentryon"
+     "image": "https://opengraph.githubassets.com/1/tryonlabs/opentryon",
+     "thumb": "data/ai-brief/thumbs/54ccd16e175ddfcb.jpg",
+     "thumb_src": "og"
     }
    ],
    "why": "옷·모델 일관성을 지킨 4K 편집",
@@ -251,21 +253,27 @@
    "title": "다이어그램 디자인 스킬",
    "url": "https://github.com/cathrynlavery/diagram-design",
    "image": "https://opengraph.githubassets.com/ad11ff533a33e357354a0a9c95336317af160d50abe74ff6b47ca6cfd25e7125/cathrynlavery/diagram-design",
-   "source": "GitHub 주간 +10.7k★"
+   "source": "GitHub 주간 +10.7k★",
+   "thumb": "data/ai-brief/thumbs/14f321c495182c59.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
    "title": "아티스트용 AI IDE",
    "url": "https://github.com/storytold/artcraft",
    "image": "https://opengraph.githubassets.com/1/storytold/artcraft",
-   "source": "GitHub Trending"
+   "source": "GitHub Trending",
+   "thumb": "data/ai-brief/thumbs/bfce4da4b5d0e88b.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
    "title": "HTML→영상 HyperFrames",
    "url": "https://github.com/heygen-com/hyperframes",
    "image": "https://opengraph.githubassets.com/1/heygen-com/hyperframes",
-   "source": "HeyGen 오픈소스"
+   "source": "HeyGen 오픈소스",
+   "thumb": "data/ai-brief/thumbs/8898dc1fb352feb7.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "vibe",

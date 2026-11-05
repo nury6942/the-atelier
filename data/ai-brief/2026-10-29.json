@@ -23,7 +23,9 @@
     "/jury 채점 스킬 동봉",
     "한 번에 긴 세션·토큰 많이"
    ],
-   "forMe": "해외 이직 포트폴리오 첫 시안을 이걸로 뽑아 보세요. 사진·글은 표시된 자리표시로 나오니 MLB 팬츠·쇼츠 작업물로 바꿔 넣으면 됩니다."
+   "forMe": "해외 이직 포트폴리오 첫 시안을 이걸로 뽑아 보세요. 사진·글은 표시된 자리표시로 나오니 MLB 팬츠·쇼츠 작업물로 바꿔 넣으면 됩니다.",
+   "thumb": "data/ai-brief/thumbs/39161a311279aa4e.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -79,7 +81,9 @@
     "클로드 코드·Codex 공용",
     "플러그인 설치 한 줄"
    ],
-   "forMe": "webnovel-forge 볼트에 깔아 두면 설정 노트를 링크 끊김 없이 정리시키기 좋습니다."
+   "forMe": "webnovel-forge 볼트에 깔아 두면 설정 노트를 링크 끊김 없이 정리시키기 좋습니다.",
+   "thumb": "data/ai-brief/thumbs/11b016ebdfa44cfd.jpg",
+   "thumb_src": "og"
   }
  ],
  "tryToday": [

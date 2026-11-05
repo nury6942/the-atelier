@@ -14,7 +14,9 @@
     {
      "title": "같은 데이터로 만든 안드로이드 TV 앱 hackertube.tv",
      "url": "https://github.com/ephraimduncan/hackertube.tv",
-     "image": "https://opengraph.githubassets.com/1/ephraimduncan/hackertube.tv"
+     "image": "https://opengraph.githubassets.com/1/ephraimduncan/hackertube.tv",
+     "thumb": "data/ai-brief/thumbs/8bf4c63ac415170d.jpg",
+     "thumb_src": "readme"
     }
    ],
    "reviews": [
@@ -71,7 +73,9 @@
    "from": {
     "label": "X @DataChaz",
     "url": "https://x.com/DataChaz/status/2116427882381885442"
-   }
+   },
+   "thumb": "data/ai-brief/thumbs/9aab5ec375395ca5.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "hack",
@@ -103,7 +107,9 @@
    "from": {
     "label": "Threads @choi.openai · ♥173",
     "url": "https://www.threads.com/@choi.openai/post/DfLt2YziRvw"
-   }
+   },
+   "thumb": "data/ai-brief/thumbs/a08f05c850717f61.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -116,7 +122,9 @@
     "별 2.5천",
     "미리보기 사이트 있음",
     "플러그인 설치 한 줄"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/2649f49189d780a3.jpg",
+   "thumb_src": "readme"
   }
  ],
  "tryToday": [
@@ -199,7 +207,9 @@
    "url": "https://github.com/paipiange/nvzhuang",
    "image": "https://opengraph.githubassets.com/1/paipiange/nvzhuang",
    "source": "GitHub · MIT · 가상 착용 사이트 · 별 1.9천",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/7b976d61285115dd.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "vibe",
@@ -207,7 +217,9 @@
    "url": "https://github.com/storytold/craft-anything",
    "image": "https://opengraph.githubassets.com/1/storytold/craft-anything",
    "source": "GitHub storytold · 소프트웨어 뜯어보고 내 것 만들기 · 별 829",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/473aabc3f5f840a3.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
@@ -215,7 +227,9 @@
    "url": "https://github.com/NiazMorshed2007/reanimate",
    "image": "https://opengraph.githubassets.com/1/NiazMorshed2007/reanimate",
    "source": "GitHub · MIT · Claude Code 스킬 · 별 721",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0d67183d9957047b.jpg",
+   "thumb_src": "og"
   },
   {
    "cat": "tool",
@@ -223,7 +237,9 @@
    "url": "https://github.com/elvarofficial/teardown",
    "image": "https://opengraph.githubassets.com/1/elvarofficial/teardown",
    "source": "GitHub · MIT · Claude Code 스킬 · 별 890",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/acae5487f5f387a6.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
@@ -235,7 +251,9 @@
     "label": "Threads @bestoj · ♥48",
     "url": "https://www.threads.com/@bestoj/post/DfLk4zBjs3Y"
    },
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/03c85f3055b51369.jpg",
+   "thumb_src": "og"
   }
  ],
  "watching": [
