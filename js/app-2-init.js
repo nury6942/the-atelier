@@ -2297,6 +2297,10 @@ function ldgRenderCatGrid() {
           '<button onclick="ldgCancelEditCatBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400 shrink-0" title="취소"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
         '</div>' +
       '</div>';
+    } else if (catName === '포인트' || catName === '미분류') {
+      // 포인트는 지출 아님 · 미분류는 고칠 칸이라 예산 줄 없음
+    } else if (catName === '여행') {
+      html += '<div class="pt-2 border-t border-slate-100 text-[11.5px] font-semibold" style="color:#334155">여행 통장(' + (window.MIRROR_TRAVEL_ACCOUNT || '미래에셋') + ')에서 나감 · 생활비에 안 셈</div>';
     } else if (hasBudget && budgetTotal === 0) {
       // 예산 명시적으로 0 — "이번 달 사용 안 함" 의도 (AI 추천 표시 X)
       var zeroUsed = totalAmt > 0;
