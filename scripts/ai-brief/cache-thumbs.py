@@ -9,7 +9,7 @@
 쓰는 법:  python3 scripts/ai-brief/cache-thumbs.py 2026-11-05 [2026-11-04 …]   ·  all = 모든 날짜
 필요한 것: Pillow, playwright(+chromium)  — GitHub Actions 에서 깔고 돈다.
 """
-import hashlib, io, json, os, re, sys
+import hashlib, io, json, os, re, sys, time
 from urllib.request import Request, urlopen
 from PIL import Image
 
@@ -111,18 +111,28 @@ def threads_pic(post, stats):
     try:
         page.goto(url + '/embed/', wait_until='networkidle', timeout=30000)
         page.wait_for_timeout(2500)
-        best, area = None, 0
+        # 첫 장(캐러셀이면 맨 왼쪽)을 원본 주소로 받는다 — 지금은 서명이 살아 있어서 받아진다.
+        # 화면 찍기로 하면 옆으로 밀린 캐러셀 사진 대신 글 카드 전체가 찍히는 사고(withbeno, 11/05)
+        img = None
         for el in page.query_selector_all('img, video'):
             b = el.bounding_box()
             if not b or b['width'] < 160 or b['height'] < 120:      # 프로필 사진·아이콘 제외
                 continue
-            if b['width'] * b['height'] > area:
-                best, area = el, b['width'] * b['height']
-        if best is None:
+            src = el.evaluate("e => e.poster || e.currentSrc || e.src || ''")
+            try:
+                r = page.request.get(src, timeout=20000) if src else None
+                if r and r.ok and r.headers.get('content-type', '').startswith('image/'):
+                    img = Image.open(io.BytesIO(r.body()))
+            except Exception as e:
+                print('  받기 실패', src[:60], e)
+            if img is None and b['x'] >= 0 and b['x'] + b['width'] <= 562:
+                img = Image.open(io.BytesIO(el.screenshot()))
+            if img is not None:
+                break
+        if img is None:
             post['thumb'] = None                 # 글만 있는 글 — 화면은 사진 칸 없이
             stats['글만'] = stats.get('글만', 0) + 1
             return
-        img = Image.open(io.BytesIO(best.screenshot()))
     except Exception as e:
         print('  Threads 실패', url[-40:], e)
         stats['fail'] += 1
@@ -157,6 +167,7 @@ def run_social(day, stats):
     for x in S.get('posts', []):
         if x.get('src') == 'threads' and x.get('media') and 'thumb' not in x:
             threads_pic(x, stats)
+            time.sleep(2)                    # 몰아서 열면 Threads 가 잠깐 막는다(11/05 141건 실패)
     json.dump(S, open(p, 'w'), ensure_ascii=False, indent=1)
 
 

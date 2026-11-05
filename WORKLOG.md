@@ -13,6 +13,7 @@
 - scripts/ai-brief/cache-thumbs.py: 사진 받기 → 없으면 페이지 캡처(X 는 공개 임베드 글 카드), Threads 는 /embed/ 의 가장 큰 사진·영상 칸 캡처
 - GitHub Actions ai-brief-images 가 새 브리프마다 자동 실행(playwright), 지난 3주 366장 채움(8.6MB)
 - 화면: thumb 먼저, 깨지면 원본 주소 · Threads 는 잘린 원문 창 대신 사진만, 원문 창은 펼칠 때만
+- Threads 는 화면 찍기 대신 첫 장 원본을 받음(캐러셀이 옆으로 밀려 글 카드 전체가 찍히던 사고) · 몰아 열면 막혀서 글마다 2초 쉼 · 사진 111 · 글만 70
 
 ## 2026-11-05 · 맥북 · Trends 탭 = 주간 카드뉴스
 
