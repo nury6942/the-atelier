@@ -193,7 +193,8 @@
     "체험단(카카오·무신사·지그재그) 자동 확인·신청, 항공권 최저가 주기 검색",
     "공모주 일정·필요 금액 아침 브리핑, 깃허브에서 필요한 스킬 배워 오게 함",
     "피클로 시험해 보고 쓸 만한 건 Aside로 옮겨 사용량 절약"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -212,7 +213,8 @@
     "hallmark: npx skills add nutlope/hallmark -g 후 /hallmark 뒤에 만들 페이지 설명",
     "명령이 구체적일수록 에이전트가 덜 추측함"
    ],
-   "try": "아뜰리에 화면 다듬을 때 /impeccable polish 한 번 돌려 보기"
+   "try": "아뜰리에 화면 다듬을 때 /impeccable polish 한 번 돌려 보기",
+   "thumb": "data/ai-brief/thumbs/1bff6519c8ccf295.jpg"
   },
   {
    "src": "threads",
@@ -230,7 +232,8 @@
     "기사 찾아 대본, 위키미디어에서 저작권 문제없는 사진, 8초 컷 9개로 편집",
     "조합: 오퍼스 5.5 + 나노바나나(이미지) + 구글 Flow(영상) + 일레븐랩스(소리)",
     "효과음은 클로드가 코드로 신디사이저처럼 직접 만듦, 오퍼스+제미나이 프로만으로도 충분"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/8b9b46474278ac59.jpg"
   },
   {
    "src": "threads",
@@ -249,7 +252,8 @@
     "프롬프트①: '…덩크 슛 장면을 3D 만화 스타일로 연속 동작 프레임 시퀀스, 4:3'",
     "프롬프트②: '이 이미지의 동작 시퀀스에 따라 GIF를 만들어'"
    ],
-   "try": "춤·달리기 등 다른 동작으로 두 줄 프롬프트 그대로 따라 해보기"
+   "try": "춤·달리기 등 다른 동작으로 두 줄 프롬프트 그대로 따라 해보기",
+   "thumb": "data/ai-brief/thumbs/93fa9f567127b9bf.jpg"
   },
   {
    "src": "threads",
@@ -267,7 +271,8 @@
     "API는 GPT-Image-2.6 Flare(빠름)·Sunburst(디테일) 두 모델",
     "같은 프롬프트 low 품질: 2.5 Flare 7.08초 → 2.6 Flare 4.84초",
     "API에 complexity(구도 계획 정도) 설정 신설 — 간단한 편집은 low 권장"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/966f9ca4c7e747b7.jpg"
   },
   {
    "src": "threads",
@@ -285,7 +290,8 @@
     "입구의 llms.txt(약 8천 자)만 읽으면 AI가 검색 없이 해당 선반으로 감",
     "카메라 기법 62개를 같은 장면으로 비교 — '확 다가오는 카메라'로 검색 가능",
     "가입 없이 무료·상업 이용 가능, MCP 연결은 유료 구독"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/6a182a3ca8a70819.jpg"
   }
  ]
 }
