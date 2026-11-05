@@ -87,6 +87,16 @@ def thumb(item, stats):
         except Exception as e:
             print('  받기 실패', item['image'][:80], e)
     how = '사진'
+    m = re.match(r'https?://github\.com/([^/]+)/([^/#?]+)', url)
+    if img is None and m:
+        # 깃허브는 페이지를 찍으면 옆이 잘린 파일 목록이 된다(11/05) → 저장소 카드 사진만. 못 받으면 비워 두고 다음 실행에 다시
+        try:
+            img = download(f'https://opengraph.githubassets.com/1/{m.group(1)}/{m.group(2)}')
+        except Exception as e:
+            print('  깃허브 카드 실패', url[:80], e)
+        if img is None:
+            stats['fail'] += 1
+            return
     if img is None:
         try:
             img, how = shoot(url), '캡처'

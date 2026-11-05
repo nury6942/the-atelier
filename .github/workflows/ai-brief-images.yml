@@ -10,6 +10,10 @@ on:
       - 'data/ai-brief/*.json'
       - 'data/ai-brief/social/*.json'
   workflow_dispatch:
+    inputs:
+      days:
+        description: '날짜들 (공백으로, 비우면 최근 이틀 · all = 전부)'
+        required: false
 
 permissions:
   contents: write
@@ -31,7 +35,8 @@ jobs:
         id: days
         run: |
           days=$(git diff --name-only HEAD~1 HEAD -- data/ai-brief | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort -u | tr '\n' ' ')
-          # 손으로 돌릴 땐 최근 이틀
+          # 손으로 돌릴 땐 입력한 날짜, 없으면 최근 이틀
+          if [ -n "${{ github.event.inputs.days }}" ]; then days="${{ github.event.inputs.days }}"; fi
           if [ -z "$days" ]; then days=$(python3 -c "import json;print(' '.join(json.load(open('data/ai-brief/index.json'))['dates'][:2]))"); fi
           echo "days=$days" >> "$GITHUB_OUTPUT"
           echo "대상: $days"
