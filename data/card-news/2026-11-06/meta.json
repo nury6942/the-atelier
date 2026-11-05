@@ -1,0 +1,1026 @@
+{
+ "week": "2026-11-06",
+ "made": "2026-11-05T21:38:42.883Z",
+ "topics": [
+  {
+   "id": "travel",
+   "name": "여행",
+   "title": "항공권 값은 내릴 조짐, 유럽은 어수선",
+   "slides": [
+    {
+     "img": "travel/01.jpg",
+     "headline": "항공권 값은 내릴 조짐, 유럽은 어수선",
+     "type": "cover"
+    },
+    {
+     "img": "travel/02.jpg",
+     "headline": "12월 유류할증료, 내릴까?",
+     "type": "content-stat"
+    },
+    {
+     "img": "travel/03.jpg",
+     "headline": "미국행은 서약서가 필수",
+     "type": "content-highlight"
+    },
+    {
+     "img": "travel/04.jpg",
+     "headline": "유럽 시위, 독일·이탈리아로 번졌다",
+     "type": "content-badge"
+    },
+    {
+     "img": "travel/05.jpg",
+     "headline": "취소는 적지만 신규 예약이 줄었다",
+     "type": "content"
+    },
+    {
+     "img": "travel/06.jpg",
+     "headline": "유로 환율, 1년 평균보다 낮다",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "travel/07.jpg",
+     "headline": "오늘 한 줄 정리: 할증료는 내릴 조짐, 유럽은 시위 변수",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "12월 유류할증료, 내릴 가능성",
+     "date": "2026-11-05 · 12월분 16일께 발표 예정",
+     "summary": "11월 국제선 유류할증료는 33단계 중 27단계로 석 달째 올랐습니다. 12월분은 16일께 발표되고, 업계는 중간선거 뒤 유가와 환율이 내려 비슷하거나 낮아질 것으로 봅니다.",
+     "why": "겨울 유럽행 표를 끊을 생각이라면 16일께 나오는 12월분을 보고 발권 시점을 정해도 늦지 않습니다. 단, 전망일 뿐 확정은 아닙니다.",
+     "points": [
+      "**유류할증료란?** 항공권에 따로 붙는 연료비 추가요금, 매달 33단계 중 정해짐",
+      "대한항공 11월분 **27단계**, 10월(23단계)보다 4단계 올라 **3개월 연속 상승**",
+      "단계는 **10월 16일~11월 15일** 항공유 평균값으로 정해져 12월분이 됨",
+      "업계는 미 중간선거 뒤 **유가·환율 하락**으로 **유지 또는 하락** 전망(확정 아님)"
+     ],
+     "slide": 2,
+     "image": "",
+     "sources": [
+      {
+       "name": "뉴시스",
+       "url": "https://www.newsis.com/view/NISX20261105_0003856871"
+      },
+      {
+       "name": "대한항공 공지(11월분)",
+       "url": "https://www.koreanair.com/contents/footer/customer-support/notice/2026/2611-infuel"
+      }
+     ]
+    },
+    {
+     "title": "미국행 에볼라 서약서 의무",
+     "date": "2026-11-04 시행 · 12월 19일까지(한국시간)",
+     "summary": "미국 질병통제예방센터(CDC)의 행정명령으로 미국행 항공편 승객은 서약서를 내야 합니다. 환승객과 미국 시민권자도 포함이고, 한국시간 12월 19일까지 적용됩니다.",
+     "why": "미국을 경유하거나 가는 일정이 있다면 서약서를 미리 작성해 두고, 대리 작성이 가능한 경우(미성년자 등)를 확인하세요.",
+     "points": [
+      "**왜?** 콩고민주공화국의 에볼라가 미국으로 들어오는 것을 막으려는 미국 CDC 조치",
+      "**11월 4일 13:59** 출발편부터 괌·하와이 포함 미국행 전 노선 적용",
+      "최근 **21일 안**에 콩고민주공화국에 간 적 없다는 서약서를 탑승 전 제출",
+      "공항 밖에 안 나간 환승도 체류로 보며, **영유아 포함 1인 1장**"
+     ],
+     "slide": 3,
+     "image": "https://cdn.traveltimes.co.kr/news/photo/202611/500658_51675_3425.jpg",
+     "sources": [
+      {
+       "name": "여행신문",
+       "url": "https://www.traveltimes.co.kr/news/articleView.html?idxno=500658"
+      },
+      {
+       "name": "디스커버리뉴스",
+       "url": "https://www.discoverynews.kr/news/articleView.html?idxno=1105906"
+      },
+      {
+       "name": "코리아타임스",
+       "url": "https://www.koreatimes.com/article/11630367"
+      }
+     ]
+    },
+    {
+     "title": "유럽 시위 확산, 겨울 예약 위축",
+     "date": "2026-10-30 ~ 11-04",
+     "summary": "프랑스에서 시작된 시위가 독일과 이탈리아로 퍼지면서 유럽 여행 수요가 흔들리고 있습니다. 여행사들은 아직 취소는 적다고 하지만, 겨울 신규 예약이 줄어 일본·동남아 상품으로 수요를 돌리고 있습니다.",
+     "why": "유럽 여행을 앞뒀다면 시위가 예정된 날짜와 장소를 피해 일정을 짜고, 취소 수수료 규정을 먼저 확인해 두는 것이 좋습니다.",
+     "points": [
+      "**왜 시위?** 프랑스는 교육 여건·생활비, 독일은 교육 투자·생활비, 이탈리아는 임금·공공서비스 문제",
+      "**10월 30~31일** 독일·이탈리아로 번졌고 일부 도시에서 경찰 충돌·상점 약탈",
+      "프랑스 시위는 내무부 집계 **10월 17일 약 55만 명**이 참가",
+      "여행사: 기존 예약 취소는 적지만 **12~2월 신규 예약은 감소**"
+     ],
+     "slide": 5,
+     "image": "https://cdn.traveltimes.co.kr/news/photo/202611/500657_51674_648.jpg",
+     "sources": [
+      {
+       "name": "여행신문",
+       "url": "https://www.traveltimes.co.kr/news/articleView.html?idxno=500657"
+      },
+      {
+       "name": "뉴스핌",
+       "url": "https://www.newspim.com/news/view/20261104000997"
+      },
+      {
+       "name": "국제뉴스",
+       "url": "https://www.gukjenews.com/news/articleView.html?idxno=3737395"
+      }
+     ]
+    },
+    {
+     "title": "유로 환율, 1년 평균보다 낮은 수준",
+     "date": "2026-11-05 기준",
+     "summary": "11월 5일 유럽중앙은행 기준으로 1유로는 1,509.28원입니다. 최근 1년 평균보다 낮고, 1년 최저에 가깝습니다.",
+     "why": "독일 이주나 유럽 여행을 위해 유로를 쓸 일이 있다면 지금은 환율 부담이 1년 중 낮은 쪽입니다. 다만 환율은 매일 움직입니다.",
+     "points": [
+      "**1유로 = 1,509.28원**(유럽중앙은행 11월 5일 기준환율)",
+      "최근 1년 평균 **1,677.83원**보다 약 **10% 낮은** 값",
+      "1년 최저 **1,480.44원(10월 27일)**, 최고 **1,793.64원(6월 5일)**",
+      "11월 4일 연합뉴스 시세 **1,506.1원**과 같은 수준(시점 차이만 있음)"
+     ],
+     "slide": 6,
+     "image": "",
+     "sources": [
+      {
+       "name": "유럽중앙은행(ECB) 원/유로 기준환율",
+       "url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/eurofxref-graph-krw.en.html"
+      },
+      {
+       "name": "연합뉴스 외국환시세(11-04)",
+       "url": "https://www.yna.co.kr/view/AKR20261104133400002"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/eurofxref-graph-krw.en.html",
+     "host": "ecb.europa.eu"
+    },
+    {
+     "url": "https://www.newsis.com/view/NISX20261105_0003856871",
+     "host": "newsis.com"
+    },
+    {
+     "url": "https://www.koreanair.com/contents/footer/customer-support/notice/2026/2611-infuel",
+     "host": "koreanair.com"
+    },
+    {
+     "url": "https://img1.newsis.com/2026/11/03/NISI20261103_0002281074_web.jpg",
+     "host": "img1.newsis.com"
+    },
+    {
+     "url": "https://www.traveltimes.co.kr/news/articleView.html?idxno=500658",
+     "host": "traveltimes.co.kr"
+    },
+    {
+     "url": "https://www.discoverynews.kr/news/articleView.html?idxno=1105906",
+     "host": "discoverynews.kr"
+    },
+    {
+     "url": "https://www.koreatimes.com/article/11630367",
+     "host": "koreatimes.com"
+    },
+    {
+     "url": "https://cdn.traveltimes.co.kr/news/photo/202611/500658_51675_3425.jpg",
+     "host": "cdn.traveltimes.co.kr"
+    },
+    {
+     "url": "https://www.traveltimes.co.kr/news/articleView.html?idxno=500657",
+     "host": "traveltimes.co.kr"
+    },
+    {
+     "url": "https://www.newspim.com/news/view/20261104000997",
+     "host": "newspim.com"
+    },
+    {
+     "url": "https://www.gukjenews.com/news/articleView.html?idxno=3737395",
+     "host": "gukjenews.com"
+    },
+    {
+     "url": "https://cdn.traveltimes.co.kr/news/photo/202611/500657_51674_648.jpg",
+     "host": "cdn.traveltimes.co.kr"
+    },
+    {
+     "url": "https://img.newspim.com/news/2026/11/04/2611041446028420_428_tc.jpg",
+     "host": "img.newspim.com"
+    }
+   ]
+  },
+  {
+   "id": "fashion",
+   "name": "패션",
+   "title": "발렌시아가도 수장이 떠났다, 케링 세 번째",
+   "slides": [
+    {
+     "img": "fashion/01.jpg",
+     "headline": "발렌시아가도 수장이 떠났다, 케링 세 번째",
+     "type": "cover"
+    },
+    {
+     "img": "fashion/02.jpg",
+     "headline": "발렌시아가 디자이너, 16개월 만에 퇴임",
+     "type": "content-stat"
+    },
+    {
+     "img": "fashion/03.jpg",
+     "headline": "코치가 끌었다, 태피스트리 전망 상향",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "fashion/04.jpg",
+     "headline": "나이키×스킴스, 와플 레이서 출시",
+     "type": "content-highlight"
+    },
+    {
+     "img": "fashion/05.jpg",
+     "headline": "한국 패션 오늘 소식",
+     "type": "content-list"
+    },
+    {
+     "img": "fashion/06.jpg",
+     "headline": "F&F 세르지오타키니, 서울오픈 챌린저 후원",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "fashion/07.jpg",
+     "headline": "오늘 한 줄 정리",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "발렌시아가, 피촐리 퇴임",
+     "date": "2026-11-05",
+     "summary": "케링이 11월 5일 발렌시아가 크리에이티브 디렉터 피촐리의 퇴임을 확인했다. 그는 2025년 7월부터 일했고 첫 쇼는 2025년 10월이었다. 업계지는 쿠튀르 스타일 판매가 기대에 못 미쳤다고 전했다. 케링은 새 디렉터를 곧 발표하겠다고 했다.",
+     "why": "컨템포러리와 럭셔리 하우스의 디자인 방향이 한 번에 세 곳에서 바뀌므로, 다음 시즌 실루엣 흐름을 가늠할 단서가 된다.",
+     "points": [
+      "**크리에이티브 디렉터란?** 브랜드 디자인을 총괄하는 자리",
+      "**피에르파올로 피촐리**가 취임 약 **16개월** 만에 발렌시아가를 떠남",
+      "생로랑(비카렐로)·맥퀸(맥그리)에 이어 **케링 3번째** 교체",
+      "후임은 **미발표**, 마틴 로즈가 유력하다는 보도(미확인)"
+     ],
+     "slide": 2,
+     "image": "https://r.fashionunited.com/4kSQ_ENSJ_3NakqFjJYKaXeEfqJhqsA6-ir5w1kdrss/resize:fit:1200:630:0/gravity:ce/quality:70/aHR0cHM6Ly9mYXNoaW9udW5pdGVkLmNvbS9pbWcvdXBsb2FkLzIwMjYvMTEvMDUvYmFsZW5jaWFnYS1zMjYtMDU1LWJkN3NhOGw1LTIwMjYtMTEtMDUuanhs.jpeg",
+     "sources": [
+      {
+       "name": "FashionUnited",
+       "url": "https://fashionunited.com/news/people/balenciaga-concludes-picciolis-tenure-after-less-than-two-years/2026110675591"
+      },
+      {
+       "name": "WWD",
+       "url": "https://wwd.com/footwear-news/sneaker-news/nike-skims-waffle-racer-sneaker-release-1239401512/"
+      },
+      {
+       "name": "Fashionista",
+       "url": "https://fashionista.com/2026/10/martine-rose-replace-pierpaolo-piccioli-balenciaga-creative-director-report"
+      }
+     ]
+    },
+    {
+     "title": "태피스트리, 코치 덕에 전망 상향",
+     "date": "2026-11-05",
+     "summary": "태피스트리는 회계연도 첫 분기(7~9월) 실적을 11월 5일 발표했다. 코치가 성장을 끌었고 케이트 스페이드는 줄었다. 회사는 연간 전망을 올렸다.",
+     "why": "컨템포러리 가죽·잡화 브랜드가 한 곳에 쏠려 성장한다는 뜻이어서, 브랜드 정체성이 분명한 곳이 이긴다는 점을 보여 준다.",
+     "points": [
+      "**태피스트리**(코치·케이트 스페이드) 7~9월 매출 **18.9억 달러(약 2조 5,600억원)**, 전년 대비 **+11%**",
+      "**코치** 매출 전년 같은 분기 대비 **+16%**",
+      "**케이트 스페이드** 매출 **-10%**",
+      "연간 매출 전망 상향 · 환율 1달러=1,356.5원(11/6 기준)"
+     ],
+     "slide": 3,
+     "image": "https://r.fashionunited.com/xS69EYiahPnGbUG3ZbMG1kxw07Z8-3xj1aAd1Ls8VLA/resize:fit:1200:630:0/gravity:ce/quality:70/aHR0cHM6Ly9mYXNoaW9udW5pdGVkLmNvbS9pbWcvdXBsb2FkLzIwMjYvMTEvMDUvY29hY2gtaW1hZ2UtMS0xLWZuZDZmcDEwLTIwMjYtMDUtMTUtbWM5cjF0azctMjAyNi0xMS0wNS5qeGw.jpeg",
+     "sources": [
+      {
+       "name": "FashionUnited",
+       "url": "https://fashionunited.com/news/business/tapestry-raises-full-year-outlook-as-coach-sales-jump-16-percent/2026110575587"
+      },
+      {
+       "name": "Tapestry 보도자료(Stockhouse)",
+       "url": "https://stockhouse.com/news/press-releases/2026/11/05/tapestry-inc-reports-fiscal-2027-first-quarter-results-and-raises-full-year"
+      },
+      {
+       "name": "Retail Boss",
+       "url": "https://retailboss.co/tapestry-q1-fiscal-2027-coach-growth-kate-spade-outlook/"
+      }
+     ]
+    },
+    {
+     "title": "나이키×스킴스 와플 레이서",
+     "date": "2026-11-05 (출시 11-10)",
+     "summary": "나이키와 킴 카다시안의 스킴스가 만든 라인이 두 번째 신발을 낸다. 첫 신발인 에어 리프트는 형태를 크게 바꿨지만, 이번에는 원래 모양을 거의 그대로 두었다. 가격은 매체마다 달라 확인 전이다.",
+     "why": "복각 러닝화를 색과 작은 디테일로 새롭게 보이게 하는 방식이라, 스포츠웨어 협업의 접근법을 참고할 만하다.",
+     "points": [
+      "**NikeSKIMS**가 1970년대 러닝화 **와플 레이서**를 여성용으로 출시",
+      "출시일 **11월 10일**, nike.com과 SKIMS.com",
+      "형태는 그대로, **3색**과 혀·뒤꿈치·깔창 디테일만 변경",
+      "의류 **레트로 스포츠 컬렉션**은 **11월 17일**"
+     ],
+     "slide": 4,
+     "image": "https://photos.webwire.com/prmedia/8/363799/363799-1-m.jpg",
+     "sources": [
+      {
+       "name": "NikeSKIMS 보도자료(WebWire)",
+       "url": "https://www.webwire.com/ViewPressRel.asp?aId=363799"
+      },
+      {
+       "name": "WWD",
+       "url": "https://wwd.com/footwear-news/sneaker-news/nike-skims-waffle-racer-sneaker-release-1239401512/"
+      },
+      {
+       "name": "Hypebeast",
+       "url": "https://hypebeast.com/2026/11/nike-kim-kardashian-skims-nikeskims-waffle-racer-collection-iw3882-400-iw3882-200-iw3882-002-release-info"
+      }
+     ]
+    },
+    {
+     "title": "한국 패션 기업 오늘 소식",
+     "date": "2026-10-29~11-06",
+     "summary": "한섬은 해외 패션 경험이 많은 인물로 대표를 바꿨고, 신세계인터는 11월 10일 3분기 숫자를 낸다. LF는 클래식 브랜드의 소재와 핏을 바꿔 판매를 늘리고 있다. 삼성물산 패션과 이랜드는 오늘 새 소식 없음.",
+     "why": "실적 발표 전후로 대표 교체와 소재·핏 변화가 겹쳐, 국내 패션사가 해외 브랜드와 중고로 성장 축을 옮기는 흐름이 보인다.",
+     "points": [
+      "**한섬**: 유태영 전무를 대표이사 부사장으로 내정, **7년** 만의 교체, 발령 **2027-01-01**",
+      "**신세계인터**: 3분기 실적 **11월 10일** 공시, 오후 4시 콜 · 패션·코스메틱 대표 분리",
+      "**LF 헤지스**: 가벼운 화섬 소재 트렌치, 레더 코트, 플레어 데님 온라인 1위",
+      "**코오롱FnC**: 몽골 업사이클 의상 경연 마무리 · **무신사 유즈드** 3분기 거래액 전 분기 대비 **+143%**"
+     ],
+     "slide": 5,
+     "image": "https://cdn.the-biz.co.kr/news/photo/202611/730679_937495_328.jpg",
+     "sources": [
+      {
+       "name": "어패럴뉴스",
+       "url": "https://www.apparelnews.co.kr/news/news_view/?idx=228782"
+      },
+      {
+       "name": "비건뉴스",
+       "url": "https://www.vegannews.co.kr/news/article.html?no=401058"
+      },
+      {
+       "name": "머니투데이",
+       "url": "https://www.mt.co.kr/living/2026/11/06/2026110314300810535"
+      },
+      {
+       "name": "THE Biz(무신사)",
+       "url": "https://www.the-biz.co.kr/news/articleView.html?idxno=730679"
+      }
+     ]
+    },
+    {
+     "title": "F&F 세르지오타키니 서울오픈 후원",
+     "date": "2026-10-25~11-04",
+     "summary": "F&F의 테니스 브랜드가 ATP 챌린저 125급 대회를 후원하며 60주년 이미지를 알렸다. 3분기 실적 발표는 11월 중이며 날짜는 보도마다 엇갈린다. 최근 1주 공시 소식은 확인하지 못했다.",
+     "why": "MLB 외에 테니스와 웰니스로 브랜드를 넓히는 흐름이어서, 스포츠웨어 디자인 소재(쿠쉬웜 다운, 셰르파 플리스)를 참고할 만하다.",
+     "points": [
+      "**세르지오타키니**(1966년 설립) 올해 **60주년**",
+      "**서울오픈 챌린저**(10/25~11/1, 올림픽공원) 공식 후원",
+      "볼키즈·심판 의류 협찬, 겨울 테니스 셋업 공개",
+      "증권사 목표주가 평균 **9만 7,333원**, 52주 **5만 8,000~8만 9,000원**"
+     ],
+     "slide": 6,
+     "image": "https://www.fashionbiz.co.kr/images/articleImg/mainImg/1793754468092-[%EC%84%B8%EB%A5%B4%EC%A7%80%EC%98%A4%20%ED%83%80%ED%82%A4%EB%8B%88-%EC%9D%B4%EB%AF%B8%EC%A7%80%EC%9E%90%EB%A3%8C3]%20%EC%84%B8%EB%A5%B4%EC%A7%80%EC%98%A4%20%ED%83%80%ED%82%A4%EB%8B%88,%20%E2%80%982026%20%EC%84%9C%EC%9A%B8%EC%98%A4%ED%94%88%20%EC%B1%8C%EB%A6%B0%EC%A0%80%20%ED%85%8C%EB%8B%88%EC%8A%A4%EB%8C%80%ED%9A%8C%E2%80%99%20%EA%B3%B5%EC%8B%9D%20%ED%9B%84%EC%9B%90.jpg",
+     "sources": [
+      {
+       "name": "패션비즈",
+       "url": "https://fashionbiz.co.kr/article/230821"
+      },
+      {
+       "name": "캐치뉴스",
+       "url": "https://www.catchnews.kr/news/articleView.html?idxno=130177"
+      },
+      {
+       "name": "Npay 증권",
+       "url": "https://finance.naver.com/item/main.naver?code=383220"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://fashionunited.com/news/people/balenciaga-concludes-picciolis-tenure-after-less-than-two-years/2026110675591",
+     "host": "fashionunited.com"
+    },
+    {
+     "url": "https://fashionista.com/2026/10/martine-rose-replace-pierpaolo-piccioli-balenciaga-creative-director-report",
+     "host": "fashionista.com"
+    }
+   ]
+  },
+  {
+   "id": "society",
+   "name": "사회 현상",
+   "title": "물가는 주춤, 일하는 모습은 달라졌다",
+   "slides": [
+    {
+     "img": "society/01.jpg",
+     "headline": "물가는 주춤, 일하는 모습은 달라졌다",
+     "type": "cover"
+    },
+    {
+     "img": "society/02.jpg",
+     "headline": "10월 물가, 1년 전보다 2.8% 올랐다",
+     "type": "content-stat"
+    },
+    {
+     "img": "society/03.jpg",
+     "headline": "10월 품목별, 전년 같은 달 대비",
+     "type": "content-list"
+    },
+    {
+     "img": "society/04.jpg",
+     "headline": "'쉬었음' 4년 만에 줄었다",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "society/05.jpg",
+     "headline": "혼자 일하는 사장이 늘었다",
+     "type": "content-highlight"
+    },
+    {
+     "img": "society/06.jpg",
+     "headline": "업무용 AI 앱, 챗GPT가 가장 많다",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "society/07.jpg",
+     "headline": "직장인 10명 중 7명, 포괄임금제 금지 찬성",
+     "type": "content-stat"
+    },
+    {
+     "img": "society/08.jpg",
+     "headline": "오늘 한 줄 정리: 물가 상승 폭은 줄었지만 일하는 방식은 계속 바뀐다",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "10월 물가 +2.8%, 두 달 연속 둔화",
+     "date": "2026-11-03",
+     "summary": "국가데이터처가 발표한 10월 소비자물가는 1년 전보다 2.8% 올라 두 달 연속 상승 폭이 줄었습니다. 채소·과일 값이 내려 전체 상승률을 낮췄지만 석유류와 가공식품, 외식은 올랐습니다. 한국은행은 11월에도 2%대 후반을 예상합니다.",
+     "why": "전체 숫자는 내려가도 기름값·가공식품·외식처럼 자주 쓰는 지출은 오르고 있어 체감 물가는 다를 수 있습니다.",
+     "points": [
+      "**소비자물가**란 가계가 자주 사는 상품·서비스 값의 평균 변화",
+      "10월 **+2.8%**(전년 같은 달 대비), 8월 3.1% → 9월 2.9% → 10월",
+      "**석유류 +14.9%**: 국제유가 상승 영향, 경유는 **+19.7%**",
+      "작황이 좋아 **배추 -11.8%**, 정부는 김장철에 **640억원** 지원"
+     ],
+     "slide": 3,
+     "image": "https://img.newspim.com/news/2026/11/03/2611030807452880_t1.jpg",
+     "sources": [
+      {
+       "name": "뉴스핌",
+       "url": "https://www.newspim.com/news/view/20261103000090"
+      },
+      {
+       "name": "한국일보",
+       "url": "https://www.hankookilbo.com/news/article/A2026110309280002594"
+      },
+      {
+       "name": "노컷뉴스",
+       "url": "https://nocutnews.co.kr/news/6601153"
+      }
+     ]
+    },
+    {
+     "title": "'쉬었음' 인구 4년 만에 감소",
+     "date": "2026-11-04",
+     "summary": "국가데이터처의 8월 부가조사에서 쉬었음 인구가 255만 1천 명으로 4년 만에 줄었습니다. 20~50대는 줄고 60세 이상은 늘어 고령층이 절반 가까이를 차지했습니다. 청년층과 30대는 쉬는 이유로 원하는 일자리를 찾기 어렵다는 응답이 가장 많았습니다.",
+     "why": "전체 숫자는 줄었지만 30대는 건강보다 일자리 문제를 먼저 꼽는 쪽으로 바뀌었다는 점이 눈에 띕니다.",
+     "points": [
+      "**'쉬었음'**이란 취업·구직 없이 특별한 활동 없이 쉬는 사람",
+      "8월 **255만 1천 명**, 전년 같은 달 대비 **-8만 9천 명**",
+      "20대 **-5만 8천 명**, 50대 **-5만 7천 명**, 60세 이상은 늘어",
+      "30대 쉰 이유 1위 **'원하는 일자리 없어서' 32.3%**(+5.0%p)"
+     ],
+     "slide": 4,
+     "image": "https://i3n.news1.kr/system/photos/2026/10/16/8162970/high.jpg",
+     "sources": [
+      {
+       "name": "뉴스1",
+       "url": "https://www.news1.kr/economy/trend/6342597"
+      },
+      {
+       "name": "파이낸셜뉴스",
+       "url": "https://www.fnnews.com/news/202611041826417373"
+      }
+     ]
+    },
+    {
+     "title": "직원 없는 자영업자 6만 2천 명 증가",
+     "date": "2026-11-04",
+     "summary": "국가데이터처의 8월 비임금근로 부가조사에서 직원 없이 혼자 일하는 자영업자가 6만 2천 명 늘었습니다. 증가분의 대부분은 15~29세와 30대입니다. 새로 시작한 자영업자 가운데 취업이 어려워서라는 응답은 1년 전보다 늘었습니다.",
+     "why": "청년층의 일자리 선택지가 임금 일자리 밖으로 넓어진 흐름으로, 창업 자금 500만원 미만이 35.2%일 만큼 작게 시작하는 경우가 많습니다.",
+     "points": [
+      "**고용원 없는 자영업자**란 직원 없이 혼자 일하는 사장",
+      "8월 **430만 3천 명**, 전년 같은 달 대비 **+6만 2천 명**",
+      "30대 **+3만 7천 명**, 15~29세 **+2만 4천 명**, 40대는 감소",
+      "신규 자영업자 **21.7%**가 '취업이 어려워서' 시작(+3.8%p)"
+     ],
+     "slide": 5,
+     "image": "https://wimg.heraldcorp.com/news/cms/2026/11/04/news-p.v1.20261104.fd7293993b51465b863369f1fab737f0_P1.jpg",
+     "sources": [
+      {
+       "name": "헤럴드경제",
+       "url": "https://biz.heraldcorp.com/article/10925362"
+      },
+      {
+       "name": "포인트경제",
+       "url": "https://www.pointe.co.kr/news/articleView.html?idxno=87167"
+      },
+      {
+       "name": "매일노동뉴스",
+       "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=237576"
+      }
+     ]
+    },
+    {
+     "title": "업무용 AI 앱, 챗GPT 2,470만 명",
+     "date": "2026-11-04",
+     "summary": "와이즈앱·리테일의 9월 집계에서 업무용 AI 앱 가운데 챗GPT 이용자가 가장 많았습니다. 제미나이와 클로드가 뒤를 이었습니다. 업무용 AI는 대화형 서비스를 넘어 통화 정리와 회의 기록 같은 영역으로 넓어지고 있습니다.",
+     "why": "AI 도구가 일부 직장인에게 보조 수단을 넘어 일상 업무 수단이 되고 있다는 조사 결과입니다.",
+     "points": [
+      "와이즈앱·리테일이 **9월** 스마트폰 사용자 표본으로 집계",
+      "월간 이용자 **챗GPT 2,470만 명**, 제미나이 **987만 명**",
+      "**클로드 404만 명**, 챗GPT는 제미나이의 약 **2.5배**",
+      "통화 정리·회의 기록·문서 협업 앱까지 업무용 AI로 분류"
+     ],
+     "slide": 6,
+     "image": "https://img.hankyung.com/photo/202611/01.46301716.1.jpg",
+     "sources": [
+      {
+       "name": "한국경제",
+       "url": "https://www.hankyung.com/article/202611044353g"
+      },
+      {
+       "name": "지피터스",
+       "url": "https://www.gpters.org/news/post/ai-ranking-october-2026-t17YE1JiZBDlJxh"
+      }
+     ]
+    },
+    {
+     "title": "직장인 71.7% '포괄임금제 금지' 찬성",
+     "date": "2026-11-01",
+     "summary": "직장갑질119가 9월 1~7일 직장인 1천 명에게 물은 결과 10명 중 7명이 포괄임금제 금지에 동의했습니다. 초과근로가 있다고 답한 사람 가운데 40.6%는 초과근로 시간 전부에 대한 가산임금을 받지 못한다고 했습니다. 이 조사는 시민단체가 의뢰한 온라인 설문입니다.",
+     "why": "연장근로를 한 시간만큼 수당이 계산되는지가 월급명세서에서 확인할 대목이라는 점을 보여 줍니다.",
+     "points": [
+      "**포괄임금제**란 초과근로와 상관없이 정해진 수당만 주는 방식",
+      "직장갑질119 조사(직장인 **1,000명**): 금지 찬성 **71.7%**",
+      "초과근로가 있는 직장인 중 **40.6%**는 전부 수당을 못 받아",
+      "못 받는 이유 1위 **포괄임금제 38.4%**, 관행상 미지급 **20.2%**"
+     ],
+     "slide": 7,
+     "image": "https://image.fnnews.com/resource/media/image/2026/11/01/202611011202557750_e.jpg",
+     "sources": [
+      {
+       "name": "뉴시스(파이낸셜뉴스 전재)",
+       "url": "https://www.fnnews.com/news/202611011202583002"
+      },
+      {
+       "name": "경향신문",
+       "url": "https://khan.co.kr/article/202611011200011"
+      },
+      {
+       "name": "메트로신문",
+       "url": "https://www.metroseoul.co.kr/article/20261101500211"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.newspim.com/news/view/20261103000090",
+     "host": "newspim.com"
+    },
+    {
+     "url": "https://www.hankookilbo.com/news/article/A2026110309280002594",
+     "host": "hankookilbo.com"
+    },
+    {
+     "url": "https://nocutnews.co.kr/news/6601153",
+     "host": "nocutnews.co.kr"
+    },
+    {
+     "url": "https://img.newspim.com/news/2026/11/03/2611030807452880_t1.jpg",
+     "host": "img.newspim.com"
+    },
+    {
+     "url": "https://www.news1.kr/economy/trend/6342597",
+     "host": "news1.kr"
+    },
+    {
+     "url": "https://www.fnnews.com/news/202611041826417373",
+     "host": "fnnews.com"
+    },
+    {
+     "url": "https://www.kjob.news/news/548917",
+     "host": "kjob.news"
+    },
+    {
+     "url": "https://i3n.news1.kr/system/photos/2026/10/16/8162970/high.jpg",
+     "host": "i3n.news1.kr"
+    },
+    {
+     "url": "https://biz.heraldcorp.com/article/10925362",
+     "host": "biz.heraldcorp.com"
+    },
+    {
+     "url": "https://www.pointe.co.kr/news/articleView.html?idxno=87167",
+     "host": "pointe.co.kr"
+    },
+    {
+     "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=237576",
+     "host": "labortoday.co.kr"
+    },
+    {
+     "url": "https://wimg.heraldcorp.com/news/cms/2026/11/04/news-p.v1.20261104.fd7293993b51465b863369f1fab737f0_P1.jpg",
+     "host": "wimg.heraldcorp.com"
+    },
+    {
+     "url": "https://www.hankyung.com/article/202611044353g",
+     "host": "hankyung.com"
+    },
+    {
+     "url": "https://www.gpters.org/news/post/ai-ranking-october-2026-t17YE1JiZBDlJxh",
+     "host": "gpters.org"
+    },
+    {
+     "url": "https://www.jnilbo.com/news/articleView.html?idxno=90000079378",
+     "host": "jnilbo.com"
+    },
+    {
+     "url": "https://img.hankyung.com/photo/202611/01.46301716.1.jpg",
+     "host": "img.hankyung.com"
+    },
+    {
+     "url": "https://www.fnnews.com/news/202611011202583002",
+     "host": "fnnews.com"
+    },
+    {
+     "url": "https://khan.co.kr/article/202611011200011",
+     "host": "khan.co.kr"
+    },
+    {
+     "url": "https://www.metroseoul.co.kr/article/20261101500211",
+     "host": "metroseoul.co.kr"
+    },
+    {
+     "url": "https://image.fnnews.com/resource/media/image/2026/11/01/202611011202557750_e.jpg",
+     "host": "image.fnnews.com"
+    }
+   ]
+  },
+  {
+   "id": "news",
+   "name": "정치·사회 뉴스",
+   "title": "11월 6일 뉴스 한눈에",
+   "slides": [
+    {
+     "img": "news/01.jpg",
+     "headline": "11월 6일 뉴스 한눈에",
+     "type": "cover"
+    },
+    {
+     "img": "news/02.jpg",
+     "headline": "조작기소 특검법, 6일 표결 전망",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/03.jpg",
+     "headline": "특검법, 여야 입장은",
+     "type": "content-split"
+    },
+    {
+     "img": "news/04.jpg",
+     "headline": "공수처장 징역 1년 구형, 선고는 1월 12일",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/05.jpg",
+     "headline": "1호기 탑승자 168명 정보 유출",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/06.jpg",
+     "headline": "프랑스 고물가 시위, 평일에도",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "news/07.jpg",
+     "headline": "이스라엘 야권 후보, 의원 67명 추천 확보",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/08.jpg",
+     "headline": "이란, 미국에 핵 제안서 전달",
+     "type": "content-list"
+    },
+    {
+     "img": "news/09.jpg",
+     "headline": "파라과이 대통령, 탄핵 심의 중 사임",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/10.jpg",
+     "headline": "오늘 한 줄 정리: 국내는 특검법 표결, 해외는 정부 구성 변화",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "조작기소 특검법 6일 표결 전망",
+     "date": "2026-11-05 ~ 2026-11-06",
+     "summary": "윤석열 정부 때 검찰·국정원·감사원의 수사와 기소가 조작이었는지 가리는 특검법이 5일 본회의에 올랐고, 국민의힘이 필리버스터로 맞섰다. 민주당은 6일 오후 토론을 끝내고 표결할 계획이다. 국민의힘은 이재명 대통령 재판을 없애려는 법이라고 하고, 청와대 홍익표 정무수석은 대통령 보호가 아니라 검찰 권력 수사라고 설명했다.",
+     "why": "표결 결과에 따라 대통령 관련 사건을 포함한 검찰 수사·기소의 재검증이 시작될 수 있다.",
+     "points": [
+      "**필리버스터란?** 소수당이 무제한 토론으로 표결을 늦추는 방법",
+      "**5일** 본회의 상정, 국민의힘 필리버스터 시작. 민주당은 종결 동의안 제출",
+      "**6일 오후 4시께** 토론 종료 후 표결 계획. 수사팀 최대 **309명**, 최장 **200일**",
+      "국민의힘 '**이재명 구하기 법**' vs 청와대 '검찰 권한 남용 수사'"
+     ],
+     "slide": 3,
+     "image": "https://img8.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110515630001300_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스(11-06)",
+       "url": "https://www.yna.co.kr/view/AKR20261105162100001"
+      },
+      {
+       "name": "한국경제",
+       "url": "https://www.hankyung.com/article/2026110696187"
+      },
+      {
+       "name": "MBC",
+       "url": "https://imnews.imbc.com/replay/2026/nwtoday/article/6863575_37012.html"
+      },
+      {
+       "name": "연합뉴스(청와대 입장)",
+       "url": "https://www.yna.co.kr/view/AKR20261105161500001"
+      }
+     ]
+    },
+    {
+     "title": "오동운 공수처장 징역 1년 구형",
+     "date": "2026-11-05",
+     "summary": "순직해병 특검이 5일 직무유기 혐의의 오동운 공수처장에게 징역 1년을 구형했다. 이재승 차장과 박석일 전 부장검사도 각 1년이다. 오 처장과 변호인은 사건을 일부러 미룬 것이 아니라 신중히 판단한 것이라고 반박했고, 선고는 내년 1월 12일이다.",
+     "why": "수사기관 지휘부가 재판을 받는 사안이라 판결이 공수처 운영에 영향을 줄 수 있다.",
+     "points": [
+      "**공수처란?** 고위공직자 범죄를 수사하는 기관",
+      "혐의: 부장검사 위증 고발 사건을 **11개월간** 대검에 넘기지 않음(직무유기)",
+      "**5일** 순직해병 특검: 오동운 처장 등 3명 각 **징역 1년** 구형",
+      "오 처장 측 '적법 절차를 지켰다'. 선고는 **내년 1월 12일**"
+     ],
+     "slide": 4,
+     "image": "https://img3.yna.co.kr/photo/yna/YH/2026/10/13/PYH2026101317130001300_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105127051004"
+      },
+      {
+       "name": "세계일보",
+       "url": "https://www.segye.com/newsView/20261105519387"
+      },
+      {
+       "name": "조선일보",
+       "url": "https://www.chosun.com/national/court_law/2026/11/06/VCEBJFWKQFCFBFJPLZIVEC3QBU/"
+      },
+      {
+       "name": "쿠키뉴스",
+       "url": "https://www.kukinews.com/article/view/kuk202611050239"
+      }
+     ]
+    },
+    {
+     "title": "공군 1호기 탑승자 명단 유출",
+     "date": "2026-11-05",
+     "summary": "대통령 부부를 포함한 공군 1호기 탑승자 168명의 개인정보가 담긴 명단이 악성코드 검사 사이트에 올라온 사실이 확인됐다. 외교부는 해킹보다 자료 처리 과정에서 샌 가능성에 무게를 두고 경찰 등과 조사 중이다. 사실관계가 확정되면 설명하겠다고 밝혔다.",
+     "why": "순방단의 여권번호 등 민감한 개인정보가 외부에 노출돼 유출 경위와 책임 규명이 과제가 됐다.",
+     "points": [
+      "**바이러스토털이란?** 파일을 올려 악성코드를 검사하는 온라인 사이트",
+      "6월 유럽 순방 직전 탑승자 **168명**의 여권번호 등이 사이트에 게시",
+      "**5일** 외교부 '모든 가능성 염두에 조사'. 벨기에 측 교환 과정·외부 업체 거론",
+      "MBC 단독: 보안 용역 업체가 원본 파일을 올린 정황"
+     ],
+     "slide": 5,
+     "image": "https://img4.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110511890001300_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105161800504"
+      },
+      {
+       "name": "쿠키뉴스",
+       "url": "https://www.kukinews.com/article/view/kuk202611050216"
+      },
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704994"
+      },
+      {
+       "name": "MBC(단독)",
+       "url": "https://imnews.imbc.com/replay/2026/nwdesk/article/6863507_37004.html"
+      }
+     ]
+    },
+    {
+     "title": "프랑스 고물가 항의 시위 60만 명",
+     "date": "2026-11-05(현지)",
+     "summary": "프랑스 노조와 학생 단체가 높은 물가와 공공서비스 악화에 항의해 5일 전국에서 시위했다. 내무부는 평일인데도 앞선 주말 시위보다 많은 60만 명 이상이 참여했다고 집계했다. 에펠탑이 임시 폐쇄되고 학교 일부가 봉쇄됐으며, 정부는 9일 노조·사용자 단체와 회의를 연다.",
+     "why": "생활비 부담이 노조·학생의 연속 시위로 이어져 정부의 임금·물가 대응이 시험대에 올랐다.",
+     "points": [
+      "**5일** 프랑스 내무부 잠정 집계 **60만 명 이상**(주최 CGT는 160만 명)",
+      "앞선 주말 시위는 **55만·41만·32만 명**(당국 추산)이었다",
+      "이유: 물가는 오르는데 임금·연금은 제자리라는 노조 주장",
+      "총리가 **9일** 노조·사용자와 생활비·임금 회의 예정"
+     ],
+     "slide": 6,
+     "image": "https://img6.yna.co.kr/photo/reuters/2026/11/06/PRU20261106020501009_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105178452085"
+      },
+      {
+       "name": "MBC",
+       "url": "https://imnews.imbc.com/replay/2026/nwtoday/article/6863577_37012.html"
+      },
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8705523"
+      },
+      {
+       "name": "아시아경제",
+       "url": "https://view.asiae.co.kr/article/2026110605505371221"
+      }
+     ]
+    },
+    {
+     "title": "이스라엘 연정 구성 논의",
+     "date": "2026-11-05(현지)",
+     "summary": "이스라엘 총선 뒤 연정 구성 협의가 본격화했다. 아랍계 정당들이 야샤르당 가디 아이젠코트 대표를 총리 후보로 추천하기로 하면서 120석 중 67명의 추천을 확보했다. 초정통파 정당 UTJ는 특정 후보를 추천하지 않기로 했고, 샤스당은 아직 결정을 발표하지 않았다.",
+     "why": "의회 과반 추천을 받은 후보가 대통령에게서 먼저 연정 구성권을 받는 구조라, 총리 교체 여부가 달려 있다.",
+     "points": [
+      "**연정이란?** 한 정당이 과반이 안 될 때 여러 정당이 함께 꾸리는 정부",
+      "아랍계 조인트리스트(**11석**)·라암(**8석**)이 아이젠코트 대표 지지",
+      "아이젠코트, 120석 중 **67명** 추천(아랍계 19석 포함)",
+      "초정통파 UTJ는 총리 후보 추천 포기. 병역 면제 중단에 실망"
+     ],
+     "slide": 7,
+     "image": "https://img1.yna.co.kr/etc/inner/KR/2026/11/05/AKR20261105186152079_07_i_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105186152079"
+      },
+      {
+       "name": "아주경제",
+       "url": "https://www.ajunews.com/view/20261106061114565"
+      },
+      {
+       "name": "아시아경제",
+       "url": "https://view.asiae.co.kr/article/2026110605325960137"
+      },
+      {
+       "name": "MBC",
+       "url": "https://imnews.imbc.com/news/2026/world/article/6863555_36925.html"
+      }
+     ]
+    },
+    {
+     "title": "이란, 카타르 통해 미국에 핵 제안서",
+     "date": "2026-11-05(현지)",
+     "summary": "로이터는 이란 고위 관리를 인용해 이란이 중재국 카타르를 통해 미국에 핵 제안서를 보냈다고 전했다. 이란은 7가지 요구가 충족돼야 논의한다는 입장이고, 미국 정부가 제안을 검토 중이라고 이 관리는 밝혔다. 미국 측 공식 반응은 확인되지 않았다.",
+     "why": "제재와 해협 개방을 맞바꾸는 협상이 열릴지에 따라 중동 정세와 원유 수송이 달라질 수 있다.",
+     "points": [
+      "**호르무즈 해협이란?** 세계 원유가 오가는 중동의 바닷길",
+      "**5일** 로이터: 이란 고위 관리 '카타르 통해 핵 제안서 전달, 미국 검토 중'",
+      "조건: 항구 봉쇄 해제·원유 판매 제재 면제·신규 제재 취소·동결 자산 반환",
+      "이행 시 **이틀 내** 호르무즈 개방 제안. 이란 안보 수장 '미국 답변 설득력 없다'"
+     ],
+     "slide": 8,
+     "image": "https://img1.yna.co.kr/photo/etc/epa/2026/11/05/PEP20261105144601009_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261106006400079"
+      },
+      {
+       "name": "헤럴드경제",
+       "url": "https://biz.heraldcorp.com/article/10927742"
+      },
+      {
+       "name": "한국경제",
+       "url": "https://www.hankyung.com/article/2026110696227"
+      },
+      {
+       "name": "SBS",
+       "url": "https://biz.sbs.co.kr/article_hub/20000344615"
+      }
+     ]
+    },
+    {
+     "title": "페냐 파라과이 대통령 사임",
+     "date": "2026-11-05(현지)",
+     "summary": "산티아고 페냐 파라과이 대통령이 5일 영상으로 사임을 발표했다. 파산한 우에노 은행과의 연루 의혹으로 야권이 탄핵안을 냈고 여당도 찬성 의사를 밝힌 상황이었다. 페냐 대통령은 연루 의혹을 직접 인정하지 않았고, 2028년까지였던 임기는 부통령이 이어받을 것으로 예상된다.",
+     "why": "임기 중 대통령이 물러나면서 후임 정부 구성과 은행 사태 수습이 이어질 전망이다.",
+     "points": [
+      "**탄핵이란?** 의회가 대통령 등을 직위에서 물러나게 하는 절차",
+      "**4일** 중앙은행이 우에노 은행 정리 절차 착수, 예금 대량 인출 발생",
+      "같은 날 야권 하원의원 **35명** 탄핵안 제출, 여당도 찬성 뜻",
+      "**5일** 페냐 대통령 사임 발표. 부통령 승계 전망, 본인은 연루 인정 안 해"
+     ],
+     "slide": 9,
+     "image": "https://img4.yna.co.kr/etc/inner/KR/2026/11/06/AKR20261106002700087_01_i_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261106002700087"
+      },
+      {
+       "name": "노컷뉴스",
+       "url": "https://www.nocutnews.co.kr/news/6602986"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105162100001",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.hankyung.com/article/2026110696187",
+     "host": "hankyung.com"
+    },
+    {
+     "url": "https://imnews.imbc.com/replay/2026/nwtoday/article/6863575_37012.html",
+     "host": "imnews.imbc.com"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105161500001",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://img8.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110515630001300_P4.jpg",
+     "host": "img8.yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105127051004",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.segye.com/newsView/20261105519387",
+     "host": "segye.com"
+    },
+    {
+     "url": "https://www.chosun.com/national/court_law/2026/11/06/VCEBJFWKQFCFBFJPLZIVEC3QBU/",
+     "host": "chosun.com"
+    },
+    {
+     "url": "https://www.kukinews.com/article/view/kuk202611050239",
+     "host": "kukinews.com"
+    },
+    {
+     "url": "https://img3.yna.co.kr/photo/yna/YH/2026/10/13/PYH2026101317130001300_P4.jpg",
+     "host": "img3.yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105161800504",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.kukinews.com/article/view/kuk202611050216",
+     "host": "kukinews.com"
+    },
+    {
+     "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704994",
+     "host": "news.kbs.co.kr"
+    },
+    {
+     "url": "https://imnews.imbc.com/replay/2026/nwdesk/article/6863507_37004.html",
+     "host": "imnews.imbc.com"
+    },
+    {
+     "url": "https://img4.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110511890001300_P4.jpg",
+     "host": "img4.yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105178452085",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://imnews.imbc.com/replay/2026/nwtoday/article/6863577_37012.html",
+     "host": "imnews.imbc.com"
+    },
+    {
+     "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8705523",
+     "host": "news.kbs.co.kr"
+    },
+    {
+     "url": "https://view.asiae.co.kr/article/2026110605505371221",
+     "host": "view.asiae.co.kr"
+    },
+    {
+     "url": "https://img6.yna.co.kr/photo/reuters/2026/11/06/PRU20261106020501009_P4.jpg",
+     "host": "img6.yna.co.kr"
+    }
+   ]
+  }
+ ]
+}
