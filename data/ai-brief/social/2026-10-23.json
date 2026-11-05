@@ -21,7 +21,8 @@
     "파일만 40GB 넘음, RTX 5090·5080(16GB)에서 확인, 나레이션은 Edge TTS",
     "한국 소재는 못 그려서 제미나이로 이미지 90장 먼저 뽑고 A→B 시작·끝 프레임으로 7초 클립 89개 연결",
     "5090 기준 1536×864 7초 클립 하나에 7분, 프롬프트는 '등속 카메라 이동'을 못 박는 게 핵심"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/fb4b6f6d4399808f.jpg"
   },
   {
    "src": "threads",
@@ -39,7 +40,8 @@
     "AI가 맥 화면을 안 건드려서 내 작업 창이 방해받지 않음",
     "모바일에만 있는 앱 작업(인스타 계정 예열, 모바일 영상 편집)을 맡길 수 있음",
     "설정은 코덱스·클로드에 'ADB로 폰 조작하게 설정해줘' 한 줄이면 됨"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/cbef48256b168173.jpg"
   },
   {
    "src": "threads",
@@ -57,7 +59,8 @@
     "CLI에서 /skill-doctor 실행 → 스킬별 사용 여부·컨텍스트 비용·호출 횟수 확인",
     "안 쓰는 목록을 뽑고, 지웠을 때 품질이 떨어지는지 클로드에게 물어본 뒤 제거"
    ],
-   "try": "클로드 코드에서 /skill-doctor 한 번 돌려 보기"
+   "try": "클로드 코드에서 /skill-doctor 한 번 돌려 보기",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -74,7 +77,8 @@
     "'아래서 올라오는 거' 대신 바텀시트, '밀면 나오는 삭제'는 스와이프 액션, '회색 반짝'은 스켈레톤",
     "이름으로 부르면 AI가 SwiftUI .presentationDetents 같은 실제 부품을 바로 고름",
     "모바일 UI 72항목을 부르는 말·정식 이름·시키는 문장·프레임워크 부품으로 정리한 표 무료 공개(MIT)"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/43bc3672d5ab8ed8.jpg"
   },
   {
    "src": "threads",
@@ -90,7 +94,8 @@
    "points": [
     "oneshotprompts.com — 모션디자인 기법 923개, 900개는 움직이는 예제로 확인 가능",
     "효과 이름을 몰라도 움직임을 보고 고르면 AI에게 줄 설명을 프롬프트로 붙여줌"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -108,7 +113,8 @@
     "카드뉴스·모션그래픽·상세페이지·이미지·영상을 동물 에이전트별로 분담",
     "끝나면 PC·모바일 알림, 팀장이 검수·수정 지시까지 해서 최종본 완성",
     "만드는 법은 댓글에 있다고 함"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/983c91f89099f38f.jpg"
   },
   {
    "src": "threads",
@@ -126,7 +132,8 @@
     "캐릭터를 누르면 해당 터미널로 이동, 서브에이전트는 미니 캐릭터로 따라다님",
     "깃허브 claude-3d-frog-office 받아 'CLAUDE.md 설치 절차대로 적용해줘' → 127.0.0.1:4777",
     "Node.js 18+, 맥·윈도우 가능, 기존 창은 claude --continue로 다시 열어야 승인 대기 감지"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/99e680569ce59973.jpg"
   },
   {
    "src": "threads",
@@ -143,7 +150,8 @@
     "서로 다른 AI 에이전트끼리, 또는 팀원의 에이전트와 메시지를 주고받는 오픈소스",
     "P2P 암호화, 무료",
     "에이전트에게 'Join the Reason Network'라고 지시하면 연결"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/9e87beb531c54a30.jpg"
   },
   {
    "src": "threads",
@@ -160,7 +168,8 @@
     "모델링·UV·재질·리깅·애니메이션·렌더링까지 스킬로 처리",
     "결과를 Roblox·Unity·Unreal로 내보내기 지원",
     "모델 겹침·떠 있는 부품까지 검사하도록 설계, 깃허브 EL4CTEO/blender-skills"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/8f27194c0631f72f.jpg"
   },
   {
    "src": "threads",
@@ -177,7 +186,8 @@
     "Codex 앱, 텔레그램 Hermes Agent 다 써본 뒤 정착한 방식",
     "아이폰에 Tailscale+Termius → 집 맥미니에 SSH → Codex CLI 실행",
     "자동화 세팅에 시간 쓰는 것보다 직접 붙어 개발하는 게 빨랐다는 결론, 이 방식으로 소개팅 앱 제작 중"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "x",

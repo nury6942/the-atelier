@@ -14,7 +14,8 @@
     "설치 없이 브라우저",
     "LLM끼리 대전 모드",
     "댓글 69"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/ca70bb91d6531579.jpg"
   },
   {
    "cat": "vibe",
@@ -28,7 +29,8 @@
     "맥·윈도·리눅스·웹",
     "얼리 알파"
    ],
-   "forMe": "MLB 프린트 PSD를 구독 없이 열어볼 수 있는지 시험해볼 후보. 단, 제작진도 아직 실무용은 아니라고 밝힘"
+   "forMe": "MLB 프린트 PSD를 구독 없이 열어볼 수 있는지 시험해볼 후보. 단, 제작진도 아직 실무용은 아니라고 밝힘",
+   "thumb": "data/ai-brief/thumbs/b8fd5df0452fdaad.jpg"
   },
   {
    "cat": "hack",
@@ -40,7 +42,8 @@
    "chips": [
     "폴더 = 재생목록",
     "댓글 81"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/324d55023abe01a0.jpg"
   },
   {
    "cat": "money",
@@ -119,7 +122,8 @@
    "url": "https://www.producthunt.com/p/opt-in-vulnerability-finding-service/oss-scanner-by-anthropic",
    "image": null,
    "source": "Product Hunt · Anthropic OSS Scanner, 관리자 신청제",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/d77f3ac087483fdf.jpg"
   },
   {
    "cat": "vibe",
@@ -127,7 +131,8 @@
    "url": "https://www.talkphotography.co.uk/threads/very-similar-adobe-alternatives-the-artcraft-apps.776913/",
    "image": "https://www.talkphotography.co.uk/styles/default/xenforo/logo_custom.og.png",
    "source": "TalkPhotography 포럼 · 개체 지우기 포토샵과 비교",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/7d9cd049e42c37f3.jpg"
   },
   {
    "cat": "vibe",
@@ -135,7 +140,8 @@
    "url": "https://www.kunalganglani.com/blog/photocraft-rust-photo-editor",
    "image": null,
    "source": "블로그 · 유망한 데모, GIMP 대체는 아직",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/4cc821b61bdaf42c.jpg"
   },
   {
    "cat": "tool",
@@ -143,7 +149,8 @@
    "url": "https://github.com/knowsuchagency/mcp2cli",
    "image": "https://opengraph.githubassets.com/fdf319f72acaf85529ce3e0ebcd6a437238e1511093ea755c93f5e4472fbd9f6/knowsuchagency/mcp2cli",
    "source": "GitHub · 도구 설명 토큰 96~99% 절약(제작자 주장)",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/2951803e398f2e35.jpg"
   },
   {
    "cat": "tool",
@@ -151,7 +158,8 @@
    "url": "https://dev.to/tekmag/openmontage-your-ai-coding-assistant-is-now-a-full-video-production-studio-open-source-from-406l",
    "image": null,
    "source": "DEV · OpenMontage, AGPL-3.0",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/ffda45f5079e8204.jpg"
   },
   {
    "cat": "hack",
@@ -159,7 +167,8 @@
    "url": "https://javier.xyz/blog/turn-a-kindle-into-a-picture-frame",
    "image": "https://javier.xyz/blog/turn-a-kindle-into-a-picture-frame/opengraph-image/cover?3f17178e83773234",
    "source": "블로그 · 책 표지 화면을 사진으로",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/c1da33903f40fb06.jpg"
   },
   {
    "cat": "release",
@@ -167,7 +176,8 @@
    "url": "https://techbytes.app/posts/chatgpt-pages-slides-collaborative-editing/",
    "image": "https://techbytes.app/assets/thumbnails/post-chatgpt-pages-slides-collaborative-editing-og.png",
    "source": "Pro·Business·Enterprise · PPT·구글 슬라이드로 내보내기",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/53b2b59dc9313eec.jpg"
   }
  ],
  "watching": [

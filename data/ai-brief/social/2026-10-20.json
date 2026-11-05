@@ -19,7 +19,8 @@
     "서브에이전트는 엘리베이터로 출근(Explore 초록 옷, Plan 보라 옷)하고 결과 보고 후 퇴근",
     "프로젝트별로 층, 세션별로 매장 — /clear 하면 같은 층 새 세션으로 따라감",
     "세션 기록(jsonl)을 0.25초마다 읽는 방식이라 훅·설정·패키지 설치 없이 로컬에서만 동작"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/950b00aa472ef665.jpg"
   },
   {
    "src": "threads",
@@ -37,7 +38,8 @@
     "배경 교체 — 얼굴·의상·비율 유지 + 조명·그림자·반사를 새 환경에 맞추라고 지시",
     "특정 물건·사람 지우기, 다른 물건으로 바꾸기, 낮→밤 전환",
     "공통 요령: '바꿀 것'과 '그대로 둘 것'을 한 프롬프트에 같이 적는다"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -56,7 +58,8 @@
     "웹디자인 더미 이미지·상세페이지 이미지·모션그래픽 소스에 활용",
     "주의: Codex가 ChatGPT 계정 로그인이어야 함 — API 키 로그인이면 API 요금 발생"
    ],
-   "try": "Codex CLI가 ChatGPT 계정으로 로그인돼 있는지 `codex login status`로 확인"
+   "try": "Codex CLI가 ChatGPT 계정으로 로그인돼 있는지 `codex login status`로 확인",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -74,7 +77,8 @@
     "GPT PRO·Claude MAX를 CLI로 연결해 안건 1건당 8회 순차 호출(조사 3·토론·회의록)",
     "첫 호출만 웹검색 허용, 나머지는 전사록만 근거로 삼게 제한",
     "회의록의 액션아이템을 JSON으로 뽑아 다음 회의 입력으로 재투입"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/8291055240cc0f29.jpg"
   },
   {
    "src": "threads",
@@ -92,7 +96,8 @@
     "멈출 조건을 시작 때 정함(예: 추가지시 20번·48시간·진전 없는 검토 3번 중 먼저)",
     "Codex가 클로드 앱 화면을 조작하는 방식이라 컴퓨터 사용·예약 기능 + 앱 켜두기 필요",
     "MIT 라이선스 Codex 스킬로 공개, 모든 앱에서 검증되진 않았다고 명시"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/98926691fb7486da.jpg"
   },
   {
    "src": "threads",
@@ -110,7 +115,8 @@
     "예시 프롬프트: \"how does a toaster know when to pop? make it a Colorfigure\"",
     "April Zhu가 무료·오픈소스 스킬로 공개(april-zhu.com)",
     "아이 학습도구·설명 자료에 바로 응용 가능"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/369c5cb3e0d61578.jpg"
   },
   {
    "src": "threads",
@@ -128,7 +134,8 @@
     "unreal-mcp 스킬 + 세션 시작 시 UE 프로젝트임을 알리는 훅 포함",
     "에디터에 ModelContextProtocol·AllToolsets 플러그인을 켜고 MCP 서버를 시작해야 함",
     "macOS·Linux·Windows(Git Bash/WSL) 지원"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -145,7 +152,8 @@
     "개발자 Shikhar 사례 — AI가 지형과 높이맵을 설계",
     "Blender로 풀·나무 등 3D 모델을 만들고 Unreal Engine에서 한 세계로 합침",
     "아직 게임이라기보다 걸어 다닐 수 있는 시연 수준"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/959ba1fb4ebd32a7.jpg"
   },
   {
    "src": "x",

@@ -14,7 +14,8 @@
     "Opus 5.5 $73.80 · 약 10만 원",
     "DeepSeek Flash $0.34 · 약 480원",
     "Gemini 4 Argon 약 $2.50 · 30분"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/e2cb7e1d4257fb1f.jpg"
   },
   {
    "cat": "vibe",
@@ -41,7 +42,8 @@
     "준비도 65%(자체 평가)",
     "무료 · 웹에서도"
    ],
-   "forMe": "누리님 VectorCraft와 이름이 같아요. 펜·패스파인더·메시를 어떻게 나눴는지 구조 참고하고, 이름 겹침도 미리 생각해 두세요"
+   "forMe": "누리님 VectorCraft와 이름이 같아요. 펜·패스파인더·메시를 어떻게 나눴는지 구조 참고하고, 이름 겹침도 미리 생각해 두세요",
+   "thumb": "data/ai-brief/thumbs/afb1280abec4dd2c.jpg"
   },
   {
    "cat": "money",
@@ -66,7 +68,8 @@
     "별 약 1,300",
     "MIT",
     "에디터 MCP는 아직 실험 단계"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/9a314bf77c0fc909.jpg"
   }
  ],
  "tryToday": [
@@ -123,7 +126,8 @@
    "url": "https://github.com/pablodelucca/pixel-agents",
    "image": "https://opengraph.githubassets.com/1/pablodelucca/pixel-agents",
    "source": "별 약 9,800 · 가구 타일셋은 유료",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/571810d6fe62956f.jpg"
   },
   {
    "cat": "free",
@@ -131,7 +135,8 @@
    "url": "https://github.com/paulrobello/claude-office",
    "image": "https://opengraph.githubassets.com/1/paulrobello/claude-office",
    "source": "v0.25 · MIT · 별 약 570",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/da20395084cffbb2.jpg"
   },
   {
    "cat": "free",
@@ -139,7 +144,8 @@
    "url": "https://www.skills.sh/bear2u/my-skills/codex-claude-loop",
    "image": "https://www.skills.sh/bear2u/my-skills/codex-claude-loop/opengraph-image?1a82f7707f2a479f",
    "source": "Claude 계획 · Codex 검토 스킬",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0ea9600b9f0f18c6.jpg"
   },
   {
    "cat": "hack",
@@ -147,7 +153,8 @@
    "url": "https://daily.dev/posts/i-tested-claude-inside-unreal-engine-5-8--wrsua1tyc",
    "image": "https://api.daily.dev/og/posts/wRsuA1tyC.png",
    "source": "모자 줍기 8~9점 · 축구 4점",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/e8ec122f0c652dea.jpg"
   },
   {
    "cat": "tool",
@@ -155,7 +162,8 @@
    "url": "https://ludusengine.com/blog/claude-code-for-unreal-engine",
    "image": "https://ludusengine.com/ludus-og-card.png",
    "source": "C++는 강하고 BP는 설계 지시 필요",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/e61e07eb57742fca.jpg"
   }
  ],
  "watching": [

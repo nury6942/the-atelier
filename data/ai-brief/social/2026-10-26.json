@@ -20,7 +20,8 @@
     "답이 '다른 에이전트가 한 일 / 내가 한 일 / 사용자가 할 일'처럼 역할별로 짧게 정리돼 나옴",
     "이전엔 이해 안 될 때 HTML로 보여달라는 것만 주로 썼다고"
    ],
-   "try": "CLAUDE.md에 'ASD-STE100 스타일로 짧게 답하라' 한 줄 넣어 보기"
+   "try": "CLAUDE.md에 'ASD-STE100 스타일로 짧게 답하라' 한 줄 넣어 보기",
+   "thumb": "data/ai-brief/thumbs/7cc45d5ecb28fc27.jpg"
   },
   {
    "src": "threads",
@@ -38,7 +39,8 @@
     "카파시 팁대로 항공정비 영어 표준(ASD-STE100)을 80%만 따르게 스킬화",
     "효과: 문장이 짧아지고 한 문장에 한 생각, 결론이 앞에, 숫자 누락 없음",
     "깃허브 ninajingit/ste-business-writing 에 클로드 스킬로 공개"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -55,7 +57,8 @@
     "'글자 멋있게' 대신 '제목은 타이핑 효과, 설명은 마스크 리빌'처럼 이름으로 요청",
     "효과 이름을 알면 수정 요청이 구체적이 된다는 요지",
     "타이핑부터 형광펜 효과까지 8개 용어는 이미지에 정리"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/abdf2736e4eb58db.jpg"
   },
   {
    "src": "threads",
@@ -73,7 +76,8 @@
     "로그인된 브라우저 상태를 Codex·Claude Code와 공유, 인증 세션으로 테스트 가능",
     "최근 업데이트로 더 빨라지고 안정적, 무료·설정 없음",
     "작성자가 에이전트에 연결해 실사용 중이라며 추천"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -90,7 +94,8 @@
     "팀원 추천으로 써본 뒤 비슷한 스킬 중 사실상 이것만 사용",
     "테스트 중인 주차감지앱에 적용한 비포·애프터를 이미지로 공개",
     "깃허브 pbakaus/impeccable — AI 하네스의 디자인 실력을 올리는 스킬"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/b5ad860ebcef1c67.jpg"
   },
   {
    "src": "threads",
@@ -109,7 +114,8 @@
     "MCP for Blender·img2threejs: 자연어·참고 이미지로 3D 만들기",
     "Video Shotcraft·HyperFrames·Remotion: 웹페이지·HTML로 영상 렌더링",
     "Penpot: MCP 되는 피그마 오픈소스 대안"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -127,7 +133,8 @@
     "Meshy·Tripo·Rodin·Opus 5.5 등으로 생성한 결과물",
     "완성 파일과 함께 원본 이미지·프롬프트·생성 설정까지 제공",
     "CC BY 4.0, 출처 표시하면 상업 이용 가능(일부 별도 조건)"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/83ee8692216c724c.jpg"
   },
   {
    "src": "threads",
@@ -145,7 +152,8 @@
     "12개 테마·1,020개 레이아웃, 차트·분석 모델 내장",
     "HTML·PDF·편집 가능한 PPTX로 내보내기",
     "깃허브 chuspeeism/dashi-ppt-skill, 스타 9,900개"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -163,7 +171,8 @@
     "클로드 코드에 GPT·Grok을 붙여 오케스트레이션하니 깔끔했다는 후기",
     "Claude Code Channels 커스텀 + Mod로 슬랙 하네스를 직접 만듦",
     "깃허브 lidge-jun/opencodex"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/33a8a1c7744c9a60.jpg"
   },
   {
    "src": "threads",

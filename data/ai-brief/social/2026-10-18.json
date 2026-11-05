@@ -88,7 +88,8 @@
    "try": "Claude 설정 → 개인정보에서 학습 사용 항목 확인하기",
    "image": null,
    "media": true,
-   "replies": 0
+   "replies": 0,
+   "thumb": "data/ai-brief/thumbs/913bf0c4ec0bcb58.jpg"
   },
   {
    "src": "threads",
@@ -105,7 +106,8 @@
    ],
    "image": null,
    "media": true,
-   "replies": 0
+   "replies": 0,
+   "thumb": "data/ai-brief/thumbs/f90b8aed6a39d86d.jpg"
   },
   {
    "src": "threads",
@@ -124,7 +126,8 @@
    "try": "Gemini Live 카메라 켜고 영어로 내 작업물 설명 연습 — 이직 면접 대비",
    "image": null,
    "media": true,
-   "replies": 0
+   "replies": 0,
+   "thumb": "data/ai-brief/thumbs/61130ecaf82a10ba.jpg"
   },
   {
    "src": "threads",
@@ -141,7 +144,8 @@
    ],
    "image": null,
    "media": true,
-   "replies": 0
+   "replies": 0,
+   "thumb": "data/ai-brief/thumbs/31d648986609ebbb.jpg"
   },
   {
    "src": "x",
@@ -181,7 +185,8 @@
    ],
    "image": null,
    "media": true,
-   "replies": 0
+   "replies": 0,
+   "thumb": "data/ai-brief/thumbs/e22d01860ecff93d.jpg"
   },
   {
    "src": "threads",
@@ -198,7 +203,8 @@
    ],
    "image": null,
    "media": true,
-   "replies": 0
+   "replies": 0,
+   "thumb": null
   },
   {
    "src": "threads",

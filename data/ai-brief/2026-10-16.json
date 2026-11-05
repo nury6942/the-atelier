@@ -18,17 +18,20 @@
     {
      "title": "모델 사진+옷 4장→에디토리얼 컷",
      "url": "https://fal.ai/learn/tools/krea-3-prompting-guide",
-     "image": "https://fal.ai/learn/tools/krea-3-prompting-guide/opengraph-image?840e62b74fecee43"
+     "image": "https://fal.ai/learn/tools/krea-3-prompting-guide/opengraph-image?840e62b74fecee43",
+     "thumb": "data/ai-brief/thumbs/4f8bbe0557a3358d.jpg"
     },
     {
      "title": "헥스코드로 제품 색만 바꾸기",
      "url": "https://www.krea.ai/krea-3",
-     "image": "https://s.krea.ai/krea-3-og-boxes-3.webp"
+     "image": "https://s.krea.ai/krea-3-og-boxes-3.webp",
+     "thumb": "data/ai-brief/thumbs/a0d58fa52c7a34d2.jpg"
     },
     {
      "title": "카탈로그 3장으로 모델 스타일링",
      "url": "https://morphic.com/resources/models/krea-3",
-     "image": "https://external-cdn.morphic.com/website-production/assets/images/og/home.avif"
+     "image": "https://external-cdn.morphic.com/website-production/assets/images/og/home.avif",
+     "thumb": "data/ai-brief/thumbs/f8f1e81f324048c1.jpg"
     }
    ],
    "new": [
@@ -67,7 +70,8 @@
     "2K $0.06 · 약 80원",
     "1K $0.03 · 약 40원"
    ],
-   "forMe": "저지 팬츠 착장컷 색만 헥스코드로 바꿔 컬러웨이 시안"
+   "forMe": "저지 팬츠 착장컷 색만 헥스코드로 바꿔 컬러웨이 시안",
+   "thumb": "data/ai-brief/thumbs/03a83ec286b9ccbe.jpg"
   },
   {
    "cat": "release",
@@ -84,17 +88,20 @@
     {
      "title": "식당 긴 대화 장면 립싱크 테스트",
      "url": "https://www.mindstudio.ai/blog/kling-4-0-first-look",
-     "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/b8f05d51-071a-4a25-928e-8ac21642fb78.png?fm=auto&w=1200&h=630&fit=crop"
+     "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/b8f05d51-071a-4a25-928e-8ac21642fb78.png?fm=auto&w=1200&h=630&fit=crop",
+     "thumb": "data/ai-brief/thumbs/19f08a7535635930.jpg"
     },
     {
      "title": "예시 영상 3편 프레임 단위 점검",
      "url": "https://www.klingmotion.com/kling-4-0-review",
-     "image": "https://www.klingmotion.com/logo.webp"
+     "image": "https://www.klingmotion.com/logo.webp",
+     "thumb": "data/ai-brief/thumbs/224699211cc2becf.jpg"
     },
     {
      "title": "MCP로 에이전트가 찍은 시네마틱",
      "url": "https://kling.ai/blog/kling-mcp-cinematic-performance-workflow",
-     "image": null
+     "image": null,
+     "thumb": "data/ai-brief/thumbs/f916fc2dcf6a8d7e.jpg"
     }
    ],
    "new": [
@@ -133,7 +140,8 @@
     "3~30초 클립",
     "4K·HDR은 예정"
    ],
-   "forMe": "Claude Code에서 착장컷을 룩북 영상으로 묶기"
+   "forMe": "Claude Code에서 착장컷을 룩북 영상으로 묶기",
+   "thumb": "data/ai-brief/thumbs/19f08a7535635930.jpg"
   },
   {
    "cat": "vibe",
@@ -145,7 +153,8 @@
    "chips": [
     "2.7만 면으로 경량화",
     "걷기·달리기·손 흔들기"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/e840030ae2c6c831.jpg"
   },
   {
    "cat": "money",
@@ -157,7 +166,8 @@
    "chips": [
     "Claude Code 선택률 82%",
     "ARR $20M→$100M · 약 1,370억 원"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/b1cff5b2d20f569c.jpg"
   },
   {
    "cat": "vibe",
@@ -169,7 +179,8 @@
    "chips": [
     "4일 새 v0.5→v0.7",
     "GitHub 별 4.4만"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/548c1317e16d2bf8.jpg"
   }
  ],
  "tryToday": [
@@ -225,49 +236,56 @@
    "url": "https://pasqualepillitteri.it/en/news/24032/claude-code-desktop-nested-sessions-environments",
    "image": null,
    "source": "10-14 업데이트 정리",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0b7fe376734277f6.jpg"
   },
   {
    "cat": "free",
    "title": "Argon 3D 게임 14개",
    "url": "https://aistudio.google.com/learn/gemini-4-argon-showcase",
    "image": "https://ai.google.dev/static/site-assets/images/share-ais-513315318.png",
-   "source": "Google AI Studio"
+   "source": "Google AI Studio",
+   "thumb": "data/ai-brief/thumbs/2fe2bf83675143aa.jpg"
   },
   {
    "cat": "release",
    "title": "Argon 게임 개발 실테스트",
    "url": "https://www.mindstudio.ai/blog/gemini-4-argon-coding-game-dev-tests",
    "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/9d4d6c24-d194-445f-93fc-4ffaac809f45.png?fm=auto&w=1200&h=630&fit=crop",
-   "source": "MindStudio · 3D 품질은 Opus 아래"
+   "source": "MindStudio · 3D 품질은 Opus 아래",
+   "thumb": "data/ai-brief/thumbs/e5f8dad6bbd2a61a.jpg"
   },
   {
    "cat": "free",
    "title": "무료 OpenDesign",
    "url": "https://open-design.ai/alternatives/figma/",
    "image": "https://open-design.ai/og-homepage-20261009.png",
-   "source": "Apache-2.0"
+   "source": "Apache-2.0",
+   "thumb": "data/ai-brief/thumbs/12205544e4dbc206.jpg"
   },
   {
    "cat": "vibe",
    "title": "AI 어도비 클론, 진짜 되나",
    "url": "https://www.vice.com/en/article/everything-we-know-about-the-free-adobe-clones-built-with-ai-do-they-actually-work/",
    "image": "https://www.vice.com/wp-content/uploads/sites/2/2026/10/Everything-We-Know-About-the-Free-Adobe-Clones-Built-With-AI.-Do-They-Actually-Work.jpg?w=2000",
-   "source": "VICE"
+   "source": "VICE",
+   "thumb": "data/ai-brief/thumbs/6c557be5d6f2d2e5.jpg"
   },
   {
    "cat": "tool",
    "title": "OpenCode 2.0",
    "url": "https://www.producthunt.com/leaderboard/daily/2026/10/13",
    "image": "https://ph-static.imgix.net/product-hunt-logo-horizontal-orange-background.png?auto=format",
-   "source": "Product Hunt 10-13 순위"
+   "source": "Product Hunt 10-13 순위",
+   "thumb": "data/ai-brief/thumbs/28e9856faa41610e.jpg"
   },
   {
    "cat": "release",
    "title": "Mistral 가중치 10/27",
    "url": "https://pasqualepillitteri.it/en/news/21196/mistral-large-4-launches-open-weights-late-october",
    "image": null,
-   "source": "1조 파라미터 공개 예정"
+   "source": "1조 파라미터 공개 예정",
+   "thumb": "data/ai-brief/thumbs/ca6f91407e028c70.jpg"
   }
  ],
  "watching": [

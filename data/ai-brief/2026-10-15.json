@@ -18,17 +18,20 @@
     {
      "title": "책상 사진→로봇 시뮬레이션",
      "url": "https://developers.googleblog.com/gemini-4-argon-for-robotics/",
-     "image": "https://storage.googleapis.com/gweb-developer-goog-blog-assets/images/argon__robotics__hero.2e16d0ba.fill-1200x600.png"
+     "image": "https://storage.googleapis.com/gweb-developer-goog-blog-assets/images/argon__robotics__hero.2e16d0ba.fill-1200x600.png",
+     "thumb": "data/ai-brief/thumbs/c64515c7bf5202fa.jpg"
     },
     {
      "title": "출시 직후 3D 게임 10선",
      "url": "https://x.com/minchoi/status/2110218145277395191",
-     "image": null
+     "image": null,
+     "thumb": "data/ai-brief/thumbs/155ec21c2601f5db.jpg"
     },
     {
      "title": "푸리에 원으로 그린 펠리컨",
      "url": "https://x.com/fofrAI/status/2110043023954284889",
-     "image": "https://pbs.twimg.com/amplify_video_thumb/2110042439679356928/img/9r6fyHnZ6WisSOJZ.jpg"
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2110042439679356928/img/9r6fyHnZ6WisSOJZ.jpg",
+     "thumb": "data/ai-brief/thumbs/84d79376c12bf3a2.jpg"
     }
    ],
    "why": "사진과 말 한 줄로 3D 세계·게임 제작",
@@ -67,7 +70,8 @@
      "tone": "bad"
     }
    ],
-   "forMe": "시장조사·판매 데이터 정리와 기획서 초안"
+   "forMe": "시장조사·판매 데이터 정리와 기획서 초안",
+   "thumb": "data/ai-brief/thumbs/b49a0488fcd432d5.jpg"
   },
   {
    "cat": "vibe",
@@ -79,7 +83,8 @@
    "chips": [
     "전작 사용자 3만 명",
     "5일 만에 대기자 680명"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/43d2ba6bb922a8fa.jpg"
   },
   {
    "cat": "money",
@@ -91,7 +96,8 @@
    "chips": [
     "28일 $7,591 · 약 1,040만 원",
     "유료 구독 258명"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/b7e86f6f0db2ecc9.jpg"
   },
   {
    "cat": "hack",
@@ -103,7 +109,8 @@
    "chips": [
     "비용 $20 · 약 2만 7천 원",
     "견적 $5,000 · 약 685만 원"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/6948792f57e3881a.jpg"
   },
   {
    "cat": "release",
@@ -120,17 +127,20 @@
     {
      "title": "Pro와 같은 프롬프트 대결",
      "url": "https://www.glbgpt.com/hub/nano-banana-2-1-vs-pro/",
-     "image": "https://wp.glbgpt.com/wp-content/uploads/2026/10/nano-banana-2-1-vs-pro-featured.webp"
+     "image": "https://wp.glbgpt.com/wp-content/uploads/2026/10/nano-banana-2-1-vs-pro-featured.webp",
+     "thumb": "data/ai-brief/thumbs/1cc940a0b4e56fa2.jpg"
     },
     {
      "title": "바로 쓰는 프롬프트 14개",
      "url": "https://picsart.com/blog/nano-banana-2-1-prompts/",
-     "image": "https://cdnblog.picsart.com/2026/10/nano-banana-2-1-prompts-cover.png"
+     "image": "https://cdnblog.picsart.com/2026/10/nano-banana-2-1-prompts-cover.png",
+     "thumb": "data/ai-brief/thumbs/5b8a732ea8700822.jpg"
     },
     {
      "title": "가상피팅 오픈소스 연동",
      "url": "https://github.com/tryonlabs/opentryon/issues/115",
-     "image": null
+     "image": null,
+     "thumb": "data/ai-brief/thumbs/54ccd16e175ddfcb.jpg"
     }
    ],
    "why": "옷·모델 일관성을 지킨 4K 편집",
@@ -169,7 +179,8 @@
      "url": "https://fuser.studio/articles/nano-banana-2-1-vs-nano-banana-2-vs-pro",
      "tone": "bad"
     }
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/1cc940a0b4e56fa2.jpg"
   }
  ],
  "tryToday": [
@@ -225,70 +236,80 @@
    "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
    "image": "https://pbs.twimg.com/amplify_video_thumb/2110444209673265152/img/oVtJzxAlfEEN1BFm.jpg",
    "source": "@ClaudeDevs · ♥16K",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/f6c87bd22327264a.jpg"
   },
   {
    "cat": "vibe",
    "title": "말로 시키면 CAD를",
    "url": "https://www.reddit.com/r/SideProject/comments/1x5thkv/made_an_app_where_an_ai_agent_does_the_cad_for_me/",
    "image": "https://repository-images.githubusercontent.com/1413505972/b8a4dabb-3f1f-48e2-8220-85609333bf85",
-   "source": "r/SideProject"
+   "source": "r/SideProject",
+   "thumb": "data/ai-brief/thumbs/5b588de246fb3e22.jpg"
   },
   {
    "cat": "free",
    "title": "다이어그램 디자인 스킬",
    "url": "https://github.com/cathrynlavery/diagram-design",
    "image": "https://opengraph.githubassets.com/ad11ff533a33e357354a0a9c95336317af160d50abe74ff6b47ca6cfd25e7125/cathrynlavery/diagram-design",
-   "source": "GitHub 주간 +10.7k★"
+   "source": "GitHub 주간 +10.7k★",
+   "thumb": "data/ai-brief/thumbs/14f321c495182c59.jpg"
   },
   {
    "cat": "free",
    "title": "아티스트용 AI IDE",
    "url": "https://github.com/storytold/artcraft",
    "image": "https://opengraph.githubassets.com/1/storytold/artcraft",
-   "source": "GitHub Trending"
+   "source": "GitHub Trending",
+   "thumb": "data/ai-brief/thumbs/bfce4da4b5d0e88b.jpg"
   },
   {
    "cat": "free",
    "title": "HTML→영상 HyperFrames",
    "url": "https://github.com/heygen-com/hyperframes",
    "image": "https://opengraph.githubassets.com/1/heygen-com/hyperframes",
-   "source": "HeyGen 오픈소스"
+   "source": "HeyGen 오픈소스",
+   "thumb": "data/ai-brief/thumbs/8898dc1fb352feb7.jpg"
   },
   {
    "cat": "vibe",
    "title": "지도 링크가 여행 포스터로",
    "url": "https://www.reddit.com/r/SideProject/comments/1x5xd4i/routetoposter_i_made_a_tool_that_turns_your_road/",
    "image": "https://opengraph.githubassets.com/96e9cb7647f87943954340f64614dcd1091594098d1bfc5b9887cc7ce02c5452/tusharkurne99/routetoposter",
-   "source": "r/SideProject"
+   "source": "r/SideProject",
+   "thumb": "data/ai-brief/thumbs/462e382d94111521.jpg"
   },
   {
    "cat": "tool",
    "title": "AI 손그림 화이트보드",
    "url": "https://www.producthunt.com/products/excaliclaw",
    "image": "https://ph-files.imgix.net/2cf74ff1-8f62-49a9-9fb2-bd9fc3845ecb.webp?auto=format&fit=crop&frame=1&h=512&w=1024",
-   "source": "Product Hunt"
+   "source": "Product Hunt",
+   "thumb": "data/ai-brief/thumbs/ea9ca10013ec21a2.jpg"
   },
   {
    "cat": "free",
    "title": "OpenFlowKit 2",
    "url": "https://www.producthunt.com/products/openflowkit",
    "image": "https://ph-files.imgix.net/263b3c42-70b5-4285-bc57-4b320be91c48.gif?auto=format&fit=crop&frame=1&h=512&w=1024",
-   "source": "Product Hunt · MIT"
+   "source": "Product Hunt · MIT",
+   "thumb": "data/ai-brief/thumbs/8b3a843ddab8873c.jpg"
   },
   {
    "cat": "release",
    "title": "Haiku 5.5로 게임 $2",
    "url": "https://www.mindstudio.ai/blog/claude-haiku-5-5-real-world-test",
    "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/01af2175-c54c-45a7-9538-bcf5ef17ca2e.png?fm=auto&w=1200&h=630&fit=crop",
-   "source": "MindStudio"
+   "source": "MindStudio",
+   "thumb": "data/ai-brief/thumbs/98b641d6d7ceea88.jpg"
   },
   {
    "cat": "release",
    "title": "소리 나는 공개 영상 AI",
    "url": "https://comfyui-wiki.com/en/news/2026-10-06-kandinsky-6-0",
    "image": "https://s.comfyui-wiki.com/news/2026-10-06-kandinsky-6-0/promo-poster.jpg",
-   "source": "Kandinsky 6.0 · MIT"
+   "source": "Kandinsky 6.0 · MIT",
+   "thumb": "data/ai-brief/thumbs/3fddaf83ea8eb95c.jpg"
   },
   {
    "cat": "release",
@@ -296,7 +317,8 @@
    "url": "https://noiz.ai/lp/blog/meet-helix-world",
    "image": "https://noiz.ai/payloadcms/helixworld/helixworld-cover.webp",
    "source": "Helix World",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/597e902e0c750bd3.jpg"
   },
   {
    "cat": "release",
@@ -304,7 +326,8 @@
    "url": "https://research.meta.ai/blog/muse-wonder",
    "image": "https://research.meta.ai/articles/introducing-muse-wonder/social/muse-wonder-social-v1.webp",
    "source": "Meta",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/31ba1e7c3abdb281.jpg"
   }
  ],
  "watching": [

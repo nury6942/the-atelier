@@ -20,7 +20,8 @@
     "클로드 코드에 whisper large-v3 turbo를 깔게 한 뒤 무음 컷·반복 구간은 뒷부분만 살리게 지시",
     "자막은 '넷플릭스 한국어 자막 지침'을 그대로 따르게, 모션은 HyperFrames, 효과음은 earshot 스킬"
    ],
-   "try": "녹화 영상 하나를 클로드 코드에 주고 '무음 컷 + 넷플릭스 자막 지침대로 자막'만 먼저 시켜보기"
+   "try": "녹화 영상 하나를 클로드 코드에 주고 '무음 컷 + 넷플릭스 자막 지침대로 자막'만 먼저 시켜보기",
+   "thumb": "data/ai-brief/thumbs/9659a39db8967dfe.jpg"
   },
   {
    "src": "threads",
@@ -38,7 +39,8 @@
     "실시간 터미널 화면, SSH로 다른 PC 연결, 웹 푸시 알림 지원(herdr 클라이언트)",
     "맥은 Ovis.dmg 설치, 폰은 TestFlight/구글 플레이 베타 또는 웹 홈 화면 추가",
     "컴퓨터·폰 양쪽 Tailscale 켜고 QR 스캔으로 연결 — 9월 나온 베타라 작성자도 미검증"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -56,7 +58,8 @@
     "Taste(AI 티 안 나는 웹 디자인), Graphify(코드·파일 지도), Headroom(컨텍스트 압축)",
     "OmniRoute(요청 라우팅), ECC(에이전트 하네스), Claude-video(유튜브 분석)",
     "Ponytail — 시니어 개발자 페르소나로 페어 프로그래밍"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/bc5585342b764125.jpg"
   },
   {
    "src": "threads",
@@ -91,7 +94,8 @@
     "가격은 월 100달러·200달러 그대로, 기존 구독자는 할 일 없음",
     "인증된 Ultra 계정은 5시간 단위 사용량 제한이 없어짐",
     "신규 계정은 인증 전까지 5시간 제한 유지, 주간 제한은 그대로"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/d9d8b3d616410e72.jpg"
   },
   {
    "src": "threads",
@@ -109,7 +113,8 @@
     "macOS·Windows·Linux 지원, 사용자가 일하는 동안 백그라운드 실행",
     "OS 접근성 트리로 앱 UI 구조를 읽어 조작, Rust로 작성",
     "여러 에이전트가 각자 독립된 마우스 커서로 동시에 작업 가능"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/5f9d00e77fbd2fb8.jpg"
   },
   {
    "src": "threads",
@@ -126,7 +131,8 @@
     "Rust로 만든 캡컷 대체 편집기, 깃허브 스타 1만 2천",
     "자막은 로컬 Whisper가 달고 업로드·워터마크·로그인·구독료 없음",
     "MCP 서버 내장 — 한 줄 설정이면 Claude가 영상을 직접 편집"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/d6ba6e49dc3b50b0.jpg"
   },
   {
    "src": "threads",
@@ -144,7 +150,8 @@
     "그 외 Lapa Ninja, One Page Love, Recent, SiteInspire, Dribbble, Behance",
     "레퍼런스 URL을 클로드 코드에 주고 레이아웃·타이포·색·여백·스크롤 효과를 분석시키기",
     "프롬프트에 '로고·이미지·문구는 복제 금지, 모바일·PC 실제 브라우저 검증' 포함"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",

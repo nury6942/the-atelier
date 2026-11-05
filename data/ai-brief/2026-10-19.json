@@ -13,7 +13,8 @@
    "chips": [
     "♥1,200 · 답글 43",
     "GPT + Opus 5.5 + Minimax H3"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/6bd8b4db9f0ad8f0.jpg"
   },
   {
    "cat": "release",
@@ -30,17 +31,20 @@
     {
      "title": "게임·방송 목소리 4개로 영상 한 편",
      "url": "https://x.com/lucian__03/status/2111867292086939656",
-     "image": "https://pbs.twimg.com/amplify_video_thumb/2111867116374937601/img/3nSPniXqZ3OKfnDi.jpg"
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2111867116374937601/img/3nSPniXqZ3OKfnDi.jpg",
+     "thumb": "data/ai-brief/thumbs/a97fb2ea83b679b7.jpg"
     },
     {
      "title": "8GB 그래픽카드에서 돌리는 ComfyUI 노드",
      "url": "https://comfyui-wiki.com/en/news/2026-10-14-comfyui-drama3",
-     "image": "https://s.comfyui-wiki.com/news/2026-10-14-comfyui-drama3/cover.jpg"
+     "image": "https://s.comfyui-wiki.com/news/2026-10-14-comfyui-drama3/cover.jpg",
+     "thumb": "data/ai-brief/thumbs/e4f24f19efe6fd48.jpg"
     },
     {
      "title": "로컬 실행 감정 연기 테스트 영상",
      "url": "https://www.youtube.com/watch?v=4kN2ACxJ8AY",
-     "image": null
+     "image": null,
+     "thumb": "data/ai-brief/thumbs/43fd5e66d93e52b0.jpg"
     }
    ],
    "new": [
@@ -77,7 +81,8 @@
     "35B · 실제 쓰는 건 3B",
     "83개 언어",
     "연매출 $50만 미만 상업 무료 · 약 7억 원"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/5e1d32ca59ef971a.jpg"
   },
   {
    "cat": "vibe",
@@ -91,7 +96,8 @@
     "v0.7.0 · 10-18",
     "무료 · 오프라인"
    ],
-   "forMe": "오토레이아웃·컴포넌트를 어떻게 다시 짰는지 보면 VectorCraft 구조 잡는 데 참고가 돼요"
+   "forMe": "오토레이아웃·컴포넌트를 어떻게 다시 짰는지 보면 VectorCraft 구조 잡는 데 참고가 돼요",
+   "thumb": "data/ai-brief/thumbs/5a566f8c84eaa323.jpg"
   },
   {
    "cat": "money",
@@ -117,7 +123,8 @@
     "웹은 설치 없음",
     "맥 brew 설치"
    ],
-   "forMe": "Claude Code에 MCP로 붙이면 Atelier 화면 시안을 피그마 형식으로 바로 받아볼 수 있어요"
+   "forMe": "Claude Code에 MCP로 붙이면 Atelier 화면 시안을 피그마 형식으로 바로 받아볼 수 있어요",
+   "thumb": "data/ai-brief/thumbs/69b54dbadd4b8d29.jpg"
   }
  ],
  "tryToday": [
@@ -172,7 +179,8 @@
    "url": "https://letsdatascience.com/news/kling-ai-opens-kling-40-to-all-users-d9dc6422",
    "image": "https://cms-image.pandaily.com/1/kling_fed3acb0c4.png",
    "source": "30초·키프레임 10개 · 10-15",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/33186e380799923e.jpg"
   },
   {
    "cat": "vibe",
@@ -180,7 +188,8 @@
    "url": "https://glyndewis.com/blog/artcraft-cloned-adobe",
    "image": "http://static1.squarespace.com/static/5a4b6d1f9f07f5d01c10f2b6/60f558c3668793736d493295/6acf0c29bc32e923ff7c7b8b/1791989038138/artcraft-thumbnail.png?format=1500w",
    "source": "Glyn Dewis · 사진가 시각",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/69182cd2e645ec16.jpg"
   },
   {
    "cat": "money",
@@ -188,7 +197,8 @@
    "url": "https://codingwithvibe.com/vibe-coded-apps/",
    "image": "https://codingwithvibe.com/wp-content/uploads/2026/06/A_modern_sleek_technology_illustration_showing.png",
    "source": "Subscribr 월 $6.2만 등 · 자기 보고",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/7282bd894769495c.jpg"
   },
   {
    "cat": "tool",
@@ -196,7 +206,8 @@
    "url": "https://trustmrr.com/startup/openbroca",
    "image": "https://trustmrr.com/startup/openbroca/opengraph-image?3c615eca672ee8f1",
    "source": "주 3,000단위 무료 · 28개 언어 번역",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/291cf2dec4da4563.jpg"
   },
   {
    "cat": "free",
@@ -204,7 +215,8 @@
    "url": "https://open-design.ai/skills/figma/",
    "image": "https://open-design.ai/og-homepage-20261009.png",
    "source": "OpenDesign · HyperFrames 기반",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/6463afca05a87887.jpg"
   },
   {
    "cat": "free",
@@ -212,7 +224,8 @@
    "url": "https://cerebralvalley.ai/e/built-with-claude-japan2026",
    "image": "https://cerebralvalley.ai/api/e/og/built-with-claude-japan2026?v=1792360266834",
    "source": "Built with Claude · 11-02~11-10",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/c01be12e38efa972.jpg"
   }
  ],
  "watching": [

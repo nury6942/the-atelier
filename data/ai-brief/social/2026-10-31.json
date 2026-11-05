@@ -20,7 +20,8 @@
     "whisper l3t 설치 → 무음 컷, 반복 구간은 앞을 지우고 뒤를 살리게 지시",
     "자막은 '넷플릭스 한국어 자막 지침'을 따르게, 모션은 HyperFrames, 효과음은 earshot"
    ],
-   "try": "녹화본 하나로 '무음 컷 + 반복 앞부분 삭제'만 Claude Code에 시켜 보기"
+   "try": "녹화본 하나로 '무음 컷 + 반복 앞부분 삭제'만 Claude Code에 시켜 보기",
+   "thumb": "data/ai-brief/thumbs/9659a39db8967dfe.jpg"
   },
   {
    "src": "threads",
@@ -38,7 +39,8 @@
     "끝없는 VHS 선반, 테이프 등을 누르면 3D로 돌아 표지가 보임",
     "열면 표지가 잉크 번지듯 펼쳐지며 상세 페이지로",
     "작성자: 예전엔 일러스트·3D 개발자 2주 작업, 지금은 프롬프트 하나"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/9e53d11c9b56cca9.jpg"
   },
   {
    "src": "threads",
@@ -57,7 +59,8 @@
     "~/.ssh/authorized_keys 에 'svc-telemetry' 이름의 키 추가",
     "역방향 터널 + 맥은 LaunchAgent로 재부팅 후에도 유지"
    ],
-   "try": "~/.ssh/authorized_keys 에 svc-telemetry 줄이 있는지 확인"
+   "try": "~/.ssh/authorized_keys 에 svc-telemetry 줄이 있는지 확인",
+   "thumb": "data/ai-brief/thumbs/23ccfd869d478448.jpg"
   },
   {
    "src": "threads",
@@ -75,7 +78,8 @@
     "1탄 결과: 세 항목 모두 Aside가 가장 좋음",
     "2탄(메모리): Aside가 다른 둘보다 2~3배 더 씀",
     "표·그래프는 원문 이미지에"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/51696af37fe0d46d.jpg"
   },
   {
    "src": "threads",
@@ -94,7 +98,8 @@
     "hangul-wrap 스킬은 제목·본문·가격 칸을 나눠 고치고 브라우저로 다시 잼",
     "같은 폭에서 꺾임 0군데"
    ],
-   "try": "아뜰리에 화면을 폰 폭으로 열어 단어 꺾임 확인"
+   "try": "아뜰리에 화면을 폰 폭으로 열어 단어 꺾임 확인",
+   "thumb": "data/ai-brief/thumbs/c2a34c7ae6a86f2b.jpg"
   },
   {
    "src": "threads",
@@ -111,7 +116,8 @@
     "원인은 Claude 기본 디자인 시스템에 섞인 AI slop",
     "다른 서비스의 design.md를 넣으면 AI 티가 줄어듦",
     "해외 모음 styles.refero.design, 한국 모음 getdesign.kr"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -129,7 +135,8 @@
     "ponytail: '정말 필요해?'부터 묻고 코드를 최소로",
     "ui-ux-pro-max: 색·폰트·레이아웃을 디자인 시스템 기준으로",
     "셋 다 무료, 깃허브에서 설치"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/7c5e4c64ab9cf1be.jpg"
   },
   {
    "src": "threads",
@@ -165,7 +172,8 @@
     "Rust로 만든 영상 편집기, 스타 1.2만+",
     "자막은 로컬 Whisper, 업로드·워터마크·로그인·구독 없음",
     "MCP 서버 내장 — 한 줄 설정으로 Claude가 직접 편집"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/d6ba6e49dc3b50b0.jpg"
   },
   {
    "src": "threads",
@@ -183,7 +191,8 @@
     "50mm·F1.8~2.8 느낌의 자연스러운 심도, 과한 샤프닝 금지",
     "SNS 썸네일용은 삼분할 + 카피 넣을 여백 확보",
     "나머지 항목은 원문 연재(1/9~9/9)에"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -200,7 +209,8 @@
     "'1번 마이크가 안 들려요', '너무 울려요'를 큐에어 AI에 말하면",
     "믹서 설정을 바로 바꿔 해결",
     "프로그램은 무료, 후원으로 운영"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/9b97db86271198d7.jpg"
   },
   {
    "src": "x",

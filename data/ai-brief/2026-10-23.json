@@ -14,7 +14,8 @@
     "파일 61KB",
     "엔진 없이 WebGPU",
     "크롬에서 바로"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/a822ca63f7eb24f0.jpg"
   },
   {
    "cat": "tool",
@@ -28,7 +29,8 @@
     "하루 20편",
     "Claude Code·Codex"
    ],
-   "forMe": "MLB 신상 팬츠·집업 소개 30초 모션을 시안 단계에서 직접 뽑아볼 수 있습니다. 고칠 곳은 화면을 눌러 지시하면 돼서 디자이너 작업 방식과 맞습니다."
+   "forMe": "MLB 신상 팬츠·집업 소개 30초 모션을 시안 단계에서 직접 뽑아볼 수 있습니다. 고칠 곳은 화면을 눌러 지시하면 돼서 디자이너 작업 방식과 맞습니다.",
+   "thumb": "data/ai-brief/thumbs/b412447cbc10f4f7.jpg"
   },
   {
    "cat": "vibe",
@@ -41,7 +43,8 @@
     "232개 TV 모델",
     "66개 브랜드",
     "한 줄 원상복구"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/ab0e470b36e49b22.jpg"
   },
   {
    "cat": "hack",
@@ -67,7 +70,8 @@
     "Blender 5.2+",
     "Roblox·Unity·Unreal 내보내기",
     "9일 만에 ★413"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/1a44d03684b9dd58.jpg"
   }
  ],
  "tryToday": [
@@ -123,7 +127,8 @@
    "url": "https://workspaceupdates.googleblog.com/2026/10/publish-interactive-apps-from-gemini-app-to-Google-Sites.html",
    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjP20CQoM0LMQpqO-PJRg-aSa27dnI5pipgL33zAvUKlQ7IpIm3IASQHcfLT9dGcEo3I-bKIcZ7TgjuVNMPU8hyTwk_Nx9nsR7nvFYWtvAE1ppX9r-yLS8eFwiyEh6hNQ0uZ7q6dpWp0B9HK7zVkTCn5uu3S4FCl7jhIqsJj16lsAUanKdNVWcQbgVUeoU/w1200-h630-p-k-no-nu/Publish%20interactive%20apps%20from%20the%20Gemini%20app%20to%20Google%20Sites.gif",
    "source": "Google Workspace 업데이트 · 10-19",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/9822e22c0dc9ce55.jpg"
   },
   {
    "cat": "free",
@@ -131,7 +136,8 @@
    "url": "https://github.com/reason-machines/reason-network",
    "image": "https://raw.githubusercontent.com/reason-machines/reason-network/HEAD/assets/reason-network-banner.png",
    "source": "GitHub reason-machines · ★1천",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/17bd4145ec305c23.jpg"
   },
   {
    "cat": "free",
@@ -139,7 +145,8 @@
    "url": "https://github.com/d-onworks/claude-3d-frog-office",
    "image": "https://raw.githubusercontent.com/d-onworks/claude-3d-frog-office/HEAD/docs/img/promo-ko.gif",
    "source": "GitHub d-onworks · MIT",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/1cf0a451181f4498.jpg"
   },
   {
    "cat": "tool",
@@ -147,7 +154,8 @@
    "url": "https://github.com/OpenMOSS/MOSS-Image",
    "image": "https://raw.githubusercontent.com/OpenMOSS/MOSS-Image/HEAD/assets/lockup-light.svg",
    "source": "GitHub OpenMOSS · 5B · ★1.4천",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/bfc4e1509fcad720.jpg"
   },
   {
    "cat": "hack",
@@ -155,7 +163,8 @@
    "url": "https://techcrunch.com/2026/10/19/people-are-using-ai-to-make-their-smart-tvs-dumb-again/",
    "image": "https://techcrunch.com/wp-content/uploads/2024/05/Google-TV.jpeg?w=1200",
    "source": "TechCrunch · 10-19",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/f93d80856f11bb09.jpg"
   },
   {
    "cat": "tool",
@@ -163,7 +172,8 @@
    "url": "https://docs.comfy.org/tutorials/video/minimax/minimax-h3",
    "image": "https://dripart.mintlify.app/_mintlify/api/og/v2?division=MiniMax+H3&title=ComfyUI+MiniMax+H3+Video+Generation+Guide&description=How+to+use+open-weights+MiniMax+H3+in+ComfyUI%3A+text-to-video%2C+image-to-video%2C+and+reference-to-video+workflows+with+native+stereo+audio%2C+prompt+writing+tips%2C+an&theme=1a95f090d02509a942c408dd&signature=04f81168ae0792c3b1b24f485da1ec645f4b1832f9b970912fe4f07e63f26ed5",
    "source": "ComfyUI 문서 · 다운로드 약 42GB",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0a73b93fdfee4149.jpg"
   },
   {
    "cat": "hack",
@@ -171,7 +181,8 @@
    "url": "https://github.com/cranebeaker/coop-anything",
    "image": "https://opengraph.githubassets.com/1/cranebeaker/coop-anything",
    "source": "GitHub cranebeaker · ★838",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/daa98ecb15f376b1.jpg"
   }
  ],
  "watching": [

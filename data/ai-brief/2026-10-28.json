@@ -14,7 +14,8 @@
     {
      "title": "아카데미 작품상 98편을 각기 다른 화풍으로, 6분 31초",
      "url": "https://lemomo-ai.github.io/lemo-opuscar/opuscar98/",
-     "image": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/docs/opuscar98.jpg"
+     "image": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/docs/opuscar98.jpg",
+     "thumb": "data/ai-brief/thumbs/dcd3f501bb0588dc.jpg"
     },
     {
      "title": "광화문광장 멤피스 애니메이션, 장소 네 줄만 바꿔 쓰는 프롬프트",
@@ -27,7 +28,8 @@
     "영상 한 편 30~60분",
     "Node·ffmpeg 필요"
    ],
-   "forMe": "MLB 신상 소개 영상을 촬영 없이 만들 때 화풍만 골라 쓰면 됩니다. 'Make a style your own'으로 아뜰리에 코발트 화풍을 하나 저장해 두면 계속 같은 톤이 나와요."
+   "forMe": "MLB 신상 소개 영상을 촬영 없이 만들 때 화풍만 골라 쓰면 됩니다. 'Make a style your own'으로 아뜰리에 코발트 화풍을 하나 저장해 두면 계속 같은 톤이 나와요.",
+   "thumb": "data/ai-brief/thumbs/26088bef70ca8bcf.jpg"
   },
   {
    "cat": "vibe",
@@ -41,7 +43,8 @@
     "6주",
     "Tripo·Blender·Cascadeur"
    ],
-   "forMe": "잘 나온 이미지 프롬프트를 JSON 한 파일에 모아 다음 생성에 다시 넣는 요령은 시즌 프린트 그래픽 톤을 맞출 때 그대로 쓸 수 있습니다."
+   "forMe": "잘 나온 이미지 프롬프트를 JSON 한 파일에 모아 다음 생성에 다시 넣는 요령은 시즌 프린트 그래픽 톤을 맞출 때 그대로 쓸 수 있습니다.",
+   "thumb": "data/ai-brief/thumbs/d62e8fc728c341ac.jpg"
   },
   {
    "cat": "hack",
@@ -67,7 +70,8 @@
     "도구 76개",
     "73개는 키 없이 내 PC",
     "표 없는 연도는 멈춤"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/220ac10bae9c401d.jpg"
   },
   {
    "cat": "hack",
@@ -81,7 +85,8 @@
     "도구 30~50개 넘으면 헷갈림",
     "골든 예시 10개로 전후 비교"
    ],
-   "forMe": "Atelier 루틴(AI Brief·자동 배포)을 나눠 맡기기보다 한 에이전트에 스킬로 붙이는 쪽이 낫다는 근거입니다. 도구가 많아지면 묶어서 필요할 때만 부르게 하세요."
+   "forMe": "Atelier 루틴(AI Brief·자동 배포)을 나눠 맡기기보다 한 에이전트에 스킬로 붙이는 쪽이 낫다는 근거입니다. 도구가 많아지면 묶어서 필요할 때만 부르게 하세요.",
+   "thumb": "data/ai-brief/thumbs/7b25289f9e72d484.jpg"
   }
  ],
  "tryToday": [
@@ -138,7 +143,8 @@
    "url": "https://github.com/cathrynlavery/diagram-design",
    "image": "https://raw.githubusercontent.com/cathrynlavery/diagram-design/main/docs/hero/hero-light.webp",
    "source": "GitHub cathrynlavery · MIT · HTML+SVG 한 장",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/14f321c495182c59.jpg"
   },
   {
    "cat": "free",
@@ -146,7 +152,8 @@
    "url": "https://github.com/elayadesign/ai-design-skills",
    "image": "https://opengraph.githubassets.com/1/elayadesign/ai-design-skills",
    "source": "GitHub elayadesign · 10-26 트렌딩 진입",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/10439e81d0b3763b.jpg"
   },
   {
    "cat": "hack",
@@ -154,7 +161,8 @@
    "url": "https://x.com/GeminiApp/status/2115171788812669225",
    "image": "https://pbs.twimg.com/amplify_video_thumb/2115171418719883264/img/-RHGa5f3YkVZ1tq6.jpg",
    "source": "X @GeminiApp · SynthID · 구글 생성물만",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/6573f17f7994641e.jpg"
   },
   {
    "cat": "tool",
@@ -162,7 +170,8 @@
    "url": "https://www.producthunt.com/p/openbot-3/openbot-4",
    "image": null,
    "source": "Product Hunt · OpenBot · 10-28 트렌딩 2위",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/3022f63cc4085a7a.jpg"
   },
   {
    "cat": "free",
@@ -170,7 +179,8 @@
    "url": "https://pasqualepillitteri.it/en/news/23599/figcraft-guide-free-figma-alternative-rust",
    "image": null,
    "source": "Pasquale Pillitteri · .fig 열기는 아직",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/cea7689ea702f0d7.jpg"
   },
   {
    "cat": "release",
@@ -178,7 +188,8 @@
    "url": "https://artificialanalysis.ai/models/kimi-k3-1-pro",
    "image": "https://artificialanalysis.ai/en/models/kimi-k3-1-pro/opengraph-image?3850766eb2d567bc",
    "source": "Artificial Analysis · 속도는 평균 아래",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/fe92d46aed828cbf.jpg"
   }
  ],
  "watching": [

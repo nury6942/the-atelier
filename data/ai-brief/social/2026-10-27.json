@@ -20,7 +20,8 @@
     "캐릭터는 OpenAI 이미지 모델로 투명배경 시트를 뽑아야 클로드가 벡터로 딸 수 있음(안 그러면 동그라미·원통 수준)",
     "TTS는 전체 대본을 한 번에 뽑아 톤 흔들림 방지, 스타일 참고 영상을 미리 줘서 색·화풍 고정"
    ],
-   "try": "참고 영상 하나 + 색 제한을 먼저 정해 두고 씬 1개만 시험 생성"
+   "try": "참고 영상 하나 + 색 제한을 먼저 정해 두고 씬 1개만 시험 생성",
+   "thumb": "data/ai-brief/thumbs/e10a59fc8b5654b3.jpg"
   },
   {
    "src": "threads",
@@ -37,7 +38,8 @@
     "맥락 다 아는 '코끼리' 세션이 설계서를 쓰고, 맥락 없는 '금붕어' 보조 AI 여럿이 처음 보는 눈으로 검증",
     "순서: /egm-brainstorm → /egm-draft(docs/designs/에 문서) → /egm-review 문서경로 → 구현",
     "에이전트 플러그인 형태, 문서는 영어, 9월 공개·깃허브 별 1천여 개(작성자도 직접 돌려보진 않음)"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -55,7 +57,8 @@
     "HyperFrames(HTML/CSS로 영상)·Remotion Skills(React로 모션그래픽) — 코드로 영상 만들기",
     "Auto-Editor는 말 없는 구간 자동 컷, WhisperX는 단어별 타임스탬프로 자막 싱크",
     "Herk Edit Kit은 컷+자막+B-roll+배경음악까지 한 번에"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -73,7 +76,8 @@
     "없던 홈페이지를 만들어 배포(한 달 방문 229명), 첫 블로그 글 조회 300회",
     "전환추적·GA4를 붙여 손님이 어디서 나가는지 확인 중",
     "9월 예약 0건 → 지금 주 4건, '혼자면 석 달 걸릴 일'이라는 평"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -92,7 +96,8 @@
     "대신 조사·서술어는 살린다: '토큰 증가 → 위임 필수' 대신 완결된 짧은 문장",
     "영어 비유·기호는 뜻으로 풀어 쓰고, 원어는 파일명·명령어만"
    ],
-   "try": "원문 규칙 몇 줄을 내 CLAUDE.md 출력 규칙과 비교해 보기"
+   "try": "원문 규칙 몇 줄을 내 CLAUDE.md 출력 규칙과 비교해 보기",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -110,7 +115,8 @@
     "발표 중에 근거 데이터를 바로 열어 볼 수 있음(차트·슬라이서 지원)",
     "클로드 코드·코덱스용 스킬, 개인·사내 무료(깃허브 ppt-to-html-agent)",
     "사내·고객사·경영진 반응이 좋았다는 실사용담"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/46d295ac7df9bbd9.jpg"
   },
   {
    "src": "threads",
@@ -127,7 +133,8 @@
     "코딩 에이전트가 화면을 만들 때 시각 완성도·사용성을 같이 점검하게 하는 스킬",
     "설치 한 줄: npx skills add nutlope/hallmark (클로드 코드·코덱스·OpenCode)",
     "기존 디자인 시스템·UI 규칙이 있으면 충돌 여부부터 확인 권장"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/1db05eb3fd92456f.jpg"
   },
   {
    "src": "threads",
@@ -144,7 +151,8 @@
     "나비·꽃 픽셀 들판을 돌아다니는 인터랙티브 포트폴리오를 Claude Opus 5.5로 제작",
     "bubbbly.com 'Butterfly Meadow'에서 직접 써볼 수 있음",
     "결과물은 원문 영상에서 확인"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/8da6271d100ec26d.jpg"
   },
   {
    "src": "x",

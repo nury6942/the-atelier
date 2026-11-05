@@ -140,6 +140,8 @@
   .post .peek iframe{width:100%;height:640px;border:0;display:block}
   .post .peek::after{content:"";position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(transparent,var(--card));pointer-events:none}
   .post.open .peek{height:640px}
+  .post .tpeek{display:none}
+  .post.open .tpeek{display:block}
   .post.open .peek::after{display:none}
   .post .emb{border-top:1px solid var(--line);padding:10px;display:none}
   .post.open .emb{display:block}
@@ -263,10 +265,13 @@
   // ── 조각 ──
   function host(u){ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return ''; } }
   // 사진이 없거나 깨지면 빈 칸 대신 '어디 글인지'(출처 도메인)를 보여준다
-  function media(src, label, extra, url){
+  // 사진은 사이트에 보관한 미리보기(thumb)가 먼저, 그게 없거나 깨지면 원본 주소(image) (누리 2026-11-05)
+  function pic(x){ return x ? (x.thumb || x.image || '') : ''; }
+  function media(src, label, extra, url, alt){
     var h = url ? host(url) : '';
+    if (src && alt === src) alt = '';
     return '<div class="img"><div class="ph"><span>'+(label?'<small>'+esc(label)+'</small>':'')+esc(h)+'</span></div>'
-      + (src ? '<img src="'+esc(src)+'" alt="" loading="lazy" onerror="this.remove()">' : '') + (extra||'') + '</div>';
+      + (src ? '<img src="'+esc(src)+'" alt="" loading="lazy"'+(alt?' data-alt="'+esc(alt)+'"':'')+' onerror="if(this.dataset.alt){var a=this.dataset.alt;this.removeAttribute(\'data-alt\');this.src=a}else this.remove()">' : '') + (extra||'') + '</div>';
   }
   function chips(a){ return (a&&a.length) ? '<div class="chips">'+a.map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('')+'</div>' : ''; }
 
@@ -274,13 +279,13 @@
     var rel = '';
     if (it.release){ var n = daysAgo(it.release.date); rel = '<div class="rel"><b>'+esc(it.release.name)+'</b><span>'+(n<=0?'오늘 발표':n+'일 전 발표')+'</span></div>'; }
     var ex = (it.examples&&it.examples.length) ? '<div class="ex">'+it.examples.slice(0,3).map(function(e){
-        return '<a href="'+esc(e.url)+'" target="_blank" rel="noopener">'+media(e.image,'',null,e.url)+'<span>'+esc(e.title)+'</span></a>'; }).join('')+'</div>' : '';
+        return '<a href="'+esc(e.url)+'" target="_blank" rel="noopener">'+media(pic(e),'',null,e.url,e.image)+'<span>'+esc(e.title)+'</span></a>'; }).join('')+'</div>' : '';
     var nw = (it.new&&it.new.length) ? '<div class="new">'+it.new.slice(0,3).map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>' : '';
     var rv = (it.reviews&&it.reviews.length) ? '<div class="rv"><div class="h">써본 사람들</div>'+it.reviews.slice(0,4).map(function(r){
         var good = r.tone !== 'bad';
         return '<a class="'+(good?'good':'bad')+'" href="'+esc(r.url||it.url)+'" target="_blank" rel="noopener"><i>'+(good?'▲':'▼')+'</i><span>'+esc(r.say)+(r.who?'<em>'+esc(r.who)+'</em>':'')+'</span></a>'; }).join('')+'</div>' : '';
     return '<div class="card '+(cls||'')+'">'
-      + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+media(it.image, CATL[it.cat], null, it.url)+'</a>'
+      + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+media(pic(it), CATL[it.cat], null, it.url, it.image)+'</a>'
       + '<div class="body"><span class="tag">'+esc(CATL[it.cat]||'')+'</span>'
       + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener"><h3>'+esc(it.title)+'</h3></a>'
       + rel + nw + (it.how?'<div class="how">'+esc(it.how)+'</div>':'') + ex + rv
@@ -309,7 +314,8 @@
 
   // X 는 사진·GIF·영상을 원래 주소로, Threads 는 원문 미리보기 창(스크롤하면 불러옴)
   function postMedia(p){
-    if (p.src === 'threads') return '<div class="peek" data-peek="'+esc(p.url.replace(/\/$/,''))+'/embed/"></div>';
+    // Threads: 보관해 둔 사진만 보여 주고, 원문 창은 '원문 펼치기'를 눌러야 열림 (요약과 같은 글이 잘린 채 두 번 보이던 것, 누리 11/05)
+    if (p.src === 'threads') return (p.thumb ? media(p.thumb, '') : '') + '<div class="peek tpeek" data-peek="'+esc(p.url.replace(/\/$/,''))+'/embed/"></div>';
     var m = (p.media_items||[])[0];
     if (!m || !m.img) return '';
     if (m.mp4) return '<div class="img"><video src="'+esc(m.mp4)+'" poster="'+esc(m.img)+'" muted loop playsinline preload="none" data-auto></video><span class="play">'+(m.type==='animated_gif'?'GIF':'영상')+'</span></div>';
@@ -332,7 +338,7 @@
   }
   function pick(p){
     if (p.from && p.from.url) return '<div class="pk">'+pick(Object.assign({}, p, {from:null}))+ofrom(p.from)+'</div>';
-    return '<a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+media(p.image, CATL[p.cat], p.watching?'<span class="watch">지켜보는 중</span>':'', p.url)
+    return '<a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+media(pic(p), CATL[p.cat], p.watching?'<span class="watch">지켜보는 중</span>':'', p.url, p.image)
       + '<div class="tt">'+esc(p.title)+'</div><span class="tag">'+esc(CATL[p.cat]||'')+'</span></a>';
   }
 
@@ -401,9 +407,9 @@
     function add(o){ if (!o.url || seen[o.url]) return; seen[o.url]=1; out.push(o); }
     dates.forEach(function(d){
       var B = briefs[d]||{}, S = socials[d]||{};
-      (S.posts||[]).forEach(function(p){ var m=(p.media_items||[])[0]; add({d:d,url:p.url,t:p.summary,kind:p.tag||'소식',pts:p.points||[],img:m&&m.img,who:p.author,likes:p.likes}); });
-      (B.cards||[]).forEach(function(c){ add({d:d,url:c.url,t:c.title,kind:c.cat==='tool'?'도구':c.cat==='release'?'소식':c.cat==='vibe'||c.cat==='money'?'만든 것':'꿀팁',pts:[c.how,c.why,c.forMe].filter(Boolean),img:c.image,who:c.source}); });
-      (B.pickup||[]).forEach(function(p){ add({d:d,url:p.url,t:p.title,kind:p.cat==='free'?'무료':p.cat==='tool'?'도구':p.cat==='vibe'?'만든 것':'소식',pts:[],img:p.image,who:p.source}); });
+      (S.posts||[]).forEach(function(p){ var m=(p.media_items||[])[0]; add({d:d,url:p.url,t:p.summary,kind:p.tag||'소식',pts:p.points||[],img:p.thumb||(m&&m.img),who:p.author,likes:p.likes}); });
+      (B.cards||[]).forEach(function(c){ add({d:d,url:c.url,t:c.title,kind:c.cat==='tool'?'도구':c.cat==='release'?'소식':c.cat==='vibe'||c.cat==='money'?'만든 것':'꿀팁',pts:[c.how,c.why,c.forMe].filter(Boolean),img:pic(c),alt:c.image,who:c.source}); });
+      (B.pickup||[]).forEach(function(p){ add({d:d,url:p.url,t:p.title,kind:p.cat==='free'?'무료':p.cat==='tool'?'도구':p.cat==='vibe'?'만든 것':'소식',pts:[],img:pic(p),alt:p.image,who:p.source}); });
     });
     // 최신 날짜 먼저, 같은 날은 좋아요 많은 순
     return out.sort(function(a,b){ return a.d===b.d ? (b.likes||0)-(a.likes||0) : (a.d<b.d?1:-1); });
@@ -422,7 +428,7 @@
       + '<div class="flt">'+VF.map(function(f){ return '<button data-f="'+esc(f)+'" class="'+(f===vf?'on':'')+'">'+esc(f)+'</button>'; }).join('')+'</div></div>';
     h += '<div class="vlist">' + (list.length ? list.map(function(x){
         var k = skey(x.url);
-        return '<div class="vrow"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+media(x.img, x.kind, null, x.url)+'</a>'
+        return '<div class="vrow"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+media(x.img, x.kind, null, x.url, x.alt)+'</a>'
           + '<div><a href="'+esc(x.url)+'" target="_blank" rel="noopener" class="vt">'+esc(x.t)+'</a>'
           + '<div class="vm"><span class="tag">'+esc(x.kind)+'</span><span>'+esc(md(x.d))+'</span>'+(x.who?'<span>'+esc(x.who)+'</span>':'')+(x.likes?'<span>♥ '+num(x.likes)+'</span>':'')+'</div>'
           + (x.pts.length ? '<ul class="vp">'+x.pts.slice(0,3).map(function(s){ return '<li>'+esc(s)+'</li>'; }).join('')+'</ul>' : '') + '</div>'

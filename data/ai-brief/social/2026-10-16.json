@@ -252,7 +252,8 @@
     "PC·태블릿·모바일 화면 검사로 글자 잘림·넘침 탐지",
     "설치: npx skills add Leonxlnx/taste-skill"
    ],
-   "try": "Atelier 화면 손볼 때 Taste Skill 깔고 모바일 넘침 검사부터"
+   "try": "Atelier 화면 손볼 때 Taste Skill 깔고 모바일 넘침 검사부터",
+   "thumb": "data/ai-brief/thumbs/326054f5a9c72fff.jpg"
   },
   {
    "src": "threads",
@@ -271,7 +272,8 @@
     "첫 지시: \"네 작업공간에 환경 만들고 결과도 거기 남겨, Codex 로컬·클라우드 작업 금지\" — 안 하면 사용량 소모",
     "가끔 세션이 초기화되니 구글드라이브로 주기 백업",
     "메인 말고 사용량 모자랄 때 보조로"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/b233f0ff0d7becf8.jpg"
   },
   {
    "src": "threads",
@@ -309,7 +311,8 @@
     "부서별 에이전트 구성, '비서실장' 에이전트가 자동 배정",
     "무료·개발 중, 윈도우판은 코드서명 전이라 보안 경고 뜰 수 있음",
     "bigbangoffice.app"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/ab9de4c2f916b513.jpg"
   },
   {
    "src": "threads",
@@ -327,7 +330,8 @@
     "MCP·CLI 지원 → 코딩 도구·터미널에서 영상 생성 자동화 가능",
     "4K·1080p 10비트 HDR 출력 추가 예정",
     "기업·개발자용 API는 추후"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/7b55395add1a43bb.jpg"
   }
  ]
 }

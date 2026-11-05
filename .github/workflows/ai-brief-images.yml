@@ -40,6 +40,16 @@ jobs:
         run: |
           for d in ${{ steps.days.outputs.days }}; do python3 scripts/ai-brief/fill-images.py "$d"; done
 
+      - name: 미리보기 사진 보관 준비
+        run: |
+          pip install -q pillow playwright
+          python3 -m playwright install --with-deps chromium >/dev/null
+
+      # 사진을 원본 주소로만 띄우면 깃허브 카드(100장 제한)·사진 없는 글이 빈칸 → 받아서(없으면 찍어서) 사이트에 둔다 (누리 2026-11-05)
+      - name: 미리보기 사진 보관
+        run: |
+          python3 scripts/ai-brief/cache-thumbs.py ${{ steps.days.outputs.days }}
+
       - name: 바뀐 게 있으면 올리기
         env:
           GH_TOKEN: ${{ github.token }}
@@ -48,7 +58,7 @@ jobs:
           git config user.name "ai-brief-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/ai-brief
-          git commit -m "brief: 빈 사진 채움 (${{ steps.days.outputs.days }})"
+          git commit -m "brief: 사진 채움·보관 (${{ steps.days.outputs.days }})"
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
           # 봇 토큰으로 올린 커밋은 Pages 빌드를 안 깨우므로 직접 요청
           gh api -X POST "repos/${{ github.repository }}/pages/builds" >/dev/null || true

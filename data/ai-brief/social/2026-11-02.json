@@ -144,7 +144,8 @@
     "틀 고정: 40~55초, 손해 문장으로 시작, 실제 캡처에 박스 하나",
     "대본→내 목소리 AI 낭독→렌더 한 번에, 쇼츠·릴스 동시 업로드",
     "조회 97%가 모르는 사람 — 도구 소개 영상이 개념 설명보다 10배"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/11c13c456eccc7e4.jpg"
   },
   {
    "src": "threads",
@@ -181,7 +182,8 @@
     "피그마 연결 없이도 사용 가능",
     "상세페이지·브랜드 게시물 올리기 전 한 번 돌려보기 추천"
    ],
-   "try": "아뜰리에 화면 캡처 넣고 /critique 돌려보기"
+   "try": "아뜰리에 화면 캡처 넣고 /critique 돌려보기",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -199,7 +201,8 @@
     "macOS·Windows·Linux, 사용 중에도 백그라운드 실행",
     "에이전트마다 독립 마우스 커서로 동시 작업",
     "Rust로 만들고 OS 접근성 트리로 실제 UI 구조를 읽음"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/5f9d00e77fbd2fb8.jpg"
   },
   {
    "src": "threads",
@@ -217,7 +220,8 @@
     "Tripo H3.1·Meshy 7.1로 각각 3D 생성 후 나은 쪽 선택",
     "배치·충돌 검사·조명·카메라·색보정까지 처리",
     "라멘 가게 예시, 장면당 약 150달러 / Claude Code·Codex에서 사용"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/ae1c672c1aff5198.jpg"
   },
   {
    "src": "threads",
@@ -235,7 +239,8 @@
     "카피 작가·후킹 전문가가 후킹 점수 7점 넘을 때까지 토론",
     "템플릿 8종·슬라이드 14종, 1080×1350 PNG 출력",
     "자동 발행은 없음 — 검수 후 직접 올림, MIT 라이선스"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -253,7 +258,8 @@
     "키·토큰은 저장소 말고 환경 설정에",
     "별도 VM이라 노트북 닫아도 계속 돌아감",
     "크레딧 다 쓰면 요금제 사용량에서 차감, 소멸 시각은 설정 > 사용량"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -271,7 +277,8 @@
     "Taste(AI 티 안 나는 웹 디자인)·Graphify(코드·파일 검색)",
     "Headroom(컨텍스트 압축으로 토큰 절약)·Claude-video(유튜브 분석)",
     "OmniRoute·ECC·Ponytail(시니어 개발자 페르소나)"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/bc5585342b764125.jpg"
   },
   {
    "src": "threads",
@@ -289,7 +296,8 @@
     "구글 Gemini 가이드 — 전부 한국어, 직군 11개",
     "MS Copilot 갤러리 — 로그인 없이, 업무용 60개+",
     "Claude Code 프롬프트 라이브러리 — 공식 52개, 마케팅 태그도"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -308,7 +316,8 @@
     "toy-crane/obsidian-skills — X·유튜브·웹 여러 URL 한꺼번에",
     "추천 조합: Web Clipper + Obsidian Skills"
    ],
-   "try": "웹노벨 볼트에 kepano/obsidian-skills 붙여보기"
+   "try": "웹노벨 볼트에 kepano/obsidian-skills 붙여보기",
+   "thumb": null
   }
  ]
 }

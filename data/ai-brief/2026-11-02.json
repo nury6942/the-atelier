@@ -14,7 +14,8 @@
     {
      "title": "같은 데이터로 만든 안드로이드 TV 앱 hackertube.tv",
      "url": "https://github.com/ephraimduncan/hackertube.tv",
-     "image": "https://opengraph.githubassets.com/1/ephraimduncan/hackertube.tv"
+     "image": "https://opengraph.githubassets.com/1/ephraimduncan/hackertube.tv",
+     "thumb": "data/ai-brief/thumbs/8bf4c63ac415170d.jpg"
     }
    ],
    "reviews": [
@@ -52,7 +53,8 @@
    "from": {
     "label": "X @karpathy · ♥1.9만",
     "url": "https://x.com/karpathy/status/2116957135661945283"
-   }
+   },
+   "thumb": "data/ai-brief/thumbs/4f8a81f9d17febcf.jpg"
   },
   {
    "cat": "tool",
@@ -70,7 +72,8 @@
    "from": {
     "label": "X @DataChaz",
     "url": "https://x.com/DataChaz/status/2116427882381885442"
-   }
+   },
+   "thumb": "data/ai-brief/thumbs/9aab5ec375395ca5.jpg"
   },
   {
    "cat": "hack",
@@ -83,7 +86,8 @@
     "맥 GPU 받아쓰기(mlx-whisper)",
     "본인 목소리 구분",
     "편집은 JSON 컷 목록"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/7b54d406da46a55d.jpg"
   },
   {
    "cat": "vibe",
@@ -101,7 +105,8 @@
    "from": {
     "label": "Threads @choi.openai · ♥173",
     "url": "https://www.threads.com/@choi.openai/post/DfLt2YziRvw"
-   }
+   },
+   "thumb": "data/ai-brief/thumbs/a08f05c850717f61.jpg"
   },
   {
    "cat": "tool",
@@ -114,7 +119,8 @@
     "별 2.5천",
     "미리보기 사이트 있음",
     "플러그인 설치 한 줄"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/2649f49189d780a3.jpg"
   }
  ],
  "tryToday": [
@@ -170,7 +176,8 @@
    "url": "https://bleepingcomputer.com/news/artificial-intelligence/anthropic-rolls-out-up-to-250-in-free-claude-code-credits-but-only-for-cloud-sessions",
    "image": "https://www.bleepstatic.com/content/hl-images/2026/05/07/ClaudeChats.png",
    "source": "소멸일 11-04·05로 출처마다 다름 · 안전하게 4일",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/d3dfcdd7e2987893.jpg"
   },
   {
    "cat": "release",
@@ -178,7 +185,8 @@
    "url": "https://officechai.com/ai/the-biological-computing-co-launches-mischief-1-an-ai-video-model-trained-on-lessons-from-living-neurons",
    "image": "http://officechai.com/wp-content/uploads/2026/10/1000443598-scaled.jpg",
    "source": "OfficeChai · 10-31 · fal·OpenRouter",
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/6c8e582856aca7a9.jpg"
   },
   {
    "cat": "tool",
@@ -186,7 +194,8 @@
    "url": "https://higgsfield.ai/playable-intro",
    "image": "https://static.higgsfield.ai/playable/og/landscape-light.webp",
    "source": "Higgsfield · 10-26 · 게임 품질 평가 아직",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/ada338eaa06b6b0a.jpg"
   },
   {
    "cat": "free",
@@ -194,7 +203,8 @@
    "url": "https://github.com/paipiange/nvzhuang",
    "image": "https://opengraph.githubassets.com/1/paipiange/nvzhuang",
    "source": "GitHub · MIT · 가상 착용 사이트 · 별 1.9천",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/7b976d61285115dd.jpg"
   },
   {
    "cat": "vibe",
@@ -202,7 +212,8 @@
    "url": "https://github.com/storytold/craft-anything",
    "image": "https://opengraph.githubassets.com/1/storytold/craft-anything",
    "source": "GitHub storytold · 소프트웨어 뜯어보고 내 것 만들기 · 별 829",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/473aabc3f5f840a3.jpg"
   },
   {
    "cat": "tool",
@@ -210,7 +221,8 @@
    "url": "https://github.com/NiazMorshed2007/reanimate",
    "image": "https://opengraph.githubassets.com/1/NiazMorshed2007/reanimate",
    "source": "GitHub · MIT · Claude Code 스킬 · 별 721",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0d67183d9957047b.jpg"
   },
   {
    "cat": "tool",
@@ -218,7 +230,8 @@
    "url": "https://github.com/elvarofficial/teardown",
    "image": "https://opengraph.githubassets.com/1/elvarofficial/teardown",
    "source": "GitHub · MIT · Claude Code 스킬 · 별 890",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/acae5487f5f387a6.jpg"
   },
   {
    "cat": "free",
@@ -230,7 +243,8 @@
     "label": "Threads @bestoj · ♥48",
     "url": "https://www.threads.com/@bestoj/post/DfLk4zBjs3Y"
    },
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/03c85f3055b51369.jpg"
   }
  ],
  "watching": [

@@ -82,7 +82,8 @@
     "skills 폴더에 복사 후 '/unslop this dashboard'처럼 지시, 코덱스에서도 동작",
     "수정 전후 10초 영상 기능은 Playwright·ffmpeg 필요, CC BY 4.0(github.com/heydamir/unslop)"
    ],
-   "try": "아뜰리에 화면 하나에 /unslop 돌려 보기"
+   "try": "아뜰리에 화면 하나에 /unslop 돌려 보기",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -100,7 +101,8 @@
     "디자인 방향·화면 구성을 먼저 계획하고, 결과를 영상으로 녹화해 문제를 찾아 고치는 과정 포함",
     "Figma·Gmail 화면 재현 테스트에서 스킬 쓴 쪽이 더 좋았다고 함",
     "설치: npx skills add benjitaylor/skills --skill stageshow"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/188d098d604569a4.jpg"
   },
   {
    "src": "threads",
@@ -118,7 +120,8 @@
     "designspells.com 마이크로 인터랙션, styles.refero.design 실제 색·글꼴 시스템",
     "supahero.io 히어로 섹션, mobbin.com 실제 앱 흐름",
     "좋은 레퍼런스를 줘야 결과물이 좋아진다는 요지"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/cb1caad3332076ee.jpg"
   },
   {
    "src": "threads",
@@ -136,7 +139,8 @@
     "예: Album Cover Flow(바닥 반사+3D 회전), 3D Image Ring(원통형, 끌면 회전), Tower Helix(나선 자동 회전)",
     "Vinyl Record(커버가 비키고 LP 굴러나옴), Tunnel(터널 안쪽으로 작아짐)",
     "코드는 Pro 유료(149달러), 미리보기는 누구나 볼 수 있어 레퍼런스로만 써도 됨"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/5b9d3e7eb96acf7f.jpg"
   },
   {
    "src": "threads",
@@ -154,7 +158,8 @@
     "~/.claude/skills/cartoon-3d-short/ 에 받고 'cartoon short 스킬로 ○○ 쇼츠 만들어 줘'",
     "Remotion·Node·파이썬3·ffmpeg 필요, 내레이션은 직접 녹음, 배경음은 파이썬으로 합성",
     "67초 최종본 렌더 약 10분, 작업 폴더 1.3GB / Remotion은 4인 이상 회사면 유료"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/5802f08cfcc21431.jpg"
   },
   {
    "src": "threads",
@@ -173,7 +178,8 @@
     "성운·배경 별 9천 개, 블룸 세기 0.55·반경 0.25·임계값 0.32, 행성 3개와 반짝이는 별 30개",
     "마우스가 닿으면 별이 소용돌이치며 무지갯빛으로 출렁 — 전체 프롬프트는 댓글에"
    ],
-   "try": "댓글 프롬프트 그대로 Claude에 붙여 index.html 만들어 열어 보기"
+   "try": "댓글 프롬프트 그대로 Claude에 붙여 index.html 만들어 열어 보기",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -191,7 +197,8 @@
     "70% 넘으면 /compact로 줄이기",
     "큰 작업은 /plan으로 계획부터 받고 따져 본 뒤 진행",
     "CLAUDE.md는 /init으로 만들고 150줄 이내, 수락 전 diff 꼭 확인"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/cdc8e2a07f2c181d.jpg"
   },
   {
    "src": "threads",
@@ -227,7 +234,8 @@
     "프롬프트: '10초 분량 짧은 드라마 만들어줘, 그래픽은 제미나이로 실사화할 거니 뼈대만 있어도 돼'",
     "나온 콘티를 제미나이에 넣어 실사 그래픽을 입힘(좌우 비교 영상)",
     "프롬프트를 더 자세히 주면 콘티 품질이 올라갈 것 같다는 소감"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/a5ce91d0e8025dfd.jpg"
   },
   {
    "src": "threads",
@@ -245,7 +253,8 @@
     "공고를 붙여넣고 반복 키워드 3개를 경력 설명에 자연스럽게 녹이게 함",
     "숫자·성과 없는 문장을 전부 찾아 현실적인 지표를 제안받음",
     "마지막엔 '채용 담당자가 10초 안에 떨어뜨릴 이유'를 찾아 고치게 함"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -263,7 +272,8 @@
     "OpenAI 아카데미: 1시간 기초 + 수료 배지, 구글 스킬스(skills.google): 짧은 모듈",
     "Elements of AI(헬싱키대): 비전공자용 원리",
     "DeepLearning.AI: 1시간 안팎 숏코스, 에이전트·RAG 최신"
-   ]
+   ],
+   "thumb": null
   }
  ]
 }

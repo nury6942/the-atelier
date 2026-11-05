@@ -181,7 +181,8 @@
     "앱에 막히는 곳이 생기면 Claude가 코드를 고쳐 새 버전을 보내고 폰이 스스로 설치",
     "처음 학습만 Sonnet, 익힌 동작은 레포에 기록해 반복은 Haiku로 — 토큰 절약",
     "계기: 네이버 세션 로그인이 자꾸 풀리고 QR 숫자 선택을 자동으로 하고 싶어서"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/e1f447533122d9a4.jpg"
   },
   {
    "src": "threads",
@@ -199,7 +200,8 @@
     "51가지 필름 스타일 Claude Code 스킬 — 스타일·스토리만 말하면 단편 제작",
     "MG(모션그래픽) 15가지 스타일 데모와 프롬프트·소스",
     "손그림 캐릭터 애니 스타터 키트 — clone 후 '15초 영상 만들어줘'로 스토리보드부터 렌더링까지"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/2bb13913622eb36d.jpg"
   },
   {
    "src": "threads",
@@ -216,7 +218,8 @@
     "Claude·Codex가 일하는 모습을 개발실·자료실·회의실·휴게실 캐릭터로 보여줌",
     "브라우저에서 도는 로컬 도구, GitHub 'toplainsoft/claude-office'",
     "처음부터 만들면 토큰이 많이 드니 받아서 내 환경에 맞게 고쳐 쓰라고 권함"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/f008de0fa0221c20.jpg"
   },
   {
    "src": "threads",
@@ -234,7 +237,8 @@
     "그중 토스의 ux-writing 스킬이 가장 좋았다는 후기",
     "위치: GitHub toss/apps-in-toss-harness → agent-plugin/shared/skills/ux-writing/SKILL.md"
    ],
-   "try": "토스 ux-writing SKILL.md를 받아 아뜰리에 문구 다듬기에 써 보기"
+   "try": "토스 ux-writing SKILL.md를 받아 아뜰리에 문구 다듬기에 써 보기",
+   "thumb": "data/ai-brief/thumbs/ec90a8b5575147ed.jpg"
   },
   {
    "src": "threads",
@@ -252,7 +256,8 @@
     "이력서로 프로필 생성 → 공고 적합도 분석 → 맞춤 이력서·자소서",
     "자소서 700자 제한 맞추기·글자 수 확인, 면접 예상 질문, 지원 마감일 정리",
     "공고 자동 수집·자동 제출은 안 함 — GitHub wing0828/ai-job-search-kr"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -270,7 +275,8 @@
     "그 폴더를 Claude Code가 읽는 게 전부",
     "굿노트 손글씨는 구글 드라이브 백업을 거쳐 볼트로, 지메일·캘린더도 연결",
     "프로젝트·업무·클라이언트 메일·일정이 한자리라 편함(맥 기준, 아직 미완)"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/b9c3f262ce068b04.jpg"
   },
   {
    "src": "threads",
@@ -288,7 +294,8 @@
     "안드로이드 MacroDroid로 알림이 뜨면 입출금을 관리자 페이지에 자동 기록",
     "AI가 대관료·통신비·광고선전비처럼 계정과목까지 분류",
     "세금 계산 때 영수증 뒤질 일이 없어짐"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/54757b32b7e64e29.jpg"
   },
   {
    "src": "threads",
@@ -306,7 +313,8 @@
     "ego lite: 브라우저는 그냥 브라우저, 운전은 내 Claude·Codex가 함",
     "ego lite는 크롬 로그인 그대로, 계정별 프로필 동시 실행, 밤 예약 실행도 잘 됨",
     "네이버 광고센터·스마트플레이스·서치콘솔도 안 막혔다고"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -324,7 +332,8 @@
     "피그마에서 그려 코드로 옮기던 과정 대신 캔버스를 코드베이스 안으로",
     "진짜 컴포넌트·스타일을 가져다 쓰니 컴포넌트가 많은 팀일수록 유리, 첫 화면 단계엔 덜함",
     "ui-skills.com의 create-canvas(ibelick)"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/c0ab6d920d393d42.jpg"
   },
   {
    "src": "threads",
@@ -342,7 +351,8 @@
     "'전체 룩을 입은 내 모습'을 이미지로 만들어 달라고 요청",
     "선수 스타일리스트가 쓰는 팁으로 소개 — 인터뷰 링크는 원문에"
    ],
-   "try": "사고 싶은 옷 캡처 2~3장과 내 사진으로 Gemini에 착장 이미지 요청해 보기"
+   "try": "사고 싶은 옷 캡처 2~3장과 내 사진으로 Gemini에 착장 이미지 요청해 보기",
+   "thumb": "data/ai-brief/thumbs/c3a6f0b710226ad9.jpg"
   }
  ]
 }

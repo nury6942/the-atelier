@@ -89,7 +89,8 @@
     "두 번째 글에 전체 프롬프트: 지브리 스타일 참조, 사람 없는 거대 로봇 장면",
     "'3D를 써도 되지만 결과는 100% 손그림 2D처럼' 조건을 박아둔 게 핵심"
    ],
-   "try": "두 번째 글 프롬프트를 Claude Code에 그대로 넣어 HTML 하나 뽑아보기"
+   "try": "두 번째 글 프롬프트를 Claude Code에 그대로 넣어 HTML 하나 뽑아보기",
+   "thumb": "data/ai-brief/thumbs/58dfccea5f0a5dee.jpg"
   },
   {
    "src": "threads",
@@ -107,7 +108,8 @@
     "프롬프트 한 번으로 완성했다는 제작자 설명",
     "Opus 5.5·Fable 5.1로는 품질이 크게 떨어졌다고",
     "결과물: chetaslua.github.io 'The Moss Keeper'"
-   ]
+   ],
+   "thumb": null
   },
   {
    "src": "threads",
@@ -125,7 +127,8 @@
     "macOS·Windows·Linux 지원, 내가 딴 일 하는 동안 백그라운드 실행",
     "에이전트 여러 개가 각자 다른 마우스 커서로 동시 작업",
     "github.com/vercel-labs/agent-desktop"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/5f9d00e77fbd2fb8.jpg"
   },
   {
    "src": "threads",
@@ -144,7 +147,8 @@
     "두 줄 이상이면 행간 150%, 한 줄이면 auto",
     "AI 작업 시작 전에 프롬프트로 먼저 고정"
    ],
-   "try": "다음 Atelier 화면 수정 때 이 4줄을 프롬프트 맨 앞에 붙이기"
+   "try": "다음 Atelier 화면 수정 때 이 4줄을 프롬프트 맨 앞에 붙이기",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -162,7 +166,8 @@
     "완독하면 그달 책장에 한 권씩 꽂힘",
     "원서는 읽은 만큼 책등이 차오르게",
     "화면 모습은 원문 사진에"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/dd488a7e25d3cb4c.jpg"
   },
   {
    "src": "threads",
@@ -198,7 +203,8 @@
     "70% 넘으면 /compact로 줄이기",
     "큰 작업은 /plan으로 계획부터 받고 따져본 뒤 진행",
     "CLAUDE.md는 /init으로 만들고 150줄 안으로, 수락 전 diff 확인"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/cdc8e2a07f2c181d.jpg"
   },
   {
    "src": "threads",
@@ -216,7 +222,8 @@
     "설치: npx skills add benjitaylor/skills --skill stageshow",
     "Claude Code·Codex·Gemini 등에서 사용, 결과는 React 컴포넌트",
     "한 번에 완벽하진 않아 피드백 몇 번 필요"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/c56ba91bf8557593.jpg"
   },
   {
    "src": "threads",
@@ -235,7 +242,8 @@
     "skills 폴더에 복사 후 '/unslop this dashboard'처럼 지시, 코덱스도 가능",
     "수정 전후 10초 영상 기능은 Playwright·ffmpeg 필요"
    ],
-   "try": "github.com/heydamir/unslop 받아 Atelier 화면 하나에 돌려보기"
+   "try": "github.com/heydamir/unslop 받아 Atelier 화면 하나에 돌려보기",
+   "thumb": null
   },
   {
    "src": "threads",
@@ -254,7 +262,8 @@
     "accrual-schedule: 발생비용 계산 + 분개 초안",
     "variance-commentary 증감 사유, audit-xls 수식·대차 검수 — 결과는 초안"
    ],
-   "try": "SA 전표 정산 때 gl-recon으로 대조 초안 받아보기"
+   "try": "SA 전표 정산 때 gl-recon으로 대조 초안 받아보기",
+   "thumb": "data/ai-brief/thumbs/058cacb312b99c1b.jpg"
   },
   {
    "src": "threads",
@@ -272,7 +281,8 @@
     "보내기·결제·서명 전에는 꼭 물어봄",
     "미국 Pro·Max 구독자 대상, 대기 명단(claude.com)",
     "앤트로픽 팀 사용 모습은 원문 영상에"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/8cd4562f9b86395c.jpg"
   }
  ]
 }

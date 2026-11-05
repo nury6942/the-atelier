@@ -11,7 +11,7 @@
      만드는 곳: ~/tools/instagram-card-news/weekly (run.sh · publish.js). 이 페이지는 index.json · meta.json 만 읽는다. */
   :root{
     --ink:#111; --paper:#fff; --wash:#F5F5F7; --line:#ECECF0; --line2:#D9D9E0;
-    --mut:#475569; --accent:#1F4BD8; --accent-wash:#EEF2FD; --err:#b42318;
+    --mut:#475569; --accent:#1F4BD8; --accent-dark:#1A3FB5; --accent-wash:#EEF2FD; --err:#b42318;
     --card:clamp(220px, 26vw, 300px);
   }
   *{box-sizing:border-box}
@@ -56,6 +56,23 @@
   details.src li a{display:inline-block;border:1px solid var(--line2);padding:4px 9px;font-size:12px;font-weight:600;color:var(--mut);text-decoration:none}
   details.src li a:hover{border-color:var(--accent);color:var(--accent)}
 
+  /* 자세히 = 이야기별 요약 (stories.json) */
+  details.more{margin-top:10px;border-top:1px solid var(--line)}
+  details.more summary{cursor:pointer;list-style:none;padding:12px 0;font-size:14px;font-weight:700;color:var(--accent)}
+  details.more summary::-webkit-details-marker{display:none}
+  details.more summary::after{content:' ↓'}
+  details.more[open] summary::after{content:' ↑'}
+  ol.stories{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:0 32px;counter-reset:st}
+  ol.stories li{counter-increment:st;padding:16px 0 18px;border-top:1px solid var(--line)}
+  ol.stories h3{margin:0;font-size:16px;font-weight:800;letter-spacing:-.015em;line-height:1.4}
+  ol.stories h3::before{content:counter(st, decimal-leading-zero) '  ';color:var(--accent);font-variant-numeric:tabular-nums}
+  ol.stories .d{font-size:12px;font-weight:600;color:var(--mut);margin-top:3px;font-variant-numeric:tabular-nums}
+  ol.stories p{margin:8px 0 0;font-size:14px;line-height:1.7;color:var(--ink)}
+  ol.stories p.why{background:var(--accent-wash);padding:8px 10px;font-weight:600;color:var(--accent-dark,#1A3FB5)}
+  ol.stories .lk{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:12px}
+  ol.stories .lk a{color:var(--mut);font-weight:600;text-underline-offset:2px}
+  ol.stories .lk a:hover{color:var(--accent)}
+
   .state{padding:64px 0;text-align:center;font-size:14px;color:var(--mut)}
   .state.err{color:var(--err)}
 
@@ -70,6 +87,7 @@
   .lb .cnt{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 
   @media (max-width:860px){
+    ol.stories{grid-template-columns:1fr}
     .wrap{padding:24px 16px 72px}
     .mast h1{font-size:2rem}
     :root{--card:72vw}
@@ -130,10 +148,16 @@
             return '<button data-t="' + esc(t.id) + '" data-i="' + i + '" aria-label="' + esc(t.name + ' ' + (i + 1) + '장: ' + s.headline) + '">' +
               '<img src="' + BASE + esc(week + '/' + s.img) + '" alt="' + esc(s.headline) + '" loading="lazy" width="1080" height="1350"></button>';
           }).join('');
+          var st = t.stories && t.stories.length ? '<details class="more"><summary>이야기 ' + t.stories.length + '개 자세히</summary><ol class="stories">' +
+            t.stories.map(function(x){
+              return '<li><h3>' + esc(x.title) + '</h3>' + (x.date ? '<div class="d">' + esc(x.date) + '</div>' : '') +
+                '<p>' + esc(x.summary) + '</p>' + (x.why ? '<p class="why">' + esc(x.why) + '</p>' : '') +
+                (x.sources && x.sources.length ? '<div class="lk">' + x.sources.map(function(q){ return '<a href="' + esc(q.url) + '" target="_blank" rel="noopener">' + esc(q.name) + '</a>'; }).join('') + '</div>' : '') + '</li>';
+            }).join('') + '</ol></details>' : '';
           var src = t.sources && t.sources.length ? '<details class="src"><summary>출처 ' + t.sources.length + '곳</summary><ul>' +
             t.sources.map(function(s){ return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.host) + '</a></li>'; }).join('') + '</ul></details>' : '';
           return '<section class="deck" id="d-' + esc(t.id) + '"><div class="deck-head"><span class="tag">' + esc(t.name) + '</span><h2>' + esc(t.title) + '</h2>' +
-            '<span class="n">' + t.slides.length + '장 →</span></div><div class="strip">' + imgs + '</div>' + src + '</section>';
+            '<span class="n">' + t.slides.length + '장 →</span></div><div class="strip">' + imgs + '</div>' + st + src + '</section>';
         }).join('');
         window._cn = m;
         spy();

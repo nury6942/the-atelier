@@ -14,7 +14,8 @@
     {
      "title": "바로 해보기: Pixel Plays (보체·다이빙·빨래 걷기 등 5편)",
      "url": "https://pixel-plays-ruby.vercel.app/",
-     "image": null
+     "image": null,
+     "thumb": "data/ai-brief/thumbs/f28a23df66a6b3a4.jpg"
     }
    ],
    "chips": [
@@ -22,7 +23,8 @@
     "캔버스 360×280",
     "이미지 파일 0개"
    ],
-   "forMe": "README에 '흰 바탕 위에 작은 장소 하나만, 화면 장식 없이' 같은 시각 규칙을 먼저 적어 두고 만든 점이 Atelier DESIGN.md 방식과 같아요. 홈 화면에 작은 계절 장면을 넣고 싶을 때 이 규칙 문장부터 빌려 쓰면 됩니다."
+   "forMe": "README에 '흰 바탕 위에 작은 장소 하나만, 화면 장식 없이' 같은 시각 규칙을 먼저 적어 두고 만든 점이 Atelier DESIGN.md 방식과 같아요. 홈 화면에 작은 계절 장면을 넣고 싶을 때 이 규칙 문장부터 빌려 쓰면 됩니다.",
+   "thumb": "data/ai-brief/thumbs/2b2bef6a7f720521.jpg"
   },
   {
    "cat": "tool",
@@ -36,7 +38,8 @@
     "24·28px 자동 검사",
     "호버 모션 또는 SVG"
    ],
-   "forMe": "기능 목록만 주면 기존 66개와 같은 결로 새 아이콘을 그려요. Atelier 사이드바 아이콘을 코발트 한 색으로 통일할 때 쓰되, 그림자 규칙은 꺼 달라고 같이 적으세요."
+   "forMe": "기능 목록만 주면 기존 66개와 같은 결로 새 아이콘을 그려요. Atelier 사이드바 아이콘을 코발트 한 색으로 통일할 때 쓰되, 그림자 규칙은 꺼 달라고 같이 적으세요.",
+   "thumb": "data/ai-brief/thumbs/78e219711e827886.jpg"
   },
   {
    "cat": "vibe",
@@ -50,7 +53,8 @@
     "테마 10종",
     "카드 3:4·21:9·1:1"
    ],
-   "forMe": "브랜드 색 하나를 넣으면 글자·선 대비까지 계산해 테마를 만들어 줘요. 코발트 #1F4BD8 하나로 이직 포트폴리오 PPT와 카드뉴스를 같은 결로 맞추는 구조를 그대로 참고할 만합니다."
+   "forMe": "브랜드 색 하나를 넣으면 글자·선 대비까지 계산해 테마를 만들어 줘요. 코발트 #1F4BD8 하나로 이직 포트폴리오 PPT와 카드뉴스를 같은 결로 맞추는 구조를 그대로 참고할 만합니다.",
+   "thumb": "data/ai-brief/thumbs/247eadf0715d323f.jpg"
   },
   {
    "cat": "tool",
@@ -64,7 +68,8 @@
     "완성 예제 29초·37초",
     "음성은 키 없이 로컬"
    ],
-   "forMe": "'/graph 0 to 100K followers' 처럼 숫자 하나가 올라가는 흑백 그래프 영상이 바로 나와요. 이직 포트폴리오에 판매량·리드타임 같은 성과 숫자를 짧은 영상으로 보여줄 때 쓸 수 있습니다."
+   "forMe": "'/graph 0 to 100K followers' 처럼 숫자 하나가 올라가는 흑백 그래프 영상이 바로 나와요. 이직 포트폴리오에 판매량·리드타임 같은 성과 숫자를 짧은 영상으로 보여줄 때 쓸 수 있습니다.",
+   "thumb": "data/ai-brief/thumbs/76b5590e5268d89a.jpg"
   },
   {
    "cat": "tool",
@@ -78,7 +83,8 @@
     "무료 Apache-2.0",
     "Markdown·Word·SRT 내보내기"
    ],
-   "forMe": "줌·팀즈·유튜브 무엇이든 회의에 봇을 넣지 않고 한글 자막과 요약·할 일을 뽑아요. 해외 회사 영어 설명회나 인터뷰 영상 복습용으로 먼저 써 보세요(실제 면접 녹음은 상대 동의를 받고)."
+   "forMe": "줌·팀즈·유튜브 무엇이든 회의에 봇을 넣지 않고 한글 자막과 요약·할 일을 뽑아요. 해외 회사 영어 설명회나 인터뷰 영상 복습용으로 먼저 써 보세요(실제 면접 녹음은 상대 동의를 받고).",
+   "thumb": "data/ai-brief/thumbs/b83ba29796283571.jpg"
   }
  ],
  "tryToday": [
@@ -133,7 +139,8 @@
    "url": "https://github.com/kevintngo/looseleaf",
    "image": "https://opengraph.githubassets.com/de66be4b200c1e398a59f13fb3acc5f9c99991120ed26914619a240de69af102/kevintngo/looseleaf",
    "source": "GitHub · MIT · 블록 61개 · 손글씨 폰트 포함 · 별 377",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/dc81c266c37fb9f1.jpg"
   },
   {
    "cat": "free",
@@ -141,7 +148,8 @@
    "url": "https://github.com/Moh4696/open-3d-skills",
    "image": "https://opengraph.githubassets.com/1/Moh4696/open-3d-skills",
    "source": "GitHub · MIT · three.js·스크롤 영상·분해도 · 별 245",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0290b279377448b6.jpg"
   },
   {
    "cat": "vibe",
@@ -149,7 +157,8 @@
    "url": "https://github.com/justrach/nanolight",
    "image": "https://opengraph.githubassets.com/1/justrach/nanolight",
    "source": "GitHub · MIT · 맥·윈도우·리눅스 · 별 355",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/0bb70cb2b7891aec.jpg"
   },
   {
    "cat": "tool",
@@ -157,7 +166,8 @@
    "url": "https://github.com/govijr/terminal-mac",
    "image": "https://opengraph.githubassets.com/1/govijr/terminal-mac",
    "source": "GitHub · MIT · 애플 칩 · 가상 맥을 터미널에서 · 별 1,449",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/dd1e40d3e0b0b802.jpg"
   },
   {
    "cat": "tool",
@@ -165,7 +175,8 @@
    "url": "https://github.com/KKKKhazix/agent-autoloop",
    "image": "https://opengraph.githubassets.com/1/KKKKhazix/agent-autoloop",
    "source": "GitHub · MIT · 맥·리눅스 · 슬랙·데스크톱 알림 · 별 2,406",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/969dd462482a25e8.jpg"
   }
  ],
  "watching": [
