@@ -1,6 +1,34 @@
 {
- "updated": "2026-11-04T22:11:37.947Z",
+ "updated": "2026-11-05T22:11:36.791Z",
  "items": [
+  {
+   "id": "2026-11-06-conv-as-diesel-from-the-gulf-and-russia",
+   "date": "2026-11-06",
+   "source": "The Conversation",
+   "title": "As diesel from the Gulf and Russia dried up, Australia had to find new suppliers – at a cost",
+   "url": "https://theconversation.com/as-diesel-from-the-gulf-and-russia-dried-up-australia-had-to-find-new-suppliers-at-a-cost-295461",
+   "author": "Lurion De Mello",
+   "minutes": 6,
+   "level": "B2+",
+   "words": 1050,
+   "topic": "환경",
+   "gist": "중동 전쟁과 러시아 정유소 피격으로 세계 디젤 공급 지도가 바뀌면서, 디젤 수입 1위국 호주가 비싼 값에 한국·미국 등 소수 공급처에 더 의존하게 된 상황을 분석한 글.\n해법으로 공급처 다변화, 비축 확대, 장기적으로 디젤 사용 자체를 줄이는 것을 제안함.",
+   "file": "data/read/2026-11-06-conv-as-diesel-from-the-gulf-and-russia.json"
+  },
+  {
+   "id": "2026-11-06-conv-clothes-on-the-bed-nothing-feels-right",
+   "date": "2026-11-06",
+   "source": "The Conversation",
+   "title": "Clothes on the bed, nothing feels right: the psychology behind your seasonal wardrobe meltdown",
+   "url": "https://theconversation.com/clothes-on-the-bed-nothing-feels-right-the-psychology-behind-your-seasonal-wardrobe-meltdown-295598",
+   "author": "Catherine Greenwood",
+   "minutes": 5,
+   "level": "B2+",
+   "words": 862,
+   "topic": "패션",
+   "gist": "계절이 바뀌면 익숙했던 겨울옷이 왜 낯설게 느껴지는지를 심리·인류학 연구로 설명하는 글.\n새 옷을 사기보다 지금 옷과 섞어 입으며 옷과의 관계를 다시 쌓으라고 조언한다.",
+   "file": "data/read/2026-11-06-conv-clothes-on-the-bed-nothing-feels-right.json"
+  },
   {
    "id": "2026-11-05-conv-corporate-green-reports-do-independent",
    "date": "2026-11-05",
@@ -383,6 +411,30 @@
  "links": [
   {
    "source": "BoF",
+   "title": "Pierpaolo Piccioli Exits Balenciaga",
+   "url": "https://www.businessoffashion.com/articles/luxury/pierpaolo-piccioli-exits-balenciaga/",
+   "date": "2026-11-06"
+  },
+  {
+   "source": "BoF",
+   "title": "Can Discount Retailers Move Beyond the Bargain Hunt?",
+   "url": "https://www.businessoffashion.com/articles/retail/can-discount-retailers-move-beyond-the-bargain-hunt/",
+   "date": "2026-11-06"
+  },
+  {
+   "source": "BoF",
+   "title": "The Pacific Palisades’ Indie-Led Retail Revival",
+   "url": "https://www.businessoffashion.com/articles/retail/pacific-palisades-los-angeles-retail-revival/",
+   "date": "2026-11-06"
+  },
+  {
+   "source": "BoF",
+   "title": "How AI Is Changing the Way Business Leaders Make Decisions",
+   "url": "https://www.businessoffashion.com/articles/artificial-intelligence/aily-labs-bianca-anghelina-ai-decision-intelligence-business-leaders/",
+   "date": "2026-11-06"
+  },
+  {
+   "source": "BoF",
    "title": "How Fashion Has ‘Turbocharged’ Its Diwali Marketing",
    "url": "https://www.businessoffashion.com/articles/global-markets/fashion-diwali-marketing-india-diaspora/",
    "date": "2026-11-05"
@@ -397,6 +449,24 @@
    "source": "BoF",
    "title": "Why Everyone Is So Obsessed With ‘Messy’ Hair",
    "url": "https://www.businessoffashion.com/articles/beauty/why-everyone-is-so-obsessed-with-messy-hair/",
+   "date": "2026-11-05"
+  },
+  {
+   "source": "BBC Future",
+   "title": "A pizza topping that divides the world",
+   "url": "https://www.bbc.com/future/article/20220818-why-is-ham-and-pineapple-pizza-so-controversial",
+   "date": "2026-11-05"
+  },
+  {
+   "source": "BBC Future",
+   "title": "'A cybercrime goldrush' threatens new web users",
+   "url": "https://www.bbc.com/future/article/20261104-scammers-are-waiting-to-swindle-new-internet-users-how-do-we-protect-them",
+   "date": "2026-11-05"
+  },
+  {
+   "source": "Guardian Long Read",
+   "title": "Lab-grown meat was supposed to save the world. What happened?",
+   "url": "https://www.theguardian.com/news/ng-interactive/2026/nov/05/lab-grown-meat-save-the-world-food-revolution-climate-crisis-food-system",
    "date": "2026-11-05"
   },
   {
@@ -518,48 +588,6 @@
    "title": "The Jennifer Lawrence Beauty Experiment",
    "url": "https://www.businessoffashion.com/articles/beauty/the-jennifer-lawrence-beauty-experiment/",
    "date": "2026-10-30"
-  },
-  {
-   "source": "BBC Future",
-   "title": "How humans shared a world with child-eating birds",
-   "url": "https://www.bbc.com/future/article/20261028-predatory-birds-the-size-of-a-small-aircraft-once-flocked-the-skies-some-of-them-ate-humans",
-   "date": "2026-10-30"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The AI bubble could expose your deepest secrets",
-   "url": "https://www.bbc.com/future/article/20261029-the-ai-bubble-could-expose-your-deepest-secrets",
-   "date": "2026-10-29"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "Fake film deals and emails from top agents: who is behind the explosion in literary scams?",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/29/paid-for-book-clubs-fake-film-deals-emails-explosion-literary-scams-authors",
-   "date": "2026-10-29"
-  },
-  {
-   "source": "BBC Future",
-   "title": "How AI is helping fight art theft",
-   "url": "https://www.bbc.com/future/article/20261027-this-painting-went-missing-20-years-ago-police-tracked-it-down-with-the-help-of-ai",
-   "date": "2026-10-28"
-  },
-  {
-   "source": "BoF",
-   "title": "How Twitch and Discord Are Shaping Menswear’s Next Generation",
-   "url": "https://www.businessoffashion.com/articles/retail/streaming-culture-twitch-discord-menswear/",
-   "date": "2026-10-28"
-  },
-  {
-   "source": "BoF",
-   "title": "Beyond Hype: Scarcity Shoppers Can Believe In",
-   "url": "https://www.businessoffashion.com/articles/retail/genuine-scarcity-vs-artificial-hype-fashion-drops-new-balance/",
-   "date": "2026-10-28"
-  },
-  {
-   "source": "BoF",
-   "title": "Fashion Magazines Find New Momentum in Eastern Europe",
-   "url": "https://www.businessoffashion.com/articles/global-markets/fashion-magazines-find-new-momentum-in-eastern-europe/",
-   "date": "2026-10-28"
   }
  ]
 }

@@ -1,0 +1,834 @@
+{
+ "id": "2026-11-06-conv-as-diesel-from-the-gulf-and-russia",
+ "title": "As diesel from the Gulf and Russia dried up, Australia had to find new suppliers – at a cost",
+ "url": "https://theconversation.com/as-diesel-from-the-gulf-and-russia-dried-up-australia-had-to-find-new-suppliers-at-a-cost-295461",
+ "source": "The Conversation",
+ "author": "Lurion De Mello",
+ "published": "2026-11-05",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "Australia relies on diesel to move freight, run mines and harvest crops. We’re now the world’s top importer of seaborne diesel, importing around 28 billion litres of the fuel last year.",
+  "Diesel is the fuel most exposed to the ongoing US–Iran war as it’s the biggest export product for Persian Gulf refineries. Last year, Russia was the world’s biggest diesel exporter. But Ukrainian drones have now damaged many Russian refineries, making supplies scarcer. This year’s turmoil has shown the risks and costs of this dependency.",
+  "In Australia, diesel prices have gone as high as A$3.20 a litre this year. Prices remain very high at around $2.79 a litre – almost a dollar more than this time last year.",
+  "Between March and August, Australia paid an extra A$9 billion to import diesel, according to the Climate Council – more than twice as much as any other country, or about $324 for every Australian.",
+  "Wars in the Middle East and Eastern Europe have done more than drive prices higher. They have redrawn the global map of buyers and sellers.",
+  "My analysis of over 21,000 diesel shipments since January 2025 exposes the shift. Exports from the Gulf have largely vanished and Russian exports have collapsed. Refineries in the United States and Asia are filling the gap.",
+  "Two big suppliers knocked out",
+  "On February 28, Iran closed the Strait of Hormuz. This blocked most crude and diesel shipments through the Gulf.",
+  "Saudi Arabia was able to keep exporting diesel from its refineries on the Red Sea. But this lifeline is fragile, as recent drone strikes on its East-West pipeline proved.",
+  "Russia was the world’s largest diesel exporter in 2025, shipping about 734,000 barrels a day. But diesel exports began falling sharply in July as Ukrainian drone strikes took refineries offline. Moscow was forced to ban most diesel exports to preserve local stocks.",
+  "By October, Russia supplied just 2% of the diesel arriving at ports worldwide – a sharp fall from last year’s figure of 12%.",
+  "America stepped in, Asia stepped up",
+  "The gap in supply has largely been filled by the United States. My analysis shows the US exported about 50% more diesel between April and October than its 2025 average. As of October, the US is the world’s top diesel exporter.",
+  "Before the US–Iran war, Asian refineries, including India’s, shipped about 28% of seaborne diesel. In October, that figure had risen to almost 40%.",
+  "These refineries are also finding new customers.",
+  "In October, Asian refiners supplied about 38% of sub-Saharan Africa’s diesel imports, up from 22% before the war. Over the same period, the Gulf’s share of that market fell from 44% to 24%.",
+  "Europe has changed too. India and Saudi Arabia are now the largest suppliers of diesel to Europe and the Mediterranean after the United States.",
+  "Closer to home, China supplied almost half of Singapore’s diesel imports in October, up from about 12% before the war.",
+  "Asian refineries have had to change suppliers of crude oil to keep running. Before the war, 57% of Asia’s seaborne crude came from the Middle East. But that share has fallen to about 40%, while Russian, American and Latin American oil has filled the gap.",
+  "What do these shifts mean for Australia?",
+  "In 2025, Australia bought almost 8% of all diesel traded by sea. Arrivals have remained steady this year despite rapid shifts in suppliers. Between March and October, around 488,000 barrels per day have arrived (about 78 million litres a day).",
+  "Global disruptions this year have led to a narrower supply chain.",
+  "In 2025, about 46,000 barrels of Indian diesel arrived per day. But none has arrived since July this year, despite official efforts to shore up fuel security.",
+  "Australia is buying much more diesel from South Korea. In 2025, South Korea supplied 29% of diesel imports. By October 2026, that figure was almost half. Australia now buys over a third of all South Korean diesel exports.",
+  "This doesn’t reduce Australia’s vulnerability. South Korean refineries get more than half their crude oil from the Middle East, much of it loaded at ports outside the Strait of Hormuz. About 20% of South Korean crude is now imported from the US.",
+  "If Middle Eastern supplies tighten or Korean refiners find better prices elsewhere, Australia will feel it.",
+  "Questions remain about how reliable the US is as a diesel supplier, given President Donald Trump floated a possible diesel export ban in September to rein in soaring domestic prices, before ruling it out in October. Because the US is the world’s largest exporter, any pullback would tighten the market Australia buys from.",
+  "What about the Russia–US deal?",
+  "On October 9, Trump unexpectedly announced a deal with Russia’s president, Vladimir Putin.",
+  "In return for the lifting of US sanctions on Russian diesel, Russia would ship a total of 1.8 million tonnes (13 million barrels) of diesel to the US. The first cargo left on October 22.",
+  "This figure is less than three weeks of Russia’s pre-war exports. It’s unclear whether Russia can spare the diesel. Ukraine briefly paused its refinery strikes under US pressure, but resumed within days, hitting a major Russian refinery at Yaroslavl this week.",
+  "None of this diesel will come here: Australia has banned Russian oil imports since 2022.",
+  "But at present, Australia competes with European and Latin American buyers for diesel from Asian refineries. If more Russian diesel crosses the Atlantic, those buyers would compete less intensely for Asian cargoes, which could ease supply and prices here.",
+  "What’s next?",
+  "The past eight months show how fast supply chains can reroute. It took just weeks for the Gulf to lose its markets, while Asian refineries found new customers in Africa and the Mediterranean almost overnight.",
+  "Shipping through the Strait of Hormuz has picked up, but there were 29 attacks on merchant ships in the first three weeks of October – more than in any full month since March.",
+  "Australia can’t assume diesel suppliers will stay loyal – or reliable. It’s sensible to broaden suppliers and, as I’ve argued, rapidly boost diesel storage to buy time.",
+  "Policymakers and business leaders must rapidly reduce our reliance on diesel. Electric buses and delivery trucks are arriving, while some major miners are electrifying trains and haul trucks. Where batteries can’t yet do the job, Australian gas could. Reducing diesel demand is our best long-term protection."
+ ],
+ "level": "B2+",
+ "minutes": 6,
+ "words": 1050,
+ "gloss": {
+  "freight": {
+   "w": "freight",
+   "pos": "명사",
+   "ko": "화물, 화물 운송",
+   "en": "goods carried by truck, train, ship or plane",
+   "ex": "Most of the fabric arrives by sea freight because air freight is too expensive.",
+   "ipa": "/freɪt/"
+  },
+  "seaborne": {
+   "w": "seaborne",
+   "pos": "형용사",
+   "ko": "해상으로 운송되는",
+   "en": "carried or transported by ship",
+   "ex": "Seaborne trade slowed sharply when the shipping lanes were closed.",
+   "ipa": "/ˈsiːbɔːn/"
+  },
+  "exposed to": {
+   "w": "exposed to",
+   "pos": "구",
+   "ko": "~에 노출된, ~의 영향을 받기 쉬운",
+   "en": "likely to be affected or harmed by something",
+   "ex": "Small brands are more exposed to sudden changes in fabric prices.",
+   "ipa": "/ɪkˈspəʊzd tuː/"
+  },
+  "refineries": {
+   "w": "refinery",
+   "pos": "명사",
+   "ko": "정유 공장",
+   "en": "a factory where crude oil is turned into fuels such as diesel",
+   "ex": "The new refinery will produce jet fuel for the region's airports.",
+   "ipa": "/rɪˈfaɪnəri/"
+  },
+  "refinery": {
+   "w": "refinery",
+   "pos": "명사",
+   "ko": "정유 공장",
+   "en": "a factory where crude oil is turned into fuels such as diesel",
+   "ex": "The new refinery will produce jet fuel for the region's airports.",
+   "ipa": "/rɪˈfaɪnəri/"
+  },
+  "scarcer": {
+   "w": "scarce",
+   "pos": "형용사",
+   "ko": "부족한, 귀한 (비교급)",
+   "en": "not available in large enough amounts",
+   "ex": "Good linen became scarce after the poor harvest.",
+   "ipa": "/skeəs/"
+  },
+  "scarce": {
+   "w": "scarce",
+   "pos": "형용사",
+   "ko": "부족한, 귀한",
+   "en": "not available in large enough amounts",
+   "ex": "Good linen became scarce after the poor harvest.",
+   "ipa": "/skeəs/"
+  },
+  "turmoil": {
+   "w": "turmoil",
+   "pos": "명사",
+   "ko": "혼란, 소동",
+   "en": "a state of great confusion or disorder",
+   "ex": "The sudden resignation left the company in turmoil for months.",
+   "ipa": "/ˈtɜːmɔɪl/"
+  },
+  "dependency": {
+   "w": "dependency",
+   "pos": "명사",
+   "ko": "의존, 의존 상태",
+   "en": "the state of relying heavily on someone or something",
+   "ex": "The country is trying to cut its dependency on imported food.",
+   "ipa": "/dɪˈpendənsi/"
+  },
+  "redrawn": {
+   "w": "redraw",
+   "pos": "동사",
+   "ko": "다시 그리다, 재편하다 (과거분사)",
+   "en": "to change the shape or arrangement of something, such as a map or system",
+   "ex": "The merger redrew the competitive landscape of the industry.",
+   "ipa": "/riːˈdrɔː/"
+  },
+  "redraw": {
+   "w": "redraw",
+   "pos": "동사",
+   "ko": "다시 그리다, 재편하다",
+   "en": "to change the shape or arrangement of something, such as a map or system",
+   "ex": "The merger redrew the competitive landscape of the industry.",
+   "ipa": "/riːˈdrɔː/"
+  },
+  "shipments": {
+   "w": "shipment",
+   "pos": "명사",
+   "ko": "선적(물), 배송 물량",
+   "en": "a quantity of goods sent together",
+   "ex": "The spring collection was delayed because one shipment got stuck at customs.",
+   "ipa": "/ˈʃɪpmənt/"
+  },
+  "shipment": {
+   "w": "shipment",
+   "pos": "명사",
+   "ko": "선적(물), 배송 물량",
+   "en": "a quantity of goods sent together",
+   "ex": "The spring collection was delayed because one shipment got stuck at customs.",
+   "ipa": "/ˈʃɪpmənt/"
+  },
+  "vanished": {
+   "w": "vanish",
+   "pos": "동사",
+   "ko": "사라지다 (과거형)",
+   "en": "to disappear suddenly or completely",
+   "ex": "Her worries vanished as soon as she saw the finished samples.",
+   "ipa": "/ˈvænɪʃ/"
+  },
+  "vanish": {
+   "w": "vanish",
+   "pos": "동사",
+   "ko": "사라지다",
+   "en": "to disappear suddenly or completely",
+   "ex": "Her worries vanished as soon as she saw the finished samples.",
+   "ipa": "/ˈvænɪʃ/"
+  },
+  "collapsed": {
+   "w": "collapse",
+   "pos": "동사",
+   "ko": "급감하다, 무너지다 (과거형)",
+   "en": "to fall suddenly and by a large amount",
+   "ex": "Sales of winter coats collapsed during the unusually warm season.",
+   "ipa": "/kəˈlæps/"
+  },
+  "collapse": {
+   "w": "collapse",
+   "pos": "동사",
+   "ko": "급감하다, 무너지다",
+   "en": "to fall suddenly and by a large amount",
+   "ex": "Sales of winter coats collapsed during the unusually warm season.",
+   "ipa": "/kəˈlæps/"
+  },
+  "filling the gap": {
+   "w": "fill the gap",
+   "pos": "구",
+   "ko": "공백을 메우다 (진행형)",
+   "en": "to provide something that is missing",
+   "ex": "Online shops quickly filled the gap left by the closed department store.",
+   "ipa": "/fɪl ðə ɡæp/"
+  },
+  "fill the gap": {
+   "w": "fill the gap",
+   "pos": "구",
+   "ko": "공백을 메우다",
+   "en": "to provide something that is missing",
+   "ex": "Online shops quickly filled the gap left by the closed department store.",
+   "ipa": "/fɪl ðə ɡæp/"
+  },
+  "lifeline": {
+   "w": "lifeline",
+   "pos": "명사",
+   "ko": "생명줄, 유일한 의지처",
+   "en": "something that someone depends on to survive or continue",
+   "ex": "For many small villages, the weekly bus is a lifeline.",
+   "ipa": "/ˈlaɪflaɪn/"
+  },
+  "fragile": {
+   "w": "fragile",
+   "pos": "형용사",
+   "ko": "취약한, 깨지기 쉬운",
+   "en": "easily damaged or broken; not strong",
+   "ex": "The peace agreement between the two companies remains fragile.",
+   "ipa": "/ˈfrædʒaɪl/"
+  },
+  "offline": {
+   "w": "offline",
+   "pos": "부사",
+   "ko": "가동 중단 상태로",
+   "en": "not working or not operating",
+   "ex": "The factory went offline for two days after the power cut.",
+   "ipa": "/ˌɒfˈlaɪn/"
+  },
+  "preserve": {
+   "w": "preserve",
+   "pos": "동사",
+   "ko": "보존하다, 지키다",
+   "en": "to keep something safe or in its existing state",
+   "ex": "The museum uses special lighting to preserve the old silk dresses.",
+   "ipa": "/prɪˈzɜːv/"
+  },
+  "stepped in": {
+   "w": "step in",
+   "pos": "구",
+   "ko": "개입하다, 나서다 (과거형)",
+   "en": "to become involved to help in a difficult situation",
+   "ex": "When the supplier failed, a local workshop stepped in to finish the order.",
+   "ipa": "/stept ɪn/"
+  },
+  "step in": {
+   "w": "step in",
+   "pos": "구",
+   "ko": "개입하다, 나서다",
+   "en": "to become involved to help in a difficult situation",
+   "ex": "When the supplier failed, a local workshop stepped in to finish the order.",
+   "ipa": "/step ɪn/"
+  },
+  "stepped up": {
+   "w": "step up",
+   "pos": "구",
+   "ko": "늘리다, 강화하다 (과거형)",
+   "en": "to increase effort or activity",
+   "ex": "The brand stepped up production ahead of the holiday season.",
+   "ipa": "/stept ʌp/"
+  },
+  "step up": {
+   "w": "step up",
+   "pos": "구",
+   "ko": "늘리다, 강화하다",
+   "en": "to increase effort or activity",
+   "ex": "The brand stepped up production ahead of the holiday season.",
+   "ipa": "/step ʌp/"
+  },
+  "shore up": {
+   "w": "shore up",
+   "pos": "구",
+   "ko": "강화하다, 떠받치다",
+   "en": "to strengthen or support something that is weak",
+   "ex": "The government cut interest rates to shore up the economy.",
+   "ipa": "/ʃɔːr ʌp/"
+  },
+  "vulnerability": {
+   "w": "vulnerability",
+   "pos": "명사",
+   "ko": "취약성",
+   "en": "the state of being easily hurt or affected",
+   "ex": "Relying on a single factory increases a company's vulnerability.",
+   "ipa": "/ˌvʌlnərəˈbɪləti/"
+  },
+  "tighten": {
+   "w": "tighten",
+   "pos": "동사",
+   "ko": "(공급이) 빠듯해지다, 조이다",
+   "en": "to become more limited or harder to get",
+   "ex": "Cotton supplies tightened after floods hit the growing regions.",
+   "ipa": "/ˈtaɪtn/"
+  },
+  "floated": {
+   "w": "float",
+   "pos": "동사",
+   "ko": "(아이디어를) 띄우다, 제안하다 (과거형)",
+   "en": "to suggest an idea so that people can consider it",
+   "ex": "The manager floated the idea of a four-day working week.",
+   "ipa": "/fləʊt/"
+  },
+  "float": {
+   "w": "float",
+   "pos": "동사",
+   "ko": "(아이디어를) 띄우다, 제안하다",
+   "en": "to suggest an idea so that people can consider it",
+   "ex": "The manager floated the idea of a four-day working week.",
+   "ipa": "/fləʊt/"
+  },
+  "rein in": {
+   "w": "rein in",
+   "pos": "구",
+   "ko": "억제하다, 통제하다",
+   "en": "to control or limit something",
+   "ex": "We need to rein in spending on samples this quarter.",
+   "ipa": "/reɪn ɪn/"
+  },
+  "soaring": {
+   "w": "soar",
+   "pos": "동사",
+   "ko": "치솟는 (현재분사)",
+   "en": "to rise very quickly to a high level",
+   "ex": "Rents in the city centre have soared over the past two years.",
+   "ipa": "/sɔː/"
+  },
+  "soar": {
+   "w": "soar",
+   "pos": "동사",
+   "ko": "치솟다",
+   "en": "to rise very quickly to a high level",
+   "ex": "Rents in the city centre have soared over the past two years.",
+   "ipa": "/sɔː/"
+  },
+  "rule out": {
+   "w": "rule out",
+   "pos": "구",
+   "ko": "배제하다, 가능성을 없애다",
+   "en": "to decide that something is not possible or will not happen",
+   "ex": "The designer ruled out moving production overseas.",
+   "ipa": "/ruːl aʊt/"
+  },
+  "pullback": {
+   "w": "pullback",
+   "pos": "명사",
+   "ko": "축소, 철수",
+   "en": "a reduction or withdrawal of something",
+   "ex": "A pullback in consumer spending hit luxury brands first.",
+   "ipa": "/ˈpʊlbæk/"
+  },
+  "sanctions": {
+   "w": "sanction",
+   "pos": "명사",
+   "ko": "제재 (복수)",
+   "en": "an official penalty, usually on trade, placed on a country",
+   "ex": "New sanctions made it harder for the firm to buy foreign parts.",
+   "ipa": "/ˈsæŋkʃən/"
+  },
+  "sanction": {
+   "w": "sanction",
+   "pos": "명사",
+   "ko": "제재",
+   "en": "an official penalty, usually on trade, placed on a country",
+   "ex": "New sanctions made it harder for the firm to buy foreign parts.",
+   "ipa": "/ˈsæŋkʃən/"
+  },
+  "spare": {
+   "w": "spare",
+   "pos": "동사",
+   "ko": "(남는 것을) 내주다, 할애하다",
+   "en": "to give something because you have enough of it",
+   "ex": "Can you spare a few metres of this wool for my sample?",
+   "ipa": "/speə/"
+  },
+  "resumed": {
+   "w": "resume",
+   "pos": "동사",
+   "ko": "재개하다 (과거형)",
+   "en": "to start again after a pause",
+   "ex": "Work on the new store resumed after the holiday.",
+   "ipa": "/rɪˈzjuːm/"
+  },
+  "resume": {
+   "w": "resume",
+   "pos": "동사",
+   "ko": "재개하다",
+   "en": "to start again after a pause",
+   "ex": "Work on the new store resumed after the holiday.",
+   "ipa": "/rɪˈzjuːm/"
+  },
+  "intensely": {
+   "w": "intensely",
+   "pos": "부사",
+   "ko": "치열하게, 강렬하게",
+   "en": "in a very strong or extreme way",
+   "ex": "Fast-fashion brands compete intensely for young customers.",
+   "ipa": "/ɪnˈtensli/"
+  },
+  "ease": {
+   "w": "ease",
+   "pos": "동사",
+   "ko": "완화하다, 누그러지다",
+   "en": "to make something less severe or difficult",
+   "ex": "Extra staff helped ease the pressure before the show.",
+   "ipa": "/iːz/"
+  },
+  "reroute": {
+   "w": "reroute",
+   "pos": "동사",
+   "ko": "경로를 바꾸다",
+   "en": "to send something by a different route",
+   "ex": "Airlines had to reroute flights around the storm.",
+   "ipa": "/ˌriːˈruːt/"
+  },
+  "loyal": {
+   "w": "loyal",
+   "pos": "형용사",
+   "ko": "충성스러운, 변함없는",
+   "en": "continuing to support or buy from someone",
+   "ex": "Her customers have stayed loyal for more than ten years.",
+   "ipa": "/ˈlɔɪəl/"
+  },
+  "broaden": {
+   "w": "broaden",
+   "pos": "동사",
+   "ko": "넓히다, 다양화하다",
+   "en": "to make something wider or include more things",
+   "ex": "Travelling abroad helped him broaden his design ideas.",
+   "ipa": "/ˈbrɔːdn/"
+  },
+  "boost": {
+   "w": "boost",
+   "pos": "동사",
+   "ko": "늘리다, 끌어올리다",
+   "en": "to increase or improve something",
+   "ex": "A celebrity post can boost sales overnight.",
+   "ipa": "/buːst/"
+  },
+  "buy time": {
+   "w": "buy time",
+   "pos": "구",
+   "ko": "시간을 벌다",
+   "en": "to delay something so you have more time to act",
+   "ex": "She asked for a short extension to buy time for the final fitting.",
+   "ipa": "/baɪ taɪm/"
+  },
+  "reliance": {
+   "w": "reliance",
+   "pos": "명사",
+   "ko": "의존",
+   "en": "the state of needing someone or something",
+   "ex": "Our reliance on one fabric mill is a serious risk.",
+   "ipa": "/rɪˈlaɪəns/"
+  },
+  "electrifying": {
+   "w": "electrify",
+   "pos": "동사",
+   "ko": "전기화하다 (현재분사)",
+   "en": "to change something so that it runs on electricity",
+   "ex": "The city plans to electrify all its ferries by 2030.",
+   "ipa": "/ɪˈlektrɪfaɪ/"
+  },
+  "electrify": {
+   "w": "electrify",
+   "pos": "동사",
+   "ko": "전기화하다",
+   "en": "to change something so that it runs on electricity",
+   "ex": "The city plans to electrify all its ferries by 2030.",
+   "ipa": "/ɪˈlektrɪfaɪ/"
+  },
+  "at a cost": {
+   "w": "at a cost",
+   "pos": "구",
+   "ko": "대가를 치르고, 비용을 들여",
+   "en": "with some loss, payment or harm involved",
+   "ex": "They finished the collection on time, but at a cost to their health.",
+   "ipa": "/æt ə kɒst/"
+  },
+  "dried up": {
+   "w": "dry up",
+   "pos": "구",
+   "ko": "(공급이) 끊기다, 고갈되다 (과거형)",
+   "en": "to stop being available",
+   "ex": "Orders dried up after the economy slowed down.",
+   "ipa": "/draɪd ʌp/"
+  },
+  "dry up": {
+   "w": "dry up",
+   "pos": "구",
+   "ko": "(공급이) 끊기다, 고갈되다",
+   "en": "to stop being available",
+   "ex": "Orders dried up after the economy slowed down.",
+   "ipa": "/draɪ ʌp/"
+  },
+  "relies on": {
+   "w": "rely on",
+   "pos": "구",
+   "ko": "~에 의존하다 (3인칭 단수)",
+   "en": "to need or depend on someone or something",
+   "ex": "The small studio relies on word of mouth for new clients.",
+   "ipa": "/rɪˈlaɪz ɒn/"
+  },
+  "rely on": {
+   "w": "rely on",
+   "pos": "구",
+   "ko": "~에 의존하다",
+   "en": "to need or depend on someone or something",
+   "ex": "The small studio relies on word of mouth for new clients.",
+   "ipa": "/rɪˈlaɪ ɒn/"
+  },
+  "disruptions": {
+   "w": "disruption",
+   "pos": "명사",
+   "ko": "혼란, 차질 (복수)",
+   "en": "a problem that stops something from continuing normally",
+   "ex": "The strike caused major disruption to deliveries.",
+   "ipa": "/dɪsˈrʌpʃən/"
+  },
+  "disruption": {
+   "w": "disruption",
+   "pos": "명사",
+   "ko": "혼란, 차질",
+   "en": "a problem that stops something from continuing normally",
+   "ex": "The strike caused major disruption to deliveries.",
+   "ipa": "/dɪsˈrʌpʃən/"
+  },
+  "unexpectedly": {
+   "w": "unexpectedly",
+   "pos": "부사",
+   "ko": "뜻밖에, 예상치 못하게",
+   "en": "in a way that surprises people",
+   "ex": "The show was unexpectedly cancelled the night before.",
+   "ipa": "/ˌʌnɪkˈspektɪdli/"
+  },
+  "picked up": {
+   "w": "pick up",
+   "pos": "구",
+   "ko": "회복되다, 늘어나다 (과거형)",
+   "en": "to improve or increase after a slow period",
+   "ex": "Business picked up again once the weather got colder.",
+   "ipa": "/pɪkt ʌp/"
+  },
+  "pick up": {
+   "w": "pick up",
+   "pos": "구",
+   "ko": "회복되다, 늘어나다",
+   "en": "to improve or increase after a slow period",
+   "ex": "Business picked up again once the weather got colder.",
+   "ipa": "/pɪk ʌp/"
+  },
+  "policymakers": {
+   "w": "policymaker",
+   "pos": "명사",
+   "ko": "정책 입안자 (복수)",
+   "en": "a person who decides government or organisation policy",
+   "ex": "Policymakers are debating how to support local manufacturers.",
+   "ipa": "/ˈpɒləsiˌmeɪkə/"
+  },
+  "policymaker": {
+   "w": "policymaker",
+   "pos": "명사",
+   "ko": "정책 입안자",
+   "en": "a person who decides government or organisation policy",
+   "ex": "Policymakers are debating how to support local manufacturers.",
+   "ipa": "/ˈpɒləsiˌmeɪkə/"
+  },
+  "sensible": {
+   "w": "sensible",
+   "pos": "형용사",
+   "ko": "현명한, 합리적인",
+   "en": "based on good judgement",
+   "ex": "It is sensible to keep a backup copy of your design files.",
+   "ipa": "/ˈsensəbl/"
+  }
+ },
+ "vocab": [
+  "turmoil",
+  "dependency",
+  "scarce",
+  "fragile",
+  "vulnerability",
+  "shore up",
+  "rein in",
+  "reliance",
+  "disruption",
+  "broaden",
+  "sensible",
+  "lifeline",
+  "preserve"
+ ],
+ "quiz": [
+  {
+   "q": "Last year Australia imported more seaborne diesel than any other country.",
+   "a": "TRUE",
+   "why": "호주는 이제 해상 디젤 수입 세계 1위라고 명시함."
+  },
+  {
+   "q": "Indian diesel has continued to arrive in Australia since July.",
+   "a": "FALSE",
+   "why": "7월 이후 인도산 디젤은 한 방울도 들어오지 않았다고 함."
+  },
+  {
+   "q": "The US president introduced a ban on diesel exports in September.",
+   "a": "FALSE",
+   "why": "9월에 수출 금지 가능성을 언급만 했고, 10월에 배제함."
+  },
+  {
+   "q": "Diesel prices in Australia are expected to fall below A$2 a litre next year.",
+   "a": "NOT GIVEN",
+   "why": "내년 가격 전망은 글에 나오지 않음."
+  }
+ ],
+ "para": [
+  {
+   "simple": "Drone attacks from Ukraine have hit Russian refineries, so there is less fuel available",
+   "article": "Ukrainian drones have now damaged many Russian refineries, making supplies scarcer"
+  },
+  {
+   "simple": "This supply route can easily break, as the recent attacks on its pipeline showed.",
+   "article": "But this lifeline is fragile, as recent drone strikes on its East-West pipeline proved."
+  },
+  {
+   "simple": "Russia had to stop selling most of its diesel abroad so it would have enough at home.",
+   "article": "Moscow was forced to ban most diesel exports to preserve local stocks."
+  },
+  {
+   "simple": "The Gulf lost its buyers in only a few weeks",
+   "article": "It took just weeks for the Gulf to lose its markets"
+  },
+  {
+   "simple": "Using less diesel is the safest plan for the future.",
+   "article": "Reducing diesel demand is our best long-term protection."
+  }
+ ],
+ "summary": "With Gulf and Russian diesel largely cut off by war, Australia now pays far more and relies on a narrower group of suppliers such as South Korea and the US, so the author argues it should diversify, store more fuel and cut its diesel use.",
+ "gist": "중동 전쟁과 러시아 정유소 피격으로 세계 디젤 공급 지도가 바뀌면서, 디젤 수입 1위국 호주가 비싼 값에 한국·미국 등 소수 공급처에 더 의존하게 된 상황을 분석한 글.\n해법으로 공급처 다변화, 비축 확대, 장기적으로 디젤 사용 자체를 줄이는 것을 제안함.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Last year, no country bought more diesel transported by sea than Australia.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "[1] \"We're now the world's top importer of seaborne diesel\"라고 했으므로 TRUE"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "After the Strait of Hormuz was closed, Saudi Arabia was unable to export any diesel.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "[9] \"Saudi Arabia was able to keep exporting diesel from its refineries on the Red Sea\" — 수출을 계속했으므로 FALSE"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The first shipment of Russian diesel under the new agreement reached the US before the end of October.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "[30] \"The first cargo left on October 22\" — 출발일만 나오고 도착 시점은 언급 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Buying a larger share of diesel from South Korea has made Australia's fuel supply less vulnerable.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "[25] 필자는 \"This doesn't reduce Australia's vulnerability\"라고 주장함"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "Expanding the country's capacity to store diesel would be a wise step for Australia.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "[37] \"It's sensible to ... rapidly boost diesel storage to buy time\" — 필자의 견해와 일치"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 10",
+    "options": [
+     "i  A key supplier's own dependence on the Middle East",
+     "ii  Shifting away from diesel altogether",
+     "iii  Drone attacks force a major exporter to keep its fuel at home",
+     "iv  A rise in attacks on cargo vessels",
+     "v  Government plans to build new refineries"
+    ],
+    "answer": "iii",
+    "why": "[10] \"Ukrainian drone strikes took refineries offline. Moscow was forced to ban most diesel exports to preserve local stocks\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 25",
+    "options": [
+     "i  A key supplier's own dependence on the Middle East",
+     "ii  Shifting away from diesel altogether",
+     "iii  Drone attacks force a major exporter to keep its fuel at home",
+     "iv  A rise in attacks on cargo vessels",
+     "v  Government plans to build new refineries"
+    ],
+    "answer": "i",
+    "why": "[25] \"South Korean refineries get more than half their crude oil from the Middle East\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 38",
+    "options": [
+     "i  A key supplier's own dependence on the Middle East",
+     "ii  Shifting away from diesel altogether",
+     "iii  Drone attacks force a major exporter to keep its fuel at home",
+     "iv  A rise in attacks on cargo vessels",
+     "v  Government plans to build new refineries"
+    ],
+    "answer": "ii",
+    "why": "[38] \"rapidly reduce our reliance on diesel ... Reducing diesel demand is our best long-term protection\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions the additional import cost worked out for each individual Australian?",
+    "options": [
+     "3",
+     "4",
+     "21",
+     "24"
+    ],
+    "answer": "4",
+    "why": "[4] \"about $324 for every Australian\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions a specific named place where a refinery was recently attacked?",
+    "options": [
+     "9",
+     "10",
+     "31",
+     "36"
+    ],
+    "answer": "31",
+    "why": "[31] \"hitting a major Russian refinery at Yaroslavl this week\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "What does the writer say about diesel from India?",
+    "options": [
+     "A Australia now buys twice as much of it as in 2025.",
+     "B None has reached Australia since July.",
+     "C It has been replaced by Russian diesel.",
+     "D Official efforts have increased its supply to Australia."
+    ],
+    "answer": "B",
+    "why": "[23] \"But none has arrived since July this year, despite official efforts to shore up fuel security\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "According to the writer, how could the Russia–US deal benefit Australia?",
+    "options": [
+     "A Australia would be able to import some of the Russian diesel.",
+     "B Ukraine would permanently stop attacking Russian refineries.",
+     "C Other buyers might compete less for diesel from Asian refineries.",
+     "D The US would stop exporting diesel to Europe."
+    ],
+    "answer": "C",
+    "why": "[33] \"those buyers would compete less intensely for Asian cargoes, which could ease supply and prices here\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Before the war, more than half of the crude oil shipped to Asia by sea came from the ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "Middle East"
+    ],
+    "why": "[19] \"57% of Asia's seaborne crude came from the Middle East\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Some large mining companies are converting their trains and ____ to electric power.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "haul trucks"
+    ],
+    "why": "[38] \"some major miners are electrifying trains and haul trucks\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Which country was the largest exporter of diesel in the world as of October?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "the United States",
+     "United States",
+     "the US",
+     "US"
+    ],
+    "why": "[13] \"As of October, the US is the world's top diesel exporter\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    9,
+    24,
+    37
+   ]
+  }
+ }
+}
