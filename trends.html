@@ -56,23 +56,28 @@
   details.src li a{display:inline-block;border:1px solid var(--line2);padding:4px 9px;font-size:12px;font-weight:600;color:var(--mut);text-decoration:none}
   details.src li a:hover{border-color:var(--accent);color:var(--accent)}
 
-  /* 자세히 = 이야기별 요약 (stories.json) */
-  details.more{margin-top:10px;border-top:1px solid var(--line)}
-  details.more summary{cursor:pointer;list-style:none;padding:12px 0;font-size:14px;font-weight:700;color:var(--accent)}
-  details.more summary::-webkit-details-marker{display:none}
-  details.more summary::after{content:' ↓'}
-  details.more[open] summary::after{content:' ↑'}
-  ol.stories{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:0 32px;counter-reset:st}
-  ol.stories li{counter-increment:st;padding:16px 0 18px;border-top:1px solid var(--line)}
-  ol.stories .ph{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--wash);margin-bottom:12px;border:1px solid var(--line)}
-  ol.stories h3{margin:0;font-size:16px;font-weight:800;letter-spacing:-.015em;line-height:1.4}
-  ol.stories h3::before{content:counter(st, decimal-leading-zero) '  ';color:var(--accent);font-variant-numeric:tabular-nums}
-  ol.stories .d{font-size:12px;font-weight:600;color:var(--mut);margin-top:3px;font-variant-numeric:tabular-nums}
-  ol.stories p{margin:8px 0 0;font-size:14px;line-height:1.7;color:var(--ink)}
-  ol.stories p.why{background:var(--accent-wash);padding:8px 10px;font-weight:600;color:var(--accent-dark,#1A3FB5)}
-  ol.stories .lk{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:12px}
-  ol.stories .lk a{color:var(--mut);font-weight:600;text-underline-offset:2px}
-  ol.stories .lk a:hover{color:var(--accent)}
+  /* 자세히 판 = 이야기 카드 바로 다음 장 (stories.json) — 사진 · 제목 · 굵은 강조 3~4줄 · 그래서 · 출처 */
+  .dcard{grid-column:span 2;height:calc(var(--card) * 1.25);scroll-snap-align:start;display:grid;grid-template-columns:44% minmax(0,1fr);border:1px solid var(--line2);background:var(--paper);cursor:zoom-in;overflow:hidden}
+  .dcard.nophoto{grid-template-columns:1fr}
+  .dcard .ph{width:100%;height:100%;object-fit:cover;display:block;background:var(--wash)}
+  .dcard .bd{padding:20px 22px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin}
+  .dcard .k{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--accent)}
+  .dcard h3{margin:-4px 0 0;font-size:18px;font-weight:800;letter-spacing:-.02em;line-height:1.35}
+  .dcard .d{font-size:12px;font-weight:600;color:var(--mut);margin-top:-6px;font-variant-numeric:tabular-nums}
+  .dcard ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+  .dcard li{position:relative;padding-left:14px;font-size:14px;line-height:1.55;color:var(--ink)}
+  .dcard li::before{content:'';position:absolute;left:0;top:.62em;width:6px;height:6px;background:var(--accent)}
+  .dcard strong{font-weight:800;color:var(--accent-dark)}
+  .dcard .why{background:var(--accent-wash);padding:9px 11px;font-size:13.5px;line-height:1.5;font-weight:700;color:var(--accent-dark)}
+  .dcard .why::before{content:'그래서  ';font-weight:800}
+  .dcard .lk{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;margin-top:auto}
+  .dcard .lk a{color:var(--mut);font-weight:600;text-underline-offset:2px}
+  .dcard .lk a:hover{color:var(--accent)}
+  .lb .dcard{grid-column:auto;height:auto;max-height:90dvh;width:min(860px,92vw);cursor:default}
+  .lb .dcard .bd{padding:28px 30px 24px;gap:14px}
+  .lb .dcard h3{font-size:24px}
+  .lb .dcard li{font-size:16.5px}
+  .lb .dcard .why{font-size:15.5px}
 
   .state{padding:64px 0;text-align:center;font-size:14px;color:var(--mut)}
   .state.err{color:var(--err)}
@@ -80,7 +85,7 @@
   /* 크게 보기 */
   .lb{position:fixed;inset:0;background:rgba(10,10,12,.92);display:none;align-items:center;justify-content:center;z-index:50}
   .lb.on{display:flex}
-  .lb img{max-height:92dvh;max-width:92vw;aspect-ratio:4/5;object-fit:contain;display:block}
+  .lb > img{max-height:92dvh;max-width:92vw;aspect-ratio:4/5;object-fit:contain;display:block}
   .lb .nav{position:absolute;top:50%;transform:translateY(-50%);border:0;background:rgba(255,255,255,.12);color:#fff;width:52px;height:52px;font-size:26px;line-height:1}
   .lb .nav:hover{background:rgba(255,255,255,.24)}
   .lb .prev{left:18px} .lb .next{right:18px}
@@ -88,7 +93,14 @@
   .lb .cnt{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 
   @media (max-width:860px){
-    ol.stories{grid-template-columns:1fr}
+    .dcard{grid-column:span 1;grid-template-columns:1fr;grid-template-rows:34% minmax(0,1fr)}
+    .dcard.nophoto{grid-template-rows:1fr}
+    .dcard .bd{padding:16px 16px 14px;gap:8px}
+    .dcard h3{font-size:16px}
+    .dcard li{font-size:13.5px}
+    .lb .dcard{grid-template-columns:1fr;grid-template-rows:auto auto;width:92vw;max-height:86dvh;overflow-y:auto}
+    .lb .dcard .ph{max-height:30dvh}
+    .lb .dcard .bd{overflow:visible}
     .wrap{padding:24px 16px 72px}
     .mast h1{font-size:2rem}
     :root{--card:72vw}
@@ -136,29 +148,42 @@
     }).join('');
   }
 
+  // 카드 순서에 「자세히」 판을 끼운다: 이야기의 slide 번호 카드 바로 뒤
+  function seq(t){
+    var out = [], by = {};
+    (t.stories || []).forEach(function(st){ if (st.slide) (by[st.slide] = by[st.slide] || []).push(st); });
+    t.slides.forEach(function(s, i){ out.push({ kind:'img', s:s, n:i + 1 }); (by[i + 1] || []).forEach(function(st){ out.push({ kind:'detail', st:st }); }); });
+    return out;
+  }
+  function bold(x){ return esc(x).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+  function detailHtml(x, extra, tid, j){
+    var pts = (x.points && x.points.length ? x.points : [x.summary]).map(function(p){ return '<li>' + bold(p) + '</li>'; }).join('');
+    return '<div class="dcard' + (x.image ? '' : ' nophoto') + (extra ? ' ' + extra : '') + '"' + (tid ? ' data-t="' + esc(tid) + '" data-j="' + j + '"' : '') + '>' +
+      (x.image ? '<img class="ph" src="' + esc(x.image) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nophoto\');this.remove()">' : '') +
+      '<div class="bd"><span class="k">자세히</span><h3>' + esc(x.title) + '</h3>' + (x.date ? '<div class="d">' + esc(x.date) + '</div>' : '') +
+      '<ul>' + pts + '</ul>' + (x.why ? '<div class="why">' + esc(x.why) + '</div>' : '') +
+      (x.sources && x.sources.length ? '<div class="lk">' + x.sources.map(function(q){ return '<a href="' + esc(q.url) + '" target="_blank" rel="noopener">' + esc(q.name) + '</a>'; }).join('') + '</div>' : '') +
+      '</div></div>';
+  }
+
   function load(week){
     cur = week; paintWeeks();
     $('decks').innerHTML = '<div class="state">불러오는 중…</div>';
     fetch(BASE + week + '/meta.json' + bust).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function(m){
         if (cur !== week) return;
-        $('sub').textContent = fmt(week) + ' · ' + m.topics.length + '개 분야 · ' + m.topics.reduce(function(a, t){ return a + t.slides.length; }, 0) + '장';
+        $('sub').textContent = fmt(week) + ' · ' + m.topics.length + '개 분야 · 카드 ' + m.topics.reduce(function(a, t){ return a + t.slides.length; }, 0) + '장 · 이야기 ' + m.topics.reduce(function(a, t){ return a + (t.stories || []).length; }, 0) + '개';
         $('jump').innerHTML = m.topics.map(function(t, i){ return '<a href="#d-' + esc(t.id) + '" class="' + (i ? '' : 'on') + '">' + esc(t.name) + '</a>'; }).join('');
         $('decks').innerHTML = m.topics.map(function(t){
-          var imgs = t.slides.map(function(s, i){
-            return '<button data-t="' + esc(t.id) + '" data-i="' + i + '" aria-label="' + esc(t.name + ' ' + (i + 1) + '장: ' + s.headline) + '">' +
-              '<img src="' + BASE + esc(week + '/' + s.img) + '" alt="' + esc(s.headline) + '" loading="lazy" width="1080" height="1350"></button>';
+          var imgs = seq(t).map(function(it, j){
+            if (it.kind === 'img') return '<button data-t="' + esc(t.id) + '" data-j="' + j + '" aria-label="' + esc(t.name + ' ' + (it.n) + '장: ' + it.s.headline) + '">' +
+              '<img src="' + BASE + esc(week + '/' + it.s.img) + '" alt="' + esc(it.s.headline) + '" loading="lazy" width="1080" height="1350"></button>';
+            return detailHtml(it.st, '', t.id, j);
           }).join('');
-          var st = t.stories && t.stories.length ? '<details class="more"><summary>이야기 ' + t.stories.length + '개 자세히</summary><ol class="stories">' +
-            t.stories.map(function(x){
-              return '<li>' + (x.image ? '<img class="ph" src="' + esc(x.image) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<h3>' + esc(x.title) + '</h3>' + (x.date ? '<div class="d">' + esc(x.date) + '</div>' : '') +
-                '<p>' + esc(x.summary) + '</p>' + (x.why ? '<p class="why">' + esc(x.why) + '</p>' : '') +
-                (x.sources && x.sources.length ? '<div class="lk">' + x.sources.map(function(q){ return '<a href="' + esc(q.url) + '" target="_blank" rel="noopener">' + esc(q.name) + '</a>'; }).join('') + '</div>' : '') + '</li>';
-            }).join('') + '</ol></details>' : '';
           var src = t.sources && t.sources.length ? '<details class="src"><summary>출처 ' + t.sources.length + '곳</summary><ul>' +
             t.sources.map(function(s){ return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.host) + '</a></li>'; }).join('') + '</ul></details>' : '';
           return '<section class="deck" id="d-' + esc(t.id) + '"><div class="deck-head"><span class="tag">' + esc(t.name) + '</span><h2>' + esc(t.title) + '</h2>' +
-            '<span class="n">' + t.slides.length + '장 →</span></div><div class="strip">' + imgs + '</div>' + st + src + '</section>';
+            '<span class="n">' + t.slides.length + '장 →</span></div><div class="strip">' + imgs + '</div>' + src + '</section>';
         }).join('');
         window._cn = m;
         spy();
@@ -176,17 +201,24 @@
     secs.forEach(function(s){ io.observe(s); });
   }
 
-  function openLb(tid, i){
+  function openLb(tid, j){
     var t = (window._cn.topics || []).filter(function(x){ return x.id === tid; })[0]; if (!t) return;
-    lb.list = t.slides.map(function(s){ return { src: BASE + cur + '/' + s.img, alt: s.headline, name: t.name }; });
-    lb.i = i; showLb(); $('lb').classList.add('on'); $('lbx').focus();
+    lb.name = t.name; lb.list = seq(t); lb.i = j; showLb(); $('lb').classList.add('on'); $('lbx').focus();
   }
-  function showLb(){ var s = lb.list[lb.i]; if (!$('lbi')) { var im = document.createElement('img'); im.id = 'lbi'; $('lb').insertBefore(im, $('lbn')); } $('lbi').src = s.src; $('lbi').alt = s.alt; $('lbc').textContent = s.name + ' · ' + (lb.i + 1) + ' / ' + lb.list.length; }
+  function showLb(){
+    var it = lb.list[lb.i], old = $('lbi'); if (old) old.remove();
+    var el;
+    if (it.kind === 'img') { el = document.createElement('img'); el.src = BASE + cur + '/' + it.s.img; el.alt = it.s.headline; }
+    else { var w = document.createElement('div'); w.innerHTML = detailHtml(it.st, ''); el = w.firstChild; }
+    el.id = 'lbi'; $('lb').insertBefore(el, $('lbn'));
+    var cards = lb.list.filter(function(x){ return x.kind === 'img'; }).length;
+    $('lbc').textContent = lb.name + ' · ' + (it.kind === 'img' ? it.n + ' / ' + cards : '자세히');
+  }
   function step(d){ lb.i = (lb.i + d + lb.list.length) % lb.list.length; showLb(); }
   function closeLb(){ $('lb').classList.remove('on'); }
 
   $('weeks').addEventListener('click', function(e){ var b = e.target.closest('button'); if (b && b.dataset.w !== cur) load(b.dataset.w); });
-  $('decks').addEventListener('click', function(e){ var b = e.target.closest('.strip button'); if (b) openLb(b.dataset.t, +b.dataset.i); });
+  $('decks').addEventListener('click', function(e){ if (e.target.closest('a')) return; var b = e.target.closest('.strip button, .strip .dcard'); if (b) openLb(b.dataset.t, +b.dataset.j); });
   $('lbp').onclick = function(){ step(-1); }; $('lbn').onclick = function(){ step(1); }; $('lbx').onclick = closeLb;
   $('lb').addEventListener('click', function(e){ if (e.target === $('lb')) closeLb(); });
   document.addEventListener('keydown', function(e){
