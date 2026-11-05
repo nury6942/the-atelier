@@ -30,7 +30,8 @@
     "맥·윈도·웹",
     "초기 개발 단계"
    ],
-   "forMe": "팬츠·쇼츠 도식화 DXF를 구독 없이 열고 PNG·PDF로 뽑아볼 후보. 아직 초기라 모르는 요소는 저장 때 빠지니 사본으로만."
+   "forMe": "팬츠·쇼츠 도식화 DXF를 구독 없이 열고 PNG·PDF로 뽑아볼 후보. 아직 초기라 모르는 요소는 저장 때 빠지니 사본으로만.",
+   "thumb": "data/ai-brief/thumbs/3ddd7645860fd7eb.jpg"
   },
   {
    "cat": "hack",
@@ -154,7 +155,8 @@
    "url": "https://github.com/openai/php2shell-checker",
    "image": "https://opengraph.githubassets.com/1/openai/php2shell-checker",
    "source": "GitHub openai · Codex 스킬",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/e41cffef180ce4c9.jpg"
   },
   {
    "cat": "free",
