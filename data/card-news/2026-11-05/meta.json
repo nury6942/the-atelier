@@ -1,0 +1,422 @@
+{
+ "week": "2026-11-05",
+ "made": "2026-11-05T04:28:40.194Z",
+ "topics": [
+  {
+   "id": "travel",
+   "name": "여행",
+   "title": "11월, 여행 전 꼭 바뀐 것 4가지",
+   "slides": [
+    {
+     "img": "travel/01.jpg",
+     "headline": "11월, 여행 전 꼭 바뀐 것 4가지",
+     "type": "cover"
+    },
+    {
+     "img": "travel/02.jpg",
+     "headline": "유럽 입국 때 지문부터 찍는다",
+     "type": "content-stat"
+    },
+    {
+     "img": "travel/03.jpg",
+     "headline": "EES는 시행, ETIAS는 아직",
+     "type": "content-split"
+    },
+    {
+     "img": "travel/04.jpg",
+     "headline": "11월 유럽행 유류할증료",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "travel/05.jpg",
+     "headline": "일본 출국세, 1,000엔에서 3배로",
+     "type": "content-stat"
+    },
+    {
+     "img": "travel/06.jpg",
+     "headline": "출발 전 체크 5",
+     "type": "content-list"
+    },
+    {
+     "img": "travel/07.jpg",
+     "headline": "저장해두고 출발 전에 다시 보기",
+     "type": "cta"
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.mofa.go.kr/tn-ko/brd/m_21401/view.do?seq=1321147",
+     "host": "mofa.go.kr"
+    },
+    {
+     "url": "https://view.asiae.co.kr/article/2025092908342533027",
+     "host": "view.asiae.co.kr"
+    },
+    {
+     "url": "https://www.heraldk.com/article/2025101202261225269",
+     "host": "heraldk.com"
+    },
+    {
+     "url": "https://www.ivisa.com/news/2026-07-20-eu-etias-launch-date-removed-website-delay",
+     "host": "ivisa.com"
+    },
+    {
+     "url": "https://thepointsguy.com/news/eu-etias-delayed/",
+     "host": "thepointsguy.com"
+    },
+    {
+     "url": "https://visasnews.com/en/etias-launch-could-be-pushed-back-to-2027/",
+     "host": "visasnews.com"
+    },
+    {
+     "url": "https://help.tourvis.com/hc/ko/articles/63425531013273",
+     "host": "help.tourvis.com"
+    },
+    {
+     "url": "https://www.newspim.com/news/view/20261016001290",
+     "host": "newspim.com"
+    },
+    {
+     "url": "https://www.econovill.com/news/articleView.html?idxno=753976",
+     "host": "econovill.com"
+    },
+    {
+     "url": "https://www.hankyung.com/article/202607019297g",
+     "host": "hankyung.com"
+    },
+    {
+     "url": "https://www.travelvoice.jp/english/the-japanese-ruling-parties-specify-a-rise-in-departure-tax-to-3-000-yen-in-the-tax-reform-outline-for-fy2026",
+     "host": "travelvoice.jp"
+    },
+    {
+     "url": "https://view.asiae.co.kr/article/2026051714403181549",
+     "host": "view.asiae.co.kr"
+    }
+   ]
+  },
+  {
+   "id": "fashion",
+   "name": "패션",
+   "title": "스포츠웨어만 웃었다",
+   "slides": [
+    {
+     "img": "fashion/01.jpg",
+     "headline": "스포츠웨어만 웃었다",
+     "type": "cover"
+    },
+    {
+     "img": "fashion/02.jpg",
+     "headline": "adidas 3분기 영업이익",
+     "type": "content-stat"
+    },
+    {
+     "img": "fashion/03.jpg",
+     "headline": "같은 스포츠, 다른 성적표",
+     "type": "content-split"
+    },
+    {
+     "img": "fashion/04.jpg",
+     "headline": "럭셔리 온도차",
+     "type": "content-list"
+    },
+    {
+     "img": "fashion/05.jpg",
+     "headline": "SS27 런웨이 4컷",
+     "type": "content-list"
+    },
+    {
+     "img": "fashion/06.jpg",
+     "headline": "무신사 상반기 매출",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "fashion/07.jpg",
+     "headline": "저장해두고 다시 보기",
+     "type": "cta"
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.finanzwire.com/press-release/eqs-adhoc-adidas-reports-record-results-and-increases-full-year-profit-outlook-HHzGe8wPa2F",
+     "host": "finanzwire.com"
+    },
+    {
+     "url": "https://www.modaes.com/global/companies/adidas-grows-9-and-posts-a-47-increase-in-profits-in-the-third-quarter-despite-a-setback-in-europe",
+     "host": "modaes.com"
+    },
+    {
+     "url": "https://fashionunited.com/news/business/adidas-raises-full-year-profit-outlook-to-2-5-billion-euros-after-record-q3/2026102975440",
+     "host": "fashionunited.com"
+    },
+    {
+     "url": "https://investinglive.com/stocks/nike-beats-q1-profit-estimates-but-sees-fiscal-2027-revenue-falling-high-single-digits/",
+     "host": "investinglive.com"
+    },
+    {
+     "url": "https://www.nst.com.my/amp/business/corporate/2026/07/1477393/nike-flags-prolonged-turnaround-as-china-slump-weak-outlook-eclipse",
+     "host": "nst.com.my"
+    },
+    {
+     "url": "https://www.webdisclosure.com/press-release/puma-q3-2026-sales-performance-improves-sequentially-fy-2026-outlook-updated-WCPHRp2DISY",
+     "host": "webdisclosure.com"
+    },
+    {
+     "url": "https://www.rttnews.com/3706167/puma-q3-net-loss-narrows-despite-drop-in-net-sales.aspx",
+     "host": "rttnews.com"
+    },
+    {
+     "url": "https://worthbury.com/magazine/briefing/hermes-louis-vuitton-interbrand-2026-brand-value/",
+     "host": "worthbury.com"
+    },
+    {
+     "url": "https://retailtimes.co.uk/the-luxury-category-experiences-significant-shifts-in-value-across-interbrands-best-global-brands-2026/",
+     "host": "retailtimes.co.uk"
+    },
+    {
+     "url": "https://fashionunited.uk/news/business/hermes-grows-nike-plummets-interbrand-ranking-reveals-fashion-industry-winners-and-losers/2026110291133",
+     "host": "fashionunited.uk"
+    },
+    {
+     "url": "https://www.luxurytribune.com/le-groupe-prada-en-croissance-de-11-au-3e-trimestre-2026-mais-miu-miu-ralentit",
+     "host": "luxurytribune.com"
+    },
+    {
+     "url": "https://www.nssmag.com/en/article/47397",
+     "host": "nssmag.com"
+    },
+    {
+     "url": "https://www.borsaitaliana.it/borsa/notizie/teleborsa/finanza/prada-ricavi-9-mesi-salgono-a-454-miliardi-di-euro-rallenta-miu-miu-109_2026-10-22_TLB.html?lang=it",
+     "host": "borsaitaliana.it"
+    },
+    {
+     "url": "https://www.omanobserver.om/article/1196722/features/fashion/pradas-skirts-take-centre-stage-as-milan-fashion-week-begins",
+     "host": "omanobserver.om"
+    },
+    {
+     "url": "https://www.thezoereport.com/fashion/paris-fashion-weeks-spring-summer-2027-trends",
+     "host": "thezoereport.com"
+    },
+    {
+     "url": "https://www.nssmag.com/de/fashion/47194/5-wichtige-trends-von-der-paris-fashion-week-ss27-damen",
+     "host": "nssmag.com"
+    },
+    {
+     "url": "https://hauteliving.com/2026/10/best-looks-paris-fashion-week-spring-summer-2027/798746/",
+     "host": "hauteliving.com"
+    },
+    {
+     "url": "https://economist.co.kr/article/view/ecn202609080027",
+     "host": "economist.co.kr"
+    },
+    {
+     "url": "https://www.youthdaily.co.kr/news/article.html?no=226588",
+     "host": "youthdaily.co.kr"
+    },
+    {
+     "url": "https://dealsite.co.kr/articles/168601",
+     "host": "dealsite.co.kr"
+    }
+   ]
+  },
+  {
+   "id": "society",
+   "name": "사회 현상",
+   "title": "2026년 11월, 숫자로 본 한국 사회",
+   "slides": [
+    {
+     "img": "society/01.jpg",
+     "headline": "2026년 11월, 숫자로 본 한국 사회",
+     "type": "cover"
+    },
+    {
+     "img": "society/02.jpg",
+     "headline": "1인 가구, 역대 최대",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "society/03.jpg",
+     "headline": "65세 이상 인구 비중",
+     "type": "content-stat"
+    },
+    {
+     "img": "society/04.jpg",
+     "headline": "출산율은 2년째 반등",
+     "type": "content-split"
+    },
+    {
+     "img": "society/05.jpg",
+     "headline": "한국의 생성형 AI 이용률",
+     "type": "content-stat"
+    },
+    {
+     "img": "society/06.jpg",
+     "headline": "같이 보면 좋은 숫자",
+     "type": "content-list"
+    },
+    {
+     "img": "society/07.jpg",
+     "headline": "내 일상에는 어떤 변화가 보여요?",
+     "type": "cta"
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.heraldk.com/article/2026072722090410402",
+     "host": "heraldk.com"
+    },
+    {
+     "url": "https://www.khan.co.kr/article/202607281341001/amp",
+     "host": "khan.co.kr"
+    },
+    {
+     "url": "https://eiec.kdi.re.kr/policy/materialView.do?num=285815",
+     "host": "eiec.kdi.re.kr"
+    },
+    {
+     "url": "https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1011",
+     "host": "index.go.kr"
+    },
+    {
+     "url": "https://biz.sbs.co.kr/amp/article/20000342664",
+     "host": "biz.sbs.co.kr"
+    },
+    {
+     "url": "https://www.hankyung.com/article/202610280427Y",
+     "host": "hankyung.com"
+    },
+    {
+     "url": "https://blogs.microsoft.com/on-the-issues/2026/09/21/the-continued-state-of-global-ai-diffusion-in-2026/",
+     "host": "blogs.microsoft.com"
+    },
+    {
+     "url": "https://www.asiae.co.kr/en/article/2026051215315915446",
+     "host": "asiae.co.kr"
+    }
+   ]
+  },
+  {
+   "id": "news",
+   "name": "정치·사회 뉴스",
+   "title": "11월 첫째 주 뉴스 한눈에",
+   "slides": [
+    {
+     "img": "news/01.jpg",
+     "headline": "11월 첫째 주 뉴스 한눈에",
+     "type": "cover"
+    },
+    {
+     "img": "news/02.jpg",
+     "headline": "조작기소 특검법안 상정",
+     "type": "content-split"
+    },
+    {
+     "img": "news/03.jpg",
+     "headline": "소규모 사업장 안전관리자 선임 확대",
+     "type": "content-stat"
+    },
+    {
+     "img": "news/04.jpg",
+     "headline": "북한, 일주일 새 4차례 발사",
+     "type": "content-list"
+    },
+    {
+     "img": "news/05.jpg",
+     "headline": "미국 중간선거, 민주당 다수",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/06.jpg",
+     "headline": "인니 대통령 통화 도청 파문",
+     "type": "content-highlight"
+    },
+    {
+     "img": "news/07.jpg",
+     "headline": "이번 주 뉴스 끝",
+     "type": "cta"
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105083100001",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.newdaily.co.kr/site/data/html/2026/11/05/2026110500179.html",
+     "host": "newdaily.co.kr"
+    },
+    {
+     "url": "https://www.naeil.com/news/read/607698",
+     "host": "naeil.com"
+    },
+    {
+     "url": "https://www.obsnews.co.kr/news/articleView.html?idxno=1542756",
+     "host": "obsnews.co.kr"
+    },
+    {
+     "url": "https://www.naeil.com/news/read/607663",
+     "host": "naeil.com"
+    },
+    {
+     "url": "https://news.tf.co.kr/read/life/2385256.htm",
+     "host": "news.tf.co.kr"
+    },
+    {
+     "url": "https://www.seoulfn.com/news/articleView.html?idxno=641990",
+     "host": "seoulfn.com"
+    },
+    {
+     "url": "http://www.yonhapnewstv.co.kr/news/AKR20261105114438oab",
+     "host": "yonhapnewstv.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105011152504",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.edaily.co.kr/News/Read?newsId=04831446645642768&mediaCodeNo=257",
+     "host": "edaily.co.kr"
+    },
+    {
+     "url": "https://www.newscj.com/news/articleView.html?idxno=3446163",
+     "host": "newscj.com"
+    },
+    {
+     "url": "https://www.munhwa.com/article/11629057",
+     "host": "munhwa.com"
+    },
+    {
+     "url": "https://www.naeil.com/news/read/607659",
+     "host": "naeil.com"
+    },
+    {
+     "url": "https://www.newsis.com/view/NISX20261105_0003856102",
+     "host": "newsis.com"
+    },
+    {
+     "url": "http://www.opinionnews.co.kr/news/articleView.html?idxno=146693",
+     "host": "opinionnews.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105082300009",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261104058151104",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261105094000104",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704801",
+     "host": "news.kbs.co.kr"
+    },
+    {
+     "url": "https://www.munhwa.com/article/11628818",
+     "host": "munhwa.com"
+    }
+   ]
+  }
+ ]
+}

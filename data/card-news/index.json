@@ -1,0 +1,34 @@
+{
+ "weeks": [
+  {
+   "week": "2026-11-05",
+   "topics": [
+    {
+     "id": "travel",
+     "name": "여행",
+     "title": "11월, 여행 전 꼭 바뀐 것 4가지",
+     "cover": "2026-11-05/travel/01.jpg"
+    },
+    {
+     "id": "fashion",
+     "name": "패션",
+     "title": "스포츠웨어만 웃었다",
+     "cover": "2026-11-05/fashion/01.jpg"
+    },
+    {
+     "id": "society",
+     "name": "사회 현상",
+     "title": "2026년 11월, 숫자로 본 한국 사회",
+     "cover": "2026-11-05/society/01.jpg"
+    },
+    {
+     "id": "news",
+     "name": "정치·사회 뉴스",
+     "title": "11월 첫째 주 뉴스 한눈에",
+     "cover": "2026-11-05/news/01.jpg"
+    }
+   ]
+  }
+ ],
+ "updated": "2026-11-05T04:28:40.199Z"
+}

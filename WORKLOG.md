@@ -1,3 +1,12 @@
+## 2026-11-05 · 맥북 · Trends 탭 = 주간 카드뉴스
+
+- 누리: 커뮤니티 인기글 Trends 는 안 씀 → 인스타 카드뉴스(여행·패션·사회 현상·정치·사회 뉴스, 7장씩)를 여기서 보기
+- trends.html 통째 교체: 주차 칩 · 분야 탭(스크롤 따라감) · 7장 가로 넘기기 · 누르면 크게(←→·스와이프) · 출처 접기. 데이터 data/card-news/index.json + <주>/meta.json + <분야>/NN.jpg
+- 만드는 곳: ~/tools/instagram-card-news(github junghwaYang/instagram-card-news) · weekly/run.sh 가 claude -p 4개 동시(sonnet) → publish.js(PNG→JPG·헤드라인·출처) → data/card-news 만 커밋·푸시
+- 아이맥 launchd com.nuri.card-news-weekly 매주 월 07:00, 로그 ~/Library/Logs/card-news-weekly.log, iCloud 카드뉴스/<날짜>/ 에도 사본
+- 옛 함수 trendCollect(15분)·trendFeed 는 아직 배포돼 있음 — 화면에선 안 씀
+- 다음 할 일: 첫 자동 실행(11/9 월) 결과 확인 · 휴대폰 폭 화면 확인
+
 ## 2026-11-05 · 맥북 · 전월·전년 비교는 늘 한 달 전체
 
 - 누리: 같은 날까지 비교는 의미 없음 → 카드 전월·전년, 막대의 작년 눈금 모두 한 달 전체와
