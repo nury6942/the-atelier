@@ -30505,10 +30505,53 @@ function openSessionDetail(dateId) {
     sectionCard(8,'Next Goals','다음 목표',sec8);
 
   document.getElementById('eng-detail-content').innerHTML = html;
+  renderEngNotes(dateId, s);
   applyReviewFontSize();
   window.scrollTo({top: 0, behavior: 'smooth'});
   // 스크롤 스파이 초기화
   setTimeout(initEngScrollSpy, 300);
+}
+
+// ✍️ 수업 공책 (오른쪽 칸) — 누리가 자유롭게 적는 메모. englishSessions/<날짜>.myNotes 에 merge 저장
+//    쓰는 즉시 이 기기(localStorage)에 먼저 남기고, 0.8초 쉬면 Firestore 로. 실패해도 기기 사본이 있어 다음에 다시 보낸다.
+var _engNoteTimer = null;
+function renderEngNotes(dateId, s){
+  var box = document.getElementById('eng-notes'); if (!box) return;
+  var KEY = 'atelier_eng_note_' + dateId, local = null;
+  try { local = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
+  var remote = { text: s.myNotes || '', at: s.myNotesAt || '' };
+  // 기기 사본이 더 새것이면(저장 실패했던 것) 그쪽을 쓰고 다시 보낸다
+  var useLocal = local && local.text !== remote.text && (!remote.at || local.at > remote.at);
+  var text = useLocal ? local.text : remote.text;
+  box.innerHTML = '<div class="en-h"><b>My Notes</b><span class="en-st" id="eng-note-st"></span></div>' +
+    '<textarea id="eng-note-ta" spellcheck="false" placeholder="이 수업에서 적어 둘 것 — 자동으로 저장돼요"></textarea>' +
+    '<div class="en-f">이 수업에만 붙는 메모예요.</div>';
+  var ta = document.getElementById('eng-note-ta'), st = document.getElementById('eng-note-st');
+  ta.value = text;
+  function stamp(iso){ if (!iso) return ''; var d = new Date(iso); return '저장됨 · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+  st.textContent = stamp(useLocal ? '' : remote.at);
+  function save(){
+    clearTimeout(_engNoteTimer); _engNoteTimer = null;
+    var val = ta.value, at = new Date().toISOString();
+    try { localStorage.setItem(KEY, JSON.stringify({ text: val, at: at })); } catch(e){}
+    st.className = 'en-st'; st.textContent = '저장 중…';
+    var ref = (typeof db !== 'undefined' && db) ? db.collection('englishSessions').doc(dateId) : null;
+    if (!ref) { st.className = 'en-st err'; st.textContent = '이 기기에만 보관됨'; return; }
+    ref.set({ myNotes: val, myNotesAt: at }, { merge: true }).then(function(){
+      s.myNotes = val; s.myNotesAt = at;
+      if (document.getElementById('eng-note-ta') === ta) st.textContent = stamp(at);
+    }).catch(function(e){
+      console.warn('[eng-notes] save failed', e);
+      if (document.getElementById('eng-note-ta') === ta) { st.className = 'en-st err'; st.textContent = '저장 실패 · 이 기기에 보관'; }
+    });
+  }
+  ta.addEventListener('input', function(){
+    st.className = 'en-st'; st.textContent = '쓰는 중…';
+    try { localStorage.setItem(KEY, JSON.stringify({ text: ta.value, at: new Date().toISOString() })); } catch(e){}
+    clearTimeout(_engNoteTimer); _engNoteTimer = setTimeout(save, 800);
+  });
+  ta.addEventListener('blur', function(){ if (_engNoteTimer) save(); });
+  if (useLocal) save();
 }
 
 // 💎 표현 뜯어보기 토글 (Upgrades 상세 해설 접기/펴기)

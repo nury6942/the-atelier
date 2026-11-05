@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=408" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=409" as="script">
   <link rel="preload" href="js/app-2-init.js?v=193" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11426,6 +11426,25 @@
   </style>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&libraries=places" async defer></script>
+<style id="eng-notes-style">
+  /* Annie 리뷰 오른쪽 공책 — 수업마다 englishSessions/<날짜>.myNotes 에 자동 저장 (2026-11-05) */
+  .eng-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start}
+  .eng-notes{position:sticky;top:150px;display:flex;flex-direction:column;height:calc(100dvh - 180px);min-height:420px;background:#fff;border:1px solid #D9D9E0}
+  .eng-notes .en-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:14px 16px 12px;border-bottom:2px solid #16161A}
+  .eng-notes .en-h b{font-size:15px;font-weight:800;letter-spacing:-.01em;color:#16161A}
+  .eng-notes .en-st{font-size:11.5px;font-weight:600;color:#475569;font-variant-numeric:tabular-nums}
+  .eng-notes .en-st.err{color:#b42318}
+  .eng-notes textarea{flex:1;width:100%;resize:none;border:0;outline:0;padding:4px 16px 16px;font:500 14px/28px 'Pretendard',sans-serif;color:#16161A;
+    background:repeating-linear-gradient(#fff 0 27px,#ECECF0 27px 28px);background-attachment:local;background-position:0 4px}
+  .eng-notes textarea::placeholder{color:#64748B}
+  .eng-notes textarea:focus{box-shadow:inset 0 0 0 2px #EEF2FD}
+  .eng-notes .en-f{padding:8px 16px;border-top:1px solid #ECECF0;font-size:11.5px;color:#475569}
+  @media (max-width:1180px){
+    .eng-detail-grid{grid-template-columns:minmax(0,1fr)}
+    .eng-notes{position:static;height:auto;min-height:0}
+    .eng-notes textarea{min-height:300px}
+  }
+</style>
 </head>
 <body class="overflow-x-hidden" style="overscroll-behavior:none;">
 
@@ -15516,7 +15535,10 @@
             <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">arrow_back</span> 트래커로
           </button>
         </div>
-        <div id="eng-detail-content" class="pt-2"></div>
+        <div class="eng-detail-grid">
+          <div id="eng-detail-content" class="pt-2"></div>
+          <aside id="eng-notes" class="eng-notes" aria-label="My Notes"></aside>
+        </div>
       </div>
 
       </div><!-- /eng-annie-view -->
@@ -16525,7 +16547,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=408" defer></script>
+<script src="js/app-1-pages.js?v=409" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
