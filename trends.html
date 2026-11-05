@@ -151,7 +151,9 @@
   // 카드 순서에 「자세히」 판을 끼운다: 이야기의 slide 번호 카드 바로 뒤
   function seq(t){
     var out = [], by = {};
-    (t.stories || []).forEach(function(st){ if (st.slide) (by[st.slide] = by[st.slide] || []).push(st); });
+    var ss = t.stories || [], hasN = ss.some(function(st){ return st.slide; });
+    // 카드 번호가 없는 옛 데이터: 이야기 순서대로 2장부터 하나씩
+    ss.forEach(function(st, k){ var n = hasN ? st.slide : Math.min(k + 2, t.slides.length - 1); if (n) (by[n] = by[n] || []).push(st); });
     t.slides.forEach(function(s, i){ out.push({ kind:'img', s:s, n:i + 1 }); (by[i + 1] || []).forEach(function(st){ out.push({ kind:'detail', st:st }); }); });
     return out;
   }
