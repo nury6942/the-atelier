@@ -52,6 +52,8 @@ jobs:
 
       # 사진을 원본 주소로만 띄우면 깃허브 카드(100장 제한)·사진 없는 글이 빈칸 → 받아서(없으면 찍어서) 사이트에 둔다 (누리 2026-11-05)
       - name: 미리보기 사진 보관
+        env:
+          GITHUB_TOKEN: ${{ github.token }}   # README 사진 찾기(API 한도 60→1000/시간)
         run: |
           python3 scripts/ai-brief/cache-thumbs.py ${{ steps.days.outputs.days }}
 

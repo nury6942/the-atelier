@@ -120,8 +120,7 @@
     "오픈소스",
     "ElevenLabs 키 필요",
     "Claude Code·Codex"
-   ],
-   "thumb": "data/ai-brief/thumbs/ac945c3c8745af6d.jpg"
+   ]
   }
  ],
  "tryToday": [
@@ -173,8 +172,7 @@
    "url": "https://github.com/earthtojake/text-to-cad",
    "image": "https://opengraph.githubassets.com/1/earthtojake/text-to-cad",
    "source": "GitHub earthtojake · MIT · STEP·STL·3MF",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/2955e31aa2908643.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -182,8 +180,7 @@
    "url": "https://github.com/op7418/guizang-ppt-skill",
    "image": "https://opengraph.githubassets.com/1/op7418/guizang-ppt-skill",
    "source": "GitHub op7418 · Claude Code·Codex",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/28fbbef4795b6f9b.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -191,8 +188,7 @@
    "url": "https://github.com/lewislulu/html-ppt-skill",
    "image": "https://raw.githubusercontent.com/lewislulu/html-ppt-skill/HEAD/docs/readme/hero.gif",
    "source": "GitHub lewislulu · MIT · 발표자 모드",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/9dbb204f20e9c2fb.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -200,8 +196,7 @@
    "url": "https://github.com/mattpocock/skills",
    "image": "https://opengraph.githubassets.com/1/mattpocock/skills",
    "source": "GitHub mattpocock · 10월 트렌딩",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/76608378b6647553.jpg"
+   "watching": false
   }
  ],
  "watching": [

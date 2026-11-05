@@ -30,8 +30,7 @@
     "맥·윈도·웹",
     "초기 개발 단계"
    ],
-   "forMe": "팬츠·쇼츠 도식화 DXF를 구독 없이 열고 PNG·PDF로 뽑아볼 후보. 아직 초기라 모르는 요소는 저장 때 빠지니 사본으로만.",
-   "thumb": "data/ai-brief/thumbs/3ddd7645860fd7eb.jpg"
+   "forMe": "팬츠·쇼츠 도식화 DXF를 구독 없이 열고 PNG·PDF로 뽑아볼 후보. 아직 초기라 모르는 요소는 저장 때 빠지니 사본으로만."
   },
   {
    "cat": "hack",
@@ -155,8 +154,7 @@
    "url": "https://github.com/openai/php2shell-checker",
    "image": "https://opengraph.githubassets.com/1/openai/php2shell-checker",
    "source": "GitHub openai · Codex 스킬",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/e41cffef180ce4c9.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -164,8 +162,7 @@
    "url": "https://github.com/wing0828/ai-job-search-kr",
    "image": "https://opengraph.githubassets.com/8b5b2d2d88122ec51fe94e0ca2f89a0143996fafe29f4d8ae514b15f038ba868/wing0828/ai-job-search-kr",
    "source": "GitHub wing0828 · MIT 파생",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/e4490f6a7dbb318f.jpg"
+   "watching": false
   },
   {
    "cat": "tool",

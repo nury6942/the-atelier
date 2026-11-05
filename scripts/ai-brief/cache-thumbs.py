@@ -43,6 +43,37 @@ def download(src):
         return Image.open(io.BytesIO(r.read(8_000_000)))
 
 
+def readme_pic(owner, repo):
+    """깃허브 README 의 첫 실물 사진·GIF (배지·아이콘·SVG 제외). 저장소 공유 그림은 글자뿐이라 이게 먼저 (누리 11/05)"""
+    hdr = {'User-Agent': UA, 'Accept': 'application/vnd.github.raw'}
+    if os.environ.get('GITHUB_TOKEN'):
+        hdr['Authorization'] = 'Bearer ' + os.environ['GITHUB_TOKEN']
+    try:
+        with urlopen(Request(f'https://api.github.com/repos/{owner}/{repo}/readme', headers=hdr), timeout=15) as r:
+            md = r.read(400_000).decode('utf-8', 'ignore')
+    except Exception as e:
+        print('  README 못 읽음', owner, repo, e)
+        return None
+    srcs = re.findall(r'!\[[^\]]*\]\(\s*<?([^)\s>]+)', md) + re.findall(r'<img[^>]+src=["\']([^"\']+)', md, re.I)
+    # 문서 순서대로
+    srcs.sort(key=lambda u: md.find(u))
+    for u in srcs:
+        low = u.lower()
+        if any(b in low for b in ('shields.io', 'badge', 'badgen', '.svg', 'star-history', 'contrib.rocks', 'logo', 'icon', 'avatar', 'favicon')):
+            continue
+        if not u.startswith('http'):
+            u = f'https://raw.githubusercontent.com/{owner}/{repo}/HEAD/' + u.lstrip('./')
+        elif 'github.com/' in u and '/blob/' in u:
+            u = u.replace('github.com/', 'raw.githubusercontent.com/').replace('/blob/', '/')
+        try:
+            img = download(u)
+        except Exception:
+            continue
+        if img is not None and img.width >= 360 and img.height >= 180:
+            return img
+    return None
+
+
 def browser():
     global _browser
     if _browser is None:
@@ -78,7 +109,7 @@ def thumb(item, stats):
         return
     name = key(url) + '.jpg'
     path = os.path.join(OUT, name)
-    if item.get('thumb') == REL + name and os.path.exists(path):
+    if item.get('thumb') == REL + name and os.path.exists(path) and (item.get('thumb_src') != 'og' or os.environ.get('RETRY_OG') != '1'):
         return
     img = None
     if item.get('image'):
@@ -88,6 +119,10 @@ def thumb(item, stats):
             print('  받기 실패', item['image'][:80], e)
     how = '사진'
     m = re.match(r'https?://github\.com/([^/]+)/([^/#?]+)', url)
+    if m and m.group(2) not in ('issues', 'pulls'):
+        rp = readme_pic(m.group(1), m.group(2))
+        if rp is not None:
+            img, how = rp, 'README'
     if img is None and m:
         # 깃허브는 페이지를 찍으면 옆이 잘린 파일 목록이 된다(11/05) → 저장소 카드 사진만. 못 받으면 비워 두고 다음 실행에 다시
         try:
@@ -107,6 +142,8 @@ def thumb(item, stats):
         return
     save(img, path)
     item['thumb'] = REL + name
+    if m:
+        item['thumb_src'] = 'readme' if how == 'README' else 'og'
     stats[how] += 1
 
 
@@ -186,13 +223,13 @@ def main():
     days = sys.argv[1:] or json.load(open(os.path.join(DATA, 'index.json')))['dates'][:1]
     if days == ['all']:
         days = sorted(set(f[:10] for d in (DATA, os.path.join(DATA, 'social')) for f in os.listdir(d) if re.match(r'\d{4}-\d{2}-\d{2}\.json$', f)))
-    stats = {'사진': 0, '캡처': 0, 'fail': 0}
+    stats = {'사진': 0, 'README': 0, '캡처': 0, 'fail': 0}
     for d in days:
         run(d, stats)
         print(d, dict(stats))
     if _browser:
         _browser.close()
-    print(f'끝: 사진 {stats["사진"]} · 캡처 {stats["캡처"]} · 실패 {stats["fail"]}')
+    print('끝:', stats)
 
 
 if __name__ == '__main__':

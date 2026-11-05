@@ -14,8 +14,7 @@
     "공개 3일 만에 ★1천",
     "인형집·걷기·와이어 보기",
     "LiDAR 아이폰 필요"
-   ],
-   "thumb": "data/ai-brief/thumbs/e3bc7a2070c416fd.jpg"
+   ]
   },
   {
    "cat": "tool",
@@ -29,8 +28,7 @@
     "데모 4편 9~10초 루프",
     "React Native·SwiftUI"
    ],
-   "forMe": "Atelier 빈 화면이나 VectorCraft 아이콘에 작은 움직임을 넣을 때, AI가 흔히 내는 '뚝뚝 끊기는 애니메이션'을 피하는 규칙집으로 쓸 수 있습니다.",
-   "thumb": "data/ai-brief/thumbs/a7c15a9b2fb3e4b7.jpg"
+   "forMe": "Atelier 빈 화면이나 VectorCraft 아이콘에 작은 움직임을 넣을 때, AI가 흔히 내는 '뚝뚝 끊기는 애니메이션'을 피하는 규칙집으로 쓸 수 있습니다."
   },
   {
    "cat": "tool",
@@ -44,8 +42,7 @@
     "design.md 10종",
     "HTML 내려받기"
    ],
-   "forMe": "Atelier 디자인 규칙을 design.md 로 올리면 새 페이지 시안을 그 규칙대로 뽑아볼 수 있습니다.",
-   "thumb": "data/ai-brief/thumbs/777f23ad5fb4db08.jpg"
+   "forMe": "Atelier 디자인 규칙을 design.md 로 올리면 새 페이지 시안을 그 규칙대로 뽑아볼 수 있습니다."
   },
   {
    "cat": "tool",
@@ -62,8 +59,7 @@
    "from": {
     "label": "X @Stefan_3D_AI",
     "url": "https://x.com/Stefan_3D_AI/status/2112507522510925933"
-   },
-   "thumb": "data/ai-brief/thumbs/b07e99e05249a71d.jpg"
+   }
   },
   {
    "cat": "hack",
@@ -149,8 +145,7 @@
    "url": "https://github.com/soumatheusgomes/editonny",
    "image": "https://raw.githubusercontent.com/soumatheusgomes/editonny/HEAD/docs/assets/readme/en-US/hero.svg",
    "source": "GitHub soumatheusgomes · MIT · ★345",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/afbac499664dd991.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -158,8 +153,7 @@
    "url": "https://github.com/Hugo-Dz/spritefusion-sprite-normals",
    "image": "https://raw.githubusercontent.com/Hugo-Dz/spritefusion-sprite-normals/HEAD/static/hero.webp",
    "source": "GitHub Hugo-Dz · ★640",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/0a682aabe575c735.jpg"
+   "watching": false
   },
   {
    "cat": "tool",
@@ -167,8 +161,7 @@
    "url": "https://github.com/dominikmartn/harp",
    "image": "https://opengraph.githubassets.com/1/dominikmartn/harp",
    "source": "GitHub dominikmartn · Warp 비공식 포크 · ★591",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/571b01845b8f8400.jpg"
+   "watching": false
   },
   {
    "cat": "vibe",
@@ -176,8 +169,7 @@
    "url": "https://github.com/lesnolie/Tigris",
    "image": "https://opengraph.githubassets.com/5653350f569d2e1e9df76bb0933a2aa0d5aff8e09550eccacf468451926e3266/lesnolie/Tigris",
    "source": "GitHub lesnolie · 에이전트로 설치 · ★413",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/0081d3510713d9be.jpg"
+   "watching": false
   },
   {
    "cat": "hack",

@@ -14,8 +14,7 @@
     {
      "title": "같은 발상을 스킬로: 2D 캐릭터 애니 쇼츠 (three.js·Remotion)",
      "url": "https://github.com/mromidev/claude-animated-shorts",
-     "image": "https://opengraph.githubassets.com/1/mromidev/claude-animated-shorts",
-     "thumb": "data/ai-brief/thumbs/3334b15fe6f5fe2c.jpg"
+     "image": "https://opengraph.githubassets.com/1/mromidev/claude-animated-shorts"
     }
    ],
    "chips": [
@@ -65,8 +64,7 @@
    "from": {
     "label": "Threads @cut.the.loops · ♥81",
     "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg"
-   },
-   "thumb": "data/ai-brief/thumbs/dcb0697681f3043b.jpg"
+   }
   },
   {
    "cat": "hack",
@@ -116,8 +114,7 @@
     "에이전트 스킬",
     "사이트 stacks.caru.moe"
    ],
-   "forMe": "Atelier가 GitHub Pages·Firebase·Actions로 어떻게 엮였는지 포트폴리오용 그림 한 장으로 뽑을 수 있어요.",
-   "thumb": "data/ai-brief/thumbs/d4458417ce4c164e.jpg"
+   "forMe": "Atelier가 GitHub Pages·Firebase·Actions로 어떻게 엮였는지 포트폴리오용 그림 한 장으로 뽑을 수 있어요."
   }
  ],
  "tryToday": [
@@ -177,8 +174,7 @@
     "label": "X @kimmonismus",
     "url": "https://x.com/kimmonismus/status/2116905923109089285"
    },
-   "watching": true,
-   "thumb": "data/ai-brief/thumbs/76e502c4ebad39b1.jpg"
+   "watching": true
   },
   {
    "cat": "free",
@@ -186,8 +182,7 @@
    "url": "https://github.com/sleepy-zone/char-db-cn",
    "image": "https://opengraph.githubassets.com/1/sleepy-zone/char-db-cn",
    "source": "GitHub · 중국어 · 별 310 · 웹 sleepyzone.online",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/645aa200957323cf.jpg"
+   "watching": false
   },
   {
    "cat": "vibe",
@@ -195,8 +190,7 @@
    "url": "https://github.com/sheikhminds/reoo",
    "image": "https://opengraph.githubassets.com/840f9c0b921cb92f6508ac1675f938c2127705f9a00dc53660ef4321327d9f97/sheikhminds/reoo",
    "source": "GitHub · MIT · 레이어·선택·PSD 입출력 · 막 공개(별 2)",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/eff6eabcea0441e6.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -204,8 +198,7 @@
    "url": "https://github.com/zhanghao123vip/ai-manju-skills",
    "image": "https://opengraph.githubassets.com/1/zhanghao123vip/ai-manju-skills",
    "source": "GitHub · MIT · 장르 21종 · 별 454",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/069c01a3a1c6d0a6.jpg"
+   "watching": false
   },
   {
    "cat": "tool",
@@ -213,8 +206,7 @@
    "url": "https://github.com/Denvolatos/lightroom-mcp-win",
    "image": "https://opengraph.githubassets.com/1/Denvolatos/lightroom-mcp-win",
    "source": "GitHub · MIT · Lightroom Classic 플러그인 · 막 공개",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/08d485a81e1e91cd.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -222,8 +214,7 @@
    "url": "https://github.com/benjitaylor/skills",
    "image": "https://opengraph.githubassets.com/1/benjitaylor/skills",
    "source": "GitHub · Figma·Linear·Slack·Raycast 화면 재현 예시",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/9467b13f4531f1ec.jpg"
+   "watching": false
   }
  ],
  "watching": [
