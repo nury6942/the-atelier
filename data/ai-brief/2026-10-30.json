@@ -15,7 +15,8 @@
      "title": "작업 폴더·지시문 구성 캡처",
      "url": "https://x.com/krblue_/status/2115225783224701389",
      "image": "https://pbs.twimg.com/media/HVo7hxsaAAAgind.jpg",
-     "thumb": "data/ai-brief/thumbs/7a5e69926a3d859a.jpg"
+     "thumb": "data/ai-brief/thumbs/7a5e69926a3d859a.jpg",
+     "thumb_src": "site"
     }
    ],
    "chips": [
@@ -24,7 +25,8 @@
     "Remotion 모션 + 일레븐랩스 v4 나레이션 + 수노 음악"
    ],
    "forMe": "'캡컷 프로젝트로 만들어줘' 하면 장면별로 고칠 수 있게 받는다고 해요. 시즌 룩북·포트폴리오 영상을 이 구조로 한 편 뽑아 보기 좋습니다. 실존 인물 초상은 저작권 위험이 있다고 본인도 적었어요.",
-   "thumb": "data/ai-brief/thumbs/7a5e69926a3d859a.jpg"
+   "thumb": "data/ai-brief/thumbs/7a5e69926a3d859a.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -61,9 +63,7 @@
     "블라인드 16/16 선호",
     "탐지기 회피용 아님"
    ],
-   "forMe": "해외 이직용 영문 커버레터·자기소개를 AI로 쓴 뒤 마지막 손질로 돌려 보세요. 예시가 영어 기준이라 영문 글에 더 잘 맞습니다.",
-   "thumb": "data/ai-brief/thumbs/db09b457282c5683.jpg",
-   "thumb_src": "og"
+   "forMe": "해외 이직용 영문 커버레터·자기소개를 AI로 쓴 뒤 마지막 손질로 돌려 보세요. 예시가 영어 기준이라 영문 글에 더 잘 맞습니다."
   },
   {
    "cat": "vibe",
@@ -76,9 +76,7 @@
     {
      "title": "제작자 실험: 문서 30장 쓴 버전이 블라인드 평가 꼴찌",
      "url": "https://github.com/Donchitos/Claude-Code-Game-Studios#does-it-produce-games-or-documents",
-     "image": "https://opengraph.githubassets.com/1/Donchitos/Claude-Code-Game-Studios",
-     "thumb": "data/ai-brief/thumbs/9a659793bb975e3a.jpg",
-     "thumb_src": "og"
+     "image": "https://opengraph.githubassets.com/1/Donchitos/Claude-Code-Game-Studios"
     }
    ],
    "reviews": [
@@ -99,9 +97,7 @@
     "스킬 74개",
     "자동 검사 15개",
     "MIT"
-   ],
-   "thumb": "data/ai-brief/thumbs/5661de317a03586b.jpg",
-   "thumb_src": "og"
+   ]
   },
   {
    "cat": "hack",
@@ -149,7 +145,8 @@
    "image": "https://us1.discourse-cdn.com/openai1/original/4X/0/4/c/04c8546833f0824a49d21f50e2b08dd44bfd3d05.png",
    "source": "OpenAI Developer Community · Plus 제외, 이월 안 됨",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/7b17ee40f3b349a1.jpg"
+   "thumb": "data/ai-brief/thumbs/7b17ee40f3b349a1.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -158,7 +155,8 @@
    "image": "https://i0.wp.com/musically.com/wp-content/uploads/2026/07/news-stories-images-4x3-12.png?fit=2000%2C1500&ssl=1",
    "source": "Music Ally · 10-28 베타, 신청제",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/4437be2ce72d73f0.jpg"
+   "thumb": "data/ai-brief/thumbs/4437be2ce72d73f0.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -167,7 +165,8 @@
    "image": "https://d3phaj0sisr2ct.cloudfront.net/site/images/sanity/2026/10/runwayads-ga-social-og-no-headline-1600x900-2x-3d214819-c070-4f55-8d8f-c8685168dc16.png",
    "source": "Runway · 10-27 · 메타·구글·틱톡 게시",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/2a46c0ccde3e9ef5.jpg"
+   "thumb": "data/ai-brief/thumbs/2a46c0ccde3e9ef5.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -175,8 +174,7 @@
    "url": "https://aiweekly.co/alerts/google-deepmind-debuts-genie-4-world-model-with-native-audio",
    "image": null,
    "source": "AI Weekly · 10-27 · 테스터 한정",
-   "watching": true,
-   "thumb": "data/ai-brief/thumbs/9c147e9296e49c3f.jpg"
+   "watching": true
   },
   {
    "cat": "release",
@@ -184,8 +182,7 @@
    "url": "https://venturebeat.com/technology/google-unveils-gemini-4-carbon-retaking-the-worlds-no-1-spot-on-updated-harder-benchmarks-but-access-is-limited",
    "image": null,
    "source": "VentureBeat · 접근 제한, 사례 아직",
-   "watching": true,
-   "thumb": "data/ai-brief/thumbs/f937c5b398fae9f3.jpg"
+   "watching": true
   },
   {
    "cat": "tool",
@@ -194,7 +191,8 @@
    "image": "https://cdn.builder.io/api/v1/image/assets/YJIGb4i01jvw0SRdL5Bt/45e8d35cbd2949b7a6fe053409a4ce0c?width=1200",
    "source": "Builder.io · MIT · 무료",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/f3204b466e8ec171.jpg"
+   "thumb": "data/ai-brief/thumbs/f3204b466e8ec171.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -203,7 +201,8 @@
    "image": "https://sunoboard.com/og/blog-how-to-connect-suno-to-claude.jpg",
    "source": "Sunoboard · Claude.ai·데스크톱·코드",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/8df3c17b1a67cd83.jpg"
+   "thumb": "data/ai-brief/thumbs/8df3c17b1a67cd83.jpg",
+   "thumb_src": "site"
   }
  ],
  "watching": [

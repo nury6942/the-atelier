@@ -83,67 +83,33 @@ def browser():
     return _browser
 
 
-def shoot(url):
-    """사진이 없으면 페이지를 찍는다. X 글은 공개 임베드(로그인 없이 보이는 글 카드)를 찍는다."""
-    m = re.search(r'(?:x|twitter)\.com/[^/]+/status/(\d+)', url)
-    page = browser().new_page(viewport={'width': 1280, 'height': 800}, device_scale_factor=1, user_agent=UA, locale='ko-KR')
-    try:
-        if m:
-            page.set_viewport_size({'width': 560, 'height': 900})
-            page.goto(f'https://platform.twitter.com/embed/Tweet.html?id={m.group(1)}&theme=light&lang=ko', wait_until='networkidle', timeout=30000)
-            page.wait_for_timeout(2500)
-            el = page.query_selector('article') or page.query_selector('#app')
-            png = (el or page).screenshot()
-        else:
-            page.goto(url, wait_until='domcontentloaded', timeout=30000)
-            page.wait_for_timeout(4500)
-            png = page.screenshot()
-        return Image.open(io.BytesIO(png))
-    finally:
-        page.close()
-
-
 def thumb(item, stats):
+    """원문에 실물 사진이 있을 때만 보관한다 (누리 11/05: "원문에 이미지가 없으면 넣을 필요 없어").
+    깃허브 = README 첫 사진·GIF, 그 밖 = 원문 대표 사진(og:image). 페이지 캡처·깃허브 글자 카드는 안 씀 → 없으면 사진 칸 없이."""
     url = item.get('url') or ''
     if not url or 'threads.' in url:           # Threads 는 화면이 원문 미리보기 창으로 대신
         return
     name = key(url) + '.jpg'
     path = os.path.join(OUT, name)
-    if item.get('thumb') == REL + name and os.path.exists(path) and (item.get('thumb_src') != 'og' or os.environ.get('RETRY_OG') != '1'):
+    if item.get('thumb') == REL + name and os.path.exists(path):
         return
-    img = None
-    if item.get('image'):
+    img, how = None, '사진'
+    m = re.match(r'https?://github\.com/([^/]+)/([^/#?]+)', url)
+    if m:
+        if m.group(2) not in ('issues', 'pulls'):
+            img, how = readme_pic(m.group(1), m.group(2)), 'README'
+    elif item.get('image') and 'opengraph.githubassets.com' not in item['image']:
         try:
             img = download(item['image'])
         except Exception as e:
             print('  받기 실패', item['image'][:80], e)
-    how = '사진'
-    m = re.match(r'https?://github\.com/([^/]+)/([^/#?]+)', url)
-    if m and m.group(2) not in ('issues', 'pulls'):
-        rp = readme_pic(m.group(1), m.group(2))
-        if rp is not None:
-            img, how = rp, 'README'
-    if img is None and m:
-        # 깃허브는 페이지를 찍으면 옆이 잘린 파일 목록이 된다(11/05) → 저장소 카드 사진만. 못 받으면 비워 두고 다음 실행에 다시
-        try:
-            img = download(f'https://opengraph.githubassets.com/1/{m.group(1)}/{m.group(2)}')
-        except Exception as e:
-            print('  깃허브 카드 실패', url[:80], e)
-        if img is None:
-            stats['fail'] += 1
-            return
     if img is None:
-        try:
-            img, how = shoot(url), '캡처'
-        except Exception as e:
-            print('  캡처 실패', url[:80], e)
-    if img is None:
-        stats['fail'] += 1
+        item.pop('thumb', None)
+        stats['없음'] = stats.get('없음', 0) + 1
         return
     save(img, path)
     item['thumb'] = REL + name
-    if m:
-        item['thumb_src'] = 'readme' if how == 'README' else 'og'
+    item['thumb_src'] = 'readme' if how == 'README' else 'site'
     stats[how] += 1
 
 
@@ -223,7 +189,7 @@ def main():
     days = sys.argv[1:] or json.load(open(os.path.join(DATA, 'index.json')))['dates'][:1]
     if days == ['all']:
         days = sorted(set(f[:10] for d in (DATA, os.path.join(DATA, 'social')) for f in os.listdir(d) if re.match(r'\d{4}-\d{2}-\d{2}\.json$', f)))
-    stats = {'사진': 0, 'README': 0, '캡처': 0, 'fail': 0}
+    stats = {'사진': 0, 'README': 0, '캡처': 0, 'fail': 0, '없음': 0}
     for d in days:
         run(d, stats)
         print(d, dict(stats))

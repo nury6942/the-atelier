@@ -19,13 +19,15 @@
      "title": "대행사 브리프 3개를 그대로 돌려본 실험",
      "url": "https://gauravtiwari.org/canva-craft/",
      "image": "https://r2.gauravtiwari.org/wp-content/uploads/2026/10/canva-craft-agencies-featured-20261024.webp",
-     "thumb": "data/ai-brief/thumbs/cc3d3a033c73b7bc.jpg"
+     "thumb": "data/ai-brief/thumbs/cc3d3a033c73b7bc.jpg",
+     "thumb_src": "site"
     },
     {
      "title": "Dream Lab에서 Craft 쓰는 순서 정리",
      "url": "https://www.lilachbullock.com/canva-craft/",
      "image": "https://www.lilachbullock.com/wp-content/uploads/2026/10/canva-craft.png",
-     "thumb": "data/ai-brief/thumbs/01b5561e9648facc.jpg"
+     "thumb": "data/ai-brief/thumbs/01b5561e9648facc.jpg",
+     "thumb_src": "site"
     }
    ],
    "new": [
@@ -65,8 +67,7 @@
     "최대 2K",
     "DesignArena 4위"
    ],
-   "forMe": "MLB 쇼츠·집업 출시 포스터 시안을 문구까지 넣어 뽑아볼 수 있습니다. 다만 브랜드 키트는 Dream Lab에서 아직 안 붙으니 로고·서체는 따로 얹어야 합니다.",
-   "thumb": "data/ai-brief/thumbs/6d2a1c2dd227d687.jpg"
+   "forMe": "MLB 쇼츠·집업 출시 포스터 시안을 문구까지 넣어 뽑아볼 수 있습니다. 다만 브랜드 키트는 Dream Lab에서 아직 안 붙으니 로고·서체는 따로 얹어야 합니다."
   },
   {
    "cat": "vibe",
@@ -80,8 +81,7 @@
     "총 다운로드 458",
     "무료 · 오프라인"
    ],
-   "forMe": "PSD를 레이어 그대로 열고 단축키도 포토샵과 같다고 하니, 집 맥에서 프린트 시안 PSD를 열어 레이어가 버티는지 확인해볼 만합니다. 스마트 오브젝트는 깨진다는 후기가 있어요.",
-   "thumb": "data/ai-brief/thumbs/98c1c6f8934afa02.jpg"
+   "forMe": "PSD를 레이어 그대로 열고 단축키도 포토샵과 같다고 하니, 집 맥에서 프린트 시안 PSD를 열어 레이어가 버티는지 확인해볼 만합니다. 스마트 오브젝트는 깨진다는 후기가 있어요."
   },
   {
    "cat": "hack",
@@ -106,9 +106,7 @@
     {
      "title": "애플TV풍 홈에 날씨까지 붙인 갈래",
      "url": "https://github.com/carlom19/cinema-home-fire-tv",
-     "image": "https://raw.githubusercontent.com/carlom19/cinema-home-fire-tv/HEAD/cinema-launcher/assets/wallpaper.png",
-     "thumb": "data/ai-brief/thumbs/e95cde304b43b3c6.jpg",
-     "thumb_src": "og"
+     "image": "https://raw.githubusercontent.com/carlom19/cinema-home-fire-tv/HEAD/cinema-launcher/assets/wallpaper.png"
     }
    ],
    "thumb": "data/ai-brief/thumbs/a4403b6ae01371e7.jpg",
@@ -126,9 +124,7 @@
     "6단계",
     "확인된 것만 보고서로"
    ],
-   "forMe": "Atelier는 Firebase에 개인 데이터가 있어서, 키·권한이 새는 곳이 없는지 한 번 돌려볼 가치가 있습니다. AI를 여러 개 띄우니 사용량이 많이 듭니다.",
-   "thumb": "data/ai-brief/thumbs/6426decba2ef7b96.jpg",
-   "thumb_src": "og"
+   "forMe": "Atelier는 Firebase에 개인 데이터가 있어서, 키·권한이 새는 곳이 없는지 한 번 돌려볼 가치가 있습니다. AI를 여러 개 띄우니 사용량이 많이 듭니다."
   },
   {
    "cat": "tool",
@@ -141,9 +137,7 @@
     "v0.2.0 · 10-18",
     "데스크톱 앱 · 브라우저",
     "10-25까지 매일 빌드"
-   ],
-   "thumb": "data/ai-brief/thumbs/6080fb8b34b08ea3.jpg",
-   "thumb_src": "og"
+   ]
   }
  ],
  "tryToday": [
@@ -200,7 +194,8 @@
    "image": "https://static.antyweb.pl/img/w_1250,h_550/wp-content/uploads/2026/10/photn.jpg",
    "source": "Antyweb · 스마트 오브젝트 깨짐",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/7e4c184e779b6f3b.jpg"
+   "thumb": "data/ai-brief/thumbs/7e4c184e779b6f3b.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -209,7 +204,8 @@
    "image": "https://cdn.aiidelist.com/api/image/Ltuwohc70O92t9ggBDwNo.webp",
    "source": "AIIDE List · 누적 약 $1만 설",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/0c9a145dac3b754f.jpg"
+   "thumb": "data/ai-brief/thumbs/0c9a145dac3b754f.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -217,9 +213,7 @@
    "url": "https://github.com/makecindy/cindy",
    "image": "https://raw.githubusercontent.com/makecindy/cindy/HEAD/.github/assets/hero-en.webp",
    "source": "GitHub makecindy · Apache-2.0 · 오늘 트렌딩 1위",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/7c213e5a7519af56.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "free",
@@ -238,7 +232,8 @@
    "image": "https://itsfoss.com/content/images/2026/10/debloat-tv-with-ai.webp",
    "source": "It's FOSS · dumbtv·cleanyourtv",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/6b355e5b9ed03476.jpg"
+   "thumb": "data/ai-brief/thumbs/6b355e5b9ed03476.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -246,8 +241,7 @@
    "url": "https://www.producthunt.com/p/aifire/kimi-k3-5-use-cases-on-free-plan",
    "image": null,
    "source": "Product Hunt · 무료 플랜 실험",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/e8c33d5867e84929.jpg"
+   "watching": false
   }
  ],
  "watching": [

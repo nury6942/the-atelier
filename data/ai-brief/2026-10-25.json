@@ -131,8 +131,7 @@
    "url": "https://pasqualepillitteri.it/en/news/23909/soundcraft-guide-free-pro-tools-alternative",
    "image": null,
    "source": "Pasquale Pillitteri · v0.7.0 기준",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/ff6eebf8c124b902.jpg"
+   "watching": false
   },
   {
    "cat": "vibe",
@@ -141,7 +140,8 @@
    "image": "https://cdn.mos.cms.futurecdn.net/GohVEZQ7wNAbxcMQvyv6ie-1920-80.jpg",
    "source": "Creative Bloq · 10-13",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/ca9db1f2876bc620.jpg"
+   "thumb": "data/ai-brief/thumbs/ca9db1f2876bc620.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",
@@ -170,7 +170,8 @@
    "image": "https://cdn.searchenginejournal.com/wp-content/uploads/2026/10/karpathy-llm-explanation-featured.jpg",
    "source": "Search Engine Journal · 카파시 제안",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/21ce56fda53d7d57.jpg"
+   "thumb": "data/ai-brief/thumbs/21ce56fda53d7d57.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",

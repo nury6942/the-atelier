@@ -19,13 +19,15 @@
      "title": "말로 CAD 모델 만드는 오픈소스를 Terra로 돌린 시연",
      "url": "https://x.com/earthtojake/status/2114810838662230419",
      "image": "https://pbs.twimg.com/amplify_video_thumb/2114810345441103872/img/Woln7zINuXVujm3z.jpg",
-     "thumb": "data/ai-brief/thumbs/dd9e9062e003cc75.jpg"
+     "thumb": "data/ai-brief/thumbs/dd9e9062e003cc75.jpg",
+     "thumb_src": "site"
     },
     {
      "title": "같은 작업을 Opus 5.5·Sol·Terra에 맡겨 시간·값 비교",
      "url": "https://x.com/rubenssoto_ai/status/2114796689563304192",
      "image": "https://pbs.twimg.com/amplify_video_thumb/2114796547527299072/img/8afJ9jt9hnmnFBv9.jpg",
-     "thumb": "data/ai-brief/thumbs/ab96431f9b76ed65.jpg"
+     "thumb": "data/ai-brief/thumbs/ab96431f9b76ed65.jpg",
+     "thumb_src": "site"
     }
    ],
    "new": [
@@ -65,8 +67,7 @@
     "Plus부터 · Codex",
     "API gpt-6.1-terra"
    ],
-   "forMe": "Atelier 자동화처럼 반복되는 작업을 Codex에 맡길 때 Terra로 바꿔 시간·비용을 비교해볼 만합니다. 손이 많이 가는 큰 수정은 아직 상위 모델이 낫다는 평이 많아요.",
-   "thumb": "data/ai-brief/thumbs/f108b5ceacfa1c86.jpg"
+   "forMe": "Atelier 자동화처럼 반복되는 작업을 Codex에 맡길 때 Terra로 바꿔 시간·비용을 비교해볼 만합니다. 손이 많이 가는 큰 수정은 아직 상위 모델이 낫다는 평이 많아요."
   },
   {
    "cat": "hack",
@@ -157,7 +158,8 @@
    "image": "https://www.androidauthority.com/wp-content/uploads/2026/05/Open-AI-ChatGPT-logo-on-phone-stock-photo-7.jpg",
    "source": "Android Authority · 써본 리뷰",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/4c0ccd01579aa5d0.jpg"
+   "thumb": "data/ai-brief/thumbs/4c0ccd01579aa5d0.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -165,8 +167,7 @@
    "url": "https://medium.com/@shtse8/how-to-use-gpt-6-1-terra-what-its-good-at-how-to-try-it-today-and-when-to-stick-with-sol-or-clau-1afbbda3c878",
    "image": null,
    "source": "Medium · 쓰는 법 정리",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/7f0833242780a09c.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -174,9 +175,7 @@
    "url": "https://github.com/earthtojake/text-to-cad",
    "image": "https://opengraph.githubassets.com/1/earthtojake/text-to-cad",
    "source": "GitHub earthtojake · MIT · STEP·STL·3MF",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/2955e31aa2908643.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "free",

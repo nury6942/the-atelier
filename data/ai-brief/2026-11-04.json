@@ -46,9 +46,7 @@
     {
      "title": "원래 실험 전체 기록: GPT-6 Astra가 신경망 숫자를 읽고 고치기",
      "url": "https://github.com/RikiyaT/lm_understand-logs",
-     "image": "https://opengraph.githubassets.com/1/RikiyaT/lm_understand-logs",
-     "thumb": "data/ai-brief/thumbs/43c01fe550a00953.jpg",
-     "thumb_src": "og"
+     "image": "https://opengraph.githubassets.com/1/RikiyaT/lm_understand-logs"
     }
    ],
    "chips": [
@@ -59,8 +57,7 @@
    "from": {
     "label": "X @simonw · ♥2,500",
     "url": "https://x.com/simonw/status/2117655816581071203"
-   },
-   "thumb": "data/ai-brief/thumbs/522d50259f4d8a8a.jpg"
+   }
   },
   {
    "cat": "hack",
@@ -160,9 +157,7 @@
    "url": "https://github.com/Humpalumps/Ultra-Water",
    "image": "https://opengraph.githubassets.com/1/Humpalumps/Ultra-Water",
    "source": "GitHub · MIT · three.js · 별 617",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/ddf1276e8f5f5f78.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "free",
@@ -170,9 +165,7 @@
    "url": "https://github.com/smithjohn78390/tongjiang-lab",
    "image": "https://opengraph.githubassets.com/1/smithjohn78390/tongjiang-lab",
    "source": "GitHub · CC BY-NC · HTML 한 파일씩 · 별 1,524",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/d62d219b9364989a.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "free",
@@ -180,9 +173,7 @@
    "url": "https://github.com/anomalyco/hex",
    "image": "https://opengraph.githubassets.com/1/anomalyco/hex",
    "source": "GitHub · MIT · 맥·윈도우·리눅스 · 별 4,517",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/0f4537518a872dde.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "tool",

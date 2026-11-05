@@ -54,8 +54,7 @@
    "from": {
     "label": "X @karpathy · ♥1.9만",
     "url": "https://x.com/karpathy/status/2116957135661945283"
-   },
-   "thumb": "data/ai-brief/thumbs/4f8a81f9d17febcf.jpg"
+   }
   },
   {
    "cat": "tool",
@@ -88,8 +87,7 @@
     "맥 GPU 받아쓰기(mlx-whisper)",
     "본인 목소리 구분",
     "편집은 JSON 컷 목록"
-   ],
-   "thumb": "data/ai-brief/thumbs/7b54d406da46a55d.jpg"
+   ]
   },
   {
    "cat": "vibe",
@@ -181,7 +179,8 @@
    "image": "https://www.bleepstatic.com/content/hl-images/2026/05/07/ClaudeChats.png",
    "source": "소멸일 11-04·05로 출처마다 다름 · 안전하게 4일",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/d3dfcdd7e2987893.jpg"
+   "thumb": "data/ai-brief/thumbs/d3dfcdd7e2987893.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -190,7 +189,8 @@
    "image": "http://officechai.com/wp-content/uploads/2026/10/1000443598-scaled.jpg",
    "source": "OfficeChai · 10-31 · fal·OpenRouter",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/6c8e582856aca7a9.jpg"
+   "thumb": "data/ai-brief/thumbs/6c8e582856aca7a9.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -199,7 +199,8 @@
    "image": "https://static.higgsfield.ai/playable/og/landscape-light.webp",
    "source": "Higgsfield · 10-26 · 게임 품질 평가 아직",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/ada338eaa06b6b0a.jpg"
+   "thumb": "data/ai-brief/thumbs/ada338eaa06b6b0a.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",
@@ -227,9 +228,7 @@
    "url": "https://github.com/NiazMorshed2007/reanimate",
    "image": "https://opengraph.githubassets.com/1/NiazMorshed2007/reanimate",
    "source": "GitHub · MIT · Claude Code 스킬 · 별 721",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/0d67183d9957047b.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "tool",
@@ -251,9 +250,7 @@
     "label": "Threads @bestoj · ♥48",
     "url": "https://www.threads.com/@bestoj/post/DfLk4zBjs3Y"
    },
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/03c85f3055b51369.jpg",
-   "thumb_src": "og"
+   "watching": false
   }
  ],
  "watching": [

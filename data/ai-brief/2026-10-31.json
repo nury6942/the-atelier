@@ -15,7 +15,8 @@
      "title": "완성 앱 시연 영상과 프롬프트 전문",
      "url": "https://x.com/0xMovez/status/2115870373300326503",
      "image": "https://pbs.twimg.com/amplify_video_thumb/2115870275925315584/img/WkXimd2ZbXW7mSy5.jpg",
-     "thumb": "data/ai-brief/thumbs/ecaf14200fdfabdd.jpg"
+     "thumb": "data/ai-brief/thumbs/ecaf14200fdfabdd.jpg",
+     "thumb_src": "site"
     }
    ],
    "chips": [
@@ -24,7 +25,8 @@
     "삭제 코드 감시 에이전트 1개"
    ],
    "forMe": "'디자인 시안부터 여러 장 그리고 고른 뒤 만든다'는 순서가 누리님 작업 방식과 같아요. 지울 수 있는 코드만 따로 공격하게 한 안전장치는 Atelier 데이터 정리 기능에도 그대로 빌려 쓸 만합니다.",
-   "thumb": "data/ai-brief/thumbs/ecaf14200fdfabdd.jpg"
+   "thumb": "data/ai-brief/thumbs/ecaf14200fdfabdd.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "vibe",
@@ -66,7 +68,8 @@
      "title": "참고 이미지로 만든 장면 시연",
      "url": "https://x.com/sorenxet/status/2116149863935078885",
      "image": "https://pbs.twimg.com/amplify_video_thumb/2116138904277409792/img/s5NQK1jsSINr8UeP.jpg",
-     "thumb": "data/ai-brief/thumbs/1ce383830e21393d.jpg"
+     "thumb": "data/ai-brief/thumbs/1ce383830e21393d.jpg",
+     "thumb_src": "site"
     }
    ],
    "chips": [
@@ -75,7 +78,8 @@
     "블렌더 5.1 이상"
    ],
    "forMe": "소품은 AI가 직접 빚지 말고 에셋을 가져와 배치하게 하라는 규칙이 결과를 가른다고 해요. 쇼츠·집업 룩을 놓을 매장·촬영 세트 배경을 말로 짜 보는 데 쓸 수 있습니다.",
-   "thumb": "data/ai-brief/thumbs/1ce383830e21393d.jpg"
+   "thumb": "data/ai-brief/thumbs/1ce383830e21393d.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -130,7 +134,8 @@
    "image": "https://github.blog/wp-content/uploads/2026/11/683299408-b1d020a6-0c6d-49a5-ab57-5434d64fb7f9.png",
    "source": "GitHub Changelog · 10-28 · 비용 절반은 자체 측정",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/194ab4b69c2cec81.jpg"
+   "thumb": "data/ai-brief/thumbs/194ab4b69c2cec81.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -138,8 +143,7 @@
    "url": "https://www.blender.org/lab/mcp-server/",
    "image": null,
    "source": "Blender Lab · 5.1 이상 · 무료",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/3b7e8e40fa4a7154.jpg"
+   "watching": false
   },
   {
    "cat": "free",
@@ -148,7 +152,8 @@
    "image": "https://styles.refero.design/opengraph-image.png",
    "source": "Refero Styles · 복사 무료",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/fda03b2f62ac2be4.jpg"
+   "thumb": "data/ai-brief/thumbs/fda03b2f62ac2be4.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",
@@ -161,7 +166,8 @@
     "url": "https://www.threads.com/@sylvia.global/post/DfG264vD1uy"
    },
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/fa45c77d9edb9a27.jpg"
+   "thumb": "data/ai-brief/thumbs/fa45c77d9edb9a27.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -170,7 +176,8 @@
    "image": "https://windowsreport.com/wp-content/uploads/2025/06/Meta-feature-banner-image.png",
    "source": "Windows Report · Style Sketch · 동남아 3국 한정",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/a23d0eae76bf57a1.jpg"
+   "thumb": "data/ai-brief/thumbs/a23d0eae76bf57a1.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -179,7 +186,8 @@
    "image": "https://wsrv.nl/?url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_jpg%2FBplmnKDr3Ric9EkOyGcQdwh3P5GYzCSaX0yfzt3RgM3DAsLK9QGrZic2fLwcGqRayM5ZWCU8RqDtT6jOUoACAic727mAlepbXEPLKibkcENTp1U%2F0%3Fwx_fmt%3Djpeg",
    "source": "BestHub · Concat 포함",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/5d0387a0e60d658a.jpg"
+   "thumb": "data/ai-brief/thumbs/5d0387a0e60d658a.jpg",
+   "thumb_src": "site"
   }
  ],
  "watching": [

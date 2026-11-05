@@ -15,7 +15,8 @@
     "LLM끼리 대전 모드",
     "댓글 69"
    ],
-   "thumb": "data/ai-brief/thumbs/ca70bb91d6531579.jpg"
+   "thumb": "data/ai-brief/thumbs/ca70bb91d6531579.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "vibe",
@@ -44,7 +45,8 @@
     "폴더 = 재생목록",
     "댓글 81"
    ],
-   "thumb": "data/ai-brief/thumbs/324d55023abe01a0.jpg"
+   "thumb": "data/ai-brief/thumbs/324d55023abe01a0.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "money",
@@ -123,8 +125,7 @@
    "url": "https://www.producthunt.com/p/opt-in-vulnerability-finding-service/oss-scanner-by-anthropic",
    "image": null,
    "source": "Product Hunt · Anthropic OSS Scanner, 관리자 신청제",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/d77f3ac087483fdf.jpg"
+   "watching": false
   },
   {
    "cat": "vibe",
@@ -133,7 +134,8 @@
    "image": "https://www.talkphotography.co.uk/styles/default/xenforo/logo_custom.og.png",
    "source": "TalkPhotography 포럼 · 개체 지우기 포토샵과 비교",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/7d9cd049e42c37f3.jpg"
+   "thumb": "data/ai-brief/thumbs/7d9cd049e42c37f3.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "vibe",
@@ -141,8 +143,7 @@
    "url": "https://www.kunalganglani.com/blog/photocraft-rust-photo-editor",
    "image": null,
    "source": "블로그 · 유망한 데모, GIMP 대체는 아직",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/4cc821b61bdaf42c.jpg"
+   "watching": false
   },
   {
    "cat": "tool",
@@ -160,8 +161,7 @@
    "url": "https://dev.to/tekmag/openmontage-your-ai-coding-assistant-is-now-a-full-video-production-studio-open-source-from-406l",
    "image": null,
    "source": "DEV · OpenMontage, AGPL-3.0",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/ffda45f5079e8204.jpg"
+   "watching": false
   },
   {
    "cat": "hack",
@@ -170,7 +170,8 @@
    "image": "https://javier.xyz/blog/turn-a-kindle-into-a-picture-frame/opengraph-image/cover?3f17178e83773234",
    "source": "블로그 · 책 표지 화면을 사진으로",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/c1da33903f40fb06.jpg"
+   "thumb": "data/ai-brief/thumbs/c1da33903f40fb06.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -179,7 +180,8 @@
    "image": "https://techbytes.app/assets/thumbnails/post-chatgpt-pages-slides-collaborative-editing-og.png",
    "source": "Pro·Business·Enterprise · PPT·구글 슬라이드로 내보내기",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/53b2b59dc9313eec.jpg"
+   "thumb": "data/ai-brief/thumbs/53b2b59dc9313eec.jpg",
+   "thumb_src": "site"
   }
  ],
  "watching": [

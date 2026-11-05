@@ -14,8 +14,7 @@
     {
      "title": "바로 해보기: Pixel Plays (보체·다이빙·빨래 걷기 등 5편)",
      "url": "https://pixel-plays-ruby.vercel.app/",
-     "image": null,
-     "thumb": "data/ai-brief/thumbs/f28a23df66a6b3a4.jpg"
+     "image": null
     }
    ],
    "chips": [
@@ -23,9 +22,7 @@
     "캔버스 360×280",
     "이미지 파일 0개"
    ],
-   "forMe": "README에 '흰 바탕 위에 작은 장소 하나만, 화면 장식 없이' 같은 시각 규칙을 먼저 적어 두고 만든 점이 Atelier DESIGN.md 방식과 같아요. 홈 화면에 작은 계절 장면을 넣고 싶을 때 이 규칙 문장부터 빌려 쓰면 됩니다.",
-   "thumb": "data/ai-brief/thumbs/2b2bef6a7f720521.jpg",
-   "thumb_src": "og"
+   "forMe": "README에 '흰 바탕 위에 작은 장소 하나만, 화면 장식 없이' 같은 시각 규칙을 먼저 적어 두고 만든 점이 Atelier DESIGN.md 방식과 같아요. 홈 화면에 작은 계절 장면을 넣고 싶을 때 이 규칙 문장부터 빌려 쓰면 됩니다."
   },
   {
    "cat": "tool",
@@ -174,9 +171,7 @@
    "url": "https://github.com/govijr/terminal-mac",
    "image": "https://opengraph.githubassets.com/1/govijr/terminal-mac",
    "source": "GitHub · MIT · 애플 칩 · 가상 맥을 터미널에서 · 별 1,449",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/dd1e40d3e0b0b802.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "tool",
@@ -184,9 +179,7 @@
    "url": "https://github.com/KKKKhazix/agent-autoloop",
    "image": "https://opengraph.githubassets.com/1/KKKKhazix/agent-autoloop",
    "source": "GitHub · MIT · 맥·리눅스 · 슬랙·데스크톱 알림 · 별 2,406",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/969dd462482a25e8.jpg",
-   "thumb_src": "og"
+   "watching": false
   }
  ],
  "watching": [

@@ -14,9 +14,7 @@
     {
      "title": "같은 발상을 스킬로: 2D 캐릭터 애니 쇼츠 (three.js·Remotion)",
      "url": "https://github.com/mromidev/claude-animated-shorts",
-     "image": "https://opengraph.githubassets.com/1/mromidev/claude-animated-shorts",
-     "thumb": "data/ai-brief/thumbs/3334b15fe6f5fe2c.jpg",
-     "thumb_src": "og"
+     "image": "https://opengraph.githubassets.com/1/mromidev/claude-animated-shorts"
     }
    ],
    "chips": [
@@ -66,9 +64,7 @@
    "from": {
     "label": "Threads @cut.the.loops · ♥81",
     "url": "https://www.threads.com/@cut.the.loops/post/DfPUjxCkqbg"
-   },
-   "thumb": "data/ai-brief/thumbs/dcb0697681f3043b.jpg",
-   "thumb_src": "og"
+   }
   },
   {
    "cat": "hack",
@@ -180,9 +176,7 @@
     "label": "X @kimmonismus",
     "url": "https://x.com/kimmonismus/status/2116905923109089285"
    },
-   "watching": true,
-   "thumb": "data/ai-brief/thumbs/76e502c4ebad39b1.jpg",
-   "thumb_src": "og"
+   "watching": true
   },
   {
    "cat": "free",
@@ -190,9 +184,7 @@
    "url": "https://github.com/sleepy-zone/char-db-cn",
    "image": "https://opengraph.githubassets.com/1/sleepy-zone/char-db-cn",
    "source": "GitHub · 중국어 · 별 310 · 웹 sleepyzone.online",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/645aa200957323cf.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "vibe",
@@ -200,9 +192,7 @@
    "url": "https://github.com/sheikhminds/reoo",
    "image": "https://opengraph.githubassets.com/840f9c0b921cb92f6508ac1675f938c2127705f9a00dc53660ef4321327d9f97/sheikhminds/reoo",
    "source": "GitHub · MIT · 레이어·선택·PSD 입출력 · 막 공개(별 2)",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/eff6eabcea0441e6.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "free",
@@ -210,9 +200,7 @@
    "url": "https://github.com/zhanghao123vip/ai-manju-skills",
    "image": "https://opengraph.githubassets.com/1/zhanghao123vip/ai-manju-skills",
    "source": "GitHub · MIT · 장르 21종 · 별 454",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/069c01a3a1c6d0a6.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "tool",
@@ -230,9 +218,7 @@
    "url": "https://github.com/benjitaylor/skills",
    "image": "https://opengraph.githubassets.com/1/benjitaylor/skills",
    "source": "GitHub · Figma·Linear·Slack·Raycast 화면 재현 예시",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/9467b13f4531f1ec.jpg",
-   "thumb_src": "og"
+   "watching": false
   }
  ],
  "watching": [

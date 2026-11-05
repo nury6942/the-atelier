@@ -15,7 +15,8 @@
     "DeepSeek Flash $0.34 · 약 480원",
     "Gemini 4 Argon 약 $2.50 · 30분"
    ],
-   "thumb": "data/ai-brief/thumbs/e2cb7e1d4257fb1f.jpg"
+   "thumb": "data/ai-brief/thumbs/e2cb7e1d4257fb1f.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "vibe",
@@ -69,9 +70,7 @@
     "별 약 1,300",
     "MIT",
     "에디터 MCP는 아직 실험 단계"
-   ],
-   "thumb": "data/ai-brief/thumbs/9a314bf77c0fc909.jpg",
-   "thumb_src": "og"
+   ]
   }
  ],
  "tryToday": [
@@ -149,7 +148,8 @@
    "image": "https://www.skills.sh/bear2u/my-skills/codex-claude-loop/opengraph-image?1a82f7707f2a479f",
    "source": "Claude 계획 · Codex 검토 스킬",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/0ea9600b9f0f18c6.jpg"
+   "thumb": "data/ai-brief/thumbs/0ea9600b9f0f18c6.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -158,7 +158,8 @@
    "image": "https://api.daily.dev/og/posts/wRsuA1tyC.png",
    "source": "모자 줍기 8~9점 · 축구 4점",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/e8ec122f0c652dea.jpg"
+   "thumb": "data/ai-brief/thumbs/e8ec122f0c652dea.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -167,7 +168,8 @@
    "image": "https://ludusengine.com/ludus-og-card.png",
    "source": "C++는 강하고 BP는 설계 지시 필요",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/e61e07eb57742fca.jpg"
+   "thumb": "data/ai-brief/thumbs/e61e07eb57742fca.jpg",
+   "thumb_src": "site"
   }
  ],
  "watching": [

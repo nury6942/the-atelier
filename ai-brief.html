@@ -267,13 +267,16 @@
   function host(u){ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return ''; } }
   // 사진이 없거나 깨지면 빈 칸 대신 '어디 글인지'(출처 도메인)를 보여준다
   // 사진은 사이트에 보관한 미리보기(thumb)가 먼저, 그게 없거나 깨지면 원본 주소(image) (누리 2026-11-05)
-  // 같은 파일 이름으로 다시 받은 사진(README 로 교체 등)이 옛 캐시로 보이지 않게 출처를 꼬리표로
-  function pic(x){ return x ? (x.thumb ? x.thumb + (x.thumb_src ? '?' + x.thumb_src : '') : (x.image || '')) : ''; }
+  // 사진은 원문에 실물이 있을 때만 (누리 11/05: "원문에 이미지가 없으면 넣을 필요 없어")
+  // 보관본(thumb) 먼저, 없으면 원문 주소. 깃허브 저장소 글자 카드(opengraph)는 사진으로 치지 않음
+  function real(u){ return u && !/opengraph\.githubassets\.com/.test(u) ? u : ''; }
+  function pic(x){ return x ? (x.thumb ? x.thumb + (x.thumb_src ? '?' + x.thumb_src : '') : real(x.image)) : ''; }
+  // 사진이 없으면 칸 자체를 안 만든다. 깨지면 원문 주소로 한 번 더, 그래도 안 되면 칸째 지움
   function media(src, label, extra, url, alt){
-    var h = url ? host(url) : '';
-    if (src && alt === src) alt = '';
-    return '<div class="img"><div class="ph"><span>'+(label?'<small>'+esc(label)+'</small>':'')+esc(h)+'</span></div>'
-      + (src ? '<img src="'+esc(src)+'" alt="" loading="lazy"'+(alt?' data-alt="'+esc(alt)+'"':'')+' onload="var r=this.naturalWidth/this.naturalHeight,b=this.parentNode.clientWidth/Math.max(1,this.parentNode.clientHeight);if(/[?]og$/.test(this.src)&&r>b*1.35)this.classList.add(\'fit\')" onerror="if(this.dataset.alt){var a=this.dataset.alt;this.removeAttribute(\'data-alt\');this.src=a}else this.remove()">' : '') + (extra||'') + '</div>';
+    if (!src) return '';
+    alt = real(alt); if (alt === src) alt = '';
+    return '<div class="img">'
+      + '<img src="'+esc(src)+'" alt="" loading="lazy"'+(alt?' data-alt="'+esc(alt)+'"':'')+' onerror="if(this.dataset.alt){var a=this.dataset.alt;this.removeAttribute(\'data-alt\');this.src=a}else{var d=this.parentNode,w=d.parentNode;d.remove();if(w&&w.tagName===\'A\'&&!w.children.length)w.remove()}">' + (extra||'') + '</div>';
   }
   function chips(a){ return (a&&a.length) ? '<div class="chips">'+a.map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('')+'</div>' : ''; }
 
@@ -287,7 +290,7 @@
         var good = r.tone !== 'bad';
         return '<a class="'+(good?'good':'bad')+'" href="'+esc(r.url||it.url)+'" target="_blank" rel="noopener"><i>'+(good?'▲':'▼')+'</i><span>'+esc(r.say)+(r.who?'<em>'+esc(r.who)+'</em>':'')+'</span></a>'; }).join('')+'</div>' : '';
     return '<div class="card '+(cls||'')+'">'
-      + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+media(pic(it), CATL[it.cat], null, it.url, it.image)+'</a>'
+      + (pic(it) ? '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+media(pic(it), CATL[it.cat], null, it.url, it.image)+'</a>' : '')
       + '<div class="body"><span class="tag">'+esc(CATL[it.cat]||'')+'</span>'
       + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener"><h3>'+esc(it.title)+'</h3></a>'
       + rel + nw + (it.how?'<div class="how">'+esc(it.how)+'</div>':'') + ex + rv

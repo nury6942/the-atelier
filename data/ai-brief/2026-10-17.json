@@ -18,20 +18,21 @@
     {
      "title": "4K 16:9 한 장, 75초에 약 50원",
      "url": "https://dev.to/shouvik12/spotted-on-devtv-flux-3-image-klein-just-landed-and-it-renders-text-like-a-sign-painter",
-     "image": null,
-     "thumb": "data/ai-brief/thumbs/f3633d03175c1a83.jpg"
+     "image": null
     },
     {
      "title": "DGX Spark에서 1K 30초·2K 35초",
      "url": "https://x.com/ivanfioravanti/status/2110771660022264137",
      "image": "https://pbs.twimg.com/media/HUr3lTtXMAAUjnC.jpg",
-     "thumb": "data/ai-brief/thumbs/5f83927390f11dde.jpg"
+     "thumb": "data/ai-brief/thumbs/5f83927390f11dde.jpg",
+     "thumb_src": "site"
     },
     {
      "title": "트렌치코트·데님 재킷 화보 프롬프트",
      "url": "https://bfl.ai/models/flux-3-image-klein",
      "image": "https://cdn.sanity.io/images/2gpum2i6/production/52e291e6a08d7bac5e539f651d0688e9b87909a9-1200x630.jpg",
-     "thumb": "data/ai-brief/thumbs/4dbf863e1b492d5c.jpg"
+     "thumb": "data/ai-brief/thumbs/4dbf863e1b492d5c.jpg",
+     "thumb_src": "site"
     }
    ],
    "new": [
@@ -71,7 +72,8 @@
     "5.6B 공개 가중치"
    ],
    "forMe": "저지 팬츠 프린트 참조 여러 장을 넣어 같은 톤 4K 시안 뽑기 (매출 500만 달러 이하 회사만 상업 무료라 회사 작업은 확인 필요)",
-   "thumb": "data/ai-brief/thumbs/4dde7a06e11b627e.jpg"
+   "thumb": "data/ai-brief/thumbs/4dde7a06e11b627e.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -89,13 +91,15 @@
      "title": "맥 스튜디오 4대 묶어 초당 36토큰",
      "url": "https://machinelearning.apple.com/research/mlx-distributed-inference",
      "image": "https://mlr.cdn-apple.com/media/MLX_icon_F001_TC_2048_2600_6439f2ba0f.png",
-     "thumb": "data/ai-brief/thumbs/98e6a11f87f3c75f.jpg"
+     "thumb": "data/ai-brief/thumbs/98e6a11f87f3c75f.jpg",
+     "thumb_src": "site"
     },
     {
      "title": "맥 스튜디오 2대로 초당 약 20토큰",
      "url": "https://wccftech.com/metas-muse-spark-open-model-delivers-a-throughput-of-20-tokens-sec-on-2x-apple-m5-ultra-mac-studios/",
      "image": "https://cdn.wccftech.com/wp-content/uploads/2025/12/Apple-Mac-Cluster-1-1920x1269.jpg",
-     "thumb": "data/ai-brief/thumbs/1045801f193fa363.jpg"
+     "thumb": "data/ai-brief/thumbs/1045801f193fa363.jpg",
+     "thumb_src": "site"
     }
    ],
    "new": [
@@ -134,7 +138,8 @@
     "816B · 활성 42B",
     "4대 초당 36토큰"
    ],
-   "thumb": "data/ai-brief/thumbs/9d251ac6836a600d.jpg"
+   "thumb": "data/ai-brief/thumbs/9d251ac6836a600d.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "vibe",
@@ -147,7 +152,8 @@
     "Claude Code + Gemini",
     "레이어 4종"
    ],
-   "thumb": "data/ai-brief/thumbs/82506691061f5f0d.jpg"
+   "thumb": "data/ai-brief/thumbs/82506691061f5f0d.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -160,7 +166,8 @@
     "켜는 데 5.47초",
     "스팀 10.07초 대비 1.8배"
    ],
-   "thumb": "data/ai-brief/thumbs/58b19e4fc0913b88.jpg"
+   "thumb": "data/ai-brief/thumbs/58b19e4fc0913b88.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "money",
@@ -173,7 +180,8 @@
     "월 $13K · 약 1,780만 원",
     "6개월"
    ],
-   "thumb": "data/ai-brief/thumbs/342db69675f58831.jpg"
+   "thumb": "data/ai-brief/thumbs/342db69675f58831.jpg",
+   "thumb_src": "site"
   }
  ],
  "tryToday": [
@@ -250,7 +258,8 @@
    "image": "https://feed.muzli.cloud/muzli_feed/wp-content/uploads/2026/09/28215049/2426fe40-2777-4e68-8722-9ab5bfc5faed.png",
    "source": "Muzli · 브리프·프롬프트 공개",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/9294dc0848e0c9ab.jpg"
+   "thumb": "data/ai-brief/thumbs/9294dc0848e0c9ab.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -259,7 +268,8 @@
    "image": "https://www.dsebastien.net/assets/images/cover_image_default.png",
    "source": "Opus 5.5 모션 영상 실험",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/10e2f7934b51932f.jpg"
+   "thumb": "data/ai-brief/thumbs/10e2f7934b51932f.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -268,7 +278,8 @@
    "image": "https://techcrunch.com/wp-content/uploads/2026/10/55591989690_9a07db512f_k.jpg?resize=1200,800",
    "source": "TechCrunch · Attie 확장",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/35f04bc99ba5e049.jpg"
+   "thumb": "data/ai-brief/thumbs/35f04bc99ba5e049.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -277,7 +288,8 @@
    "image": "https://claude.com/resources/articles/code-review-is-now-generally-available/opengraph-image/og",
    "source": "Team·Enterprise · 리뷰 6~10분",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/b09ae946e685c3f0.jpg"
+   "thumb": "data/ai-brief/thumbs/b09ae946e685c3f0.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -285,8 +297,7 @@
    "url": "https://kompozy.io/reviews/suno-speech",
    "image": null,
    "source": "Suno Speech 베타 · 리뷰 3.7/5",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/5c5b3a3c46871ece.jpg"
+   "watching": false
   },
   {
    "cat": "release",
@@ -295,7 +306,8 @@
    "image": "https://eu-images.contentstack.com/v3/assets/blt6b0f74e5591baa03/blt346538649d456dca/6ac5c4921ba7957b35dbc2d4/GettyImages-1148091793.jpg?disable=upscale&width=1200&height=630&fit=crop",
    "source": "501B 공개 모델 · 이달 가중치",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/3a95c7adf2f70b3b.jpg"
+   "thumb": "data/ai-brief/thumbs/3a95c7adf2f70b3b.jpg",
+   "thumb_src": "site"
   }
  ],
  "watching": [

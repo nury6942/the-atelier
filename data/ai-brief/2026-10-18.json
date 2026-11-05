@@ -21,7 +21,8 @@
     "WordCraft 별 5,100+",
     "엑셀 함수 513/523개"
    ],
-   "thumb": "data/ai-brief/thumbs/30dbb24afd9def2a.jpg"
+   "thumb": "data/ai-brief/thumbs/30dbb24afd9def2a.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -39,19 +40,22 @@
      "title": "브라우저 게임 25개 만들기 신구 비교",
      "url": "https://note.com/masa_wunder/n/n0770dbbe6720?hl=en",
      "image": "https://assets.st-note.com/production/uploads/images/325443986/rectangle_large_type_2_3d2c62c7fc984a39c00ec5a82fb4b57b.png?fit=bounds&quality=85&width=1280",
-     "thumb": "data/ai-brief/thumbs/e684a55b614123a4.jpg"
+     "thumb": "data/ai-brief/thumbs/e684a55b614123a4.jpg",
+     "thumb_src": "site"
     },
     {
      "title": "공식 데모: 레이싱 게임·포탈 2 재현",
      "url": "https://api-docs.deepseek.com/news/news261017/",
      "image": "https://api-docs.deepseek.com/img/deepseek-social-card.jpeg",
-     "thumb": "data/ai-brief/thumbs/d84eb2137f14b1cf.jpg"
+     "thumb": "data/ai-brief/thumbs/d84eb2137f14b1cf.jpg",
+     "thumb_src": "site"
     },
     {
      "title": "사용법·첫 테스트 정리",
      "url": "https://medium.com/data-science-in-your-pocket/deepseek-v4-1-flash-1017-is-here-5bb734eaeb18",
      "image": "https://miro.medium.com/v2/da:true/resize:fit:1200/0*ZOk6tOY4Ib1sOyo0",
-     "thumb": "data/ai-brief/thumbs/75e3e68cbd13ff3e.jpg"
+     "thumb": "data/ai-brief/thumbs/75e3e68cbd13ff3e.jpg",
+     "thumb_src": "site"
     }
    ],
    "new": [
@@ -95,7 +99,8 @@
     "가중치 공개"
    ],
    "forMe": "Atelier 같은 작은 도구를 시킬 때 비용 걱정 없이 여러 번 다시 뽑아보기(앱은 무료)",
-   "thumb": "data/ai-brief/thumbs/e684a55b614123a4.jpg"
+   "thumb": "data/ai-brief/thumbs/e684a55b614123a4.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -108,7 +113,8 @@
     "30분 미만",
     "현상금 걸린 문제"
    ],
-   "thumb": "data/ai-brief/thumbs/eac388a852e87188.jpg"
+   "thumb": "data/ai-brief/thumbs/eac388a852e87188.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "money",
@@ -121,7 +127,8 @@
     "누적 매출 $6K+ · 약 840만 원",
     "팔로워 약 3만"
    ],
-   "thumb": "data/ai-brief/thumbs/ab33721889b6129c.jpg"
+   "thumb": "data/ai-brief/thumbs/ab33721889b6129c.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -135,7 +142,8 @@
     "PH 409표"
    ],
    "forMe": "레퍼런스 사이트 보다가 ⌘E로 Atelier 수정 요청 바로 넘기기",
-   "thumb": "data/ai-brief/thumbs/f4b83b9387f5988e.jpg"
+   "thumb": "data/ai-brief/thumbs/f4b83b9387f5988e.jpg",
+   "thumb_src": "site"
   }
  ],
  "tryToday": [
@@ -192,7 +200,8 @@
    "image": "https://cdn.sanity.io/images/sp40emik/production/771cfe201a3d24d7a340c3372e6a1654ec1a6e42-1800x1013.png",
    "source": "Reflection · 501B 코딩 모델 10-16",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/7ded5c03aba57f68.jpg"
+   "thumb": "data/ai-brief/thumbs/7ded5c03aba57f68.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "vibe",
@@ -201,7 +210,8 @@
    "image": "https://static0.xdaimages.com/wordpress/wp-content/uploads/wm/2026/10/artcraft-app-icons-like-photocraft-pdfcraft-and-gridcraft-on-an-ipad-beside-a-keyboard.jpeg?w=1600&h=900&fit=crop",
    "source": "XDA · 실사용 후기",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/b8bdb71dd1bd4c08.jpg"
+   "thumb": "data/ai-brief/thumbs/b8bdb71dd1bd4c08.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -210,7 +220,8 @@
    "image": "https://www.talkphotography.co.uk/styles/default/xenforo/logo_custom.og.png",
    "source": "TalkPhotography · 행사 사진가",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/b03344758153e131.jpg"
+   "thumb": "data/ai-brief/thumbs/b03344758153e131.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",
@@ -219,7 +230,8 @@
    "image": "https://www.implicator.ai/content/images/2026/09/20260910-084052-voicestudio_local_voice.webp",
    "source": "VoiceStudio · 646개 언어",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/17b73b33e947c454.jpg"
+   "thumb": "data/ai-brief/thumbs/17b73b33e947c454.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",
@@ -227,9 +239,7 @@
    "url": "https://github.com/anthropics/claude-plugins-official",
    "image": "https://opengraph.githubassets.com/1/anthropics/claude-plugins-official",
    "source": "GitHub 트렌딩",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/3de13b42e404c830.jpg",
-   "thumb_src": "og"
+   "watching": false
   },
   {
    "cat": "free",
@@ -238,7 +248,8 @@
    "image": "https://cdn.sanity.io/images/599r6htc/regionalized/a7879b106e8145df3a396d42dd4c6a8655476012-1440x720.png?w=1200&q=70&fit=max&auto=format",
    "source": "Figma 리소스",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/3320271b92730863.jpg"
+   "thumb": "data/ai-brief/thumbs/3320271b92730863.jpg",
+   "thumb_src": "site"
   }
  ],
  "watching": [

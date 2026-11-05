@@ -55,7 +55,8 @@
      "title": "720p 영상에서 건진 프레임 시연",
      "url": "https://x.com/VibeEverything/status/2116431161887203760",
      "image": "https://pbs.twimg.com/amplify_video_thumb/2116424834041405440/img/NWFspPkFFjmh9lpc.jpg",
-     "thumb": "data/ai-brief/thumbs/3c54845d79c752d1.jpg"
+     "thumb": "data/ai-brief/thumbs/3c54845d79c752d1.jpg",
+     "thumb_src": "site"
     }
    ],
    "chips": [
@@ -63,7 +64,8 @@
     "영상 프레임이 피부·빛 더 실사 같다는 인용글"
    ],
    "forMe": "옷이 움직일 때 생기는 주름·핏을 보고 싶을 때, 이미지 한 장을 여러 번 뽑기보다 짧은 영상에서 마음에 드는 순간을 고르는 쪽이 싸고 자연스럽다는 얘기예요.",
-   "thumb": "data/ai-brief/thumbs/3c54845d79c752d1.jpg"
+   "thumb": "data/ai-brief/thumbs/3c54845d79c752d1.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "hack",
@@ -76,8 +78,7 @@
     "데스크톱·안드로이드 둘 다",
     "추가 비용 0"
    ],
-   "forMe": "Atelier를 브라우저 탭이 아니라 독에 있는 앱으로 바로 띄울 수 있어요. 오늘 해볼 것 원픽으로 올려 뒀습니다.",
-   "thumb": "data/ai-brief/thumbs/1180352798dd5a35.jpg"
+   "forMe": "Atelier를 브라우저 탭이 아니라 독에 있는 앱으로 바로 띄울 수 있어요. 오늘 해볼 것 원픽으로 올려 뒀습니다."
   },
   {
    "cat": "tool",
@@ -90,8 +91,7 @@
     "읽기 구간만 82~94% 절감",
     "전체가 90% 준 건 아님",
     "요약이 놓친 버그 사례도"
-   ],
-   "thumb": "data/ai-brief/thumbs/625ffdb211e6522a.jpg"
+   ]
   }
  ],
  "tryToday": [
@@ -148,7 +148,8 @@
    "image": "https://api.alphasignal.ai/api/news/preview/replit-s-cloud-agents-let-non-engineers-ship-250-000-lines-to-production/v2/card.jpg",
    "source": "AlphaSignal · 10-27 · 디자인팀 6개월 25만 줄",
    "watching": true,
-   "thumb": "data/ai-brief/thumbs/687ad322a9632236.jpg"
+   "thumb": "data/ai-brief/thumbs/687ad322a9632236.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "release",
@@ -156,8 +157,7 @@
    "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-october-30-2026/",
    "image": null,
    "source": "The Neuron · 10-30 · 여러 소리 한 번에",
-   "watching": true,
-   "thumb": "data/ai-brief/thumbs/ef8beecd64167814.jpg"
+   "watching": true
   },
   {
    "cat": "tool",
@@ -165,8 +165,7 @@
    "url": "https://letsdatascience.com/news/moonshot-releases-kimi-k31-pro-api-open-weights-due-nov-4-786e160c",
    "image": null,
    "source": "Let's Data Science · 공개 약속일, 아직 미공개",
-   "watching": false,
-   "thumb": "data/ai-brief/thumbs/ccb216fa7cc0c98f.jpg"
+   "watching": false
   },
   {
    "cat": "tool",
@@ -175,7 +174,8 @@
    "image": "https://www.vals.ai/og/models/mistralai_mistral-large-4.png",
    "source": "Vals AI · 44개 중 32위 · 48.05%",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/ddd6de80b7c0e534.jpg"
+   "thumb": "data/ai-brief/thumbs/ddd6de80b7c0e534.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",
@@ -188,7 +188,8 @@
     "url": "https://www.threads.com/@jk_shin81/post/DfJwAlmGOo7"
    },
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/7204ed0f5d9bfa3f.jpg"
+   "thumb": "data/ai-brief/thumbs/7204ed0f5d9bfa3f.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -197,7 +198,8 @@
    "image": "https://byteiota.com/wp-content/uploads/2026/09/featured-image-96.jpg",
    "source": "byteiota · 350줄 넘는 파일만 넘김",
    "watching": false,
-   "thumb": "data/ai-brief/thumbs/e3420b01ffada912.jpg"
+   "thumb": "data/ai-brief/thumbs/e3420b01ffada912.jpg",
+   "thumb_src": "site"
   }
  ],
  "watching": [
