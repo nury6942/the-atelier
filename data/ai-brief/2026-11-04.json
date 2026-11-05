@@ -199,7 +199,7 @@
    "cat": "tool",
    "title": "사진 한 장을 3D로, Idol",
    "url": "https://github.com/speridlabs/idol-sdk",
-   "image": "https://opengraph.githubassets.com/1/speridlabs/idol-sdk",
+   "image": null,
    "source": "GitHub · Apache-2.0 · 별 720",
    "watching": false,
    "thumb": "data/ai-brief/thumbs/c84a62934d54f15c.jpg"
