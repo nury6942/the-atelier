@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-05T07:38",
+ "generatedAt": "2026-11-05T19:38",
  "sites": [
   "KE",
   "OZ",
@@ -8,35 +8,156 @@
  ],
  "items": [
   {
-   "key": "promo|KE|호주 출발 항공권 특별 할인 혜택",
+   "key": "promo|KE|미주의 겨울을 LINK 하세요",
    "code": "KE",
    "airline": "대한항공",
-   "title": "호주 출발 항공권 특별 할인 혜택",
-   "sub": "더 편안한 디지털 여정을 위한 고객 평가단 모집",
-   "start": "2026-11-02",
-   "end": "2026-11-15",
+   "title": "미주의 겨울을 LINK 하세요",
+   "sub": "삼성카드 미주 일반석 8% 할인",
+   "start": "2026-11-01",
+   "end": "2026-11-30",
    "regions": [
-    "호주"
+    "캐나다",
+    "미국"
    ],
    "all": false,
-   "pct": null,
-   "link": "https://www.koreanair.com/contents/promotion/list/2026/2611sydq4?pageNum=1",
-   "firstSeen": "2026-11-02",
+   "pct": 8,
+   "link": "https://www.koreanair.com/contents/promotion/list/2026/2611sslink?pageNum=1",
+   "firstSeen": "2026-11-05",
    "detail": {
-    "buy": null,
-    "travel": [],
-    "exclude": [],
-    "discounts": [],
+    "buy": {
+     "from": "2026-11-01",
+     "to": "2026-11-30"
+    },
+    "travel": [
+     {
+      "from": "2026-12-01",
+      "to": "2027-03-27"
+     }
+    ],
+    "exclude": [
+     {
+      "from": "2027-01-01",
+      "to": "2027-01-10"
+     }
+    ],
+    "discounts": [
+     {
+      "region": "미국",
+      "cities": [
+       "뉴욕",
+       "로스앤젤레스",
+       "샌프란시스코",
+       "시애틀",
+       "호놀룰루"
+      ],
+      "pct": 8,
+      "amount": null,
+      "cabin": "일반석 스탠다드·세이버"
+     },
+     {
+      "region": "캐나다",
+      "cities": [
+       "밴쿠버"
+      ],
+      "pct": 8,
+      "amount": null,
+      "cabin": "일반석 스탠다드·세이버"
+     }
+    ],
     "on": "운임",
-    "how": "할인 운임 자동 적용 (쿠폰·코드 없음)",
+    "how": "삼성카드 LINK에서 쿠폰 번호 발급 후 결제 단계 '쿠폰/할인권'에 코드 입력",
     "code": null,
     "conditions": [
-     "호주(시드니·브리즈번·멜버른) 출발 여정만 적용, 한국 출발 해당 없음"
+     "삼성카드 신용카드 결제",
+     "홈페이지/앱 로그인",
+     "스탠다드·세이버만",
+     "공동운항·다구간·보너스 제외"
     ],
     "fares": [],
-    "url": "https://www.koreanair.com/contents/promotion/list/2026/2611sydq4?pageNum=1"
+    "url": "https://www.koreanair.com/contents/promotion/list/2026/2611sslink?pageNum=1"
    },
-   "plan": []
+   "plan": [
+    {
+     "slug": "honolulu",
+     "pct": 8,
+     "region": "미국",
+     "google": 1135700,
+     "out": "2026-12-01",
+     "back": "2026-12-10"
+    },
+    {
+     "slug": "los-angeles",
+     "pct": 8,
+     "region": "미국",
+     "google": 1516100,
+     "out": "2026-12-01",
+     "back": "2026-12-10"
+    },
+    {
+     "slug": "vancouver",
+     "pct": 8,
+     "region": "캐나다",
+     "google": 1872400,
+     "out": "2026-12-01",
+     "back": "2026-12-10"
+    }
+   ],
+   "est": [
+    {
+     "slug": "honolulu",
+     "city": "호놀룰루",
+     "cc": "us",
+     "region": "미국",
+     "out": "2026-12-01",
+     "back": "2026-12-10",
+     "price": 1241800,
+     "src": "sky",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/hnl/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
+     "pct": 8,
+     "onFare": true,
+     "fuel": 509800,
+     "tax": 93000,
+     "fare": 639000,
+     "discount": 51100,
+     "final": 1190700
+    },
+    {
+     "slug": "los-angeles",
+     "city": "로스앤젤레스",
+     "cc": "us",
+     "region": "미국",
+     "out": "2026-12-01",
+     "back": "2026-12-10",
+     "price": 1762100,
+     "src": "sky",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
+     "pct": 8,
+     "onFare": true,
+     "fuel": 740200,
+     "tax": 93000,
+     "fare": 928900,
+     "discount": 74300,
+     "final": 1687800
+    },
+    {
+     "slug": "vancouver",
+     "city": "밴쿠버",
+     "cc": "ca",
+     "region": "캐나다",
+     "out": "2026-12-01",
+     "back": "2026-12-10",
+     "price": 1795300,
+     "src": "sky",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/yvr/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
+     "pct": 8,
+     "onFare": true,
+     "fuel": 740200,
+     "tax": 98000,
+     "fare": 957100,
+     "discount": 76600,
+     "final": 1718700
+    }
+   ]
   },
   {
    "key": "promo|TW|11월 맞이 더블 혜택",
@@ -84,7 +205,7 @@
       "cities": [],
       "pct": 72,
       "amount": null,
-      "cabin": "이코노미·와이드 프리미엄"
+      "cabin": "특가 운임"
      },
      {
       "region": "전 노선",
@@ -99,13 +220,13 @@
     "code": "BLKFRIGO",
     "conditions": [
      "에어프레미아 회원 로그인",
-     "발행 쿠폰과 중복 불가",
+     "에어프레미아 쿠폰과 중복 불가",
      "일부 일자·운임 적용 제한",
-     "조기 소진 가능"
+     "코드 조기 소진 가능"
     ],
     "fares": [
      {
-      "city": "뉴욕(뉴어크)",
+      "city": "뉴욕",
       "iata": "EWR",
       "price": 1287800
      },
@@ -142,10 +263,10 @@
      "back": "2026-12-03"
     },
     {
-     "slug": "los-angeles",
+     "slug": "san-francisco",
      "pct": 72,
      "region": "전 노선",
-     "google": 1142000,
+     "google": 1168976,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -170,22 +291,22 @@
      "final": 692600
     },
     {
-     "slug": "los-angeles",
-     "city": "로스앤젤레스",
+     "slug": "san-francisco",
+     "city": "샌프란시스코",
      "cc": "us",
      "region": "전 노선",
-     "out": "2026-11-24",
-     "back": "2026-12-03",
-     "price": 1219900,
-     "src": "sky",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
+     "out": null,
+     "back": null,
+     "price": 1168976,
+     "src": "google",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 72,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 386700,
-     "discount": 278400,
-     "final": 941500
+     "fare": 335776,
+     "discount": 241800,
+     "final": 927176
     }
    ]
   },
@@ -219,13 +340,13 @@
      }
     ],
     "on": "운임",
-    "how": "항공권 검색 후 화면 하단 프로모션 코드 버튼에서 코드 입력",
+    "how": "신규 회원 가입 후 항공권 검색 화면 하단 프로모션 코드 버튼에서 코드 입력",
     "code": "WELCOMEV",
     "conditions": [
      "에어프레미아 신규 회원 가입",
      "가입일로부터 14일 이내 사용",
      "에어프레미아 쿠폰과 중복 불가",
-     "일부 일자·운임 적용 제외"
+     "일부 일자·운임은 코드 사용 불가"
     ],
     "fares": [],
     "url": "https://www.airpremia.com/event/promotionDetail?detailId=370"
@@ -240,10 +361,10 @@
      "back": "2026-12-03"
     },
     {
-     "slug": "los-angeles",
+     "slug": "san-francisco",
      "pct": 5,
      "region": "전 노선",
-     "google": 1142000,
+     "google": 1168976,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -268,22 +389,22 @@
      "final": 907600
     },
     {
-     "slug": "los-angeles",
-     "city": "로스앤젤레스",
+     "slug": "san-francisco",
+     "city": "샌프란시스코",
      "cc": "us",
      "region": "전 노선",
-     "out": "2026-11-24",
-     "back": "2026-12-03",
-     "price": 1219900,
-     "src": "sky",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
+     "out": null,
+     "back": null,
+     "price": 1168976,
+     "src": "google",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 5,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 386700,
-     "discount": 19300,
-     "final": 1200600
+     "fare": 335776,
+     "discount": 16800,
+     "final": 1152176
     }
    ]
   }
