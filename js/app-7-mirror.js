@@ -1013,8 +1013,7 @@ function ldgRenderBoard() {
   if (!m.L.length) {
     // 아직 오지 않은 달: 작년 같은 달과 올해 할 일·예산을 미리 보여 준다
     el.innerHTML = '<div style="font-size:11px;color:#1d5fd1;background:#eef5fb;padding:6px 10px;margin-bottom:8px">' + mk + '은 아직 오지 않았어요 · 작년 같은 달을 보고 미리 짠 계획이에요</div>' +
-      _boardSplit(ym, null) + (function() { try { return _boardPlanCard(_ldgYear); } catch (e) { console.error('[Board plan]', e); return ''; } })() + _boardCats(ym, null, true) +
-      '<div class="lb-c">' + _boardPlaybook(ym, m, true) + '</div>';
+      _boardSplit(ym, null) + (function() { try { return _boardPlanCard(_ldgYear); } catch (e) { console.error('[Board plan]', e); return ''; } })() + _boardCats(ym, null, true);
     try { _bFixTags(el); } catch (e) {}
     return;
   }
@@ -1072,55 +1071,6 @@ function ldgRenderBoard() {
   try { h += _boardPlanCard(_ldgYear); } catch (e) { console.error('[Board plan]', e); }
   try { h += _boardCats(ym, m, false); } catch (e) { console.error('[Board cats]', e); }
 
-  // ── 큰 결제 · 어디에 썼나
-  // 큰 결제마다: 무슨 칸인지 + 그래서 어떤 돈인지(괜찮은 돈 / 확인할 돈)
-  var bigNote = function(t) {
-    var M = t['대분류'], S = t['소분류'], tfx = _boardTripFor(ym);
-    if (M === '여행') {
-      if (/^국내/.test(S || '')) return ['ok', '국내 여행' + (/ · /.test(t['세부사항'] || '') ? ' · ' + _bEsc(t['세부사항'].split(' · ').slice(1).join(' · ')) : '')];
-      var inTrip = tfx && t.date > tfx.from && t.date <= tfx.trip.end;
-      return ['ok', '여행 통장에서 · ' + (inTrip ? _bEsc(tfx.trip.title) + ' 예산 안' : '해외 여행 예산')];
-    }
-    if (_bFixed(t)) return ['ok', '매달 나가는 고정비'];
-    if (_bAnnual(t)) return ['ok', '연간 적립에서'];
-    if (M === '품위유지비') return ['warn', '10만↑ 옷 · 7일 기다렸나? 옷 한도 ' + _bMan(_bPlan(ym).caps['옷·뷰티'] || 250000) + '만'];
-    if (M === '생필품비') return ['warn', '계획한 물건? 물건 한도 ' + _bMan(_bPlan(ym).caps['물건'] || 200000) + '만'];
-    if (M === '관계비' || M === '경조사비') return ['ok', '사람에 쓴 돈 · 사람 한도 ' + _bMan(_bPlan(ym).caps['사람'] || 100000) + '만'];
-    if (M === '여가비') return ['warn', '취미 한도 10만 넘는 한 번'];
-    if (M === '미분류') return ['bad', '정체 확인 필요'];
-    return ['ok', ''];
-  };
-  var catName = function(t) { return MIRROR_BUCKETS[_bBucket(t)][0] + (t['소분류'] && !/^기타/.test(t['소분류']) ? '·' + t['소분류'] : ''); };
-  var list = _boardShowAllBig ? m.bigs : m.bigs.slice(0, 6);
-  var bigRows = list.map(function(t) {
-    var col = MIRROR_BUCKETS[_bBucket(t)][2], n = bigNote(t), zap = (m.binge[t.date] || 0) >= 3;
-    var nc = n[0] === 'ok' ? BK.sub : BK.red;
-    return '<div style="display:grid;grid-template-columns:40px minmax(0,1fr) 48px;gap:8px;align-items:center;font-size:12px;padding:7px 0;border-top:1px solid #eef1f5">' +
-      '<span style="color:' + BK.sub + '">' + t.date.slice(5).replace('-', '/') + (zap ? '⚡' : '') + '</span>' +
-      '<div style="min-width:0"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:' + BK.ink + '"><span style="font-size:10.5px;font-weight:600;color:' + BK.dataText + ';background:' + BK.track + ';padding:1px 6px;margin-right:6px">' + _bEsc(catName(t)) + '</span>' + _bEsc((t['세부사항'] || '').replace(/\(주\)|㈜|주식회사/g, '').trim()) + '</div>' +
-      (n[1] ? '<div style="font-size:11px;color:' + nc + ';margin-top:1px">' + (n[0] === 'ok' ? '✓ ' : '→ ') + n[1] + '</div>' : '') + '</div>' +
-      '<b class="lb-n" style="text-align:right">' + _bMan(t['금액']) + '만</b></div>';
-  }).join('');
-  var bySum = {};
-  m.bigs.forEach(function(t) { var k = MIRROR_BUCKETS[_bBucket(t)][0]; bySum[k] = (bySum[k] || 0) + t['금액']; });
-  var bigChips = Object.keys(bySum).sort(function(x, y) { return bySum[y] - bySum[x]; }).map(function(k) {
-    var bk = MIRROR_BUCKETS.filter(function(x) { return x[0] === k; })[0];
-    return '<span style="font-size:11px;color:' + BK.ink + ';white-space:nowrap">' + k + ' <b class="lb-n">' + _bMan(bySum[k]) + '</b></span>';
-  }).join('');
-  var maxB = Math.max.apply(null, m.buckets.concat(b ? b.bucketAvg : []).concat([1]));
-  var cats = MIRROR_BUCKETS.map(function(bk, i) {
-    var v = m.buckets[i], a = b ? b.bucketAvg[i] : 0, d = v - a;
-    return '<div style="display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;align-items:center;font-size:12px;margin:7px 0"><span style="color:' + BK.ink + ';font-weight:600">' + bk[0] + '</span>' +
-      '<div>' + _bLine(v / maxB * 100, 10, bk[2], '<b class="lb-n" style="color:' + BK.ink + '">' + _bMan(v) + '만</b>' + (a ? ' <b style="color:' + (d > a * 0.15 ? BK.red : BK.green) + '">' + (d > 0 ? '+' : '−') + _bMan(Math.abs(d)) + '</b> <span>· 평소 ' + _bMan(a) + '</span>' : ''),
-        a ? '<div title="평소 ' + _bMan(a) + '만" style="position:absolute;top:0;bottom:0;left:' + (a / maxB * 100 * B_SCALE) + '%;width:2px;background:' + BK.ink + ';z-index:1"></div>' : '', null, a ? a / maxB * 100 + 0.6 : null) + '</div></div>';
-  }).join('');
-  var todoHtml = ''; try { todoHtml = _boardPlaybook(ym, m, true); } catch (e) { console.error('[Board todo]', e); }
-  h += '<div class="lb-grid">' + '<div class="lb-c lb-6">' + todoHtml + '</div>' +
-    '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' 10만 원 넘게 쓴 것 · ' + m.bigs.length + '건 = 지출의 ' + Math.round(m.bigShare * 100) + '%</span><span>⚡ 하루 3건↑ 몰아친 날</span></p>' +
-      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px">' + bigChips + '</div>' +
-      (bigRows || '<div style="font-size:12px;color:' + BK.sub + '">없음</div>') +
-      (m.bigs.length > 6 ? '<button class="lb-more" onclick="_boardShowAllBig=!_boardShowAllBig;ldgRenderBoard()">' + (_boardShowAllBig ? '접기' : '+ ' + (m.bigs.length - 6) + '건 더보기') + '</button>' : '') + '</div>' +
-    '</div>';
 
   // ── 내 습관 (나라는 사람 + 어디서 새나) — 매달 바뀌지 않아서 접어 둠
   var habitOpen = false;
