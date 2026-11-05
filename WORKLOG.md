@@ -4,7 +4,7 @@
 - trends.html 통째 교체: 주차 칩 · 분야 탭(스크롤 따라감) · 7장 가로 넘기기 · 누르면 크게(←→·스와이프) · 출처 접기. 데이터 data/card-news/index.json + <주>/meta.json + <분야>/NN.jpg
 - 만드는 곳: ~/tools/instagram-card-news(github junghwaYang/instagram-card-news) · weekly/run.sh 가 claude -p 4개 동시(sonnet) → publish.js(PNG→JPG·헤드라인·출처) → data/card-news 만 커밋·푸시
 - 아이맥 launchd com.nuri.card-news-weekly 매주 월 07:00, 로그 ~/Library/Logs/card-news-weekly.log, iCloud 카드뉴스/<날짜>/ 에도 사본
-- 옛 함수 trendCollect(15분)·trendFeed 는 아직 배포돼 있음 — 화면에선 안 씀
+- 옛 함수 trendCollect·trendFeed 는 코드에서 뺌(functions/index.js 해당 칸, trends-collect.js 삭제). Firebase 에서 지우기는 누리가 직접 명령 실행
 - 다음 할 일: 첫 자동 실행(11/9 월) 결과 확인 · 휴대폰 폭 화면 확인
 
 ## 2026-11-05 · 맥북 · 전월·전년 비교는 늘 한 달 전체
