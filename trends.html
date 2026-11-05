@@ -20,28 +20,24 @@
     word-break:keep-all;overflow-wrap:break-word}
   a{color:inherit}
   button{font:inherit;cursor:pointer;color:inherit}
-  .wrap{max-width:1320px;margin:0 auto;padding:36px 24px 96px}
+  /* 머리 = AI Brief 와 같은 틀(ai-brief.html .mast·.seg·.days·.sech) — 세 페이지(AI Brief·Trends·Job Hunt) 제목 크기·선·위치 통일 */
+  .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 96px}
+  .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px}
+  .mast h1{margin:0;font-size:2.6rem;font-weight:800;font-style:italic;letter-spacing:-.035em;line-height:.9;text-transform:uppercase}
+  .seg{display:flex;border:1px solid var(--ink)}
+  .seg a{text-decoration:none;padding:8px 16px;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ink)}
+  .seg a+a{border-left:1px solid var(--ink)}
+  .seg a.on{background:var(--ink);color:var(--paper)}
+  .days{display:flex;gap:6px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+  .days::-webkit-scrollbar{display:none}
+  .days button{flex:none;border:1px solid var(--line);background:var(--paper);padding:6px 10px;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--mut)}
+  .days button:hover{border-color:var(--ink);color:var(--ink)}
+  .days button.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}
 
-  .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
-  .mast h1{margin:0;font-size:2.4rem;font-weight:800;letter-spacing:-.035em;line-height:.95}
-  .mast .sub{font-size:13px;color:var(--mut);margin-top:8px;font-variant-numeric:tabular-nums}
-  .weeks{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:100%}
-  .weeks::-webkit-scrollbar{display:none}
-  .weeks button{flex:none}
-  .weeks button{border:1px solid var(--line2);background:var(--paper);padding:7px 12px;font-size:13px;font-weight:600;color:var(--mut);font-variant-numeric:tabular-nums}
-  .weeks button:hover{border-color:var(--accent);color:var(--accent)}
-  .weeks button.on{border-color:var(--ink);background:var(--ink);color:#fff}
-
-  .jump{display:flex;gap:4px;margin-top:4px;position:sticky;top:0;background:var(--paper);z-index:5;border-bottom:1px solid var(--line)}
-  .jump a{text-decoration:none;padding:12px 14px;font-size:14px;font-weight:700;color:var(--mut);border-bottom:2px solid transparent;margin-bottom:-1px}
-  .jump a:hover{color:var(--ink)}
-  .jump a.on{color:var(--accent);border-bottom-color:var(--accent)}
-
-  section.deck{padding:34px 0 8px;scroll-margin-top:52px}
-  .deck-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
-  .deck-head .tag{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--accent)}
-  .deck-head h2{margin:0;font-size:1.45rem;font-weight:800;letter-spacing:-.025em}
-  .deck-head .n{margin-left:auto;font-size:12.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+  section.deck{scroll-margin-top:12px}
+  .sech{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--ink);padding-bottom:10px;margin:56px 0 20px}
+  .sech h2{margin:0;font-size:1.35rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:-.015em}
+  .sech .cap{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
 
   .strip{display:grid;grid-auto-flow:column;grid-auto-columns:var(--card);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin}
   .strip button{all:unset;cursor:zoom-in;scroll-snap-align:start;display:block;position:relative}
@@ -100,13 +96,13 @@
   .lb .cnt{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 
   @media (max-width:860px){
-    .wrap{padding:24px 16px 72px}
+    .wrap{padding:22px 14px 72px}
     .mast h1{font-size:2rem}
+    .seg{width:100%}
+    .seg a{flex:1;text-align:center;padding:8px 0}
+    .sech .cap{display:none}
     :root{--card:72vw}
-    .strip{margin:0 -16px;padding:0 16px 12px;scroll-padding:0 16px}
-    .jump{overflow-x:auto;scrollbar-width:none;margin:4px -16px 0;padding:0 8px}
-    .jump::-webkit-scrollbar{display:none}
-    .jump a{flex:none}
+    .strip{margin:0 -14px;padding:0 14px 12px;scroll-padding:0 14px}
     .lb .nav{display:none}
   }
 </style>
@@ -114,13 +110,10 @@
 <body>
 <div class="wrap">
   <header class="mast">
-    <div>
-      <h1>Trends</h1>
-      <div class="sub" id="sub">주간 카드뉴스</div>
-    </div>
-    <div class="weeks" id="weeks"></div>
+    <h1>Trends</h1>
+    <nav class="seg" id="jump"></nav>
   </header>
-  <nav class="jump" id="jump"></nav>
+  <div class="days" id="weeks"></div>
   <div id="decks"><div class="state" id="state">불러오는 중…</div></div>
 </div>
 
@@ -142,8 +135,9 @@
   function fmt(w){ var d = new Date(w + 'T00:00:00'); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; }
   function chip(w){
     var d = new Date(w + 'T00:00:00'), t = new Date(); t.setHours(0,0,0,0);
-    var diff = Math.round((t - d) / 864e5), dow = '일월화수목금토'.charAt(d.getDay());
-    return diff === 0 ? '오늘' : diff === 1 ? '어제' : (d.getMonth() + 1) + '/' + d.getDate() + ' ' + dow;
+    var dow = '일월화수목금토'.charAt(d.getDay());
+    var p2 = function(n){ return (n < 10 ? '0' : '') + n; };
+    return p2(d.getMonth() + 1) + '.' + p2(d.getDate()) + ' ' + dow; // AI Brief 날짜 칩과 같은 꼴
   }
 
   function paintWeeks(){
@@ -196,7 +190,6 @@
     fetch(BASE + week + '/meta.json' + bust).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function(m){
         if (cur !== week) return;
-        $('sub').textContent = fmt(week) + ' · ' + m.topics.length + '개 분야 · 카드 ' + m.topics.reduce(function(a, t){ return a + t.slides.length; }, 0) + '장 · 이야기 ' + m.topics.reduce(function(a, t){ return a + (t.stories || []).length; }, 0) + '개';
         $('jump').innerHTML = m.topics.map(function(t, i){ return '<a href="#d-' + esc(t.id) + '" class="' + (i ? '' : 'on') + '">' + esc(t.name) + '</a>'; }).join('');
         $('decks').innerHTML = m.topics.map(function(t){
           var imgs = seq(t).map(function(it, j){
@@ -206,8 +199,8 @@
           }).join('');
           var src = t.sources && t.sources.length ? '<details class="src"><summary>출처 ' + t.sources.length + '곳</summary><ul>' +
             t.sources.map(function(s){ return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.host) + '</a></li>'; }).join('') + '</ul></details>' : '';
-          return '<section class="deck" id="d-' + esc(t.id) + '"><div class="deck-head"><span class="tag">' + esc(t.name) + '</span><h2>' + esc(t.title) + '</h2>' +
-            '<span class="n">' + t.slides.length + '장 →</span></div><div class="strip">' + imgs + '</div>' + src + '</section>';
+          return '<section class="deck" id="d-' + esc(t.id) + '"><div class="sech"><h2>' + esc(t.title) + '</h2>' +
+            '<span class="cap">' + esc(t.name) + ' · ' + t.slides.length + '장 →</span></div><div class="strip">' + imgs + '</div>' + src + '</section>';
         }).join('');
         window._cn = m;
         spy(); fit();
