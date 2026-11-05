@@ -1,298 +1,724 @@
 {
  "week": "2026-11-05",
- "made": "2026-11-05T04:28:40.194Z",
+ "made": "2026-11-05T04:42:05.338Z",
  "topics": [
   {
    "id": "travel",
    "name": "여행",
-   "title": "11월, 여행 전 꼭 바뀐 것 4가지",
+   "title": "표 값은 오르고 출입국 규칙이 바뀐 한 주",
    "slides": [
     {
      "img": "travel/01.jpg",
-     "headline": "11월, 여행 전 꼭 바뀐 것 4가지",
+     "headline": "표 값은 오르고 출입국 규칙이 바뀐 한 주",
      "type": "cover"
     },
     {
      "img": "travel/02.jpg",
-     "headline": "유럽 입국 때 지문부터 찍는다",
-     "type": "content-stat"
-    },
-    {
-     "img": "travel/03.jpg",
-     "headline": "EES는 시행, ETIAS는 아직",
-     "type": "content-split"
-    },
-    {
-     "img": "travel/04.jpg",
-     "headline": "11월 유럽행 유류할증료",
+     "headline": "유럽행 유류할증료, 편도",
      "type": "content-bigdata"
     },
     {
-     "img": "travel/05.jpg",
-     "headline": "일본 출국세, 1,000엔에서 3배로",
-     "type": "content-stat"
-    },
-    {
-     "img": "travel/06.jpg",
-     "headline": "출발 전 체크 5",
+     "img": "travel/03.jpg",
+     "headline": "할증료 단계, 5월 이후 흐름",
      "type": "content-list"
     },
     {
+     "img": "travel/04.jpg",
+     "headline": "미국행은 에볼라 서약서 제출",
+     "type": "content-stat"
+    },
+    {
+     "img": "travel/05.jpg",
+     "headline": "대한항공·아시아나, 이렇게 하나로",
+     "type": "content-steps"
+    },
+    {
+     "img": "travel/06.jpg",
+     "headline": "일본 면세, 먼저 내고 돌려받기",
+     "type": "content-split"
+    },
+    {
      "img": "travel/07.jpg",
-     "headline": "저장해두고 출발 전에 다시 보기",
+     "headline": "유럽 입국 심사, 대기 최대 5시간",
+     "type": "content-stat"
+    },
+    {
+     "img": "travel/08.jpg",
+     "headline": "ETIAS, 시작 날짜는 아직 비어 있음",
+     "type": "content-highlight"
+    },
+    {
+     "img": "travel/09.jpg",
+     "headline": "원·달러 환율",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "travel/10.jpg",
+     "headline": "이번 주 한 줄 정리: 표 값은 올랐고 입국 절차는 길어졌다",
      "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "11월 유류할증료 27단계로 석 달 연속 상승",
+     "date": "2026-10-16 발표 · 11월 발권분",
+     "summary": "대한항공이 10월 16일 11월분 국제선 유류할증료를 27단계로 정했습니다. 10월 23단계보다 4단계 높고 9월부터 석 달 연속 올랐습니다. 편도 기준 55,600원에서 408,100원까지이고, 런던·파리·프랑크푸르트 같은 유럽 구간은 370,100원입니다. 9월 16일~10월 15일 싱가포르 항공유 평균이 배럴당 173.89달러로 직전 기간보다 9.7% 올랐기 때문입니다. 할증료는 탑승일이 아니라 발권일 기준이라 11월 안에 산 표에 적용됩니다.",
+     "why": "유럽행 왕복은 할증료만 약 74만원이라, 항공권을 사는 달에 따라 총액이 크게 달라집니다.",
+     "sources": [
+      {
+       "name": "헤럴드경제",
+       "url": "https://biz.heraldcorp.com/article/10904788"
+      },
+      {
+       "name": "투어비스",
+       "url": "https://help.tourvis.com/hc/ko/articles/63425531013273"
+      },
+      {
+       "name": "뉴스1",
+       "url": "https://www.news1.kr/finance/market-exr/6343771"
+      }
+     ]
+    },
+    {
+     "title": "미국행 탑승객 에볼라 서약서 의무화",
+     "date": "2026-11-04 ~ 12-19",
+     "summary": "대한항공은 11월 4일 출발편부터 미국행 모든 승객에게 에볼라 관련 서약서를 받습니다. 미국 질병통제예방센터의 행정명령에 따른 조치이고 괌·하와이도 포함됩니다. 최근 21일 안에 콩고민주공화국에 있었거나 제출을 거부하면 탑승할 수 없습니다. 미국 시민권자와 영주권자, 미국을 거쳐 다른 나라로 가는 환승객도 내야 합니다. 시행은 한국시간 12월 19일까지이며 미국 보건 당국 지침에 따라 바뀔 수 있습니다.",
+     "why": "서류 한 장이지만 한 명당 한 장이라 가족 여행이면 출발 전에 미리 준비해야 합니다.",
+     "sources": [
+      {
+       "name": "뉴스핌",
+       "url": "https://www.newspim.com/news/view/20261103000137"
+      },
+      {
+       "name": "여행신문",
+       "url": "https://www.traveltimes.co.kr/news/articleView.html?idxno=500658"
+      },
+      {
+       "name": "에어프레미아 공지",
+       "url": "https://www.airpremia.com/a/en/customer/notice/809"
+      }
+     ]
+    },
+    {
+     "title": "대한항공·아시아나 통합, 예약 이관 시작",
+     "date": "2026-11-02 ~ 12-17",
+     "summary": "두 항공사는 11월 2일 아시아나 예약정보를 대한항공으로 옮기는 첫 이관을 했습니다. 국제선은 11월 4일부터 12월 3일까지 17차례로 나눠 옮기고, 끝나면 OZ 편명이 KE로 바뀝니다. 통합 대한항공은 12월 17일 출범하며, 변경·환불은 12월 16일까지 아시아나나 예매처, 17일부터 대한항공이나 예매처에서 합니다. 아시아나 마일리지는 9월 15일 공정거래위원회 승인에 따라 10년간 따로 유지됩니다. 국제선은 연결편이 많아 예약 조회와 부가서비스 승계가 제대로 되는지가 남은 과제입니다.",
+     "why": "아시아나 표를 이미 샀다면 12월 17일 전후로 편명과 문의처가 바뀌니 예약 알림을 확인해야 합니다.",
+     "sources": [
+      {
+       "name": "아시아투데이",
+       "url": "https://asiatoday.co.kr/kn/view.php?key=20261102010000659"
+      },
+      {
+       "name": "뉴스웨이",
+       "url": "https://www.newsway.co.kr/news/view?ud=2026091515051381129"
+      }
+     ]
+    },
+    {
+     "title": "일본 즉시면세 폐지, 먼저 내고 공항에서 환급",
+     "date": "2026-11-01 시행",
+     "summary": "일본은 11월 1일 구매분부터 외국인 관광객의 소비세 면세를 사후 환급 방식으로 바꿨습니다. 이제 매장에서 소비세 10%를 포함한 가격을 내고, 출국할 때 공항 세관에서 물건이 일본 밖으로 나가는지 확인받아야 돌려받습니다. 세전 10만엔짜리 옷이면 11만엔을 먼저 내고 1만엔을 환급받습니다. 같은 매장 하루 5,000엔 이상이라는 기준은 그대로이고, 소모품 1인 50만엔 한도와 밀봉 포장 의무는 없어졌습니다. 면세품이 든 짐을 먼저 부치면 환급이 거절될 수 있습니다.",
+     "why": "일본에서 쇼핑한다면 짐을 부치기 전에 공항 단말기 확인부터 하도록 공항 도착 시간을 넉넉히 잡아야 합니다.",
+     "sources": [
+      {
+       "name": "위키트리",
+       "url": "https://www.wikitree.co.kr/articles/1169952"
+      },
+      {
+       "name": "SoraNews24",
+       "url": "https://soranews24.com/2026/11/03/japan-ends-tax-free-shopping-system-for-foreign-tourists-new-refund-request-system-now-in-effect"
+      }
+     ]
+    },
+    {
+     "title": "EES 입국 대기, 공항·항공사가 개선 요구",
+     "date": "2026-10-12",
+     "summary": "유럽공항협의회와 유럽항공사협회가 10월 12일 유럽 입국 생체 등록 제도(EES)에 대한 6개 요구안을 냈습니다. EES는 4월 10일 전면 시행됐는데, 두 단체는 국경 대기가 일상적으로 2시간을 넘고 혼잡할 때는 최대 5시간이라고 주장합니다. 중복 확인 제거, 앱 사전 등록 개선, 대기가 길 때 생체 등록을 잠시 멈추는 제도의 상설화 등이 들어 있습니다. 유럽연합은 독일 등 최소 9개국에 등록 일시 중단 재량을 준 상태입니다. 유럽연합 집행위원회의 답은 아직 확인되지 않았습니다.",
+     "why": "유럽 환승이나 입국 일정은 심사 대기 시간을 길게 잡아야 하고, 독일 이주를 준비한다면 같은 입국 절차를 겪게 됩니다.",
+     "sources": [
+      {
+       "name": "Biometric Update",
+       "url": "https://www.biometricupdate.com/202610/airlines-airports-demand-overhaul-of-eu-biometric-border-checks"
+      },
+      {
+       "name": "International Airport Review",
+       "url": "https://www.internationalairportreview.com/aci-europe-and-a4e-call-for-urgent-ees-changes-as-border-queues-reach-five-hours/2136737.article"
+      }
+     ]
+    },
+    {
+     "title": "ETIAS 시작 날짜, 아직 확정되지 않음",
+     "date": "2026-08 ~ 10",
+     "summary": "유럽 사전 여행허가제(ETIAS)는 공식 사이트에 2026년 4분기 시작이라고 적혀 있지만 확정 날짜는 없습니다. 지금은 신청을 받지 않고, 시작 몇 달 전에 날짜를 알리겠다는 입장입니다. 파이낸셜타임스는 EES 시행이 순탄하지 않아 2027년으로 미루는 논의가 있다고 보도했습니다. 시스템을 만드는 eu-LISA 이사회는 6월 17일 논의했으나 공식 결정은 없었다고 밝혔습니다. 10월 14일에도 영국 여행협회가 시작이 늦춰진 것으로 보인다고 말했습니다.",
+     "why": "당장은 한국 여권으로 사전 신청 없이 갈 수 있지만, 시작 몇 달 전 공지가 나올 때까지 날짜를 믿고 계획하기는 어렵습니다.",
+     "sources": [
+      {
+       "name": "Passport Index",
+       "url": "https://discover.passportindex.org/policy-and-regulations/etias-launch-could-be-delayed-until-2027/"
+      },
+      {
+       "name": "The Independent(Yahoo)",
+       "url": "https://travel.yahoo.com/news/articles/eu-delay-20-pre-authorisation-155623470.html"
+      },
+      {
+       "name": "Biometric Update",
+       "url": "https://www.biometricupdate.com/202610/airlines-airports-demand-overhaul-of-eu-biometric-border-checks"
+      }
+     ]
+    },
+    {
+     "title": "원·달러 환율 1,340원 안팎, 유가 급락",
+     "date": "2026-11-05",
+     "summary": "11월 5일 하나은행 매매기준율은 1달러 1,338.80원으로 전날보다 3.70원 내렸습니다. 서울외환시장에서도 오전 9시 17분 1,340.7원으로 전일 주간 종가보다 0.8원 낮았습니다. 미국 중간선거에서 민주당이 이길 것이라는 기대에 달러와 미국 국채금리가 내렸고, 중동전쟁 종전 기대로 서부텍사스산원유 가격은 8% 넘게 떨어졌습니다. 다만 데이터센터 규제 우려로 원화 강세는 크지 않았고 같은 날 코스피는 크게 내렸습니다.",
+     "why": "환율과 유가가 함께 움직이는 시기라, 환전과 항공권 구매 시점을 한 번에 정하기보다 나눠서 정하는 편이 안전합니다.",
+     "sources": [
+      {
+       "name": "잡포스트",
+       "url": "https://www.job-post.co.kr/news/articleView.html?idxno=236647"
+      },
+      {
+       "name": "뉴스1",
+       "url": "https://www.news1.kr/finance/market-exr/6343771"
+      }
+     ]
     }
    ],
    "sources": [
     {
-     "url": "https://www.mofa.go.kr/tn-ko/brd/m_21401/view.do?seq=1321147",
-     "host": "mofa.go.kr"
-    },
-    {
-     "url": "https://view.asiae.co.kr/article/2025092908342533027",
-     "host": "view.asiae.co.kr"
-    },
-    {
-     "url": "https://www.heraldk.com/article/2025101202261225269",
-     "host": "heraldk.com"
-    },
-    {
-     "url": "https://www.ivisa.com/news/2026-07-20-eu-etias-launch-date-removed-website-delay",
-     "host": "ivisa.com"
-    },
-    {
-     "url": "https://thepointsguy.com/news/eu-etias-delayed/",
-     "host": "thepointsguy.com"
-    },
-    {
-     "url": "https://visasnews.com/en/etias-launch-could-be-pushed-back-to-2027/",
-     "host": "visasnews.com"
+     "url": "https://biz.heraldcorp.com/article/10904788",
+     "host": "biz.heraldcorp.com"
     },
     {
      "url": "https://help.tourvis.com/hc/ko/articles/63425531013273",
      "host": "help.tourvis.com"
     },
     {
-     "url": "https://www.newspim.com/news/view/20261016001290",
+     "url": "https://www.news1.kr/finance/market-exr/6343771",
+     "host": "news1.kr"
+    },
+    {
+     "url": "https://www.newspim.com/news/view/20261103000137",
      "host": "newspim.com"
     },
     {
-     "url": "https://www.econovill.com/news/articleView.html?idxno=753976",
-     "host": "econovill.com"
+     "url": "https://www.traveltimes.co.kr/news/articleView.html?idxno=500658",
+     "host": "traveltimes.co.kr"
     },
     {
-     "url": "https://www.hankyung.com/article/202607019297g",
-     "host": "hankyung.com"
+     "url": "https://www.airpremia.com/a/en/customer/notice/809",
+     "host": "airpremia.com"
     },
     {
-     "url": "https://www.travelvoice.jp/english/the-japanese-ruling-parties-specify-a-rise-in-departure-tax-to-3-000-yen-in-the-tax-reform-outline-for-fy2026",
-     "host": "travelvoice.jp"
+     "url": "https://asiatoday.co.kr/kn/view.php?key=20261102010000659",
+     "host": "asiatoday.co.kr"
     },
     {
-     "url": "https://view.asiae.co.kr/article/2026051714403181549",
-     "host": "view.asiae.co.kr"
+     "url": "https://www.newsway.co.kr/news/view?ud=2026091515051381129",
+     "host": "newsway.co.kr"
+    },
+    {
+     "url": "https://www.wikitree.co.kr/articles/1169952",
+     "host": "wikitree.co.kr"
+    },
+    {
+     "url": "https://soranews24.com/2026/11/03/japan-ends-tax-free-shopping-system-for-foreign-tourists-new-refund-request-system-now-in-effect",
+     "host": "soranews24.com"
+    },
+    {
+     "url": "https://www.biometricupdate.com/202610/airlines-airports-demand-overhaul-of-eu-biometric-border-checks",
+     "host": "biometricupdate.com"
+    },
+    {
+     "url": "https://www.internationalairportreview.com/aci-europe-and-a4e-call-for-urgent-ees-changes-as-border-queues-reach-five-hours/2136737.article",
+     "host": "internationalairportreview.com"
+    },
+    {
+     "url": "https://discover.passportindex.org/policy-and-regulations/etias-launch-could-be-delayed-until-2027/",
+     "host": "discover.passportindex.org"
+    },
+    {
+     "url": "https://travel.yahoo.com/news/articles/eu-delay-20-pre-authorisation-155623470.html",
+     "host": "travel.yahoo.com"
+    },
+    {
+     "url": "https://www.job-post.co.kr/news/articleView.html?idxno=236647",
+     "host": "job-post.co.kr"
     }
    ]
   },
   {
    "id": "fashion",
    "name": "패션",
-   "title": "스포츠웨어만 웃었다",
+   "title": "실적은 갈렸고 수장은 흔들렸다",
    "slides": [
     {
      "img": "fashion/01.jpg",
-     "headline": "스포츠웨어만 웃었다",
+     "headline": "실적은 갈렸고 수장은 흔들렸다",
      "type": "cover"
     },
     {
      "img": "fashion/02.jpg",
      "headline": "adidas 3분기 영업이익",
-     "type": "content-stat"
+     "type": "content-bigdata"
     },
     {
      "img": "fashion/03.jpg",
-     "headline": "같은 스포츠, 다른 성적표",
-     "type": "content-split"
+     "headline": "이익을 만든 건 의류, 신발은 제자리",
+     "type": "content-highlight"
     },
     {
      "img": "fashion/04.jpg",
-     "headline": "럭셔리 온도차",
-     "type": "content-list"
+     "headline": "Puma 매출 하락, 최대주주는 Anta",
+     "type": "content-highlight"
     },
     {
      "img": "fashion/05.jpg",
-     "headline": "SS27 런웨이 4컷",
+     "headline": "디자인 수장 연달아 퇴임, 후임은 미정",
      "type": "content-list"
     },
     {
      "img": "fashion/06.jpg",
-     "headline": "무신사 상반기 매출",
+     "headline": "LVMH 패션·가죽 3분기 매출",
      "type": "content-bigdata"
     },
     {
      "img": "fashion/07.jpg",
-     "headline": "저장해두고 다시 보기",
+     "headline": "나이키 출신이 경쟁사로 옮겼다",
+     "type": "content-highlight"
+    },
+    {
+     "img": "fashion/08.jpg",
+     "headline": "10월 협업, 패션과 스포츠가 섞인다",
+     "type": "content-list"
+    },
+    {
+     "img": "fashion/09.jpg",
+     "headline": "삼성물산 패션 3분기 매출",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "fashion/10.jpg",
+     "headline": "이번 주 한 줄 정리 의류는 팔리고 수장은 바뀐다",
      "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "adidas, 분기 영업이익 사상 최대",
+     "date": "2026-10-29",
+     "summary": "adidas가 3분기 영업이익 1,008백만 유로(전년 대비 37% 증가)를 냈습니다. 분기 기준으로 가장 큰 금액이고, 매출도 7,252백만 유로로 9% 늘었습니다. 의류 매출이 환율 효과를 뺀 기준으로 19% 늘었고 신발은 제자리였습니다. 이익에는 미국 관세 환급이 들어 있고, 회사는 올해 영업이익 전망을 약 23억 유로에서 약 25억 유로로 올렸습니다. CEO 굴덴은 라이프스타일 신발은 재고와 할인 때문에 어렵다고 말했습니다.",
+     "why": "지금 시장에서 팔리는 것은 신발보다 의류라서, 스포츠웨어 디자이너의 일감과 평가 기준이 의류 쪽으로 움직이고 있습니다.",
+     "sources": [
+      {
+       "name": "adidas Group",
+       "url": "https://www.adidas-group.com/en/media/press-releases/adidas-achieves-record-results-in-the-third-quarter-of-2026-and-increases-full-year-profit-outlook"
+      },
+      {
+       "name": "FashionUnited",
+       "url": "https://fashionunited.uk/news/business/adidas-q3-tariff-refund-and-full-price-sales-drive-growth/2026102190947"
+      },
+      {
+       "name": "SGI Europe",
+       "url": "https://www.sgieurope.com/financial-results/adidas-lifts-profit-outlook-after-record-quarter/123712.article"
+      }
+     ]
+    },
+    {
+     "title": "Puma, 매출 5% 감소 속 최대주주 교체",
+     "date": "2026-10-07 ~ 2026-10-30",
+     "summary": "Puma의 3분기 매출은 17.76억 유로로 전년보다 5.1% 줄었고, 영업손실 11.4백만 유로를 냈습니다. 유럽과 북미가 줄고 아시아태평양과 온라인은 늘었습니다. 올해 영업손실 전망은 80~130백만 유로로 좁혀졌습니다. 10월 7일에는 중국 Anta가 Artémis의 지분 29.06%를 15억 유로 넘게 주고 사 최대주주가 됐고, 회사 인수 계획은 없다고 밝혔습니다. 나이키 출신 Arne Arens가 11월 15일 최고상업책임자로 합류합니다.",
+     "why": "adidas와 Puma의 격차가 한 분기에 숫자로 드러났고, Puma는 주주와 영업 책임자를 함께 바꾸며 방향을 다시 잡는 중입니다.",
+     "sources": [
+      {
+       "name": "FashionUnited",
+       "url": "https://fashionunited.com/news/business/puma-continues-to-lose-revenue-and-records-losses/2026103075483"
+      },
+      {
+       "name": "RTTNews",
+       "url": "https://www.rttnews.com/3706167/puma-q3-net-loss-narrows-despite-drop-in-net-sales.aspx"
+      },
+      {
+       "name": "FashionUnited (Anta)",
+       "url": "https://fashionunited.com/news/business/anta-sports-completes-puma-acquisition-and-becomes-largest-shareholder/2026100775077"
+      }
+     ]
+    },
+    {
+     "title": "디자인 수장 3명 연달아 퇴임, 후임은 아직",
+     "date": "2026-10-09 ~ 2026-10-16",
+     "summary": "생로랑의 Anthony Vaccarello가 10년 만에 떠난다고 Kering이 10월 9일 확인했습니다. 10월 15일에는 맥퀸의 Seán McGirr가 3년 만에, 캘빈클라인 컬렉션의 Veronica Leoni가 퇴임을 알렸습니다. 세 곳 모두 후임은 10월 말 기준 발표되지 않았습니다. 라코스테도 10월 초 CEO를 해임하고 전임 Thierry Guibert를 다시 불렀습니다. Kering은 맥퀸을 두고 새로운 방향을 만들겠다고 했습니다.",
+     "why": "브랜드가 판매 부진을 디자이너 교체로 풀고 있어서, 다음 시즌 룩이 어디로 바뀔지는 후임 발표를 봐야 알 수 있습니다.",
+     "sources": [
+      {
+       "name": "FashionUnited (AFP)",
+       "url": "https://fashionunited.uk/news/business/kering-boss-de-meo-wields-axe-at-mcqueen-in-fashion-shake-up/2026101690907"
+      },
+      {
+       "name": "Dazed",
+       "url": "https://www.dazeddigital.com/fashion/article/71269/1/the-biggest-fashion-collaborations-of-october-streetwear-adidas-converse-vaquera"
+      },
+      {
+       "name": "TheIndustry.fashion",
+       "url": "https://www.theindustry.fashion/people-moves-october-2026-saint-laurent-lacoste-mango-and-more/"
+      }
+     ]
+    },
+    {
+     "title": "LVMH·Kering, 패션 부문 3분기 뒷걸음",
+     "date": "2026-10-12 ~ 2026-10-22",
+     "summary": "LVMH의 패션·가죽 부문 3분기 매출은 환율과 인수 효과를 뺀 기준으로 5% 줄었습니다. 중국 수요가 약했고 미국은 강했습니다. Kering의 3분기 매출은 3,345백만 유로로 같은 기준 1% 줄었고, Gucci는 1,291백만 유로로 6% 줄었습니다. Gucci를 뺀 소매 매출은 2% 늘었고 생로랑과 보테가 베네타가 이끌었습니다. Kering CEO는 Gucci 회복을 가장 먼저 풀 일이라고 했습니다.",
+     "why": "고가 시장이 줄면 브랜드는 더 안전한 디자인과 더 싼 라인을 찾게 되고, 그 흐름이 컨템포러리와 스포츠 브랜드로 번질 수 있습니다.",
+     "sources": [
+      {
+       "name": "FashionUnited (LVMH)",
+       "url": "https://fashionunited.com/news/business/lvmh-q3-organic-revenue-growth-slows-amid-china-downturn/2026101375147"
+      },
+      {
+       "name": "FashionUnited (Kering)",
+       "url": "https://fashionunited.uk/news/business/kering-q3-revenue-remains-stable-as-jewelry-and-eyewear-offset-gucci-contraction/2026102391016"
+      },
+      {
+       "name": "FashionUnited (AFP)",
+       "url": "https://fashionunited.uk/news/business/kering-boss-de-meo-wields-axe-at-mcqueen-in-fashion-shake-up/2026101690907"
+      }
+     ]
+    },
+    {
+     "title": "나이키 출신이 Lululemon·Puma 상품·영업을 맡는다",
+     "date": "2026-10-07 ~ 2026-11-15",
+     "summary": "Lululemon은 Athleta 대표였던 Maggie Gauger를 사장 겸 최고제품책임자로 10월 26일 앉혔습니다. 그는 나이키에서 20년 넘게 일했고, 디자인·머천다이징·신발·소재를 맡습니다. 같은 날 Joseph Godsey가 최고운영책임자가 됐습니다. Puma는 나이키 출신 Arne Arens를 최고상업책임자로 11월 15일 맞이합니다. 두 회사 모두 실적이 부진한 가운데 경영진을 바꾸고 있습니다.",
+     "why": "경쟁 브랜드의 상품 기획 방식이 나이키식으로 옮겨 가는 중이라, 앞으로 이 브랜드들의 제품 구성과 협업 방향이 달라질 수 있습니다.",
+     "sources": [
+      {
+       "name": "FashionUnited",
+       "url": "https://fashionunited.com/news/people/lululemon-realigns-leadership-to-strengthen-competitive-position/2026100875089"
+      },
+      {
+       "name": "TheIndustry.fashion",
+       "url": "https://www.theindustry.fashion/people-moves-october-2026-saint-laurent-lacoste-mango-and-more/"
+      },
+      {
+       "name": "FashionUnited (Puma)",
+       "url": "https://fashionunited.com/news/business/puma-continues-to-lose-revenue-and-records-losses/2026103075483"
+      }
+     ]
+    },
+    {
+     "title": "10월 협업: Acne×Chalayan, Lululemon×Ganni",
+     "date": "2026-10-14 ~ 2026-10-30",
+     "summary": "Acne Studios가 Hussein Chalayan과 12피스 캡슐을 10월 14일 냈습니다. 2000년대 초 Chalayan의 아카이브 디자인을 패치워크 데님과 비대칭 재단으로 다시 만들었습니다. Lululemon은 Ganni와 22피스를 10월 15일 내놨고, 80년대 댄스 영화에서 영감을 얻어 레오퍼드와 러플을 기능성 소재에 입혔습니다. adidas Originals는 JENNAX와 라텍스 Firebird 트랙수트를 한정판으로 만들었습니다.",
+     "why": "패션 브랜드와 스포츠 브랜드가 서로의 디자인 언어를 빌리는 협업이 계속되고 있어서, 트랙수트와 데님이 같은 자리에서 다뤄집니다.",
+     "sources": [
+      {
+       "name": "Dazed",
+       "url": "https://www.dazeddigital.com/fashion/article/71269/1/the-biggest-fashion-collaborations-of-october-streetwear-adidas-converse-vaquera"
+      },
+      {
+       "name": "Hypebeast",
+       "url": "https://hypebeast.com/2026/10/acne-studios-and-hussein-chalayan-reimagine-archival-designs-in-new-collaboration"
+      },
+      {
+       "name": "Retail Gazette",
+       "url": "https://www.retailgazette.co.uk/blog/2026/10/lululemon-teams-up-with-ganni-for-dance-inspired-collection/"
+      }
+     ]
+    },
+    {
+     "title": "삼성물산 패션·한섬, 3분기 이익 늘었다",
+     "date": "2026-10-28 ~ 2026-11-03",
+     "summary": "삼성물산 패션부문의 3분기 매출은 4,980억원으로 11.9% 늘었고 영업이익은 200억원으로 66.7% 늘었습니다. 한섬은 매출 3,248억원(4.9% 증가), 영업이익 75억7,400만원(206.1% 증가)이었습니다. 간절기 의류와 수입 브랜드가 실적을 끌었습니다. 삼성물산은 올해 패션 매출 목표를 약 2조 2,000억원으로 잡았고, 한섬은 내년 2월 일본에 첫 매장을 엽니다. 신세계인터내셔날은 패션 부문 안에 애슬레저 담당 조직을 새로 만들었습니다.",
+     "why": "국내 대형 회사들이 수입 브랜드와 해외 진출으로 실적을 내고 있어서, 자체 브랜드의 상품 기획이 해외 기준을 요구받는 쪽으로 가고 있습니다.",
+     "sources": [
+      {
+       "name": "MTN 머니투데이방송",
+       "url": "https://news.mtn.co.kr/article/2026110314330881355"
+      },
+      {
+       "name": "이데일리",
+       "url": "https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=05090566645617512"
+      },
+      {
+       "name": "이투데이",
+       "url": "https://www.etoday.co.kr/news/view/2643103"
+      }
+     ]
     }
    ],
    "sources": [
     {
-     "url": "https://www.finanzwire.com/press-release/eqs-adhoc-adidas-reports-record-results-and-increases-full-year-profit-outlook-HHzGe8wPa2F",
-     "host": "finanzwire.com"
+     "url": "https://www.adidas-group.com/en/media/press-releases/adidas-achieves-record-results-in-the-third-quarter-of-2026-and-increases-full-year-profit-outlook",
+     "host": "adidas-group.com"
     },
     {
-     "url": "https://www.modaes.com/global/companies/adidas-grows-9-and-posts-a-47-increase-in-profits-in-the-third-quarter-despite-a-setback-in-europe",
-     "host": "modaes.com"
+     "url": "https://fashionunited.uk/news/business/adidas-q3-tariff-refund-and-full-price-sales-drive-growth/2026102190947",
+     "host": "fashionunited.uk"
     },
     {
-     "url": "https://fashionunited.com/news/business/adidas-raises-full-year-profit-outlook-to-2-5-billion-euros-after-record-q3/2026102975440",
+     "url": "https://www.sgieurope.com/financial-results/adidas-lifts-profit-outlook-after-record-quarter/123712.article",
+     "host": "sgieurope.com"
+    },
+    {
+     "url": "https://fashionunited.com/news/business/puma-continues-to-lose-revenue-and-records-losses/2026103075483",
      "host": "fashionunited.com"
-    },
-    {
-     "url": "https://investinglive.com/stocks/nike-beats-q1-profit-estimates-but-sees-fiscal-2027-revenue-falling-high-single-digits/",
-     "host": "investinglive.com"
-    },
-    {
-     "url": "https://www.nst.com.my/amp/business/corporate/2026/07/1477393/nike-flags-prolonged-turnaround-as-china-slump-weak-outlook-eclipse",
-     "host": "nst.com.my"
-    },
-    {
-     "url": "https://www.webdisclosure.com/press-release/puma-q3-2026-sales-performance-improves-sequentially-fy-2026-outlook-updated-WCPHRp2DISY",
-     "host": "webdisclosure.com"
     },
     {
      "url": "https://www.rttnews.com/3706167/puma-q3-net-loss-narrows-despite-drop-in-net-sales.aspx",
      "host": "rttnews.com"
     },
     {
-     "url": "https://worthbury.com/magazine/briefing/hermes-louis-vuitton-interbrand-2026-brand-value/",
-     "host": "worthbury.com"
+     "url": "https://fashionunited.com/news/business/anta-sports-completes-puma-acquisition-and-becomes-largest-shareholder/2026100775077",
+     "host": "fashionunited.com"
     },
     {
-     "url": "https://retailtimes.co.uk/the-luxury-category-experiences-significant-shifts-in-value-across-interbrands-best-global-brands-2026/",
-     "host": "retailtimes.co.uk"
-    },
-    {
-     "url": "https://fashionunited.uk/news/business/hermes-grows-nike-plummets-interbrand-ranking-reveals-fashion-industry-winners-and-losers/2026110291133",
+     "url": "https://fashionunited.uk/news/business/kering-boss-de-meo-wields-axe-at-mcqueen-in-fashion-shake-up/2026101690907",
      "host": "fashionunited.uk"
     },
     {
-     "url": "https://www.luxurytribune.com/le-groupe-prada-en-croissance-de-11-au-3e-trimestre-2026-mais-miu-miu-ralentit",
-     "host": "luxurytribune.com"
+     "url": "https://www.dazeddigital.com/fashion/article/71269/1/the-biggest-fashion-collaborations-of-october-streetwear-adidas-converse-vaquera",
+     "host": "dazeddigital.com"
     },
     {
-     "url": "https://www.nssmag.com/en/article/47397",
-     "host": "nssmag.com"
+     "url": "https://www.theindustry.fashion/people-moves-october-2026-saint-laurent-lacoste-mango-and-more/",
+     "host": "theindustry.fashion"
     },
     {
-     "url": "https://www.borsaitaliana.it/borsa/notizie/teleborsa/finanza/prada-ricavi-9-mesi-salgono-a-454-miliardi-di-euro-rallenta-miu-miu-109_2026-10-22_TLB.html?lang=it",
-     "host": "borsaitaliana.it"
+     "url": "https://fashionunited.uk/news/people/lacoste-ousts-its-ceo-eric-vallat-thierry-guibert-takes-back-the-helm/2026100790758",
+     "host": "fashionunited.uk"
     },
     {
-     "url": "https://www.omanobserver.om/article/1196722/features/fashion/pradas-skirts-take-centre-stage-as-milan-fashion-week-begins",
-     "host": "omanobserver.om"
+     "url": "https://fashionunited.com/news/people/saint-laurent-confirms-anthony-vaccarellos-departure-after-a-decade/2026100975116",
+     "host": "fashionunited.com"
     },
     {
-     "url": "https://www.thezoereport.com/fashion/paris-fashion-weeks-spring-summer-2027-trends",
-     "host": "thezoereport.com"
+     "url": "https://fashionunited.com/news/business/lvmh-q3-organic-revenue-growth-slows-amid-china-downturn/2026101375147",
+     "host": "fashionunited.com"
     },
     {
-     "url": "https://www.nssmag.com/de/fashion/47194/5-wichtige-trends-von-der-paris-fashion-week-ss27-damen",
-     "host": "nssmag.com"
+     "url": "https://fashionunited.uk/news/business/kering-q3-revenue-remains-stable-as-jewelry-and-eyewear-offset-gucci-contraction/2026102391016",
+     "host": "fashionunited.uk"
     },
     {
-     "url": "https://hauteliving.com/2026/10/best-looks-paris-fashion-week-spring-summer-2027/798746/",
-     "host": "hauteliving.com"
+     "url": "https://fashionunited.com/news/people/lululemon-realigns-leadership-to-strengthen-competitive-position/2026100875089",
+     "host": "fashionunited.com"
     },
     {
-     "url": "https://economist.co.kr/article/view/ecn202609080027",
-     "host": "economist.co.kr"
+     "url": "https://www.dazeddigital.com/fashion/article/71269/1/",
+     "host": "dazeddigital.com"
     },
     {
-     "url": "https://www.youthdaily.co.kr/news/article.html?no=226588",
-     "host": "youthdaily.co.kr"
+     "url": "https://hypebeast.com/2026/10/acne-studios-and-hussein-chalayan-reimagine-archival-designs-in-new-collaboration",
+     "host": "hypebeast.com"
     },
     {
-     "url": "https://dealsite.co.kr/articles/168601",
-     "host": "dealsite.co.kr"
+     "url": "https://www.retailgazette.co.uk/blog/2026/10/lululemon-teams-up-with-ganni-for-dance-inspired-collection/",
+     "host": "retailgazette.co.uk"
+    },
+    {
+     "url": "https://www.fashionsnap.com/article/2026-10-14/acne-studios-hussein-chalayan/",
+     "host": "fashionsnap.com"
+    },
+    {
+     "url": "https://news.mtn.co.kr/article/2026110314330881355",
+     "host": "news.mtn.co.kr"
+    },
+    {
+     "url": "https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=05090566645617512",
+     "host": "edaily.co.kr"
     }
    ]
   },
   {
    "id": "society",
    "name": "사회 현상",
-   "title": "2026년 11월, 숫자로 본 한국 사회",
+   "title": "아기는 늘고, 청년 일자리는 줄고, 사람은 덜 움직였다",
    "slides": [
     {
      "img": "society/01.jpg",
-     "headline": "2026년 11월, 숫자로 본 한국 사회",
+     "headline": "아기는 늘고, 청년 일자리는 줄고, 사람은 덜 움직였다",
      "type": "cover"
     },
     {
      "img": "society/02.jpg",
-     "headline": "1인 가구, 역대 최대",
+     "headline": "8월 출생아, 7년 만에 최다",
      "type": "content-bigdata"
     },
     {
      "img": "society/03.jpg",
-     "headline": "65세 이상 인구 비중",
-     "type": "content-stat"
+     "headline": "청년 고용률이 계속 내려갑니다",
+     "type": "content-highlight"
     },
     {
      "img": "society/04.jpg",
-     "headline": "출산율은 2년째 반등",
-     "type": "content-split"
+     "headline": "20·30대 '쉬었음'",
+     "type": "content-badge"
     },
     {
      "img": "society/05.jpg",
-     "headline": "한국의 생성형 AI 이용률",
-     "type": "content-stat"
+     "headline": "9월 이사, 53년 만에 최소",
+     "type": "content-bigdata"
     },
     {
      "img": "society/06.jpg",
-     "headline": "같이 보면 좋은 숫자",
-     "type": "content-list"
+     "headline": "소비, 한 달은 올랐고 분기는 내렸다",
+     "type": "content-split"
     },
     {
      "img": "society/07.jpg",
-     "headline": "내 일상에는 어떤 변화가 보여요?",
+     "headline": "10월 소비자물가 상승률",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "society/08.jpg",
+     "headline": "생성형 AI 써본 사람",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "society/09.jpg",
+     "headline": "AI 앱, 사람보다 시간이 더 늘었다",
+     "type": "content-highlight"
+    },
+    {
+     "img": "society/10.jpg",
+     "headline": "이번 주 한 줄 정리: 아이는 늘었지만 청년 일자리와 소비는 아직 무겁습니다",
      "type": "cta"
     }
    ],
-   "sources": [
+   "stories": [
     {
-     "url": "https://www.heraldk.com/article/2026072722090410402",
-     "host": "heraldk.com"
+     "title": "8월 출생아 7년 만에 최다",
+     "date": "2026-10-28",
+     "summary": "국가데이터처가 10월 28일 낸 8월 인구동향에서 출생아는 2만 3,703명으로 1년 전보다 13.0% 늘었습니다. 8월 기준으로 2019년 이후 가장 많고, 26개월째 이어진 증가입니다. 1~8월 누적은 19만 3,783명(+14.5%)이며 8월 합계출산율은 0.87명입니다. 30~34세, 35~39세 여성의 출산율이 각각 12.6%, 15.9% 올랐습니다. 사망자(3만 308명)가 출생아보다 많아 인구는 82개월째 자연감소했습니다.",
+     "why": "출생이 늘어도 사망이 더 많아 인구 감소는 당분간 이어지고, 지금 태어나는 아이가 앞으로 세금과 연금을 나눠 질 세대입니다.",
+     "sources": [
+      {
+       "name": "한국일보",
+       "url": "https://www.hankookilbo.com/news/article/A2026102809510004434"
+      },
+      {
+       "name": "아주경제",
+       "url": "https://www.ajunews.com/view/20261028110622856"
+      }
+     ]
     },
     {
-     "url": "https://www.khan.co.kr/article/202607281341001/amp",
-     "host": "khan.co.kr"
+     "title": "청년 고용률 29개월 연속 하락",
+     "date": "2026-10-16",
+     "summary": "국가데이터처의 9월 고용동향에서 취업자는 2,926만 6천 명으로 1년 전보다 11만 3천 명 늘었습니다. 하지만 15~29세 고용률은 44.0%로 1.1%p 내려 29개월째 떨어졌고, 청년 실업률은 5.4%로 9월 기준 4년 만에 가장 높았습니다. 20대 취업자는 17만 명 줄고 60세 이상은 17만 2천 명, 30대는 8만 1천 명 늘었습니다. 이번 발표부터 15~34세 지표도 따로 공개했고 고용률은 56.1%(-0.4%p)였습니다. 10월 고용동향은 11월 중순 나옵니다.",
+     "why": "일자리 숫자는 늘어도 늘어난 자리가 고령층에 몰려, 막 일을 시작하는 세대의 진입이 어려워졌습니다.",
+     "sources": [
+      {
+       "name": "쿠키뉴스",
+       "url": "https://www.kukinews.com/article/view/kuk202610160013"
+      },
+      {
+       "name": "뉴스핌",
+       "url": "https://www.newspim.com/news/view/20261016000050"
+      }
+     ]
     },
     {
-     "url": "https://eiec.kdi.re.kr/policy/materialView.do?num=285815",
-     "host": "eiec.kdi.re.kr"
+     "title": "20·30대 '쉬었음' 68만 명",
+     "date": "2026-11-05",
+     "summary": "국가데이터처가 11월 5일 낸 8월 경제활동인구 부가조사에서 '쉬었음' 인구는 255만 1천 명으로 1년 전보다 8만 9천 명 줄었습니다. 20대 37만 7천 명, 30대 30만 3천 명을 합치면 68만 명으로 전체의 26.7%입니다. 쉬는 이유는 전체로는 '몸이 좋지 않아서'(34.4%)가 1위지만, 15~29세는 35.2%, 30대는 32.3%가 '원하는 일자리를 찾기 어려워서'를 꼽았습니다. 1년 안에 일할 뜻이 있는 비경제활동인구 비중은 19.9%로 2018년 이후 가장 낮습니다.",
+     "why": "쉬는 사람 수는 줄었지만, 젊은 층이 쉬는 이유는 의지보다 맞는 일자리가 없다는 쪽에 가깝습니다.",
+     "sources": [
+      {
+       "name": "파이낸셜뉴스",
+       "url": "https://fnnews.com/news/202611042008367964"
+      },
+      {
+       "name": "MTN",
+       "url": "https://news.mtn.co.kr/article/2026110414210144342"
+      }
+     ]
     },
     {
-     "url": "https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1011",
-     "host": "index.go.kr"
+     "title": "9월 인구이동 53년 만에 최소",
+     "date": "2026-10-28",
+     "summary": "국가데이터처의 9월 국내인구이동통계에서 이동자는 44만 4천 명으로 1년 전보다 10.1% 줄었습니다. 9월 기준으로 1973년 이후 가장 적고, 인구이동률 10.6%는 2000년 통계 작성 이후 9월 기준 최저입니다. 3분기 이동자도 138만 3천 명으로 10.2% 줄었습니다. 서울은 9월에 2,359명이 순유출돼 3월부터 7개월 연속이며, 인천은 1,956명 순유입이었습니다. 추석이 9월 하순에 있었던 점이 영향을 줬고, 10월 통계는 기저효과로 반등할 수 있다고 합니다.",
+     "why": "이사가 줄었다는 것은 집을 옮기려는 수요와 거래가 함께 가라앉았다는 뜻이어서 주거 선택의 폭이 좁아졌음을 보여줍니다.",
+     "sources": [
+      {
+       "name": "아주경제",
+       "url": "https://www.ajunews.com/view/20261028110622856"
+      },
+      {
+       "name": "아이뉴스24",
+       "url": "https://www.inews24.com/view/2019739"
+      },
+      {
+       "name": "연합뉴스(코리안센터 게재)",
+       "url": "https://www.koreancenter.or.kr/news/articleView.html?idxno=1430970"
+      }
+     ]
     },
     {
-     "url": "https://biz.sbs.co.kr/amp/article/20000342664",
-     "host": "biz.sbs.co.kr"
+     "title": "9월 소매판매 반등, 3분기는 감소",
+     "date": "2026-10-30",
+     "summary": "국가데이터처의 9월 산업활동동향에서 소매판매는 전월보다 3.6% 늘었습니다. 2023년 2월 이후 3년 7개월 만에 가장 큰 증가로, 승용차(+18.3%)와 추석 음식료품(+6.6%)이 이끌었습니다. 그러나 전년 같은 달보다는 0.4% 적고, 3분기 전체는 전분기보다 1.0% 줄어 2분기에 이어 두 분기 연속 감소했습니다. 데이터처는 4분기 자동차 같은 내구재 판매가 얼마나 회복할지 지켜봐야 한다고 설명했습니다.",
+     "why": "한 달 반등만 보면 소비가 살아난 것 같지만, 분기로 보면 내수는 아직 약합니다.",
+     "sources": [
+      {
+       "name": "아주경제",
+       "url": "https://www.ajunews.com/view/20261030090004660"
+      },
+      {
+       "name": "더파워뉴스(연합뉴스)",
+       "url": "https://www.thepowernews.co.kr/view.php?ud=202610300939167670de3f0aa1be_7"
+      }
+     ]
     },
     {
-     "url": "https://www.hankyung.com/article/202610280427Y",
-     "host": "hankyung.com"
+     "title": "10월 소비자물가 2.8% 상승",
+     "date": "2026-11-03",
+     "summary": "국가데이터처가 11월 3일 낸 10월 소비자물가는 1년 전보다 2.8% 올랐습니다. 8월 3.1%, 9월 2.9%에 이어 두 달 연속 2%대 후반입니다. 석유류가 14.9%(경유 19.7%, 휘발유 11.6%) 올랐고 가공식품은 2.9%로 상승폭이 11개월 만에 가장 컸습니다. 외식물가도 2.9% 올라 올해 2월 이후 가장 높았습니다. 반대로 농산물은 7.5% 내려 전체 상승폭을 줄였습니다.",
+     "why": "전체 숫자는 안정돼 보여도 기름값과 밥값처럼 매일 쓰는 지출이 먼저 오르고 있습니다.",
+     "sources": [
+      {
+       "name": "파이낸셜뉴스",
+       "url": "https://www.fnnews.com/news/202611030815584016"
+      },
+      {
+       "name": "뉴스핌",
+       "url": "https://www.newspim.com/news/view/20261103000090"
+      }
+     ]
     },
     {
-     "url": "https://blogs.microsoft.com/on-the-issues/2026/09/21/the-continued-state-of-global-ai-diffusion-in-2026/",
-     "host": "blogs.microsoft.com"
+     "title": "생성형 AI 이용 경험 85%, 유료 결제 25.9%",
+     "date": "2026-10-30",
+     "summary": "인크로스가 만 15~69세 2,000명을 조사한 '2026 아이엠 리포트'에서 생성형 AI를 써본 사람은 85.0%로 1년 전보다 11.6%p 늘었습니다. 유료 결제율은 25.9%이고 결제자의 월평균 지출은 3만 5,932원입니다. 유료 서비스는 챗GPT 53.1%, 제미나이 43.4%, 클로드 15.4% 순이었고, 주 용도는 정보 검색(76.8%)이었습니다. 한 민간 조사 결과이며, 다른 조사와는 기준이 달라 수치를 곧바로 비교하기는 어렵습니다.",
+     "why": "AI가 신기한 도구에서 매달 돈을 내는 일상 서비스로 옮겨가는 중입니다.",
+     "sources": [
+      {
+       "name": "지디넷코리아",
+       "url": "https://zdnet.co.kr/view/?no=20261030120240"
+      },
+      {
+       "name": "데일리포스트",
+       "url": "https://www.thedailypost.kr/news/articleView.html?idxno=116562"
+      }
+     ]
     },
     {
-     "url": "https://www.asiae.co.kr/en/article/2026051215315915446",
-     "host": "asiae.co.kr"
+     "title": "AI 앱 이용자 +19%, 사용시간 +64%",
+     "date": "2026-10-13",
+     "summary": "와이즈앱·리테일이 10월 13일 낸 9월 조사에서 생성형 AI 앱 상위 10개의 중복 제외 이용자는 3,075만 명으로 1년 전(2,593만 명)보다 19% 늘었습니다. 같은 기간 총 사용시간은 28억 분에서 46억 분으로 64% 늘었습니다. 챗GPT는 월 2,470만 명으로 1위입니다. 전용 모바일 앱이 있는 서비스만 집계해 PC 웹으로만 쓰는 사람은 빠져 있습니다.",
+     "why": "쓰는 사람이 느는 속도보다 한 사람이 AI에 쓰는 시간이 더 빨리 늘고 있습니다.",
+     "sources": [
+      {
+       "name": "지디넷코리아",
+       "url": "https://zdnet.co.kr/view/?no=20261013163218"
+      },
+      {
+       "name": "AI매터스",
+       "url": "https://aimatters.co.kr/news-report/54946/"
+      }
+     ]
     }
-   ]
+   ],
+   "sources": []
   },
   {
    "id": "news",
@@ -306,33 +732,206 @@
     },
     {
      "img": "news/02.jpg",
-     "headline": "조작기소 특검법안 상정",
-     "type": "content-split"
-    },
-    {
-     "img": "news/03.jpg",
-     "headline": "소규모 사업장 안전관리자 선임 확대",
-     "type": "content-stat"
-    },
-    {
-     "img": "news/04.jpg",
-     "headline": "북한, 일주일 새 4차례 발사",
-     "type": "content-list"
-    },
-    {
-     "img": "news/05.jpg",
-     "headline": "미국 중간선거, 민주당 다수",
+     "headline": "조작기소 특검법 본회의 상정",
      "type": "content-badge"
     },
     {
-     "img": "news/06.jpg",
-     "headline": "인니 대통령 통화 도청 파문",
+     "img": "news/03.jpg",
+     "headline": "오세훈 2심 무죄, 대법원으로",
+     "type": "content-split"
+    },
+    {
+     "img": "news/04.jpg",
+     "headline": "윤석열 선거법 2심도 유죄",
      "type": "content-highlight"
     },
     {
+     "img": "news/05.jpg",
+     "headline": "북한, 일주일 새 4차례 무력시위",
+     "type": "content-list"
+    },
+    {
+     "img": "news/06.jpg",
+     "headline": "경사노위, 새 정부 첫 노사정 합의",
+     "type": "content-stat"
+    },
+    {
      "img": "news/07.jpg",
-     "headline": "이번 주 뉴스 끝",
+     "headline": "미 중간선거, 민주당 상·하원 장악",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "news/08.jpg",
+     "headline": "코스피 장중 3%대 하락, 사이드카",
+     "type": "content-stat"
+    },
+    {
+     "img": "news/09.jpg",
+     "headline": "인니 대통령 통화 도청, 3명 체포",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/10.jpg",
+     "headline": "이번 주 한 줄 정리",
      "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "조작기소 특검법, 본회의 상정",
+     "date": "2026-11-04 ~ 2026-11-05",
+     "summary": "4일 국회 법제사법위원회가 '조작기소 특검법안'을 더불어민주당 주도로 통과시켰습니다. 이 법안은 윤석열 정부 시기 검찰 등 수사기관이 증거를 조작해 기소했다는 의혹을 특별검사가 수사하도록 하는 내용이며, 대장동·위례 사건과 쌍방울 대북송금 사건 등이 수사 대상으로 보도됐습니다. 5일 여야 원내대표 협상이 합의 없이 끝나자 조정식 국회의장은 오후 3시 본회의에 법안을 상정하겠다고 공지했습니다. 민주당은 공소취소 조항을 모두 삭제했고 수사기관의 권력 남용을 밝히는 법이라고 설명합니다. 국민의힘은 특검 결과가 대통령 관련 재판의 공소취소 명분으로 쓰일 수 있다며 필리버스터와 장외투쟁을 예고했습니다. 필리버스터가 이어지면 민주당은 토론을 강제로 끝내는 절차를 거쳐 처리할 것으로 전해졌습니다.",
+     "why": "수사 대상과 방식을 두고 여야가 정면으로 맞서면서, 정기국회의 법안·예산 처리 일정 전체에 영향을 줄 수 있습니다.",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105083100001"
+      },
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704832&ref=A"
+      },
+      {
+       "name": "SBS",
+       "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008832195&plink=ORI&cooper=NAVER"
+      }
+     ]
+    },
+    {
+     "title": "오세훈 시장 2심 무죄, 특검 상고",
+     "date": "2026-10-23 ~ 2026-11-05",
+     "summary": "서울고법은 10월 23일 오세훈 서울시장의 정치자금법 위반 혐의 항소심에서 무죄를 선고했습니다. 명태균 씨 관련 여론조사 비용을 제3자가 대신 낸 의혹을 다룬 사건입니다. 김건희 특검팀은 10월 30일 대법원에 상고장을 냈고, 오 시장 측은 같은 주장을 반복한다고 해도 없던 증거가 생기지는 않는다고 밝혔습니다. 5일 더불어민주당은 국회에서 좌담회를 열어 판결이 증거를 잘못 판단했다며 대법원의 파기환송을 촉구하고 공직선거법 개정을 추진하겠다고 했습니다. 국민의힘은 법원의 판단을 존중해야 하며 민주당의 공세는 사법부 압박이라는 입장입니다. 최종 판단은 대법원에서 나옵니다.",
+     "why": "여론조사 비용을 둘러싼 정치자금법 해석이 대법원에서 정해지면, 같은 유형의 다른 사건 판단에도 기준이 됩니다.",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105091000001"
+      },
+      {
+       "name": "매일신문",
+       "url": "https://www.imaeil.com/page/view/2026110512570389115"
+      }
+     ]
+    },
+    {
+     "title": "윤석열 전 대통령, 선거법 2심도 유죄",
+     "date": "2026-11-04 ~ 2026-11-05",
+     "summary": "서울고법은 4일 대선 후보 시절 허위 발언을 한 혐의(공직선거법 위반)로 기소된 윤석열 전 대통령에게 1심과 같은 징역 1년 6개월, 집행유예 3년을 선고했습니다. 이 형이 대법원에서 확정되면 당선무효형에 해당합니다. 판결 뒤 국민의힘은 판결이 확정되지 않았다는 점을 강조했고, 민주당 쪽에서는 이 사건과 이재명 대통령 사건은 다르다는 설명이 나왔습니다. 5일에는 내란 우두머리 혐의 항소심의 결심공판이 열렸습니다. 이 사건은 1심에서 무기징역이 선고됐습니다. 선거법 사건은 대법원 판단이 남아 있습니다.",
+     "why": "여러 재판이 동시에 진행 중이어서, 이번 판결이 이후 재판과 정치권 논쟁의 기준점으로 거론됩니다.",
+     "sources": [
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704810&ref=A"
+      },
+      {
+       "name": "JTBC",
+       "url": "https://news.jtbc.co.kr/article/NB12326604?influxDiv=NAVER"
+      },
+      {
+       "name": "시사저널",
+       "url": "https://www.sisajournal.com/news/articleView.html?idxno=392984"
+      }
+     ]
+    },
+    {
+     "title": "북한, 일주일 새 네 차례 무력시위",
+     "date": "2026-10-29 ~ 2026-11-05",
+     "summary": "북한은 10월 29일 600㎜ 초대형 방사포, 31일 집속탄두 전술탄도미사일, 11월 2일 전략순항미사일 집속탄두 위력평가시험에 이어 4일 신형 대공미사일을 시험발사하고 순항미사일로 비행장 표적을 타격하는 훈련을 했다고 5일 조선중앙통신이 보도했습니다. 김정은 국무위원장이 참관하지 않은 세 차례는 노동신문 등 대내 매체에 실리지 않았습니다. 통일부 당국자는 한미 연합공중훈련 '프리덤 플래그'와 대외 정세에 대응하는 성격이 강하다고 설명했습니다. 합동참모본부는 정확한 제원을 한미가 정밀 분석 중이라고 밝혔습니다.",
+     "why": "무기 종류와 훈련 표적이 다양해지고 있어, 한미 연합훈련 기간 군의 대응과 분석 결과가 이어서 주목됩니다.",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105011152504"
+      },
+      {
+       "name": "이데일리",
+       "url": "https://www.edaily.co.kr/News/Read?newsId=04831446645642768&mediaCodeNo=257"
+      },
+      {
+       "name": "천지일보",
+       "url": "https://www.newscj.com/news/articleView.html?idxno=3446163"
+      }
+     ]
+    },
+    {
+     "title": "경사노위, 새 정부 첫 노사정 합의",
+     "date": "2026-11-05",
+     "summary": "대통령 직속 경제사회노동위원회(경사노위)의 산업안전보건위원회는 5일 전체회의에서 소규모 사업장 안전보건관리자 활용 방안에 합의했습니다. 이재명 정부 출범 이후 경사노위에서 나온 첫 노사정 합의입니다. 제조업·임업 등 5개 업종의 상시근로자 20명 이상 50명 미만 사업장에 안전관리자 또는 보건관리자 1명을 두도록 하며, 약 3만 곳이 해당될 것으로 전해졌습니다. 사업주가 일정 시간 이상 직접 안전보건 교육과 위험성평가를 하면 선임으로 인정하는 방안도 포함됐고, 정부는 인건비와 교육비를 지원할 방침입니다. 노사정은 내년 상반기까지 2차 합의를 목표로 논의를 이어갑니다.",
+     "why": "산업재해 관리에서 비어 있던 소규모 사업장에 최소한의 안전 담당자를 두는 방향이 노사 합의로 정해졌습니다.",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105030651530"
+      },
+      {
+       "name": "헤럴드경제",
+       "url": "https://biz.heraldcorp.com/article/10927107?ref=naver"
+      },
+      {
+       "name": "내일신문",
+       "url": "https://www.naeil.com/news/read/607663?ref=naver"
+      }
+     ]
+    },
+    {
+     "title": "미 중간선거, 민주당이 상·하원 다수",
+     "date": "2026-11-03 ~ 2026-11-05",
+     "summary": "3일(현지시간) 치러진 미국 중간선거에서 민주당이 연방 상원과 하원 모두에서 다수당이 됐다고 주요 언론이 보도했습니다. 4일 CNN·NBC 등 미국 언론은 민주당이 상원에서 54석을 확보했고, 하원(435석)은 최소 245석을 얻을 것으로 전망했습니다. 개표가 끝나지 않은 지역이 있어 최종 의석수는 달라질 수 있습니다. 주지사 선거에서도 텍사스와 조지아 등에서 민주당이 승리했으며, 당선인 36명 중 34명이 데이터센터 규제 입장을 밝혔습니다. 트럼프 대통령은 결과를 수용하겠다는 입장을 냈고, 한국 정부는 한미 관계에 큰 변화가 없을 것이라고 밝혔습니다.",
+     "why": "남은 임기 2년 동안 예산·통상·인공지능 정책을 두고 백악관과 의회가 맞서는 구도가 되어, 한국의 통상·산업에도 변수가 됩니다.",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105067600091"
+      },
+      {
+       "name": "뉴스천지",
+       "url": "https://www.newscj.com/news/articleView.html?idxno=3446180"
+      },
+      {
+       "name": "빅터뉴스",
+       "url": "https://www.bigtanews.co.kr/article/view/big202611050017"
+      }
+     ]
+    },
+    {
+     "title": "코스피, 미 선거 결과에 장중 3%대 하락",
+     "date": "2026-11-05",
+     "summary": "5일 코스피는 장 초반부터 급락해 매도 사이드카가 발동됐고 장중 3%대 하락 폭을 보였습니다. 미국 민주당이 의회를 장악하면서 인공지능 데이터센터의 인허가와 전력 비용 규제가 강화될 수 있다는 우려가 반도체 업종에 번졌고, 외국인의 대규모 매도가 겹쳤습니다. 반면 대신증권 등은 이런 우려가 과도하며 국내 증시 방향을 바꿀 변수는 아니라고 분석했습니다. 민주당 의석이 대통령 거부권을 넘을 만큼 많지 않아 양당이 서로의 정책을 막는 구조라는 이유입니다.",
+     "why": "미국의 규제 방향이 한국 반도체 기업 주가에 바로 반영된 사례로, 앞으로 미국 의회의 AI 관련 입법이 주목됩니다.",
+     "sources": [
+      {
+       "name": "서울경제",
+       "url": "https://www.sedaily.com/article/20110635?ref=naver"
+      },
+      {
+       "name": "위키트리",
+       "url": "https://www.wikitree.co.kr/articles/1172078"
+      },
+      {
+       "name": "더리포트",
+       "url": "https://www.thereport.co.kr/news/articleView.html?idxno=93082"
+      }
+     ]
+    },
+    {
+     "title": "인도네시아 대통령 통화 도청 파문",
+     "date": "2026-11-03 ~ 2026-11-05",
+     "summary": "인도네시아 경찰은 프라보워 수비안토 대통령을 비롯한 주요 인사들의 전화를 도청한 혐의로 대통령 비서실장과 경찰 고위 간부 2명을 체포했다고 밝혔습니다. 비서실장은 전직 경찰청장 출신입니다. 피해자에는 정치인·기업인·언론인 등도 포함된 것으로 알려졌고, 도청 내용과 목적은 수사 중입니다. 5일 자카르타에는 군 병력이 대거 배치됐다고 AP·로이터가 전했습니다.",
+     "why": "대통령 측근 수사가 수도의 보안 강화로 이어지면서, 인도네시아 정국이 어떻게 흘러갈지 외신이 주시하고 있습니다.",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261105094000104"
+      },
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704801&ref=A"
+      },
+      {
+       "name": "문화일보",
+       "url": "https://www.munhwa.com/article/11628818?ref=naver"
+      }
+     ]
     }
    ],
    "sources": [
@@ -341,80 +940,80 @@
      "host": "yna.co.kr"
     },
     {
-     "url": "https://www.newdaily.co.kr/site/data/html/2026/11/05/2026110500179.html",
-     "host": "newdaily.co.kr"
+     "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704832&ref=A",
+     "host": "news.kbs.co.kr"
     },
     {
-     "url": "https://www.naeil.com/news/read/607698",
-     "host": "naeil.com"
+     "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008832195",
+     "host": "news.sbs.co.kr"
     },
     {
-     "url": "https://www.obsnews.co.kr/news/articleView.html?idxno=1542756",
-     "host": "obsnews.co.kr"
+     "url": "https://www.yna.co.kr/view/AKR20261105091000001",
+     "host": "yna.co.kr"
     },
     {
-     "url": "https://www.naeil.com/news/read/607663",
-     "host": "naeil.com"
+     "url": "https://www.imaeil.com/page/view/2026110512570389115",
+     "host": "imaeil.com"
     },
     {
-     "url": "https://news.tf.co.kr/read/life/2385256.htm",
-     "host": "news.tf.co.kr"
+     "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704810&ref=A",
+     "host": "news.kbs.co.kr"
     },
     {
-     "url": "https://www.seoulfn.com/news/articleView.html?idxno=641990",
-     "host": "seoulfn.com"
+     "url": "https://news.jtbc.co.kr/article/NB12326604",
+     "host": "news.jtbc.co.kr"
     },
     {
-     "url": "http://www.yonhapnewstv.co.kr/news/AKR20261105114438oab",
-     "host": "yonhapnewstv.co.kr"
+     "url": "https://www.sisajournal.com/news/articleView.html?idxno=392984",
+     "host": "sisajournal.com"
     },
     {
      "url": "https://www.yna.co.kr/view/AKR20261105011152504",
      "host": "yna.co.kr"
     },
     {
-     "url": "https://www.edaily.co.kr/News/Read?newsId=04831446645642768&mediaCodeNo=257",
-     "host": "edaily.co.kr"
-    },
-    {
      "url": "https://www.newscj.com/news/articleView.html?idxno=3446163",
      "host": "newscj.com"
     },
     {
-     "url": "https://www.munhwa.com/article/11629057",
-     "host": "munhwa.com"
+     "url": "https://www.yna.co.kr/view/AKR20261105030651530",
+     "host": "yna.co.kr"
     },
     {
-     "url": "https://www.naeil.com/news/read/607659",
+     "url": "https://biz.heraldcorp.com/article/10927107",
+     "host": "biz.heraldcorp.com"
+    },
+    {
+     "url": "https://www.naeil.com/news/read/607663",
      "host": "naeil.com"
     },
     {
-     "url": "https://www.newsis.com/view/NISX20261105_0003856102",
-     "host": "newsis.com"
-    },
-    {
-     "url": "http://www.opinionnews.co.kr/news/articleView.html?idxno=146693",
-     "host": "opinionnews.co.kr"
-    },
-    {
-     "url": "https://www.yna.co.kr/view/AKR20261105082300009",
+     "url": "https://www.yna.co.kr/view/AKR20261105067600091",
      "host": "yna.co.kr"
     },
     {
-     "url": "https://www.yna.co.kr/view/AKR20261104058151104",
-     "host": "yna.co.kr"
+     "url": "https://www.newscj.com/news/articleView.html?idxno=3446180",
+     "host": "newscj.com"
+    },
+    {
+     "url": "https://www.bigtanews.co.kr/article/view/big202611050017",
+     "host": "bigtanews.co.kr"
+    },
+    {
+     "url": "https://www.sedaily.com/article/20110635",
+     "host": "sedaily.com"
+    },
+    {
+     "url": "https://www.wikitree.co.kr/articles/1172078",
+     "host": "wikitree.co.kr"
+    },
+    {
+     "url": "https://www.thereport.co.kr/news/articleView.html?idxno=93082",
+     "host": "thereport.co.kr"
     },
     {
      "url": "https://www.yna.co.kr/view/AKR20261105094000104",
      "host": "yna.co.kr"
-    },
-    {
-     "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8704801",
-     "host": "news.kbs.co.kr"
-    },
-    {
-     "url": "https://www.munhwa.com/article/11628818",
-     "host": "munhwa.com"
     }
    ]
   }
