@@ -56,28 +56,33 @@
   details.src li a{display:inline-block;border:1px solid var(--line2);padding:4px 9px;font-size:12px;font-weight:600;color:var(--mut);text-decoration:none}
   details.src li a:hover{border-color:var(--accent);color:var(--accent)}
 
-  /* 자세히 판 = 이야기 카드 바로 다음 장 (stories.json) — 사진 · 제목 · 굵은 강조 3~4줄 · 그래서 · 출처 */
-  .dcard{grid-column:span 2;height:calc(var(--card) * 1.25);scroll-snap-align:start;display:grid;grid-template-columns:44% minmax(0,1fr);border:1px solid var(--line2);background:var(--paper);cursor:zoom-in;overflow:hidden}
-  .dcard.nophoto{grid-template-columns:1fr}
-  .dcard .ph{width:100%;height:100%;object-fit:cover;display:block;background:var(--wash)}
-  .dcard .bd{padding:20px 22px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin}
-  .dcard .k{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--accent)}
-  .dcard h3{margin:-4px 0 0;font-size:18px;font-weight:800;letter-spacing:-.02em;line-height:1.35}
-  .dcard .d{font-size:12px;font-weight:600;color:var(--mut);margin-top:-6px;font-variant-numeric:tabular-nums}
-  .dcard ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
-  .dcard li{position:relative;padding-left:14px;font-size:14px;line-height:1.55;color:var(--ink)}
-  .dcard li::before{content:'';position:absolute;left:0;top:.62em;width:6px;height:6px;background:var(--accent)}
-  .dcard strong{font-weight:800;color:var(--accent-dark)}
-  .dcard .why{background:var(--accent-wash);padding:9px 11px;font-size:13.5px;line-height:1.5;font-weight:700;color:var(--accent-dark)}
-  .dcard .why::before{content:'그래서  ';font-weight:800}
-  .dcard .lk{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;margin-top:auto}
-  .dcard .lk a{color:var(--mut);font-weight:600;text-underline-offset:2px}
-  .dcard .lk a:hover{color:var(--accent)}
-  .lb .dcard{grid-column:auto;height:auto;max-height:90dvh;width:min(860px,92vw);cursor:default}
-  .lb .dcard .bd{padding:28px 30px 24px;gap:14px}
-  .lb .dcard h3{font-size:24px}
-  .lb .dcard li{font-size:16.5px}
-  .lb .dcard .why{font-size:15.5px}
+  /* 자세히 장 = 이야기 카드 바로 다음 장. 카드와 같은 4:5 · 같은 바탕·포인트 색(분야별 렌더 스타일, weekly/run.sh 의 STYLE·ACCENT 와 맞춤)
+     글자 크기는 카드 폭 기준(cqw) — PNG 카드(1080px)와 같은 비율로 커지고 작아진다 */
+  .dcard{--z:1;--bg:#fff;--fg:#1a1a1a;--sub:#475569;--acc:#1F4BD8;--mark:var(--acc);
+    position:relative;aspect-ratio:4/5;width:100%;container-type:inline-size;scroll-snap-align:start;background:var(--bg);color:var(--fg);
+    border:1px solid var(--line);cursor:zoom-in;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif}
+  .dcard.th-clean{--bg:#F0F0F0}
+  .dcard.th-blueprint{--bg:#EDF0F5}
+  .dcard .in{position:absolute;inset:0;padding:calc(7.4cqw * var(--z)) calc(7.4cqw * var(--z)) calc(6.5cqw * var(--z));display:flex;flex-direction:column;gap:calc(2.4cqw * var(--z))}
+  .dcard .top{display:flex;justify-content:space-between;align-items:center;font-size:calc(2.4cqw * var(--z));font-weight:600;color:var(--sub);margin:calc(-2.6cqw * var(--z)) 0 calc(1cqw * var(--z))}
+  .dcard .top .ac::before{content:'';display:inline-block;width:calc(1.5cqw * var(--z));height:calc(1.5cqw * var(--z));border-radius:50%;background:var(--acc);margin-right:calc(1cqw * var(--z));vertical-align:.1em}
+  .dcard .top .k{color:var(--mark);font-weight:800;letter-spacing:.14em}
+  .dcard .ph{display:block;width:100%;max-height:36%;object-fit:contain;object-position:center;background:rgba(0,0,0,.04);flex:none}
+  .dcard h3{margin:calc(.6cqw * var(--z)) 0 0;font-size:calc(5.4cqw * var(--z));font-weight:800;letter-spacing:-.03em;line-height:1.28}
+  .dcard .d{font-size:calc(2.5cqw * var(--z));font-weight:600;color:var(--sub);margin-top:calc(-1.4cqw * var(--z));font-variant-numeric:tabular-nums}
+  .dcard ul{list-style:none;margin:calc(.4cqw * var(--z)) 0 0;padding:0;display:flex;flex-direction:column;gap:calc(1.7cqw * var(--z))}
+  .dcard li{position:relative;padding-left:calc(3.4cqw * var(--z));font-size:calc(3.2cqw * var(--z));line-height:1.5;font-weight:500}
+  .dcard li::before{content:'';position:absolute;left:0;top:.6em;width:calc(1.4cqw * var(--z));height:calc(1.4cqw * var(--z));background:var(--acc)}
+  .dcard strong{font-weight:800;color:var(--mark)}
+  .dcard.th-clean strong{color:var(--fg);background:linear-gradient(transparent 58%, color-mix(in srgb, var(--acc) 55%, transparent) 58%)}
+  .dcard .why{margin-top:auto;background:color-mix(in srgb, var(--acc) 11%, var(--bg));padding:calc(2.4cqw * var(--z)) calc(2.8cqw * var(--z));font-size:calc(3cqw * var(--z));line-height:1.5;font-weight:700}
+  .dcard.th-clean .why{background:#fff}
+  .dcard .why b{color:var(--mark);margin-right:calc(1cqw * var(--z))}
+  .dcard .lk{display:flex;flex-wrap:wrap;gap:calc(.6cqw * var(--z)) calc(2.4cqw * var(--z));font-size:calc(2.3cqw * var(--z));font-weight:600}
+  .dcard .lk a{color:var(--sub);text-underline-offset:2px}
+  .dcard .lk a:hover{color:var(--fg)}
+  .dcard.th-clean{--mark:#4F7A1F}
+  .lb .dcard{width:min(92vw, 92dvh * .8);height:auto;cursor:default;border:0}
 
   .state{padding:64px 0;text-align:center;font-size:14px;color:var(--mut)}
   .state.err{color:var(--err)}
@@ -93,14 +98,6 @@
   .lb .cnt{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 
   @media (max-width:860px){
-    .dcard{grid-column:span 1;grid-template-columns:1fr;grid-template-rows:34% minmax(0,1fr)}
-    .dcard.nophoto{grid-template-rows:1fr}
-    .dcard .bd{padding:16px 16px 14px;gap:8px}
-    .dcard h3{font-size:16px}
-    .dcard li{font-size:13.5px}
-    .lb .dcard{grid-template-columns:1fr;grid-template-rows:auto auto;width:92vw;max-height:86dvh;overflow-y:auto}
-    .lb .dcard .ph{max-height:30dvh}
-    .lb .dcard .bd{overflow:visible}
     .wrap{padding:24px 16px 72px}
     .mast h1{font-size:2rem}
     :root{--card:72vw}
@@ -158,15 +155,33 @@
     return out;
   }
   function bold(x){ return esc(x).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
-  function detailHtml(x, extra, tid, j){
+  // 분야별 카드 양식 — weekly/run.sh 의 STYLE·ACCENT 와 같게
+  var THEME = { travel:['clean','#8BC34A'], fashion:['minimal','#1E2A5E'], society:['blueprint','#1F4BD8'], news:['minimal','#1F4BD8'] };
+  function detailHtml(x, tid, j){
+    var th = THEME[tid] || ['minimal','#1F4BD8'];
     var pts = (x.points && x.points.length ? x.points : [x.summary]).map(function(p){ return '<li>' + bold(p) + '</li>'; }).join('');
-    return '<div class="dcard' + (x.image ? '' : ' nophoto') + (extra ? ' ' + extra : '') + '"' + (tid ? ' data-t="' + esc(tid) + '" data-j="' + j + '"' : '') + '>' +
-      (x.image ? '<img class="ph" src="' + esc(x.image) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nophoto\');this.remove()">' : '') +
-      '<div class="bd"><span class="k">자세히</span><h3>' + esc(x.title) + '</h3>' + (x.date ? '<div class="d">' + esc(x.date) + '</div>' : '') +
-      '<ul>' + pts + '</ul>' + (x.why ? '<div class="why">' + esc(x.why) + '</div>' : '') +
+    return '<div class="dcard th-' + th[0] + '" style="--acc:' + th[1] + '"' + (j != null ? ' data-t="' + esc(tid) + '" data-j="' + j + '"' : '') + '><div class="in">' +
+      '<div class="top"><span class="ac">nuri_brief</span><span class="k">자세히</span></div>' +
+      (x.image ? '<img class="ph" src="' + esc(x.image) + '" alt="" loading="lazy" onerror="this.remove()">' : '') +
+      '<h3>' + esc(x.title) + '</h3>' + (x.date ? '<div class="d">' + esc(x.date) + '</div>' : '') +
+      '<ul>' + pts + '</ul>' + (x.why ? '<div class="why"><b>그래서</b>' + esc(x.why) + '</div>' : '') +
       (x.sources && x.sources.length ? '<div class="lk">' + x.sources.map(function(q){ return '<a href="' + esc(q.url) + '" target="_blank" rel="noopener">' + esc(q.name) + '</a>'; }).join('') + '</div>' : '') +
       '</div></div>';
   }
+
+  // 자세히 장: 글이 넘치면 그 장만 글자를 줄인다(사진 먼저 작게) — 카드 크기는 그대로
+  function fit(root){
+    [].forEach.call((root || document).querySelectorAll('.dcard'), function(c){
+      var inn = c.querySelector('.in'), z = 1, ph = c.querySelector('.ph');
+      c.style.setProperty('--z', 1); if (ph) ph.style.maxHeight = '';
+      if (!inn.clientHeight) return;
+      if (ph && inn.scrollHeight > inn.clientHeight + 1) ph.style.maxHeight = '26%';
+      while (inn.scrollHeight > inn.clientHeight + 1 && z > 0.66) { z -= 0.03; c.style.setProperty('--z', z.toFixed(2)); }
+    });
+  }
+  var fitT; function refit(){ clearTimeout(fitT); fitT = setTimeout(function(){ fit(); }, 80); }
+  window.addEventListener('resize', refit);
+  document.addEventListener('load', function(e){ if (e.target.classList && e.target.classList.contains('ph')) refit(); }, true);
 
   function load(week){
     cur = week; paintWeeks();
@@ -180,7 +195,7 @@
           var imgs = seq(t).map(function(it, j){
             if (it.kind === 'img') return '<button data-t="' + esc(t.id) + '" data-j="' + j + '" aria-label="' + esc(t.name + ' ' + (it.n) + '장: ' + it.s.headline) + '">' +
               '<img src="' + BASE + esc(week + '/' + it.s.img) + '" alt="' + esc(it.s.headline) + '" loading="lazy" width="1080" height="1350"></button>';
-            return detailHtml(it.st, '', t.id, j);
+            return detailHtml(it.st, t.id, j);
           }).join('');
           var src = t.sources && t.sources.length ? '<details class="src"><summary>출처 ' + t.sources.length + '곳</summary><ul>' +
             t.sources.map(function(s){ return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.host) + '</a></li>'; }).join('') + '</ul></details>' : '';
@@ -188,7 +203,7 @@
             '<span class="n">' + t.slides.length + '장 →</span></div><div class="strip">' + imgs + '</div>' + src + '</section>';
         }).join('');
         window._cn = m;
-        spy();
+        spy(); fit();
       })
       .catch(function(e){ $('decks').innerHTML = '<div class="state err">이번 주 카드를 불러오지 못했어요 (' + esc(e.message) + ')</div>'; });
   }
@@ -205,14 +220,14 @@
 
   function openLb(tid, j){
     var t = (window._cn.topics || []).filter(function(x){ return x.id === tid; })[0]; if (!t) return;
-    lb.name = t.name; lb.list = seq(t); lb.i = j; showLb(); $('lb').classList.add('on'); $('lbx').focus();
+    lb.name = t.name; lb.tid = t.id; lb.list = seq(t); lb.i = j; showLb(); $('lb').classList.add('on'); $('lbx').focus();
   }
   function showLb(){
     var it = lb.list[lb.i], old = $('lbi'); if (old) old.remove();
     var el;
     if (it.kind === 'img') { el = document.createElement('img'); el.src = BASE + cur + '/' + it.s.img; el.alt = it.s.headline; }
-    else { var w = document.createElement('div'); w.innerHTML = detailHtml(it.st, ''); el = w.firstChild; }
-    el.id = 'lbi'; $('lb').insertBefore(el, $('lbn'));
+    else { var w = document.createElement('div'); w.innerHTML = detailHtml(it.st, lb.tid); el = w.firstChild; }
+    el.id = 'lbi'; $('lb').insertBefore(el, $('lbn')); if (it.kind !== 'img') { fit($('lb')); var p = el.querySelector('.ph'); if (p) p.onload = function(){ fit($('lb')); }; }
     var cards = lb.list.filter(function(x){ return x.kind === 'img'; }).length;
     $('lbc').textContent = lb.name + ' · ' + (it.kind === 'img' ? it.n + ' / ' + cards : '자세히');
   }
