@@ -355,7 +355,10 @@
     var skipped = (S && S.skipped || []).filter(function(x){ return /로그인/.test(x); });
     if (skipped.length) h += '<div class="stale" style="margin:0 0 16px">오늘 '+esc(skipped.map(function(x){ return x.split(':')[0].toUpperCase(); }).join('·'))+' 수집이 로그인 문제로 빠졌어요 · 수집하는 컴퓨터(아이맥) 크롬에서 다시 로그인해 주세요</div>';
     if (B.tryToday && B.tryToday.length) h += '<div class="tries">'+B.tryToday.slice(0,2).map(function(t,i){ return tryBlock(d,t,i); }).join('')+'</div>';
-    var cards = B.cards || [];
+    var cards = (B.cards || []).slice();
+    // 큰 칸(hero)은 사진 있는 카드가 맡는다 — 사진 없는 카드가 큰 칸이면 아래가 텅 빔 (11/05). 사진 없는 건 순서대로 뒤로
+    var hi = cards.findIndex(function(c){ return !!pic(c); });
+    if (hi > 0) cards.unshift(cards.splice(hi, 1)[0]);
     if (cards.length){
       h += '<div class="sech"><h2>핵심 5</h2><span class="cap">발표 → 사람들이 만든 것</span></div>';
       h += '<div class="grid">'+card(cards[0],'hero')+'<div class="side">'+(cards[1]?card(cards[1]):'')+(cards[2]?card(cards[2]):'')+'</div></div>';
