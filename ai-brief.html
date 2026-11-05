@@ -267,7 +267,8 @@
   function host(u){ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return ''; } }
   // 사진이 없거나 깨지면 빈 칸 대신 '어디 글인지'(출처 도메인)를 보여준다
   // 사진은 사이트에 보관한 미리보기(thumb)가 먼저, 그게 없거나 깨지면 원본 주소(image) (누리 2026-11-05)
-  function pic(x){ return x ? (x.thumb || x.image || '') : ''; }
+  // 같은 파일 이름으로 다시 받은 사진(README 로 교체 등)이 옛 캐시로 보이지 않게 출처를 꼬리표로
+  function pic(x){ return x ? (x.thumb ? x.thumb + (x.thumb_src ? '?' + x.thumb_src : '') : (x.image || '')) : ''; }
   function media(src, label, extra, url, alt){
     var h = url ? host(url) : '';
     if (src && alt === src) alt = '';
