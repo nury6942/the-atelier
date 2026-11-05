@@ -1294,8 +1294,8 @@ var _ldgCatMarksCache = { k: '', v: {} };
 window.ldgCatMarks = function(ym) {
   var tx = _ledgerData.transactions || [], key = ym + '|' + tx.length;
   if (_ldgCatMarksCache.k === key) return _ldgCatMarksCache.v;
-  var now = new Date(), curYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0'), cut = ym === curYm ? now.getDate() : 31;
-  var ly = []; try { ly = ldgBoardMonth(_bYm(ym, -12), true).L.filter(function(t) { return _bS(t) && +t.date.slice(8, 10) <= cut; }); } catch (e) {}
+  var now = new Date(), curYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  var ly = []; try { ly = ldgBoardMonth(_bYm(ym, -12), true).L.filter(_bS); } catch (e) {}  // 작년 같은 달 한 달 전체 (같은 날까지 X, 누리 11/05)
   var all = tx.filter(function(t) { return t['출처'] === '뱅샐' && t.date && _bS(t); });
   var ms = Array.from(new Set(all.map(function(t) { return t.date.slice(0, 7); }))).filter(function(x) { return x < curYm; }).sort().slice(-6);
   var median = function(arr) { if (!arr.length) return 0; var a = arr.slice().sort(function(x, y) { return x - y; }), h = a.length >> 1; return a.length % 2 ? a[h] : (a[h - 1] + a[h]) / 2; };

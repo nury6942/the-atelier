@@ -2262,12 +2262,12 @@ function ldgRenderCatGrid() {
     // 전월·전년 한 줄 (진행 중인 달은 같은 날까지끼리)
     var cmpPart = function(prevVal, label, tip) {
       var d = totalAmt - prevVal;
-      if (totalAmt === 0 && prevVal === 0) return '';
       var c = (d === 0 || catName === '포인트') ? '#475569' : (((d > 0) === isGoodUp) ? '#23855f' : '#b8433a');
       return '<span title="' + tip + '" style="color:' + c + '">' + label + ' ' + (d > 0 ? '▲' : d < 0 ? '▼' : '─') + (d ? ldgFmtShort(Math.abs(d)) : '') + '</span>';
     };
-    var cmpA = prevCutDay > 0 ? cmpPart(prevTotal, '전월', '전월 1일~' + prevCutDay + '일까지와 비교') : cmpPart(prevTotalFull, '전월', '전월 전체와 비교');
-    var cmpB = lyCutDay > 0 ? cmpPart(lyCatTotals[catName] || 0, '전년', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 1일~' + lyCutDay + '일까지와 비교') : cmpPart(lyCatTotalsFull[catName] || 0, '전년', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 전체와 비교');
+    // 누리 2026-11-05: 같은 날까지 비교는 의미 없음 → 늘 지난달 한 달 전체·작년 같은 달 전체와. 둘 다 0이어도 '─'로 보여 줌
+    var cmpA = cmpPart(prevTotalFull, '전월', '지난달 한 달 전체와 비교');
+    var cmpB = cmpPart(lyCatTotalsFull[catName] || 0, '전년', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 한 달 전체와 비교');
     if (cmpA || cmpB) html += '<p class="text-[10.5px] text-right mt-0.5 font-semibold" style="font-feature-settings:\'tnum\'">' + [cmpA, cmpB].filter(Boolean).join(' <span style="color:#475569">·</span> ') + '</p>';
     html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
