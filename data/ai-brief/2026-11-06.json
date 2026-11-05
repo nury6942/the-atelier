@@ -23,7 +23,9 @@
     {
      "title": "집 고양이 사진으로 핼러윈 GIF 만들어 본 기록",
      "url": "https://www.techradar.com/ai-platforms-assistants/chatgpt/chatgpt-images-2-6-is-here-and-it-can-turn-your-photos-into-animated-gifs-so-i-tried-it-on-my-cat",
-     "image": null
+     "image": "https://cdn.mos.cms.futurecdn.net/8fnRc7pRw2pcj5XavjF3rm-1920-80.jpg",
+     "thumb": "data/ai-brief/thumbs/dcdfe1ce264df403.jpg",
+     "thumb_src": "site"
     }
    ],
    "new": [
@@ -73,19 +75,23 @@
    "cat": "vibe",
    "title": "옛 편지 123통을 가상 손글씨로 다시 쓴다",
    "url": "https://github.com/rafaelcespedes/if-this-finds-you",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/rafaelcespedes/if-this-finds-you",
    "source": "GitHub @rafaelcespedes · 별 49 · 11-03",
    "how": "디자이너 혼자, 획 단위로 써 내려가는 웹 실험",
    "examples": [
     {
      "title": "바로 보기: If This Finds You",
      "url": "https://ifthisfindsyou.app",
-     "image": null
+     "image": "https://ifthisfindsyou.app/brand/share-2.jpg",
+     "thumb": "data/ai-brief/thumbs/499d5f82fed8bd23.jpg",
+     "thumb_src": "site"
     },
     {
      "title": "모든 손글씨를 폰트(.otf·.ttf)로 받기",
      "url": "https://ifthisfindsyou.app/fonts",
-     "image": null
+     "image": "https://ifthisfindsyou.app/brand/share-2.jpg",
+     "thumb": "data/ai-brief/thumbs/d53e7107a61cb4ac.jpg",
+     "thumb_src": "site"
     }
    ],
    "chips": [
@@ -93,13 +99,15 @@
     "14개 언어",
     "손글씨 폰트 무료(OFL)"
    ],
-   "forMe": "손글씨마다 상업 이용 가능한 SIL OFL 폰트로 받을 수 있어요. MLB 그래픽에 핸드레터링 느낌 시안을 낼 때 바로 꺼내 쓸 수 있는 자료입니다."
+   "forMe": "손글씨마다 상업 이용 가능한 SIL OFL 폰트로 받을 수 있어요. MLB 그래픽에 핸드레터링 느낌 시안을 낼 때 바로 꺼내 쓸 수 있는 자료입니다.",
+   "thumb": "data/ai-brief/thumbs/b6e0c8de880bdb71.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
    "title": "코드로 찍는 영화, 15초 광고부터 10분 다큐",
    "url": "https://github.com/sarpstar/cinecode",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/sarpstar/cinecode",
    "source": "GitHub @sarpstar · 별 411 · 11-03",
    "how": "Claude Code가 대본·장면·소리까지 MP4로",
    "chips": [
@@ -107,26 +115,30 @@
     "9:16·1:1·16:9",
     "MIT 무료"
    ],
-   "forMe": "제품·색·폰트·로고를 주면 스튜디오 조명처럼 세운 광고 영상을 세 비율로 뽑아 줘요. 시즌 신상 티저를 포트폴리오용 모션으로 만들어 볼 때 쓸 만합니다."
+   "forMe": "제품·색·폰트·로고를 주면 스튜디오 조명처럼 세운 광고 영상을 세 비율로 뽑아 줘요. 시즌 신상 티저를 포트폴리오용 모션으로 만들어 볼 때 쓸 만합니다.",
+   "thumb": "data/ai-brief/thumbs/7bbd34ebffb22755.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
    "title": "캐릭터 그림 한 장으로 움직이는 이모티콘",
    "url": "https://github.com/WoYun520/pixel-gif-sticker-pack",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/a3a79a3edfad38c4dbf744ff6519f5ed572de31ef6fd8649c9b24adb6ed9ca1d/WoYun520/pixel-gif-sticker-pack",
    "source": "GitHub @WoYun520 · 별 398 · 11-05",
    "how": "Codex 스킬, 동작 설계부터 투명 GIF 묶음까지",
    "chips": [
     "예시 GIF 218장",
     "512×512 투명 배경",
     "MIT"
-   ]
+   ],
+   "thumb": "data/ai-brief/thumbs/a8ae8c608f91123c.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "vibe",
    "title": "글자로 그린 미니어처 섬이 3D로 움직인다",
    "url": "https://github.com/JDhruv14/ascii-diorama",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/JDhruv14/ascii-diorama",
    "source": "GitHub @JDhruv14 · 별 91 · 11-02",
    "how": "Three.js 장면 위를 색 입힌 글자로 덮음",
    "chips": [
@@ -186,13 +198,15 @@
    "cat": "release",
    "title": "제미나이 영상 15초·30% 저렴",
    "url": "https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemini-omni-1-2-flash/",
-   "image": null,
+   "image": "https://storage.googleapis.com/gweb-uniblog-publish-prod/images/gemini-omni-1.2_FZLql41.width-1300.png",
    "source": "Google · Gemini Omni 1.2 Flash · 11-05",
    "from": {
     "label": "X @kimmonismus · ♥420",
     "url": "https://x.com/kimmonismus/status/2118396513541857743"
    },
-   "watching": true
+   "watching": true,
+   "thumb": "data/ai-brief/thumbs/63c3d56bc72bc9e8.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "tool",
@@ -204,15 +218,19 @@
     "label": "X @claudeai · ♥17,000",
     "url": "https://x.com/claudeai/status/2118403114890137895"
    },
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/00183b004892f2d6.jpg",
+   "thumb_src": "site"
   },
   {
    "cat": "free",
    "title": "모션그래픽 스타일 100종 스킬",
    "url": "https://github.com/aykutucesai/motionforge",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/83b93ad15c49c2db6199bfda00b1c8350908da2038054944479a7edc3848edc1/aykutucesai/motionforge",
    "source": "GitHub @aykutucesai · 별 61 · MIT",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/5840b465d3ada547.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
@@ -220,23 +238,29 @@
    "url": "https://github.com/brewed-ops/talking-explainer",
    "image": null,
    "source": "GitHub @brewed-ops · 별 65",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/d75619cd76613375.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "free",
    "title": "눈 달린 도형 아바타 편집기",
    "url": "https://github.com/DominikScholz/open-bot-avatar",
-   "image": null,
+   "image": "https://repository-images.githubusercontent.com/1443244793/eb2d1d4e-7b9f-4e48-a653-77f6d33c29e9",
    "source": "GitHub @DominikScholz · 별 190 · MIT",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/fd45eb244da9abd6.jpg",
+   "thumb_src": "readme"
   },
   {
    "cat": "tool",
    "title": "윈도우 화면 위 작은 알림 섬",
    "url": "https://github.com/Renly1994/xiaotang-daozai",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/f3a70a4c1dd8b03ae60df88f9caae6b57c8bebd15ba3e283ead6b2509f178f17/Renly1994/xiaotang-daozai",
    "source": "GitHub @Renly1994 · 별 348 · MIT",
-   "watching": false
+   "watching": false,
+   "thumb": "data/ai-brief/thumbs/3e67fe295d801033.jpg",
+   "thumb_src": "readme"
   }
  ],
  "watching": [
