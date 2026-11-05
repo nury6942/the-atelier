@@ -1,0 +1,262 @@
+{
+ "date": "2026-11-06",
+ "generatedAt": "2026-11-06T07:20:00+09:00",
+ "sourcesNote": "웹 검색 13회 + GitHub 검색 API로 11-02 이후 새 저장소 별·생성일·라이선스 확인, README 원문 대조 · 맥 수집(social) 13개 글 참고 · 실행 환경에서 X·Threads·Reddit·HN·개별 사이트 직접 열기가 막혀 후기는 검색으로 확인한 기사·블로그 위주",
+ "cards": [
+  {
+   "cat": "release",
+   "title": "사진 한 장이 반복 GIF로, 챗GPT 안에서",
+   "url": "https://openai.com/index/introducing-images-2-6/",
+   "image": null,
+   "source": "OpenAI · Images 2.6 · 11-04",
+   "release": {
+    "name": "ChatGPT Images 2.6 (GPT-Image-2.6 Flare·Sunburst)",
+    "date": "2026-11-04",
+    "url": "https://openai.com/index/introducing-images-2-6/"
+   },
+   "examples": [
+    {
+     "title": "동작 12컷 시트를 먼저 그리고 그걸 GIF로 — 덩크 슛 애니메이션",
+     "url": "https://www.threads.com/@jh_aicafe/post/DfXWU8RmePs",
+     "image": null
+    },
+    {
+     "title": "집 고양이 사진으로 핼러윈 GIF 만들어 본 기록",
+     "url": "https://www.techradar.com/ai-platforms-assistants/chatgpt/chatgpt-images-2-6-is-here-and-it-can-turn-your-photos-into-animated-gifs-so-i-tried-it-on-my-cat",
+     "image": null
+    }
+   ],
+   "new": [
+    "GIF 생성",
+    "SVG 출력(API)",
+    "속도 50%↑"
+   ],
+   "reviews": [
+    {
+     "say": "고양이 움직임이 꽤 사실적, 공유 링크도 바로",
+     "who": "TechRadar",
+     "url": "https://www.techradar.com/ai-platforms-assistants/chatgpt/chatgpt-images-2-6-is-here-and-it-can-turn-your-photos-into-animated-gifs-so-i-tried-it-on-my-cat",
+     "tone": "good"
+    },
+    {
+     "say": "SVG는 깔끔하지만 48번 중 9번만 나옴",
+     "who": "CellCog 블로그",
+     "url": "https://cellcog.ai/blog/recraft-v4-1-vs-gpt-image-2-6-svg/",
+     "tone": "bad"
+    },
+    {
+     "say": "중간 품질은 2.5보다 순위가 낮게 나옴",
+     "who": "Kingy AI",
+     "url": "https://kingy.ai/blog/chatgpt-gifs-images-2-6-vs-2-5-hands-on-test/",
+     "tone": "bad"
+    },
+    {
+     "say": "글자·물체 경계 작은 오류는 여전",
+     "who": "Analytics Vidhya",
+     "url": "https://www.analyticsvidhya.com/blog/2026/11/gpt-image-2-6-review/",
+     "tone": "bad"
+    }
+   ],
+   "why": "움직이는 시안이 프롬프트 한 줄로",
+   "chips": [
+    "최소 약 6초 생성",
+    "2.5 대비 50% 빠름",
+    "GIF는 계정별 순차 배포"
+   ],
+   "forMe": "저지 팬츠 착용 사진 한 장으로 한 바퀴 도는 GIF를 만들면 상세페이지·포트폴리오용 움직이는 컷이 바로 생겨요. SVG 출력은 아직 자주 실패한다니 아이콘은 기존 방식이 낫습니다.",
+   "from": {
+    "label": "Threads @choi.openai · ♥425",
+    "url": "https://www.threads.com/@choi.openai/post/DfVsqGWmerS"
+   }
+  },
+  {
+   "cat": "vibe",
+   "title": "옛 편지 123통을 가상 손글씨로 다시 쓴다",
+   "url": "https://github.com/rafaelcespedes/if-this-finds-you",
+   "image": null,
+   "source": "GitHub @rafaelcespedes · 별 49 · 11-03",
+   "how": "디자이너 혼자, 획 단위로 써 내려가는 웹 실험",
+   "examples": [
+    {
+     "title": "바로 보기: If This Finds You",
+     "url": "https://ifthisfindsyou.app",
+     "image": null
+    },
+    {
+     "title": "모든 손글씨를 폰트(.otf·.ttf)로 받기",
+     "url": "https://ifthisfindsyou.app/fonts",
+     "image": null
+    }
+   ],
+   "chips": [
+    "1395~1929년 편지",
+    "14개 언어",
+    "손글씨 폰트 무료(OFL)"
+   ],
+   "forMe": "손글씨마다 상업 이용 가능한 SIL OFL 폰트로 받을 수 있어요. MLB 그래픽에 핸드레터링 느낌 시안을 낼 때 바로 꺼내 쓸 수 있는 자료입니다."
+  },
+  {
+   "cat": "tool",
+   "title": "코드로 찍는 영화, 15초 광고부터 10분 다큐",
+   "url": "https://github.com/sarpstar/cinecode",
+   "image": null,
+   "source": "GitHub @sarpstar · 별 411 · 11-03",
+   "how": "Claude Code가 대본·장면·소리까지 MP4로",
+   "chips": [
+    "15초~10분 이상",
+    "9:16·1:1·16:9",
+    "MIT 무료"
+   ],
+   "forMe": "제품·색·폰트·로고를 주면 스튜디오 조명처럼 세운 광고 영상을 세 비율로 뽑아 줘요. 시즌 신상 티저를 포트폴리오용 모션으로 만들어 볼 때 쓸 만합니다."
+  },
+  {
+   "cat": "tool",
+   "title": "캐릭터 그림 한 장으로 움직이는 이모티콘",
+   "url": "https://github.com/WoYun520/pixel-gif-sticker-pack",
+   "image": null,
+   "source": "GitHub @WoYun520 · 별 398 · 11-05",
+   "how": "Codex 스킬, 동작 설계부터 투명 GIF 묶음까지",
+   "chips": [
+    "예시 GIF 218장",
+    "512×512 투명 배경",
+    "MIT"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "글자로 그린 미니어처 섬이 3D로 움직인다",
+   "url": "https://github.com/JDhruv14/ascii-diorama",
+   "image": null,
+   "source": "GitHub @JDhruv14 · 별 91 · 11-02",
+   "how": "Three.js 장면 위를 색 입힌 글자로 덮음",
+   "chips": [
+    "Claude Code 스킬",
+    "틸트시프트 효과",
+    "MIT"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "내 옷 사진 한 장을 도는 GIF로",
+   "minutes": 15,
+   "why": "어제 나온 챗GPT GIF 기능을 누리님 제품 사진으로 바로 써 보는 거예요. 무료 계정에도 이미지 기능이 있고, 결과 GIF가 한 장 남습니다(GIF 메뉴가 아직 안 보이면 계정 배포 대기 중).",
+   "from": {
+    "label": "Threads @choi.openai · ♥425",
+    "url": "https://www.threads.com/@choi.openai/post/DfVsqGWmerS"
+   },
+   "steps": [
+    {
+     "text": "챗GPT 열고 사진 올리기",
+     "url": "https://chatgpt.com/"
+    },
+    {
+     "text": "GIF 프롬프트 붙여넣기",
+     "copy": "이 사진 속 옷(저지 팬츠)을 입은 모델이 제자리에서 천천히 한 바퀴 도는 2초짜리 반복 GIF로 만들어줘. 배경은 순백색, 카메라는 고정. 옷의 로고·봉제선·밴딩 디테일이 흐트러지지 않게 유지하고, 마지막 프레임이 첫 프레임과 자연스럽게 이어지게 해줘."
+    },
+    {
+     "text": "GIF 내려받아 저장"
+    }
+   ]
+  },
+  {
+   "title": "가상 손글씨 폰트 하나 받기",
+   "minutes": 10,
+   "why": "손글씨마다 무료 폰트 파일로 받을 수 있어 그래픽 시안 재료가 하나 생겨요. 설치 없이 브라우저에서 바로 됩니다.",
+   "from": {
+    "label": "GitHub @rafaelcespedes · 별 49",
+    "url": "https://github.com/rafaelcespedes/if-this-finds-you"
+   },
+   "steps": [
+    {
+     "text": "폰트 목록 열기",
+     "url": "https://ifthisfindsyou.app/fonts"
+    },
+    {
+     "text": "내 문장 손글씨로 써 보기"
+    },
+    {
+     "text": "Download font 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "제미나이 영상 15초·30% 저렴",
+   "url": "https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemini-omni-1-2-flash/",
+   "image": null,
+   "source": "Google · Gemini Omni 1.2 Flash · 11-05",
+   "from": {
+    "label": "X @kimmonismus · ♥420",
+    "url": "https://x.com/kimmonismus/status/2118396513541857743"
+   },
+   "watching": true
+  },
+  {
+   "cat": "tool",
+   "title": "클로드, 내 계좌 읽기 전용 연결",
+   "url": "https://claude.com/resources/articles/introducing-personal-finance-in-claude",
+   "image": "https://claude.com/resources/articles/introducing-personal-finance-in-claude/opengraph-image/og",
+   "source": "Anthropic · 미국 Pro·Max·Ultra 베타 · 11-05",
+   "from": {
+    "label": "X @claudeai · ♥17,000",
+    "url": "https://x.com/claudeai/status/2118403114890137895"
+   },
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "모션그래픽 스타일 100종 스킬",
+   "url": "https://github.com/aykutucesai/motionforge",
+   "image": null,
+   "source": "GitHub @aykutucesai · 별 61 · MIT",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "말하는 캐릭터 설명 영상 스킬",
+   "url": "https://github.com/brewed-ops/talking-explainer",
+   "image": null,
+   "source": "GitHub @brewed-ops · 별 65",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "눈 달린 도형 아바타 편집기",
+   "url": "https://github.com/DominikScholz/open-bot-avatar",
+   "image": null,
+   "source": "GitHub @DominikScholz · 별 190 · MIT",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "윈도우 화면 위 작은 알림 섬",
+   "url": "https://github.com/Renly1994/xiaotang-daozai",
+   "image": null,
+   "source": "GitHub @Renly1994 · 별 348 · MIT",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "DeepSeek Super-agent (연구 시제품)",
+   "url": "https://github.com/deepseek-ai/dsh-superagent-prototype",
+   "date": "2026-10-31",
+   "note": "Super-agent로 만든 사례 아직 · 11-07 지나면 정리"
+  },
+  {
+   "name": "Mischief 1",
+   "url": "https://officechai.com/ai/the-biological-computing-co-launches-mischief-1-an-ai-video-model-trained-on-lessons-from-living-neurons",
+   "date": "2026-10-31",
+   "note": "실사용 사례 아직"
+  },
+  {
+   "name": "Gemini Omni 1.2 Flash",
+   "url": "https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemini-omni-1-2-flash/",
+   "date": "2026-11-05",
+   "note": "15초 영상·대화로 고치기 · 독립 실사용 후기 아직(리셀러 테스트뿐)"
+  }
+ ]
+}
