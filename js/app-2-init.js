@@ -2197,6 +2197,7 @@ function ldgRenderCatGrid() {
     if (bi === -1) return -1;
     return ai - bi;
   });
+  var _heroV = 0, _heroCap = 0;
   catKeys.forEach(function(catName) {
     var subs = cats[catName] || [];
     var hasTx = !!catSums[catName];
@@ -2241,7 +2242,7 @@ function ldgRenderCatGrid() {
     // AI 페이스 뱃지
     var pace = ldgAIPaceStatus(catName, _ldgYear, _ldgMonth);
     var paceBadge = '';
-    if (pace && hasTx) {
+    if (false) {
       paceBadge = '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap" style="background:' + pace.color + '15;color:' + pace.color + ';" title="' + pace.label + ' · 월말 예상 ' + ldgFmt(pace.projected) + '">' + pace.emoji + ' ' + pace.label + '</span>';
     }
     html += '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' + opacity + '">';
@@ -2258,17 +2259,16 @@ function ldgRenderCatGrid() {
       var txt = (d === 0) ? (label + ' ─') : (arrow + ' ' + label + ' ' + (d > 0 ? '+' : '') + d.toLocaleString('ko-KR'));
       return '<p class="text-[10px] text-right mt-0.5" style="color:' + color + ';font-feature-settings:\'tnum\'" title="' + tip + '">' + txt + '</p>';
     };
-    if (prevCutDay > 0) {
-      // 진행 중인 달: 같은 날짜까지(공정) + 지난달 전체 둘 다
-      html += cmpLine(prevTotal, '전월 동일', '전월 1일~' + prevCutDay + '일까지 누적과 비교 (진행 중인 달 공정 비교)');
-      html += cmpLine(prevTotalFull, '전월 전체', '지난달 한 달 전체와 비교');
-    } else {
-      // 이미 끝난 과거 달: 전월 전체 한 줄이면 충분 (동일=전체)
-      html += cmpLine(prevTotalFull, '전월비', '전월 전체와 비교');
-    }
-    // 전년 같은 달
-    if (lyCutDay > 0) html += cmpLine(lyCatTotals[catName] || 0, '전년 동일', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 1일~' + lyCutDay + '일까지와 비교');
-    else html += cmpLine(lyCatTotalsFull[catName] || 0, '전년비', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 전체와 비교');
+    // 전월·전년 한 줄 (진행 중인 달은 같은 날까지끼리)
+    var cmpPart = function(prevVal, label, tip) {
+      var d = totalAmt - prevVal;
+      if (totalAmt === 0 && prevVal === 0) return '';
+      var c = (d === 0 || catName === '포인트') ? '#475569' : (((d > 0) === isGoodUp) ? '#23855f' : '#b8433a');
+      return '<span title="' + tip + '" style="color:' + c + '">' + label + ' ' + (d > 0 ? '▲' : d < 0 ? '▼' : '─') + (d ? ldgFmtShort(Math.abs(d)) : '') + '</span>';
+    };
+    var cmpA = prevCutDay > 0 ? cmpPart(prevTotal, '전월', '전월 1일~' + prevCutDay + '일까지와 비교') : cmpPart(prevTotalFull, '전월', '전월 전체와 비교');
+    var cmpB = lyCutDay > 0 ? cmpPart(lyCatTotals[catName] || 0, '전년', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 1일~' + lyCutDay + '일까지와 비교') : cmpPart(lyCatTotalsFull[catName] || 0, '전년', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 전체와 비교');
+    if (cmpA || cmpB) html += '<p class="text-[10.5px] text-right mt-0.5 font-semibold" style="font-feature-settings:\'tnum\'">' + [cmpA, cmpB].filter(Boolean).join(' <span style="color:#475569">·</span> ') + '</p>';
     html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
     subAmts.forEach(function(s) {
@@ -2310,54 +2310,15 @@ function ldgRenderCatGrid() {
           '</div>' +
         '</div>' +
       '</div>';
-    } else if (hasBudget && budgetTotal > 0) {
-      var remaining = budgetTotal - totalAmt;
-      var color = remaining >= 0 ? '#10b981' : '#ef4444';
-      var pct = Math.min(totalAmt / budgetTotal * 100, 100);
-      var remLabel = remaining >= 0 ? '남음' : '초과';
-      var remDisplay = ldgFmtShort(Math.abs(remaining));
-      var aiRecEdit = ldgAIRecommendForDisplay(catName, _ldgYear, _ldgMonth, budgetTotal);
-      var isIncSav = (catName === '수입' || catName === '저축');
-      html += '<div class="pt-2 border-t border-slate-50">';
-      // 예산 바 (클릭하면 편집)
-      html += '<div class="cursor-pointer hover:bg-indigo-50/20 -mx-5 px-5 py-1.5 transition-colors" onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" title="클릭하여 예산 수정">' +
-        '<div class="flex justify-between text-[10px] font-medium mb-1"><span class="text-slate-400">예산 ' + ldgFmtShort(budgetTotal) + ' <span class="text-[9px] text-slate-300">✏️</span></span><span style="color:' + color + ';font-weight:700;font-feature-settings:\'tnum\'">' + remDisplay + ' ' + remLabel + '</span></div>' +
-        '<div class="w-full h-1 bg-slate-100 rounded-full"><div class="h-full rounded-full" style="width:' + pct + '%;background:' + color + '"></div></div>' +
-      '</div>';
-      // 절약 추천 — 지출은 '줄이기'만, 수입/저축은 '목표 페이스'. (늘리라는 지출 추천은 구조적으로 안 나옴)
-      if (aiRecEdit && aiRecEdit > 0) {
-        var saveAmt = budgetTotal - aiRecEdit; // 지출: 양수면 절약 가능액
-        var recLabel = isIncSav
-          ? '🎯 목표 ' + ldgFmtShort(aiRecEdit) + '로'
-          : '💡 ' + ldgFmtShort(aiRecEdit) + '로 줄이기 <span class="text-[9px] text-slate-400">(과거 최저)</span>';
-        var recTitle = isIncSav
-          ? '과거 같은 달 평균 페이스'
-          : ('과거 같은 달 가장 적게 쓴 수준(' + ldgFmt(aiRecEdit) + ')으로 절약 목표 — 약 ' + ldgFmt(Math.max(saveAmt,0)) + ' 절약');
-        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="mt-2 text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="' + recTitle + '">' +
-          '<span style="font-size: var(--font-size-micro)">🤖</span> ' + recLabel +
-        '</button>';
-      }
-      html += '</div>';
     } else {
-      // 예산 미설정 - 절약선 제안 + 설정 버튼
-      var aiRec = ldgAIRecommendForDisplay(catName, _ldgYear, _ldgMonth, null);
-      html += '<div class="pt-2 border-t border-slate-50 flex items-center justify-between gap-1">';
-      html += '<button onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-0.5">' +
-          '<span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">add</span> 예산 설정' +
-        '</button>';
-      if (aiRec && aiRec > 0) {
-        var recTitle2 = (catName === '수입' || catName === '저축')
-          ? '과거 같은 달 평균 페이스'
-          : ('과거 같은 달 가장 적게 쓴 수준(' + ldgFmt(aiRec) + ')을 절약 목표 예산으로 제안');
-        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="' + recTitle2 + '">' +
-          '<span style="font-size: var(--font-size-micro)">🤖</span> 추천 ' + ldgFmtShort(aiRec) + ' 적용' +
-        '</button>';
-      }
-      html += '</div>';
+      var mk_ = (window.ldgCatMarks && catName !== '수입' && catName !== '저축') ? (ldgCatMarks(monthKey)[catName] || {}) : {};
+      if (window.ldgCatBar) html += ldgCatBar({ cat: catName, v: totalAmt, cap: budgetTotal, has: hasBudget && budgetTotal > 0, av: mk_.av, lv: mk_.lv, goal: isGoodUp });
+      if (window.ldgCatBar && hasBudget && budgetTotal > 0 && !isGoodUp && catName !== '포인트' && catName !== '미분류' && catName !== '여행') { _heroV += totalAmt; _heroCap += budgetTotal; }
     }
     html += '</div>';
   });
   el.innerHTML = html;
+  try { ldgLaneLabels(el); ldgRenderCatHero(_heroV, _heroCap); } catch (e) { console.error("[cat bar]", e); }
 }
 
 // ============================================
