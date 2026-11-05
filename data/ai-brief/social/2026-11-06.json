@@ -1,0 +1,291 @@
+{
+ "date": "2026-11-06",
+ "collectedAt": "2026-11-06T06:31:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@ClaudeDevs",
+   "url": "https://x.com/ClaudeDevs/status/2118063143167693011",
+   "at": "2026-11-04T19:29:39Z",
+   "likes": 21000,
+   "replies": 646,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "클로드 코드 백그라운드 서브에이전트, 사용량 99% 절약",
+   "points": [
+    "실행 중인 서브에이전트는 30초마다 상태 줄을 새로 씀",
+    "예전엔 이때마다 대화 전체를 다시 읽어 사용량을 잡아먹었음",
+    "이제 Haiku 5.5가 짧은 메모만 보고 상태 줄을 작성",
+    "상태 갱신 한 번당 비용이 약 99% 줄었다고 공식 계정이 발표"
+   ],
+   "try": "서브에이전트 여러 개 띄우는 작업도 이제 덜 아까워짐",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2118062835507040256/img/agkh_HQTXpNdQHFr.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118062835507040256/vid/avc1/640x360/kLpQ6U0sHDrqErhf.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@claudeai",
+   "url": "https://x.com/claudeai/status/2118403114890137895",
+   "at": "2026-11-05T18:00:35Z",
+   "likes": 17000,
+   "replies": 662,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "클로드에 '개인 재무' 베타 — 내 계좌로 돈 질문 답변",
+   "points": [
+    "고른 계좌를 연결하면 실제 잔액·거래 내역을 바탕으로 일상 말로 답함",
+    "접근은 읽기 전용 — 돈을 옮기거나 투자하지 못함",
+    "광고·협찬 추천 없음, 투자 조언용은 아니라고 명시",
+    "미국에서 Pro·Max·Ultra 요금제부터 순차 출시"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/media/HWYUk7ZWwAAcrVe.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118401044841390080/vid/avc1/640x360/WXL9zd_-7MVyqbxg.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@kimmonismus",
+   "url": "https://x.com/kimmonismus/status/2118396513541857743",
+   "at": "2026-11-05T17:34:21Z",
+   "likes": 420,
+   "replies": 47,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "구글 Gemini Omni 1.2 Flash, 15초 영상 생성·편집",
+   "points": [
+    "3~15초 영상을 만들고 대화로 여러 번 고쳐 다듬을 수 있음",
+    "인물·장면 일관성, 대사 품질이 좋아짐",
+    "720p 기준 초당 0.07달러 — 이전 모델보다 30% 저렴",
+    "제미나이 앱에서 구글 AI 구독자 전체에 배포 시작"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2118387774378192896/img/dPbZ-qxFOtFSBnvZ.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118387774378192896/vid/avc1/640x360/9UltbiV3cJKW2pPW.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2118192898785354185",
+   "at": "2026-11-05T04:05:15Z",
+   "likes": 168,
+   "replies": 69,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "오퍼스 5.5로 만든 3D 게임 사례 10개 모음",
+   "points": [
+    "Claude Code+Blender+Three.js로 24시간 만에 브라우저 3D 게임, 시연 영상도 클로드가 플레이",
+    "Godot로 만든 타워 디펜스 — 타워 14종·맵 5개·보스전",
+    "걷기·자전거·택시·헬기로 돌아다니는 3D 시드니(오픈소스 3D 뉴욕 기반)",
+    "로블록스 펫 시뮬레이터를 3일 만에 출시, 165개 직업 브라우저 RPG 등"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2118191466279251969/img/bmcMV2lKdfgTo7Io.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118191466279251969/vid/avc1/540x540/l8WDgeAJKOTLXDxO.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@lucas_flatwhite",
+   "url": "https://x.com/lucas_flatwhite/status/2117924913785053387",
+   "at": "2026-11-04T10:20:23Z",
+   "likes": 724,
+   "replies": 9,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code를 게임 스튜디오처럼 — 에이전트 49개 프레임워크",
+   "points": [
+    "깃허브 Donchitos/Claude-Code-Game-Studios: 에이전트 49개+워크플로우 스킬 74개+훅·룰·템플릿",
+    "디렉터→리드→스페셜리스트 3단계 (프로듀서·게임 디자이너·QA 등)",
+    "혼자 AI로 만들 때 생기는 하드코딩·스파게티 코드·설계 문서 누락을 막는 구조",
+    "Godot 4·Unity·Unreal 5용 에이전트 세트가 다 들어 있음"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HWRhehNaUAAs61W.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HWRhehHboAA9_6E.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@elvar_official",
+   "url": "https://x.com/elvar_official/status/2117615560259223622",
+   "at": "2026-11-03T13:51:07Z",
+   "likes": 627,
+   "replies": 40,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "아이디어를 분해되는 3D 기계로 만드는 클로드 스킬 무료 공개",
+   "points": [
+    "Three.js로 기계 뼈대·장갑판·날개 구동부가 있는 벌새를 생성",
+    "광학부가 층별 이름표를 달고 앞으로 빠지고, 날개를 떼어 속 구조를 보여 줌",
+    "전체 분해(teardown) 후 부품이 제자리로 돌아오며 다시 날갯짓",
+    "스킬과 소스 코드는 작성자 아티클에 무료로 공개"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2117614269902532608/img/bnqUAZmNZZoS8aDf.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2117614269902532608/vid/avc1/640x360/u3IOijKpCvhzWIBS.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@deverapper",
+   "url": "https://www.threads.com/@deverapper/post/DfVxa_KgfR4",
+   "at": "2026-11-05T00:43:49Z",
+   "likes": 466,
+   "replies": 30,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "AI에 붙이면 일이 빨라지는 직군별 공공·무료 API 12가지",
+   "points": [
+    "특허 KIPRIS Plus, 법률 국가법령정보(판례·헌재), 세무 OPEN DART·국세청 사업자조회",
+    "부동산 국토부 실거래가·건축물대장, 금융 한은 ECOS·KRX·FRED",
+    "마케팅 네이버 검색광고·데이터랩·Meta·유튜브 API",
+    "장점: 원본이라 정확, 매일 자동 수집, AI가 근거 달고 답함(지어내지 않음)"
+   ],
+   "try": "마케팅 쪽은 네이버 데이터랩 API부터 연결해 볼 만함"
+  },
+  {
+   "src": "threads",
+   "author": "@sonsatam",
+   "url": "https://www.threads.com/@sonsatam/post/DfWZlOlmN6t",
+   "at": "2026-11-05T06:34:44Z",
+   "likes": 69,
+   "replies": 27,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "AI 에이전트 '피클' 7일차 — 매일 돌리는 일 11가지",
+   "points": [
+    "아침마다 날씨·옷 추천+네이버 캘린더·TimeTree 가족 일정 브리핑",
+    "밤사이 경제 뉴스 찾아 클로드에 글 프롬프트, 제미나이에 이미지 프롬프트 자동 전달",
+    "체험단(카카오·무신사·지그재그) 자동 확인·신청, 항공권 최저가 주기 검색",
+    "공모주 일정·필요 금액 아침 브리핑, 깃허브에서 필요한 스킬 배워 오게 함",
+    "피클로 시험해 보고 쓸 만한 건 Aside로 옮겨 사용량 절약"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@gspark337",
+   "url": "https://www.threads.com/@gspark337/post/DfWdFRAitGG",
+   "at": "2026-11-05T07:05:20Z",
+   "likes": 17,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "'예쁘게 해줘' 대신 이름 붙은 디자인 스킬 명령 쓰기",
+   "points": [
+    "AI 기본값 디자인: 보라 그라데이션, 카드 안의 카드, 제목 위 둥근 아이콘",
+    "impeccable: npx impeccable install 후 /impeccable polish",
+    "hallmark: npx skills add nutlope/hallmark -g 후 /hallmark 뒤에 만들 페이지 설명",
+    "명령이 구체적일수록 에이전트가 덜 추측함"
+   ],
+   "try": "아뜰리에 화면 다듬을 때 /impeccable polish 한 번 돌려 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@byungwook.an",
+   "url": "https://www.threads.com/@byungwook.an/post/DfViJVfBOaw",
+   "at": "2026-11-04T22:31:53Z",
+   "likes": 22,
+   "replies": 10,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "오퍼스 5.5+Aside로 추모 다큐를 프롬프트 한 번에",
+   "points": [
+    "클로드가 Aside 브라우저로 구글 Flow에 들어가 직접 영상 생성까지 조작",
+    "기사 찾아 대본, 위키미디어에서 저작권 문제없는 사진, 8초 컷 9개로 편집",
+    "조합: 오퍼스 5.5 + 나노바나나(이미지) + 구글 Flow(영상) + 일레븐랩스(소리)",
+    "효과음은 클로드가 코드로 신디사이저처럼 직접 만듦, 오퍼스+제미나이 프로만으로도 충분"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jh_aicafe",
+   "url": "https://www.threads.com/@jh_aicafe/post/DfXWU8RmePs",
+   "at": "2026-11-05T15:25:33Z",
+   "likes": 20,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "ChatGPT로 동작 12장 시트 → GIF 애니메이션",
+   "points": [
+    "먼저 드리블→점프→덩크→착지 12컷 '시퀀스 시트' 이미지를 만듦",
+    "그 한 장을 레퍼런스로 올리고 GIF로 만들어 달라고 요청",
+    "프롬프트①: '…덩크 슛 장면을 3D 만화 스타일로 연속 동작 프레임 시퀀스, 4:3'",
+    "프롬프트②: '이 이미지의 동작 시퀀스에 따라 GIF를 만들어'"
+   ],
+   "try": "춤·달리기 등 다른 동작으로 두 줄 프롬프트 그대로 따라 해보기"
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DfVsqGWmerS",
+   "at": "2026-11-05T00:04:46Z",
+   "likes": 425,
+   "replies": 32,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "ChatGPT Images 2.6 — GIF 생성, 속도 약 50%↑",
+   "points": [
+    "프롬프트나 사진 한 장으로 반복 재생 GIF 생성",
+    "API는 GPT-Image-2.6 Flare(빠름)·Sunburst(디테일) 두 모델",
+    "같은 프롬프트 low 품질: 2.5 Flare 7.08초 → 2.6 Flare 4.84초",
+    "API에 complexity(구도 계획 정도) 설정 신설 — 간단한 편집은 low 권장"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jay.ai.daily",
+   "url": "https://www.threads.com/@jay.ai.daily/post/DfTey89ihZm",
+   "at": "2026-11-04T03:27:50Z",
+   "likes": 687,
+   "replies": 85,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI용 디자인 자료실 COREVIS — llms.txt로 토큰 절약",
+   "points": [
+    "도트 이펙트·UI 부품·모션그래픽·아이콘·3D 1,273점, React·HTML·CSS로 바로 받음",
+    "입구의 llms.txt(약 8천 자)만 읽으면 AI가 검색 없이 해당 선반으로 감",
+    "카메라 기법 62개를 같은 장면으로 비교 — '확 다가오는 카메라'로 검색 가능",
+    "가입 없이 무료·상업 이용 가능, MCP 연결은 유료 구독"
+   ]
+  }
+ ]
+}
