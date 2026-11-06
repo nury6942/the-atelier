@@ -1,3 +1,9 @@
+## 2026-11-06 · 맥북 · impeccable critique + 폰 가계부 숫자 버그
+
+- /impeccable critique 전체(dual-agent): 23/40, 기록 .impeccable/critique/ (공개 저장소 제외)
+- P0: m-ledger 목표 카드가 만원 목표를 원으로 나눠 1074431%·🔴초과 → ×10000, 지출 합계 5곳 포인트 제외(데스크톱 ldgIsExpense 기준), 목표는 Firestore 에서도 받음
+- 다음: 폰 가계부 판 다시(adapt, 시안 먼저) · AI Brief·Job Hunt 이탤릭 제목 정본 통일 · 안쪽 페이지 밤하늘 띠(시안 먼저) · polish
+
 ## 2026-11-06 · 맥미니 · English › Drills 답·채점 저장 (app-1-pages v410 · sw v1686)
 
 - 누리: Drills 도 실시간 저장, 채점한 것도 그대로 남는 거 맞지? → 아니었음(화면에만 있고 새로고침·다른 기기면 빈칸)
