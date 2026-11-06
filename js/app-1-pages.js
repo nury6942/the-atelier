@@ -27105,9 +27105,9 @@
           '</div>' +
           '<div class="p-5 flex-grow">' +
             '<div class="flex gap-2 mb-4">' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">수입</div><div class="text-sm font-black text-slate-700">' + Math.round(mIncome).toLocaleString('ko-KR') + '</div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">지출</div><div class="text-sm font-black text-slate-700">' + Math.round(mExpense).toLocaleString('ko-KR') + '</div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축</div><div class="text-sm font-black text-slate-700">' + Math.round(mSavings).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[11px] font-bold text-slate-500 mb-0.5">수입</div><div class="text-sm font-black text-slate-700">' + Math.round(mIncome).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[11px] font-bold text-slate-500 mb-0.5">지출</div><div class="text-sm font-black text-slate-700">' + Math.round(mExpense).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[11px] font-bold text-slate-500 mb-0.5">저축</div><div class="text-sm font-black text-slate-700">' + Math.round(mSavings).toLocaleString('ko-KR') + '</div></div>' +
             '</div>' +
             '<table class="w-full"><tbody>' +
               itemsHtml + _hubNewRowHtml(monthKey) +
@@ -27125,15 +27125,15 @@
           '</div>' +
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">유동자산</span>' +
+              '<span class="text-[11px] font-bold" style="' + balLabel + '">유동자산</span>' +
               '<span class="text-base font-black font-headline" style="' + balColor + '">' + Math.round(liquidAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center mb-1">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">비유동자산</span>' +
+              '<span class="text-[11px] font-bold" style="' + balLabel + '">비유동자산</span>' +
               '<span class="text-base font-black font-headline" style="' + balColor + '">' + Math.round(nonLiquidAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center pt-1 mt-1" style="border-top:1px solid ' + (isActive ? 'rgba(255,255,255,0.2)' : 'rgba(31,75,216,0.12)') + ';">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">총 자산</span>' +
+              '<span class="text-[11px] font-bold" style="' + balLabel + '">총 자산</span>' +
               '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:var(--lavender-deep);') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
           '</div></div>';
@@ -33161,7 +33161,7 @@ speaker 설정:
     results.forEach(function(r) { if (!groups[r.cat]) groups[r.cat] = []; groups[r.cat].push(r); });
     var html = '';
     Object.keys(groups).forEach(function(cat) {
-      html += '<div class="px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest text-slate-400 bg-slate-50">' + cat + ' (' + groups[cat].length + ')</div>';
+      html += '<div class="px-4 py-1.5 text-[11px] font-bold text-slate-400 bg-slate-50">' + cat + ' (' + groups[cat].length + ')</div>';
       groups[cat].forEach(function(r) {
         html += '<button onclick="searchNavigate(\'' + r.page + '\');document.getElementById(\'global-search-results\').style.display=\'none\';document.getElementById(\'global-search-input\').value=\'\';" class="w-full text-left px-4 py-2.5 flex items-center gap-3 hover:bg-indigo-50 transition-colors">' +
           '<span class="material-symbols-outlined text-indigo-400" style="font-size: var(--font-size-h2)">' + r.icon + '</span>' +
