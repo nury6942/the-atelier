@@ -1,9 +1,10 @@
 ## 2026-11-06 밤 · 맥북 · 글자 품질만 (q7 — 색·배치·내용 손대지 않음)
 
-- 11px 미만 → 11px: Flight Deals 라벨 9곳(NEW 배지는 그대로), 부업 「재동기화」·Sync Active(10.4px), 여행 예산 남음 미니 배지(10px), 좌표 자동 찾기 버튼·출발/복귀 안내·hub 종류 선택(10px), tutor 라벨 3곳
+- 11px 미만 → 11px: Flight Deals 라벨 9곳(NEW 배지는 그대로), 부업 「재동기화」·Sync Active(10.4px), 좌표 자동 찾기 버튼·출발/복귀 안내·hub 종류 선택(10px), tutor 라벨 3곳
 - 흐린 회색 글자 → #5B5B66: 캐시플로 SVG 축 글자(flt-svg-x/y), 포스타입 차트 축 3곳, Chart.js x축 눈금, IELTS 힌트·표 머리·카드 이름, Read 단어 메타·힌트 글자수
 - 제목 단계 건너뜀: 로드맵 h4→h3·h5→h4, 여행 일정 카드 h5→h4 (크기·글꼴·여백 그대로)
-- ?v=: app-1-pages 423, flight-deals 12, app-4-roadmap 166, app-6 173, english-read 3, ielts-app 15
+- 여행 예산 남음 미니 배지 10→11px 은 폰에서 카테고리 이름(항공권·숙소·생활비)을 더 잘라서 되돌림 — 이름 잘림은 원래부터 있음(배치 문제라 손대지 않음)
+- ?v=: app-1-pages 424, flight-deals 12, app-4-roadmap 166, app-6 173, english-read 3, ielts-app 15
 
 ## 2026-11-06 밤 · 맥북 · 사이드바·지평선 띠 원래대로
 

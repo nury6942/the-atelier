@@ -15307,7 +15307,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       else if (rem < 0) { style = 'background:#FEF2F2;color:#B91C1C'; label = fmtW(rem) + ' 초과'; }
       else { style = 'background:#ecfdf5;color:#15803D'; label = fmtW(rem) + ' 남음'; }
       return '<span class="font-bold rounded-full flex-shrink-0" style="' + style +
-        ';font-size:11px;padding:' + (mini ? '2px 8px' : '3px 10px') +
+        ';font-size:' + (mini ? '10px' : '11px') + ';padding:' + (mini ? '2px 8px' : '3px 10px') +
         ';font-variant-numeric:tabular-nums;white-space:nowrap">' + label + '</span>';
     };
 
