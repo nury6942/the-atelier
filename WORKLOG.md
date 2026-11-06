@@ -1,3 +1,9 @@
+## 2026-11-06 · 맥북 · critique 23/40 → 다듬기 1차 (갈래 3개 병렬)
+
+- ① 폰 가계부 새로(ff21dd0·b64fa1a): js/app-7-mirror.js 를 그대로 불러 판정·규칙 4개·한 해 막대가 데스크톱과 같은 숫자(모으기 3,247→1,054 일치), 이모지·그라데이션·분홍 카드 제거, 체크리스트·캘린더·차트는 뺌
+- ② AI Brief(6582833·d96b2fe) 기울임 제목·한글 자간·연회색·10px 정리 + 지평선 띠 · Job Hunt gen.py 같은 정리 + 필터 한 줄(맥북·아이맥 md5 같음, 사이트는 아침 루틴 뒤)
+- ③ 본 사이트(d0aafa9…316d5ae): 사이드바=홈 15곳, Monthly Assets, 자산·설정 중복 제거, 캘린더 4색(코발트/회색 선/잉크 선/모래)+범례, 빈 달 한 줄, 사진 없는 도시 카드, 연회색·9~10px·보라·튕김·그림자·v1.0.4·한글 자간·제목 단계, 두 번 눌러 삭제(atlTapConfirm), 지평선 띠 .atl-horizon(assets/home/band-horizon.webp, 폰은 두 줄) · 디텍터 index 390→173
+
 ## 2026-11-06 · 맥북 · impeccable critique + 폰 가계부 숫자 버그
 
 - /impeccable critique 전체(dual-agent): 23/40, 기록 .impeccable/critique/ (공개 저장소 제외)
