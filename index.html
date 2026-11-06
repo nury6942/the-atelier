@@ -74,7 +74,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
   <link rel="preload" href="js/app-1-pages.js?v=419" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=196" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=197" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
@@ -6538,8 +6538,9 @@
     .trav-tabs-next { display:none; }
     @media (min-width:768px){ .trv-overview { grid-template-columns:repeat(auto-fit,minmax(118px,1fr)) !important; } }
     .trv-ltab { text-transform:none !important; letter-spacing:0 !important; font-family:'Pretendard',sans-serif !important; font-size:13px !important; font-weight:600 !important; }
-    .trv-ov-chip.is-warn { border-color:#DC2626; background:#fff; }
-    .trv-ov-chip.is-warn .trv-ov-v { color:#DC2626; }
+    #journey-overview .trv-ov-chip.is-warn { box-shadow:inset 0 3px 0 #DC2626; background:#fff; }
+    #journey-overview .trv-ov-chip.is-warn .trv-ov-v { color:#DC2626 !important; }
+    .bk-gap b { letter-spacing:0 !important; font-family:'Pretendard',sans-serif !important; }
     /* (2026-11-06 4차) 요약 칩 라벨 Title Case · 뜨는 hover 없음 */
     .trv-ov-l { text-transform:none !important; letter-spacing:0 !important; font-family:'Pretendard',sans-serif !important; font-size:12px !important; font-weight:600 !important; }
     .trv-ov-v { font-family:'Pretendard',sans-serif !important; }
@@ -17684,7 +17685,7 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=196" defer></script>
+<script src="js/app-2-init.js?v=197" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
@@ -17698,7 +17699,7 @@
 <script src="js/app-4-roadmap.js?v=165" defer></script>
 <script src="js/app-5-ledger-export.js?v=164" defer></script>
 <script src="js/app-6-postype-analytics.js?v=172" defer></script>
-<script src="js/app-7-mirror.js?v=92" defer></script>
+<script src="js/app-7-mirror.js?v=93" defer></script>
 <script src="js/money-tax.js?v=5" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
 <script src="js/english-study.js?v=26" defer></script>

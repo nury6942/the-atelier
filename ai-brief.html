@@ -116,6 +116,7 @@
   .side .ex{grid-template-columns:1fr;gap:6px}  /* 좁은 옆 카드는 예시를 '작은 사진 + 제목' 목록으로 */
   .side .ex a{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:center}
   .side .ex span{margin-top:0}
+  .side .ex a > span:first-child{grid-column:1/-1}  /* (11/06 4차) 사진 없는 예시는 글자가 64px 사진 칸에 갇혀 한 단어씩 꺾이던 것 */
   .why{margin-top:10px;font-size:12px;color:var(--mut)}
   .why b{color:var(--ink)}
   .new{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
