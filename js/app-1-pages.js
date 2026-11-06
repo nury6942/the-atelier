@@ -15354,7 +15354,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
             '<span class="material-symbols-outlined text-base" style="color:' + cfg.color + '">' + cfg.icon + '</span>' +
             '<span class="text-sm font-bold text-slate-700 truncate">' + g + '</span>' +
           '</div>' +
-          badge(b - s, b, true) +
+          '<span class="fbg-top">' + badge(b - s, b, true) + '</span>' +
         '</div>' +
         '<div class="flex items-baseline gap-1.5 flex-wrap mb-1.5">' +
           '<span class="text-base font-extrabold text-slate-900" style="font-variant-numeric:tabular-nums">₩' + Math.round(s).toLocaleString('ko-KR') + '</span>' +
@@ -15362,6 +15362,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           '<span class="text-[10px] font-semibold text-slate-400 ml-auto">' + (b > 0 ? gPct + '%' : '—') + '</span>' +
         '</div>' +
         bar(s, b, cfg.color, 'h-2') +
+        // (11/06 A안) 폰에선 남음 배지를 막대 아래로 — 위 줄을 이름이 다 쓰게
+        '<div class="fbg-bot">' + badge(b - s, b, true) + '</div>' +
         // 소분류 breakdown — 이 그룹에 실제 지출이 있는 카테고리만
         (function(){
           var parts = cfg.cats.filter(function(c){ return catSpent[c]; }).map(function(c){
