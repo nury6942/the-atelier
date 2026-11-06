@@ -1,3 +1,8 @@
+## 2026-11-06 밤 · 맥북 · Roadmap 삭제
+
+- 누리: 안 씀, 데이터까지 삭제 → 사이드바·홈 메뉴·Help 줄·page-roadmap·Phase/설정 모달 삭제, js/app-4-roadmap.js·roadmap-data.js·daily-actions.js·daily-guides.js 삭제
+- 데이터는 Firestore 없이 기기 localStorage(atelier_roadmap_*)뿐 → 사이트가 열릴 때 지움. index.html 백업은 맥북 스크래치
+
 ## 2026-11-06 밤 · 맥북 · My Notes 답 읽기 쉽게
 
 - 누리: 답 글자 작고 줄글이라 읽기 힘듦 → 질문·답 15px, 답은 문장마다 줄바꿈(옛 답도 화면에서 …다./…요. 끝마다 나눔), 프롬프트에 "한 문장마다 줄 바꿈·예문 따로 한 줄"

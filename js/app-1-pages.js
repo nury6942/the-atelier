@@ -16879,7 +16879,6 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     "ledger": { "title": "Money" },
     "matrix": { "title": "Calendar" },
     "english": { "title": "English" },
-    "roadmap": { "title": "Roadmap" },
     "nomad-master": { "title": "Nomad Master" },
     "vault": { "title": "Vault" },
     "income": { "title": "Money" },
@@ -21855,6 +21854,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     else if (tab === 'tax') navigate('tax');
   }
   if (typeof window !== 'undefined') window.switchMoneyTab = switchMoneyTab;
+  // (2026-11-06) Roadmap 페이지 삭제 — 이 기기에 남은 로드맵 체크·설정 기록도 지운다 (누리: 안 씀, 데이터까지 삭제)
+  try { ['atelier_roadmap_checks','atelier_roadmap_config','atelier_roadmap_expanded','atelier_roadmap_daily_checks','atelier_roadmap_daily_guide_open'].forEach(function(k){ localStorage.removeItem(k); }); } catch(e) {}
 
   // 미니 요약 업데이트 (Travel 페이지)
   // Finance 스키마: ['date','description','trip','category','amount','currency','krw_amount']
@@ -22017,7 +22018,6 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     if(pageId==='planner') { if(typeof loadPlanner==='function') loadPlanner(); }
     if(pageId==='packing') { if(typeof pkInit==='function') pkInit(); }
     if(pageId==='reference') { if(typeof loadReference==='function') loadReference(); }
-    if(pageId==='roadmap') { if(typeof loadRoadmap==='function') loadRoadmap(); }
   }
   window.addEventListener('DOMContentLoaded', () => {
     // ★ URL ?nav= 우선 처리 (m-ledger.html → 자산/부업 탭 복귀 시 무한 리다이렉트 방지)
