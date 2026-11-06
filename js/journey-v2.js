@@ -7,8 +7,9 @@
 // ════════════════════════════════════════════════════════════════════
 (function() {
   'use strict';
-  var MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  var WD = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  // (2026-11-06 3차) 대문자+자간 키커 → 보통 글씨 (DESIGN.md: 메뉴·제목은 Title Case)
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function d0(s) { return new Date(String(s).slice(0, 10) + 'T00:00:00'); }
   function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -97,8 +98,8 @@
     if (dd && ddl && s && e) {
       var td = d0(ymd(new Date()));
       if (td < s) { ddl.textContent = 'Departure in'; dd.textContent = 'D−' + Math.round((s - td) / 864e5); }
-      else if (td <= e) { ddl.textContent = 'On the road'; dd.textContent = 'DAY ' + (Math.round((td - s) / 864e5) + 1) + '/' + days; }
-      else { ddl.textContent = 'Back home'; dd.textContent = 'DONE'; }
+      else if (td <= e) { ddl.textContent = 'On the road'; dd.textContent = 'Day ' + (Math.round((td - s) / 864e5) + 1) + '/' + days; }
+      else { ddl.textContent = 'Back home'; dd.textContent = 'Done'; }
     }
     if (facts) {
       var cs = cities(), total = 0, known = 0;
@@ -110,8 +111,16 @@
         '<div><p class="jv-lbl">Days</p><b>' + (days || '—') + '<small>일</small></b></div>' +
         '<div><p class="jv-lbl">Stops</p><b>' + cs.length + '<small>곳 · ' + nights + '박</small></b></div>' +
         '<div><p class="jv-lbl">Drive</p><b>' + (known ? '≈' + total.toLocaleString('ko-KR') : '—') + '<small>km</small></b></div>' +
-        '<div><p class="jv-lbl">Budget left</p><b>' + esc(remain) + '</b></div>';
+        '<div><p class="jv-lbl">Budget left</p><b>' + manwon(remain) + '</b></div>';
     }
+  }
+
+  // 큰 숫자 칸의 ₩5,729,537 남음 → 572만 남음 (기호·자릿수 대신 만 단위)
+  function manwon(t) {
+    var neg = /[-−]/.test(t), n = parseInt(String(t).replace(/[^\d]/g, ''), 10);
+    if (!isFinite(n)) return esc(t);
+    var v = n >= 10000 ? Math.round(n / 10000).toLocaleString('ko-KR') + '<small>만 ' : n.toLocaleString('ko-KR') + '<small>원 ';
+    return (neg ? '−' : '') + v + (/초과/.test(t) ? '초과' : (neg ? '초과' : '남음')) + '</small>';
   }
 
   // ─────────────── Route 경로 띠 ───────────────
@@ -211,7 +220,7 @@
   // (2026-11-06 2차) 이모지 → Material Symbols — 사이트 아이콘 한 벌로
   var LEG_MODE = { train:['train','기차'], flight:['flight','비행기'], car:['directions_car','차'], bus:['directions_bus','버스'], boat:['directions_boat','배'], metro:['subway','지하철'] };
   function msi(n) { return '<span class="material-symbols-outlined" aria-hidden="true">' + n + '</span>'; }
-  function hmTxt(m) { m = Math.round(m / 5) * 5; return (Math.floor(m / 60) ? Math.floor(m / 60) + 'H ' : '') + (m % 60 ? (m % 60) + 'M' : ''); }
+  function hmTxt(m) { m = Math.round(m / 5) * 5; return ((Math.floor(m / 60) ? Math.floor(m / 60) + 'h ' : '') + (m % 60 ? (m % 60) + 'm' : '')).trim(); }
   function minsOf(a, b) { if (!a || !b) return 0; var p = a.split(':'), q = b.split(':'); var d = (+q[0] * 60 + +q[1]) - (+p[0] * 60 + +p[1]); return d > 0 ? d : 0; }
   function legHtml(a, b) {
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
@@ -241,7 +250,7 @@
     return '<div class="jv-leg is-' + mode + '"><span>' +
       '<em>' + msi(md[0]) + md[1] + '</em>' +
       '<b>' + (best ? '' : '≈') + hmTxt(mins) + '</b>' +
-      (dist ? '<i>' + dist + ' KM</i>' : '') + alt +
+      (dist ? '<i>' + dist.toLocaleString('ko-KR') + ' km</i>' : '') + alt +
     '</span></div>';
   }
 
@@ -351,7 +360,7 @@
   // ── 일정 줄 꾸미기: 이동·식사·선셋 태그, "한국어 (English)"의 영어는 옅게 ──
   var TAG = {
     train: ['train', '기차'], metro: ['subway', '지하철·트램'], bus: ['directions_bus', '버스'], car: ['directions_car', '드라이브'], walk: ['directions_walk', '걸어서'], flight: ['flight', '비행'], boat: ['directions_boat', '배'], cable: ['gondola_lift', '케이블카'],
-    breakfast: ['bakery_dining', 'BREAKFAST'], lunch: ['restaurant', 'LUNCH'], dinner: ['wine_bar', 'DINNER'], cafe: ['local_cafe', 'CAFÉ'], sunset: ['wb_twilight', 'SUNSET'], sunrise: ['wb_sunny', 'SUNRISE'], night: ['bedtime', 'NIGHT']
+    breakfast: ['bakery_dining', 'Breakfast'], lunch: ['restaurant', 'Lunch'], dinner: ['wine_bar', 'Dinner'], cafe: ['local_cafe', 'Café'], sunset: ['wb_twilight', 'Sunset'], sunrise: ['wb_sunny', 'Sunrise'], night: ['bedtime', 'Night']
   };
   var MOVES = { train:1, metro:1, bus:1, car:1, walk:1, flight:1, boat:1, cable:1 };
   function dur(a, b) {
@@ -425,7 +434,37 @@
     for (var j = 0; j < dm.length; j++) if (dm[j].date === d) { window.setDayPinsFilterQuiet(String(dm[j].day)); break; }
   }
   document.addEventListener('scroll', function() { if (!_followTick) { _followTick = true; setTimeout(followScroll, 80); } }, { passive: true, capture: true });
+  // ─────────────── (2026-11-06 3차) 화면 다듬기 CSS — index.html 대신 여기서 넣는다 ───────────────
+  var R3_CSS = [
+    /* 대문자+자간 키커 → 보통 글씨, 자간 0 */
+    '#page-journey .jv-lbl, #page-journey .jv-btn { text-transform:none; letter-spacing:0; font-size:12px; font-weight:600; }',
+    '#page-journey .jv-btn { font-size:12.5px; }',
+    '#page-journey .jv-now .jv-lbl { color:rgba(255,255,255,.86); }',
+    '#page-journey .jv-leg span, #page-journey .jv-leg i { letter-spacing:0; }',
+    '#page-journey .jv-leg i { color:var(--jv-sub); }',
+    '#page-journey #journey-week-grid.wk4 .wk4-eyebrow .wk4-day-date { letter-spacing:0 !important; text-transform:none !important; }',
+    /* 경로 띠 끝 흐림(그라데이션 마스크) 제거 — ‹ › 버튼과 늘 보이는 스크롤바만 */
+    '#page-journey .jv-route-strip, #page-journey .jv-route-strip.can-l, #page-journey .jv-route-strip.can-r { -webkit-mask-image:none !important; mask-image:none !important; }',
+    /* 날씨 칩 흐린 글자(opacity .72) → 읽히게, 일몰 분홍 → 잉크 */
+    '.wk4-wx u, .wk4-wx s { opacity:1 !important; color:#5B5B66; }',
+    '.wk4-wx s.is-rain { color:#B91C1C; }',
+    '#page-journey .wk4-wx em { color:#5B5B66 !important; }',
+    '#page-journey .jv-sun-s b { color:var(--jv-ink); }',
+    /* Daily Log Single/All Days 토글 — 회색(#64748b on #f1f5f9 3.9:1) → 잉크 계열 */
+    '#page-journey .dlv-toggle { background:#fff; border-radius:0; }',
+    '#page-journey .dlv-toggle button { color:#3F3F48; border-radius:0; }',
+    '#page-journey .dlv-toggle button.is-active { color:#fff; }',
+    /* 좌표 없는 곳 자동 찾기 버튼 10px → 12px */
+    'button[onclick^="geocodeTripSpots"] { font-size:12px !important; padding:4px 8px !important; border-radius:0 !important; }'
+  ].join('\n');
+  function injectCss() {
+    if (document.getElementById('atl-r3y-trv')) return;
+    var st = document.createElement('style'); st.id = 'atl-r3y-trv'; st.textContent = R3_CSS;
+    document.head.appendChild(st);
+  }
+
   function boot() {
+    injectCss();
     wrapBefore('renderWeekView', fillPlanCoords);
     wrapBefore('renderDayPinsMap', fillPlanCoords);
     wrap('renderWeekView', function() {
