@@ -1104,7 +1104,7 @@ function ldgRenderBoard() {
       '<div class="lb-hero-n"><span class="lb-n" style="color:' + (m.leftLife >= 0 ? BK.judge : BK.red) + '">' + (m.leftLife >= 0 ? '+' : '') + _bMan(m.leftLife) + '만</span><small>' + (m.salaryDue ? '남을 예정' : '남음') + '</small></div>' +
       '<p class="lb-fx">' + LF.html + '</p>' +
       '<p class="lb-fx2">' + LF.breakdown + '</p>' +
-      '<div style="margin-top:auto;padding-top:14px">' + _bStack([['고정', LF.fix, '#16161A'], ['연간 적립', LF.ann, '#5B5B66'], ['생활비', LF.liv, '#A1A1AA'], ['남음', Math.max(0, m.leftLife), '#9DB0EE']], Math.max(incAll, m.life) * 1.02, 12) + '</div>' +
+      '<div style="margin-top:14px">' + _bStack([['고정', LF.fix, '#16161A'], ['연간 적립', LF.ann, '#5B5B66'], ['생활비', LF.liv, '#A1A1AA'], ['남음', Math.max(0, m.leftLife), '#9DB0EE']], Math.max(incAll, m.life) * 1.02, 12) + '</div>' +
       (m.travel ? '<p class="lb-fx2" style="margin-top:6px">여행 ' + _bMan(m.travel) + '만은 여행 통장(' + MIRROR_TRAVEL_ACCOUNT + ')에서 → 여기 안 셈</p>' : '') + '</div>' +
     '<div class="lb-c lb-6"><p class="lb-t"><span>나의 규칙 4개 · 이 달 지키는 중?</span><span>' + [m.side > 0 && netSave >= m.side, livingNow <= livCap, m.life <= salBase, shopBig.length < 2].filter(Boolean).length + ' / 4 지킴</span></p>' + rules + '</div></div>';
 
