@@ -251,7 +251,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   //   일반 기간 일정(꽉 찬 바)과 달리 "이 구간 내내 이랬다"는 배경 정보를 칸을 안 먹고 보여준다.
   //   예: 야근 기간, 지연 출근 기간, 생리 주기, 프로젝트 스프린트
   const IV_HEX = {
-    rose:'#DC2626', orange:'#ea580c', amber:'#B45309', lime:'#65a30d',
+    rose:'#e11d48', orange:'#ea580c', amber:'#B45309', lime:'#65a30d',
     cyan:'#0891b2', blue:'#2563eb', violet:'#7c3aed', fuchsia:'#c026d3', slate:'#64748b'
   };
   function _ivIsInterval(row) { return (row && (row[2]||'').trim()) === '인터벌'; }
@@ -1257,7 +1257,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       { value: '데드라인', dot: '#FF3B00', label: '데드라인', emoji: '🚨' },
       { value: '영어',  dot: '#558A12', label: '영어' },
       { value: '특별휴가', dot: '#FFE01A', label: '특별휴가', emoji: '🎁' },
-      { value: '인터벌', dot: '#DC2626', label: '인터벌', emoji: '↔️' },
+      { value: '인터벌', dot: '#e11d48', label: '인터벌', emoji: '↔️' },
     ],
     onSelect: function(val) { toggleLeaveDay(); }
   });
@@ -23546,12 +23546,6 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   // ★ (2026-10-11) 시리즈 이름으로 색 고정 — 달력(js/cal-wb.js SERIES_FIXED)과 맞춤. R 시리즈 = 청록
   function _seriesFixedHex(name) { return /^R/i.test(String(name || '').trim()) ? '#0D9488' : null; }
 
-  // (2026-11-06 4차) 시리즈 타임라인 막대 = 달력과 같은 4색 문법: 시놉·초고·퇴고 = 흰 바탕+잉크 선, 휴식 = 회색 파선, 연재 = 코발트
-  function _phaseBarStyle(k) {
-    if (k === 'publishing') return { box: 'background:#1F4BD8;', txt: '#fff' };
-    if (k === 'rest') return { box: 'background:#fff;border:1px dashed #A1A1AA;box-sizing:border-box;', txt: '#5B5B66' };
-    return { box: 'background:#fff;box-shadow:inset 0 0 0 1px #16161A;', txt: '#16161A' };
-  }
   function getSeriesColor(name) {
     var data = getSeriesData();
     var s = data.find(function(x){return x.name===name;});
@@ -24684,7 +24678,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     completed:  { icon: '✅', label: '완결',         color: '#6b7280', bg: 'rgba(107,114,128,0.08)' }
   };
 
-  var _seriesHexMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#DC2626', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316', fuchsia:'#d946ef' };
+  var _seriesHexMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316', fuchsia:'#d946ef' };
   function _getSeriesHex(seriesName) {
     var c = getSeriesColor(seriesName);
     return _seriesHexMap[c] || '#1F4BD8';
@@ -24797,12 +24791,12 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         var clampEnd = Math.min(pEnd, yrEnd);
         var leftPct = ((clampStart - yrStart) / (yrEnd - yrStart) * 100).toFixed(2);
         var widthPct = Math.max(0.3, ((clampEnd - clampStart) / (yrEnd - yrStart) * 100)).toFixed(2);
-        var _pb = _phaseBarStyle(realKey);
+        var color = phaseColors[realKey] || '#94a3b8';
         var label = phaseLabels[realKey] || '';
         var showLabel = parseFloat(widthPct) > 3;
 
-        rowsHtml += '<div class="absolute top-1.5" style="left:' + leftPct + '%;width:' + widthPct + '%;height:20px;' + _pb.box + '" title="' + label + ': ' + ph.start + ' ~ ' + ph.end + '">';
-        if (showLabel) rowsHtml += '<span class="text-[11px] font-bold px-1 truncate block leading-5" style="color:' + _pb.txt + '">' + label + '</span>';
+        rowsHtml += '<div class="absolute top-1.5 rounded-sm" style="left:' + leftPct + '%;width:' + widthPct + '%;height:20px;background:' + color + ';opacity:0.85" title="' + label + ': ' + ph.start + ' ~ ' + ph.end + '">';
+        if (showLabel) rowsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">' + label + '</span>';
         rowsHtml += '</div>';
       });
 
@@ -24889,10 +24883,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           if (pe<rStart.getTime()||ps>rEnd.getTime()) return;
           var cl=Math.max(0,(ps-rStart.getTime())/totalMs*100), cr=Math.min(100,(pe-rStart.getTime())/totalMs*100);
           var cw=Math.max(0.3,cr-cl);
-          var _pb2 = _phaseBarStyle(rk);
+          var col = rk==='publishing'?sColor:(phaseColors[rk]||'#94a3b8');
           var lbl = {synopsis:'시놉',draft:'초고',revision:'퇴고',rest:'휴식',publishing:'연재'}[rk]||rk;
-          rowsHtml += '<div class="absolute top-1.5 cursor-pointer" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;height:20px;'+_pb2.box+'" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
-          if (cw > 3) rowsHtml += '<span class="text-[11px] font-bold px-1 truncate block leading-5" style="color:'+_pb2.txt+'">'+lbl+'</span>';
+          rowsHtml += '<div class="absolute top-1.5 rounded-sm cursor-pointer" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;height:20px;background:'+col+';opacity:0.85" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
+          if (cw > 3) rowsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">'+lbl+'</span>';
           rowsHtml += '</div>';
         });
         if (w.phases&&w.phases._pub) delete w.phases._pub;
@@ -24977,7 +24971,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var totalMs = rangeEnd.getTime() - rangeStart.getTime();
     var pct = function(d) { return Math.max(0, Math.min(100, ((d.getTime() - rangeStart.getTime()) / totalMs * 100))); };
     var todayPct = pct(today);
-    var scMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#DC2626', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316' };
+    var scMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316' };
     var _md = function(d) { return (d.getMonth()+1)+'/'+d.getDate(); };
 
     // Month markers
