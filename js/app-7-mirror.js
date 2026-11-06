@@ -505,11 +505,12 @@ function ldgLeftFormula(m) {
   if (Math.round(oth / 1e4)) br.push('미분류 ' + B(oth));
   return { fix: sp.fix, ann: sp.ann, liv: sp.liv, oth: oth,
     html: inc.join(' + ') + ' − 여행 빼고 쓴 돈 ' + B(m.life) + ' = <b class="lb-n num" style="color:' + (m.leftLife >= 0 ? BK.judge : BK.red) + '">' + (m.leftLife >= 0 ? '+' : '−') + _bMan(Math.abs(m.leftLife)) + '</b>',
-    breakdown: '여행 빼고 쓴 돈 = ' + br.join(' + ') + ' · ' + LIVING_FX };
+    breakdown: '여행 빼고 쓴 돈 = ' + br.join(' + ') };
 }
 window.ldgLeftFormula = ldgLeftFormula;
 
 function _boardCss() {
+  _boardCssR4z();
   if (document.getElementById('ldg-board-css')) return;
   var s = document.createElement('style');
   s.id = 'ldg-board-css';
@@ -531,7 +532,9 @@ function _boardCss() {
     '@media (max-width:720px){.lb-goal{grid-template-columns:repeat(2,minmax(0,1fr))}.lb-3,.lb-6{grid-column:span 12}.lb-env{grid-template-columns:repeat(2,minmax(0,1fr))}}'
   ].join('\n');
   document.head.appendChild(s);
-  // 2026-11-06 4차 (atl-r4z): 판정 크게·코발트, 집 상환·습관은 조용히
+}
+// 2026-11-06 4차 (atl-r4z): 판정 크게·코발트, 집 상환·습관은 조용히
+function _boardCssR4z() {
   if (!document.getElementById('atl-r4z')) {
     var z = document.createElement('style');
     z.id = 'atl-r4z';
