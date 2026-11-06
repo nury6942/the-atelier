@@ -957,7 +957,36 @@
     '  .wbc.is-phone #wbc-fab .material-symbols-outlined { font-size:22px; }',
     '}'
   ].join('\n');
+  // ─────────────── (2026-11-06 4차) 다듬기 — 시리즈 타임라인 막대 4색 문법 · 통계 12px · 범례 선 ───────────────
+  //   막대 색(앰버·파랑·청록·보라·초록)은 app-1-pages.js 가 인라인으로 칠한다 → 여기서 뜻으로 덮어쓴다 (title 이 「시놉: …」 꼴)
+  var TL = ['#cal-work-timeline-section', '#work-timeline-section'];
+  function tl(sel) { return TL.map(function(r) { return r + ' div.relative.flex-1 > div.absolute.top-1\\.5' + sel; }).join(', '); }
+  var R4_CSS = [
+    /* 글쓰기 단계(시놉·초고·퇴고·연재) = 개인·글쓰기 → 흰 바탕 + 잉크 1px 선, 잉크 글자 11px */
+    tl('') + ' { background:#fff !important; opacity:1 !important; border-radius:0 !important; box-shadow:inset 0 0 0 1px #15171C; }',
+    tl(' > span') + ' { font-size:11px !important; font-weight:600 !important; color:#15171C !important; line-height:20px; }',
+    /* 휴식 = 쉬는 칸 → 점선 회색, 보조 글자 */
+    tl('[title^="휴식"]') + ' { box-shadow:none; outline:1px dashed #8A8A95; outline-offset:-1px; }',
+    tl('[title^="휴식"] > span') + ' { color:#5B5B66 !important; }',
+    /* 연재 = 밖으로 나가는 마일스톤 → 코발트 꽉 채움 + 흰 글자 (6.9:1) */
+    tl('[title^="연재"]') + ' { background:#1F4BD8 !important; box-shadow:none; }',
+    tl('[title^="연재"] > span') + ' { color:#fff !important; }',
+    /* 머리줄 범례 견본도 같은 문법 (순서: 시놉·초고·퇴고·휴식·연재) */
+    TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span > span.w-2\\.5'; }).join(', ') + ' { width:14px; height:10px; border-radius:0; background:#fff !important; box-shadow:inset 0 0 0 1px #15171C; }',
+    TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span:nth-child(4) > span.w-2\\.5'; }).join(', ') + ' { box-shadow:none; outline:1px dashed #8A8A95; outline-offset:-1px; }',
+    TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span:nth-child(5) > span.w-2\\.5'; }).join(', ') + ' { background:#1F4BD8 !important; box-shadow:none; }',
+    TL.map(function(r) { return r + ' .flex.gap-2\\.5'; }).join(', ') + ' { font-size:12px !important; color:#5B5B66 !important; flex-wrap:wrap; row-gap:4px; }',
+    TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span'; }).join(', ') + ' { white-space:nowrap; flex:none; }',
+    TL.map(function(r) { return r + ' > div:first-child > div.flex.items-center.gap-2'; }).join(', ') + ' { flex-wrap:wrap; row-gap:6px; }',
+    /* 통계 보조 줄 11px → 12px */
+    '.wbc .wbc-stat .s, #wbc .wbc-stat .s { font-size:12px; }',
+    /* 주간 GTM 칩 여백: 좁은 화면에서 2px 3px 까지 줄던 것 → 4px 6px */
+    'html body #wbc .wbc-gtm, html body #wbc .wbc-gtm.s-fw, html body #wbc .wbc-gtm.is-key { padding:4px 6px !important; }',
+    /* 범례 「업무 일정」·연장근무 견본: #DCDCE3 선은 흰 바탕에서 안 보임 → #8A8A95 (폰 점과 같은 선) */
+    '.wbc-legend .k-work::before, .wbc .wbc-stat .l.is-ot::before { box-shadow:inset 0 0 0 1px #8A8A95; }'
+  ].join('\n');
   function injectCss() {
+    if (!document.getElementById('atl-r4y-cal')) { var s4 = document.createElement('style'); s4.id = 'atl-r4y-cal'; s4.textContent = R4_CSS; document.head.appendChild(s4); }
     if (document.getElementById('atl-r3y-cal')) return;
     var st = document.createElement('style'); st.id = 'atl-r3y-cal'; st.textContent = R3_CSS;
     document.head.appendChild(st);

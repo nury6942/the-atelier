@@ -91,7 +91,7 @@
     var s = t.start_date ? d0(t.start_date) : null, e = t.end_date ? d0(t.end_date) : null;
     if (eb) eb.textContent = 'Itinerary' + (s ? ' · ' + s.getFullYear() : '');
     if (datesEl && s && e) {
-      datesEl.textContent = MON[s.getMonth()] + ' ' + String(s.getDate()).padStart(2, '0') + ' ' + WD[s.getDay()] + ' — ' +
+      datesEl.textContent = MON[s.getMonth()] + ' ' + String(s.getDate()).padStart(2, '0') + ' ' + WD[s.getDay()] + ' – ' +
         MON[e.getMonth()] + ' ' + String(e.getDate()).padStart(2, '0') + ' ' + WD[e.getDay()] + ' · ' + e.getFullYear();
     }
     var days = (s && e) ? Math.round((e - s) / 864e5) + 1 : 0;
@@ -369,8 +369,19 @@
     if (!(m > 0)) return '';
     return m >= 60 ? Math.floor(m / 60) + '시간' + (m % 60 ? ' ' + (m % 60) + '분' : '') : m + '분';
   }
+  // (2026-11-06 4차) 화면이 만든 구분 글자의 em-dash(—) 정리 — 시간 범위는 en-dash(–), 안내 문장은 가운뎃점(·). 사용자가 쓴 글은 건드리지 않는다
+  function tidyDashes(grid) {
+    grid.querySelectorAll('.wk4-time').forEach(function(el) {
+      if (el.children.length || el.textContent.indexOf('—') < 0) return;
+      el.textContent = el.textContent.replace(/\s*—\s*/g, '–');
+    });
+    (document.getElementById('page-journey') || grid).querySelectorAll('.j-night-warn').forEach(function(el) {
+      for (var i = 0; i < el.childNodes.length; i++) { var n = el.childNodes[i]; if (n.nodeType === 3 && n.textContent.indexOf(' — ') >= 0) n.textContent = n.textContent.replace(' — ', ' · '); }
+    });
+  }
   function decorateSlots() {
     var grid = document.getElementById('journey-week-grid');
+    if (grid) { try { tidyDashes(grid); } catch(e) {} }
     if (!grid || typeof journeyData === 'undefined') return;
     var byId = {};
     journeyData.forEach(function(d) { if (d._id) byId[d._id] = d; });
@@ -463,8 +474,57 @@
     document.head.appendChild(st);
   }
 
+  // ─────────────── (2026-11-06 4차) 다듬기 — 사진 없는 도시 카드 · Route 곁가지 버튼 ⋯ · 11px → 12px ───────────────
+  var R4_CSS = [
+    /* 사진 없는 도시: 코발트 판 반복 → 흰 바탕 + 코발트 1px 선 + 모래 지평선 6px + 도시 이름 잉크 (Ctrl+V·사진 추가는 그대로) */
+    '#page-journey .jv-stop-img.is-empty { background:#fff; border:1px solid #1F4BD8; box-shadow:inset 0 -6px 0 #F0A647; }',
+    '#page-journey .jv-stop-img.is-empty .jv-stop-ph { color:#15171C; }',
+    '#page-journey .jv-stop-img.is-empty .jv-stop-ph b { font-size:26px; letter-spacing:-0.02em; }',
+    '#page-journey .jv-stop-img.is-empty .jv-stop-ph i { color:#5B5B66; font-size:12px; }',
+    '#page-journey .jv-stop-img.is-empty .jv-stop-no { border-color:#1F4BD8; color:#1F4BD8; }',
+    /* Daily Log 설명·숙소 미등록 경고 11px → 12px */
+    '#page-journey p.wk4-sub.wk4-sub-desc, #page-journey div.j-night-warn.wk4-night { font-size:12px !important; }',
+    /* Route 머리줄: 도시 추가 + ⋯ More(펼침) */
+    '#trv-stops .jv-more { position:relative; display:inline-flex; align-self:center; }',
+    '#trv-stops .jv-sec-h > .jv-btn { align-self:center; }',
+    '#trv-stops .jv-more-btn { display:inline-flex; align-items:center; gap:4px; }',
+    '#trv-stops .jv-more-btn .material-symbols-outlined { font-size:18px; line-height:1; }',
+    '#trv-stops .jv-more-btn[aria-expanded="true"] { border-color:#15171C; }',
+    '#trv-stops .jv-more-menu { position:absolute; right:0; top:calc(100% + 4px); z-index:30; min-width:180px; display:grid; background:#fff; border:1px solid #DCDCE3; box-shadow:0 8px 24px rgba(21,23,28,.12); padding:4px 0; }',
+    '#trv-stops .jv-more-menu[hidden] { display:none; }',
+    '#trv-stops .jv-more-menu .jv-btn { border:0; text-align:left; padding:10px 14px; min-height:40px; width:100%; background:#fff; white-space:nowrap; }',
+    '#trv-stops .jv-more-menu .jv-btn:hover, #trv-stops .jv-more-menu .jv-btn:focus-visible { background:#EEF2FD; outline:none; }',
+    '@media (max-width:767.98px) {',
+    '  #trv-stops .jv-sec-h { flex-wrap:nowrap; align-items:center; gap:8px; }',
+    '  #trv-stops .jv-sec-h h2 { flex:none; }',
+    '  #trv-stops #jv-route-meta { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }',
+    '  #trv-stops .jv-sec-h .jv-btn { flex:none; white-space:nowrap; }',
+    '  #trv-stops .jv-more-label { display:none; }',
+    '}'
+  ].join('\n');
+  function initRouteMore() {
+    var sec = document.getElementById('trv-stops'); if (!sec || sec.querySelector('.jv-more')) return;
+    var head = sec.querySelector('.jv-sec-h'); if (!head) return;
+    var add = head.querySelector('button[onclick^="openCityModal"]');
+    var moved = [].slice.call(head.querySelectorAll('button.jv-btn')).filter(function(b) { return b !== add; });
+    if (!add || !moved.length) return;
+    var wrap = document.createElement('span'); wrap.className = 'jv-more';
+    wrap.innerHTML = '<button type="button" class="jv-btn jv-more-btn" aria-haspopup="menu" aria-expanded="false" aria-label="경로 도구 더 보기">' + msi('more_horiz') + '<span class="jv-more-label">More</span></button>' +
+      '<div class="jv-more-menu" role="menu" hidden></div>';
+    var btn = wrap.firstChild, menu = wrap.lastChild;
+    moved.forEach(function(b) { b.setAttribute('role', 'menuitem'); menu.appendChild(b); });
+    add.parentNode.insertBefore(wrap, add.nextSibling);
+    function setOpen(on) { menu.hidden = !on; btn.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+    btn.addEventListener('click', function(e) { e.stopPropagation(); setOpen(menu.hidden); if (!menu.hidden) { var f = menu.querySelector('button'); f && f.focus(); } });
+    menu.addEventListener('click', function() { setOpen(false); });
+    document.addEventListener('click', function(e) { if (!menu.hidden && !wrap.contains(e.target)) setOpen(false); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && !menu.hidden) { setOpen(false); btn.focus(); } });
+  }
+
   function boot() {
     injectCss();
+    if (!document.getElementById('atl-r4y-trv')) { var st4 = document.createElement('style'); st4.id = 'atl-r4y-trv'; st4.textContent = R4_CSS; document.head.appendChild(st4); }
+    try { initRouteMore(); } catch(e) { console.warn('[jv] more', e); }
     wrapBefore('renderWeekView', fillPlanCoords);
     wrapBefore('renderDayPinsMap', fillPlanCoords);
     wrap('renderWeekView', function() {
