@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=414" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=415" as="script">
   <link rel="preload" href="js/app-2-init.js?v=194" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5767,7 +5767,8 @@
     .jv-leg { flex-basis:104px !important; }
     .jv-leg span { display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 6px; }
     .jv-leg em { font-style:normal; font-family:'Pretendard',sans-serif; font-size:11px; font-weight:700; color:var(--jv-ink); letter-spacing:0; white-space:nowrap; display:inline-flex; align-items:center; gap:3px; }
-    .jv-leg em .material-symbols-outlined, .jv-leg-alt .material-symbols-outlined { font-size:15px; line-height:1; }
+    .atl-msi { display:inline-block; vertical-align:-2px; line-height:1; font-weight:400; letter-spacing:0; }
+    .jv-leg span.material-symbols-outlined { font-family:'Material Symbols Outlined' !important; display:inline-block; position:static; background:none; padding:0; font-size:15px; font-weight:400; letter-spacing:0; line-height:1; color:inherit; }
     .jv-leg-alt { display:inline-flex; align-items:center; gap:2px; }
     .jv-leg b { font-family:'Manrope',sans-serif; font-size:13px; font-weight:800; color:var(--jv-ink); letter-spacing:-.01em; white-space:nowrap; }
     .jv-leg i { font-style:normal; font-size:11px; color:var(--jv-mute); }
@@ -12242,7 +12243,7 @@
                 <p id="dlv-single-date" class="dlv-panel-date">—</p>
               </div>
               <div class="dlv-panel-nav">
-                <button onclick="dlvOptimizeRoute()" class="j-day-route-btn" style="margin-left:0" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>
+                <button onclick="dlvOptimizeRoute()" class="j-day-route-btn" style="margin-left:0" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)"><span class="material-symbols-outlined atl-msi" aria-hidden="true" style="font-size:14px">route</span> 동선</button>
                 <button onclick="dlvNavDay(-1)" class="j-week-nav-btn" title="이전 날"><span class="material-symbols-outlined">chevron_left</span></button>
                 <button onclick="dlvNavDay(1)" class="j-week-nav-btn" title="다음 날"><span class="material-symbols-outlined">chevron_right</span></button>
               </div>
@@ -16681,7 +16682,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=414" defer></script>
+<script src="js/app-1-pages.js?v=415" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->

@@ -1,3 +1,5 @@
+// (2026-11-06 2차) Travel 이모지 대신 쓰는 Material Symbols 한 글자
+window._msi = function(n, sz) { return '<span class="material-symbols-outlined atl-msi" aria-hidden="true" style="font-size:' + (sz || 14) + 'px">' + n + '</span>'; };
 
   // ===== 모달 공통 키보드 핸들러 (Enter=저장, Tab/화살표=필드 이동) =====
   (function() {
@@ -3872,7 +3874,7 @@
       var lodgeIcon = cityName ? '<span class="material-symbols-outlined align-middle text-indigo-400 mr-1" style="font-size: var(--font-size-body)" title="숙박지">hotel</span>' : '';
       var tripBadges = dayTrips.map(function(c){
         var safe = String(c).replace(/[<>"']/g, '');
-        return '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 ml-1.5 align-middle" title="당일치기">🚆 ' + _displayCityShort(safe) + ' <span class="opacity-60">(당일)</span></span>';
+        return '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 ml-1.5 align-middle" title="당일치기">' + _msi('train') + ' ' + _displayCityShort(safe) + ' <span class="opacity-60">(당일)</span></span>';
       }).join('');
       titleEl.innerHTML = lodgeIcon + '<span class="align-middle">' + baseLabel + '</span>' + tripBadges;
     }
@@ -3897,7 +3899,7 @@
       // (0) ★ (2026-07-23) 숙소 미등록 밤 경고
       var nightGapsDV = getUncoveredNights();
       if (dateStr && nightGapsDV[dateStr]) {
-        panelHtml += '<div class="j-night-warn">🛏 이 밤 숙소 미등록 — Records에서 확인</div>';
+        panelHtml += '<div class="j-night-warn">' + _msi('bed') + ' 이 밤 숙소 미등록 — Records에서 확인</div>';
       }
       // (1) 도시별 교통편 가이드 — 이 도시 첫날일 때만 표시
       var currentCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
@@ -3949,7 +3951,7 @@
         var iN = _normCityKey(itemCityRaw);
         if (iN && iN !== baseCityNorm) {
           var safeC = itemCityRaw.replace(/[<>"']/g, '');
-          itemCityChip = '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 mr-1.5 align-middle cursor-pointer hover:bg-amber-100" title="더블클릭하여 행선지 변경" ondblclick="editScheduleCity(' + realIdx + ', event)">📍' + _displayCityShort(safeC) + '</span>';
+          itemCityChip = '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 mr-1.5 align-middle cursor-pointer hover:bg-amber-100" title="더블클릭하여 행선지 변경" ondblclick="editScheduleCity(' + realIdx + ', event)">' + _msi('location_on') + _displayCityShort(safeC) + '</span>';
         }
       }
       var isSouvenir = (item.type === '기념품');
@@ -3999,7 +4001,7 @@
       if (isSouvenir) {
         displayTitle = _trvMapsLink(item.description || '쇼핑', dlCityCtx);
         var metaParts = [];
-        if (item.location) metaParts.push('📍 ' + _trvMapsLink(item.location, dlCityCtx));
+        if (item.location) metaParts.push(_msi('location_on') + ' ' + _trvMapsLink(item.location, dlCityCtx));
         if (item.title) metaParts.push('대상: ' + item.title);
         if (item.amount) metaParts.push(_spotPriceHtml('€' + item.amount));
         displayDescHtml = metaParts.length ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed">' + metaParts.join(' · ') + '</p>' : '';
@@ -4918,7 +4920,7 @@
             if (itemCityRaw) {
               var iN = _normCityKey(itemCityRaw);
               if (iN && iN !== baseN2) {
-                cityChip = '<span class="wk4-chip is-city" title="더블클릭하여 행선지 변경" onclick="event.stopPropagation()" ondblclick="editScheduleCity(' + realIdx + ', event)">📍' + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
+                cityChip = '<span class="wk4-chip is-city" title="더블클릭하여 행선지 변경" onclick="event.stopPropagation()" ondblclick="editScheduleCity(' + realIdx + ', event)">' + _msi('location_on') + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
               }
             }
             // 우선순위: 기념품(주황) > 예약(핑크) > 시간고정(민트) > 일반 — 담백한 톤이라 왼쪽 3px 컬러 바 + 이모지 칩으로 전달
@@ -4945,7 +4947,7 @@
             if (isSouvenir) {
               renderTitle = (item.description || '쇼핑').replace(/</g,'&lt;');
               var meta = [];
-              if (item.location) meta.push('📍 ' + String(item.location).replace(/</g,'&lt;'));
+              if (item.location) meta.push(_msi('location_on') + ' ' + String(item.location).replace(/</g,'&lt;'));
               if (item.title) meta.push('대상: ' + String(item.title).replace(/</g,'&lt;'));
               if (item.amount) meta.push(_spotPriceHtml('€' + item.amount));
               renderDesc = meta.length ? meta.join(' · ') : '';
@@ -4981,7 +4983,7 @@
             }
             // ★ (2026-07-23) 좌표 있는 아이템: 📍 클릭 → 지도가 그 핀으로 날아감 (Wanderlog식)
             var mapBtn = (typeof item.lat === 'number' && typeof item.lng === 'number')
-              ? '<button class="j-slot-mapbtn" title="지도에서 보기" onclick="focusDayPin(\'' + safeId + '\', event)">📍</button>'
+              ? '<button class="j-slot-mapbtn" title="지도에서 보기" onclick="focusDayPin(\'' + safeId + '\', event)">' + _msi('location_on', 16) + '</button>'
               : '';
             var confChip = '';
             var _sMin = _t2m(item.time), _eMin = _t2m(item.end_time);
@@ -5008,7 +5010,7 @@
       var headerCityHtml = '';
       if (dayTrips.length > 0) {
         var tripsTxt = dayTrips.map(function(c){ return _displayCityShort(c).replace(/</g,'&lt;'); }).join(', ');
-        headerCityHtml = '<p class="wk4-daytrip" title="당일치기 행선지">🚆 ' + tripsTxt + ' (당일)</p>';
+        headerCityHtml = '<p class="wk4-daytrip" title="당일치기 행선지">' + _msi('train') + ' ' + tripsTxt + ' (당일)</p>';
       }
       // ★ (2026-09-19) 9px 회색이라 안 보이던 날짜 라벨 — 짐 체크리스트와 같은 모양으로.
       //   번호는 칠한 칸, 날짜는 12px 진하게, 주말은 빨강.
@@ -5041,7 +5043,7 @@
           '</h3>' +
           headerCityHtml +
           '<div class="wk4-wx-slot" id="wk4-wx-' + idx + '"></div>' +
-          '<button class="j-day-route-btn wk4-route" onclick="event.stopPropagation();optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
+          '<button class="j-day-route-btn wk4-route" onclick="event.stopPropagation();optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">' + _msi('route') + ' 동선</button>' +
         '</div>';
       var _wxCity = _wxCityForDay(items, cityName);
       if (_wxCity && dateStr) wxQueue.push({ id: 'wk4-wx-' + idx, city: _wxCity, date: dateStr });
@@ -5090,7 +5092,7 @@
       if (isToday) dayCardClasses.push('is-today');
       if (isPastCol) dayCardClasses.push('wk4-past'); // 지난 날 컬럼 전체 흐리게
       var miniPanelsWrap = miniPanelHtml ? '<div class="j-day-panels">' + miniPanelHtml + '</div>' : '';
-      var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn wk4-night">🛏 이 밤 숙소 미등록 — Records에서 확인</div>' : '';
+      var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn wk4-night">' + _msi('bed') + ' 이 밤 숙소 미등록 — Records에서 확인</div>' : '';
       return '<div class="' + dayCardClasses.join(' ') + '" data-date="' + dateStr + '">' +
           dayHeadHtml +
           nightWarnHtml +
@@ -9053,7 +9055,7 @@
       '<div class="sv-main">' +
         '<h5 class="sv-name"' + (nameDbl ? ' ondblclick="' + nameDbl + '"' : '') + '>' + nameLinked + '</h5>' +
         (noteTxt ? '<p class="sv-desc"' + (noteDbl ? ' ondblclick="' + noteDbl + '"' : '') + '>' + noteTxt + '</p>' : '') +
-        (loc ? '<p class="sv-extra">📍 ' + _trvMapsLink(loc, city) + '</p>' : '') +
+        (loc ? '<p class="sv-extra">' + _msi('location_on') + ' ' + _trvMapsLink(loc, city) + '</p>' : '') +
         // 대상·도시는 헤더와 중복이라 평소엔 숨김 — 행에 마우스를 올렸을 때만 편집용으로 노출
         (dblClickFn ? '<p class="sv-edit"><span ondblclick="' + dblClickFn.replace('%FIELD%','title') + '">' + (title || '대상') + '</span>' +
           (city ? '<span ondblclick="' + dblClickFn.replace('%FIELD%','city') + '">' + city + '</span>' : '') +
