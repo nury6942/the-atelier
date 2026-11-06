@@ -1,0 +1,762 @@
+{
+ "id": "2026-11-07-conv-humidity-can-make-heatwaves-more",
+ "title": "Humidity can make heatwaves more dangerous. It’s time to warn Australians about this threat",
+ "url": "https://theconversation.com/humidity-can-make-heatwaves-more-dangerous-its-time-to-warn-australians-about-this-threat-295453",
+ "source": "The Conversation",
+ "author": "Alyson Wright, Mark de Souza, Sharon Campbell",
+ "published": "2026-11-05",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "It’s the build-up in northern Australia – the time of year when heat and humidity get worse ahead of the wet season. Common phrases such as “going troppo” or “mango madness” give a sense of the effects. Tempers fray and tensions rise.",
+  "There’s now emerging evidence that humidity makes heat more dangerous. Humid heatwaves – where high temperatures combine with high humidity – are potentially more dangerous than dry heatwaves.",
+  "Elsewhere in the world, humid heatwaves are already claiming lives. Over 1,300 pilgrims died in Saudi Arabia in 2024 due to lethal levels of humidity and heat, while India and Pakistan have also been hard hit.",
+  "Our recent research in the Northern Territory found more people came to emergency departments during intense humid heatwaves than comparable dry heatwaves.",
+  "The problem is, we’re not warning people about this combined threat. Australia’s heatwave warning systems focus only on temperature – not on humidity.",
+  "Why humidity matters",
+  "Intense heat stresses the body. Humidity can make this worse.",
+  "The human body relies heavily on sweating to regulate temperature. When sweat evaporates from the skin, it removes heat and helps keep the body cool. When humidity is high, evaporation doesn’t work as well and it’s harder for the body to release heat and stay cool.",
+  "Humid conditions can boost the risk of heat-related illnesses such as heatstroke, worsen existing heart and lung conditions and put more strain on the bodies of people with chronic diseases.",
+  "High humidity can also contribute to poor sleep, reducing the body’s ability to recover during prolonged hot periods.",
+  "Hot and wet conditions also provide optimal conditions for mosquitoes, ticks and parasites, which are vectors for the spread of key tropical diseases. Mould, bacteria and viruses are more likely to grow in high humidity, increasing the risk of lung and skin disease.",
+  "What we found in the Northern Territory",
+  "The top third of the Northern Territory has a monsoonal coastal climate prone to humidity, while the two thirds inland is arid. This means we can analyse and compare humid and dry heatwaves across these environments.",
+  "Our study analysed more than two decades of emergency department data across the NT to see if dry heat or humid heat affected the numbers of people needing emergency care. We used a temperature-based index for dry heat and a combined temperature and relative humidity index to determine humid heat.",
+  "The results were clear. While more people sought emergency treatment during both dry and humid heatwaves, humid heatwaves were worse. Severe and extreme dry heatwaves led to 4.4% more hospital visits, while similar humid heatwaves saw 6.1% more people attending emergency departments.",
+  "When arid areas of the Territory were hit by humid heatwaves, the effect was even clearer – emergency visits rose 8.7%.",
+  "Where are the warnings?",
+  "In many parts of northern Australia, heatwaves are projected to become more frequent and intense due to global warming.",
+  "Every summer, Australia’s Bureau of Meteorology issues heatwave warnings to give people advance notice of three or more days of unusual heat over day and night. Warnings can be issued for mild, severe and extreme heatwaves.",
+  "These warnings are vital. They let people prepare for heat and change plans, while health services can boost staffing numbers.",
+  "The problem is, these warnings are largely based on temperature. Most people can tolerate a 35°C day with low humidity. But a 35°C day with high humidity is much harder for us to cope with.",
+  "This means the current system may not be warning Australians about a real risk to their health – especially those in tropical and coastal regions.",
+  "Preparing health services for humid heat",
+  "Health services in the NT are often ageing and under strain. Last wet season did significant damage.",
+  "Dry and wet heatwaves will put more pressure on health systems already struggling during extreme weather. Even a modest increase in patients will add more pressure on staffing, bed capacity and resources.",
+  "We’ve long known heat affects some people much more than others. Children, older adults, people with chronic diseases and those in disadvantaged communities are hit harder. In the Territory, low-quality housing, poor access to healthcare and outdoor work and recreation also boost risks from heat.",
+  "Time to redefine heatwaves",
+  "It’s no longer enough to define a heatwave using temperature alone. Across northern Australia, humidity directly affects how people experience a heatwave.",
+  "Climatologists are already exploring ways to include humidity in measures of dangerous heat.",
+  "To take the threat of humid heat seriously, we need to redefine heatwaves to include humidity and temperature. This will strengthen our early warning systems.",
+  "On a practical level, we need to prepare our health systems for more demand during severe humid heat, particularly in remote and tropical regions.",
+  "As the Top End prepares for another wet season, authorities will focus on the threats of cyclones, flooding and other visible weather threats. It’s time to look at a less visible danger – the combination of heat and humidity."
+ ],
+ "level": "B2+",
+ "minutes": 5,
+ "words": 816,
+ "gloss": {
+  "humidity": {
+   "w": "humidity",
+   "pos": "명사",
+   "ko": "습도",
+   "en": "the amount of water vapour in the air",
+   "ex": "The humidity in Seoul in August makes linen shirts stick to your back.",
+   "ipa": "/hjuːˈmɪdəti/"
+  },
+  "heatwaves": {
+   "w": "heatwave",
+   "pos": "명사",
+   "ko": "폭염",
+   "en": "a period of unusually hot weather",
+   "ex": "Several heatwaves hit Europe last summer, closing outdoor markets early.",
+   "ipa": "/ˈhiːtweɪvz/"
+  },
+  "heatwave": {
+   "w": "heatwave",
+   "pos": "명사",
+   "ko": "폭염",
+   "en": "a period of unusually hot weather",
+   "ex": "The city opened cooling centres during the heatwave.",
+   "ipa": "/ˈhiːtweɪv/"
+  },
+  "build-up": {
+   "w": "build-up",
+   "pos": "명사",
+   "ko": "(우기 직전의) 고온다습 시기; 점차 쌓임",
+   "en": "a gradual increase; in northern Australia, the hot, humid period before the wet season",
+   "ex": "There was a slow build-up of tension before the collection launch.",
+   "ipa": "/ˈbɪld ʌp/"
+  },
+  "tempers fray": {
+   "w": "tempers fray",
+   "pos": "구",
+   "ko": "사람들이 신경이 날카로워지다",
+   "en": "people start to get irritated and lose patience",
+   "ex": "Tempers fray when the fitting runs three hours late.",
+   "ipa": "/ˈtempəz freɪ/"
+  },
+  "fray": {
+   "w": "fray",
+   "pos": "동사",
+   "ko": "(신경이) 날카로워지다; (천이) 해지다",
+   "en": "to become strained or irritated; (of fabric) to wear at the edges",
+   "ex": "Raw denim edges fray after a few washes.",
+   "ipa": "/freɪ/"
+  },
+  "emerging": {
+   "w": "emerging",
+   "pos": "형용사",
+   "ko": "새로 드러나는, 떠오르는",
+   "en": "starting to appear or become known",
+   "ex": "Emerging designers often show their work at smaller fashion weeks.",
+   "ipa": "/ɪˈmɜːdʒɪŋ/"
+  },
+  "claiming lives": {
+   "w": "claim lives",
+   "pos": "구",
+   "ko": "목숨을 앗아가다",
+   "en": "causing people to die",
+   "ex": "The storm is still claiming lives in coastal villages.",
+   "ipa": "/ˈkleɪmɪŋ laɪvz/"
+  },
+  "claim lives": {
+   "w": "claim lives",
+   "pos": "구",
+   "ko": "목숨을 앗아가다",
+   "en": "to cause people to die",
+   "ex": "Road accidents claim thousands of lives every year.",
+   "ipa": "/kleɪm laɪvz/"
+  },
+  "pilgrims": {
+   "w": "pilgrim",
+   "pos": "명사",
+   "ko": "순례자들",
+   "en": "people who travel to a holy place for religious reasons",
+   "ex": "Pilgrims walked for weeks to reach the cathedral.",
+   "ipa": "/ˈpɪlɡrɪmz/"
+  },
+  "pilgrim": {
+   "w": "pilgrim",
+   "pos": "명사",
+   "ko": "순례자",
+   "en": "a person who travels to a holy place for religious reasons",
+   "ex": "Each pilgrim carried only a small backpack.",
+   "ipa": "/ˈpɪlɡrɪm/"
+  },
+  "lethal": {
+   "w": "lethal",
+   "pos": "형용사",
+   "ko": "치명적인",
+   "en": "able to cause death",
+   "ex": "Carbon monoxide can be lethal in a closed room.",
+   "ipa": "/ˈliːθəl/"
+  },
+  "hard hit": {
+   "w": "hard hit",
+   "pos": "구",
+   "ko": "큰 타격을 입은",
+   "en": "badly affected",
+   "ex": "Small boutiques were hard hit by the rise in rent.",
+   "ipa": "/hɑːd hɪt/"
+  },
+  "comparable": {
+   "w": "comparable",
+   "pos": "형용사",
+   "ko": "비슷한, 비교할 만한",
+   "en": "similar enough to be compared",
+   "ex": "The new fabric costs less but offers comparable quality.",
+   "ipa": "/ˈkɒmpərəbəl/"
+  },
+  "regulate": {
+   "w": "regulate",
+   "pos": "동사",
+   "ko": "조절하다, 규제하다",
+   "en": "to control something so it stays at the right level",
+   "ex": "Wool helps regulate body temperature in both cold and warm weather.",
+   "ipa": "/ˈreɡjuleɪt/"
+  },
+  "evaporates": {
+   "w": "evaporate",
+   "pos": "동사",
+   "ko": "증발하다",
+   "en": "(of a liquid) changes into gas",
+   "ex": "The puddle evaporates within an hour in the afternoon sun.",
+   "ipa": "/ɪˈvæpəreɪts/"
+  },
+  "evaporate": {
+   "w": "evaporate",
+   "pos": "동사",
+   "ko": "증발하다",
+   "en": "(of a liquid) to change into gas",
+   "ex": "Leave the dye to dry until the water evaporate completely is wrong — let the water evaporate completely.",
+   "ipa": "/ɪˈvæpəreɪt/"
+  },
+  "boost": {
+   "w": "boost",
+   "pos": "동사",
+   "ko": "높이다, 늘리다",
+   "en": "to increase or improve something",
+   "ex": "A good window display can boost sales noticeably.",
+   "ipa": "/buːst/"
+  },
+  "heatstroke": {
+   "w": "heatstroke",
+   "pos": "명사",
+   "ko": "열사병",
+   "en": "a serious illness caused by the body overheating",
+   "ex": "The marathon runner collapsed with heatstroke near the finish line.",
+   "ipa": "/ˈhiːtstrəʊk/"
+  },
+  "strain": {
+   "w": "strain",
+   "pos": "명사",
+   "ko": "부담, 압박",
+   "en": "pressure or stress on something or someone",
+   "ex": "Long working hours put a strain on her health.",
+   "ipa": "/streɪn/"
+  },
+  "chronic": {
+   "w": "chronic",
+   "pos": "형용사",
+   "ko": "만성적인",
+   "en": "lasting for a long time or constantly returning",
+   "ex": "He has suffered from chronic back pain since his twenties.",
+   "ipa": "/ˈkrɒnɪk/"
+  },
+  "prolonged": {
+   "w": "prolonged",
+   "pos": "형용사",
+   "ko": "장기간의, 오래 계속되는",
+   "en": "continuing for a long time",
+   "ex": "Prolonged exposure to sunlight can fade natural dyes.",
+   "ipa": "/prəˈlɒŋd/"
+  },
+  "optimal": {
+   "w": "optimal",
+   "pos": "형용사",
+   "ko": "최적의",
+   "en": "the best or most suitable",
+   "ex": "Twenty degrees is the optimal temperature for storing silk.",
+   "ipa": "/ˈɒptɪməl/"
+  },
+  "vectors": {
+   "w": "vector",
+   "pos": "명사",
+   "ko": "(병의) 매개체들",
+   "en": "animals or insects that carry disease from one host to another",
+   "ex": "Rats were once major vectors of plague.",
+   "ipa": "/ˈvektəz/"
+  },
+  "vector": {
+   "w": "vector",
+   "pos": "명사",
+   "ko": "(병의) 매개체",
+   "en": "an animal or insect that carries disease",
+   "ex": "The mosquito is a well-known vector of malaria.",
+   "ipa": "/ˈvektə/"
+  },
+  "parasites": {
+   "w": "parasite",
+   "pos": "명사",
+   "ko": "기생충들",
+   "en": "organisms that live on or in another and take food from it",
+   "ex": "The vet checked the dog for parasites.",
+   "ipa": "/ˈpærəsaɪts/"
+  },
+  "parasite": {
+   "w": "parasite",
+   "pos": "명사",
+   "ko": "기생충",
+   "en": "an organism that lives on or in another and feeds from it",
+   "ex": "A single parasite can make a fish seriously ill.",
+   "ipa": "/ˈpærəsaɪt/"
+  },
+  "monsoonal": {
+   "w": "monsoonal",
+   "pos": "형용사",
+   "ko": "몬순(계절풍)의",
+   "en": "relating to the seasonal winds that bring heavy rain",
+   "ex": "Monsoonal rains flood the region every July.",
+   "ipa": "/mɒnˈsuːnəl/"
+  },
+  "prone to": {
+   "w": "prone to",
+   "pos": "구",
+   "ko": "~하기 쉬운, ~의 경향이 있는",
+   "en": "likely to suffer from or do something",
+   "ex": "Light-coloured suede is prone to stains.",
+   "ipa": "/ˈprəʊn tə/"
+  },
+  "arid": {
+   "w": "arid",
+   "pos": "형용사",
+   "ko": "건조한, 메마른",
+   "en": "having very little rain",
+   "ex": "Few plants survive in such an arid landscape.",
+   "ipa": "/ˈærɪd/"
+  },
+  "inland": {
+   "w": "inland",
+   "pos": "부사",
+   "ko": "내륙에, 내륙으로",
+   "en": "in or towards the middle of a country, away from the coast",
+   "ex": "The village lies fifty kilometres inland.",
+   "ipa": "/ˈɪnlænd/"
+  },
+  "sought": {
+   "w": "seek",
+   "pos": "동사",
+   "ko": "구했다, 찾았다 (seek의 과거)",
+   "en": "tried to get or find",
+   "ex": "She sought advice from a senior pattern maker.",
+   "ipa": "/sɔːt/"
+  },
+  "seek": {
+   "w": "seek",
+   "pos": "동사",
+   "ko": "구하다, 찾다",
+   "en": "to try to get or find something",
+   "ex": "Many graduates seek work experience abroad.",
+   "ipa": "/siːk/"
+  },
+  "projected": {
+   "w": "project",
+   "pos": "동사",
+   "ko": "(~할 것으로) 예상되는",
+   "en": "estimated or forecast to happen",
+   "ex": "Online sales are projected to double within five years.",
+   "ipa": "/prəˈdʒektɪd/"
+  },
+  "project": {
+   "w": "project",
+   "pos": "동사",
+   "ko": "예상하다, 추정하다",
+   "en": "to estimate what will happen in the future",
+   "ex": "Analysts project a slow recovery for the retail sector.",
+   "ipa": "/prəˈdʒekt/"
+  },
+  "advance notice": {
+   "w": "advance notice",
+   "pos": "구",
+   "ko": "사전 통지",
+   "en": "a warning given before something happens",
+   "ex": "Please give us two weeks' advance notice if you need to cancel.",
+   "ipa": "/ədˈvɑːns ˈnəʊtɪs/"
+  },
+  "vital": {
+   "w": "vital",
+   "pos": "형용사",
+   "ko": "필수적인, 매우 중요한",
+   "en": "extremely important or necessary",
+   "ex": "Good lighting is vital in a design studio.",
+   "ipa": "/ˈvaɪtəl/"
+  },
+  "tolerate": {
+   "w": "tolerate",
+   "pos": "동사",
+   "ko": "견디다, 참다",
+   "en": "to be able to bear something unpleasant",
+   "ex": "I can't tolerate itchy fabrics against my skin.",
+   "ipa": "/ˈtɒləreɪt/"
+  },
+  "cope with": {
+   "w": "cope with",
+   "pos": "구",
+   "ko": "~에 대처하다, 감당하다",
+   "en": "to deal successfully with a difficult situation",
+   "ex": "The team coped with the tight deadline surprisingly well.",
+   "ipa": "/ˈkəʊp wɪð/"
+  },
+  "ageing": {
+   "w": "ageing",
+   "pos": "형용사",
+   "ko": "노후한, 나이 들어가는",
+   "en": "becoming old",
+   "ex": "The factory still runs on ageing sewing machines.",
+   "ipa": "/ˈeɪdʒɪŋ/"
+  },
+  "under strain": {
+   "w": "under strain",
+   "pos": "구",
+   "ko": "압박을 받는, 과부하 상태인",
+   "en": "experiencing a lot of pressure",
+   "ex": "Public transport is under strain during rush hour.",
+   "ipa": "/ˈʌndə streɪn/"
+  },
+  "modest": {
+   "w": "modest",
+   "pos": "형용사",
+   "ko": "크지 않은, 적당한",
+   "en": "not large in size or amount",
+   "ex": "The brand reported a modest rise in profits.",
+   "ipa": "/ˈmɒdɪst/"
+  },
+  "bed capacity": {
+   "w": "bed capacity",
+   "pos": "구",
+   "ko": "병상 수용 능력",
+   "en": "the number of patients a hospital can keep in beds",
+   "ex": "The new wing doubled the hospital's bed capacity.",
+   "ipa": "/bed kəˈpæsəti/"
+  },
+  "disadvantaged": {
+   "w": "disadvantaged",
+   "pos": "형용사",
+   "ko": "(사회적·경제적으로) 취약한, 소외된",
+   "en": "lacking money, education or opportunities",
+   "ex": "The charity runs sewing classes for disadvantaged teenagers.",
+   "ipa": "/ˌdɪsədˈvɑːntɪdʒd/"
+  },
+  "recreation": {
+   "w": "recreation",
+   "pos": "명사",
+   "ko": "여가 활동",
+   "en": "activities done for enjoyment when not working",
+   "ex": "The park is used mainly for recreation at weekends.",
+   "ipa": "/ˌrekriˈeɪʃən/"
+  },
+  "redefine": {
+   "w": "redefine",
+   "pos": "동사",
+   "ko": "재정의하다",
+   "en": "to change the meaning or limits of something",
+   "ex": "Her minimalist collection helped redefine luxury for a younger audience.",
+   "ipa": "/ˌriːdɪˈfaɪn/"
+  },
+  "climatologists": {
+   "w": "climatologist",
+   "pos": "명사",
+   "ko": "기후학자들",
+   "en": "scientists who study climate",
+   "ex": "Climatologists warn that summers will keep getting longer.",
+   "ipa": "/ˌklaɪməˈtɒlədʒɪsts/"
+  },
+  "climatologist": {
+   "w": "climatologist",
+   "pos": "명사",
+   "ko": "기후학자",
+   "en": "a scientist who studies climate",
+   "ex": "A climatologist explained the data on the evening news.",
+   "ipa": "/ˌklaɪməˈtɒlədʒɪst/"
+  },
+  "take seriously": {
+   "w": "take something seriously",
+   "pos": "구",
+   "ko": "~을 심각하게 받아들이다",
+   "en": "to treat something as important",
+   "ex": "The company finally took customer complaints seriously.",
+   "ipa": "/teɪk ˈsɪəriəsli/"
+  },
+  "on a practical level": {
+   "w": "on a practical level",
+   "pos": "구",
+   "ko": "실질적인 면에서",
+   "en": "when thinking about real actions rather than ideas",
+   "ex": "On a practical level, we need more storage space for samples.",
+   "ipa": "/ɒn ə ˈpræktɪkəl ˈlevəl/"
+  },
+  "remote": {
+   "w": "remote",
+   "pos": "형용사",
+   "ko": "외딴, 멀리 떨어진",
+   "en": "far away from towns and cities",
+   "ex": "Deliveries to remote islands can take weeks.",
+   "ipa": "/rɪˈməʊt/"
+  },
+  "relies heavily on": {
+   "w": "rely heavily on",
+   "pos": "구",
+   "ko": "~에 크게 의존하다",
+   "en": "depends a lot on",
+   "ex": "The brand relies heavily on social media for marketing.",
+   "ipa": "/rɪˈlaɪz ˈhevɪli ɒn/"
+  },
+  "rely heavily on": {
+   "w": "rely heavily on",
+   "pos": "구",
+   "ko": "~에 크게 의존하다",
+   "en": "to depend a lot on",
+   "ex": "Many small designers rely heavily on online orders.",
+   "ipa": "/rɪˈlaɪ ˈhevɪli ɒn/"
+  },
+  "contribute to": {
+   "w": "contribute to",
+   "pos": "구",
+   "ko": "~의 한 원인이 되다",
+   "en": "to help cause something",
+   "ex": "Stress can contribute to headaches.",
+   "ipa": "/kənˈtrɪbjuːt tə/"
+  },
+  "staffing": {
+   "w": "staffing",
+   "pos": "명사",
+   "ko": "인력 배치, 직원 수",
+   "en": "the number of workers employed or available",
+   "ex": "Staffing is always tight before a big sale.",
+   "ipa": "/ˈstɑːfɪŋ/"
+  },
+  "worsen": {
+   "w": "worsen",
+   "pos": "동사",
+   "ko": "악화시키다, 악화되다",
+   "en": "to make or become worse",
+   "ex": "Scratching will only worsen the rash.",
+   "ipa": "/ˈwɜːsən/"
+  },
+  "combined threat": {
+   "w": "combined threat",
+   "pos": "구",
+   "ko": "복합적 위협",
+   "en": "a danger created by two or more things together",
+   "ex": "Farmers face the combined threat of drought and rising costs.",
+   "ipa": "/kəmˈbaɪnd θret/"
+  }
+ },
+ "vocab": [
+  "humidity",
+  "lethal",
+  "comparable",
+  "regulate",
+  "chronic",
+  "prolonged",
+  "prone to",
+  "arid",
+  "vital",
+  "tolerate",
+  "cope with",
+  "disadvantaged",
+  "under strain"
+ ],
+ "quiz": [
+  {
+   "q": "Australia’s current heatwave warnings take both temperature and humidity into account.",
+   "a": "FALSE",
+   "why": "경보 시스템은 온도에만 초점을 두고 습도는 반영하지 않는다고 했다."
+  },
+  {
+   "q": "In the Northern Territory study, humid heatwaves led to a bigger rise in emergency visits than dry heatwaves.",
+   "a": "TRUE",
+   "why": "건조 폭염은 4.4%, 습한 폭염은 6.1% 증가해 습한 쪽이 더 컸다."
+  },
+  {
+   "q": "The Bureau of Meteorology plans to include humidity in its warnings from next summer.",
+   "a": "NOT GIVEN",
+   "why": "기후학자들이 방법을 연구 중이라고만 했고 기상청의 도입 계획은 언급이 없다."
+  },
+  {
+   "q": "More than 1,300 pilgrims died in Saudi Arabia in 2024 because of heat and humidity.",
+   "a": "TRUE",
+   "why": "2024년 사우디에서 1,300명 넘는 순례자가 치명적 습도와 더위로 사망했다고 나온다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "People get angry easily and stress increases.",
+   "article": "Tempers fray and tensions rise."
+  },
+  {
+   "simple": "In very damp air, sweat doesn’t dry off the skin as easily.",
+   "article": "When humidity is high, evaporation doesn’t work as well"
+  },
+  {
+   "simple": "Hospitals in the NT are frequently old and overloaded.",
+   "article": "Health services in the NT are often ageing and under strain."
+  },
+  {
+   "simple": "Just a few extra patients will stretch the number of workers even further.",
+   "article": "Even a modest increase in patients will add more pressure on staffing"
+  },
+  {
+   "simple": "Measuring only heat is no longer a good way to decide what a heatwave is.",
+   "article": "It’s no longer enough to define a heatwave using temperature alone."
+  }
+ ],
+ "summary": "Research from the Northern Territory shows that hot weather combined with high humidity sends more people to hospital than dry heat, so Australia should include humidity in its heatwave definitions and warnings and prepare health services for the extra demand.",
+ "gist": "습도가 높은 폭염이 건조한 폭염보다 건강에 더 위험하다는 호주 북부 연구 결과를 소개하는 글.\n온도만 보는 현재 폭염 경보를 습도까지 반영하도록 바꾸고 의료 체계를 대비시켜야 한다고 주장한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Australia's existing heatwave warnings take account of both temperature and humidity.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "5문단 \"Australia’s heatwave warning systems focus only on temperature – not on humidity\" — 온도만 반영함"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "The Northern Territory study examined hospital emergency records spanning over twenty years.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "14문단 \"analysed more than two decades of emergency department data\""
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "In the Northern Territory study, children made up the largest share of extra emergency visits during humid heatwaves.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "26문단은 아이들이 취약하다고만 하고(\"Children... are hit harder\"), 연구에서 연령별 비율은 언급하지 않음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "The writer believes that heatwaves should be defined using humidity as well as temperature.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "30문단 \"we need to redefine heatwaves to include humidity and temperature\""
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The writer considers the Bureau of Meteorology's heatwave warnings to be of little practical use.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "20문단 \"These warnings are vital\" — 필자는 경보가 매우 중요하다고 봄"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 8",
+    "options": [
+     "i  A region whose geography allows a natural comparison",
+     "ii  How moisture in the air interferes with the body's cooling",
+     "iii  The cost of upgrading ageing hospitals",
+     "iv  Humid heat linked to a larger rise in hospital visits",
+     "v  Why insects thrive in tropical climates"
+    ],
+    "answer": "ii",
+    "why": "8문단 \"When humidity is high, evaporation doesn’t work as well and it’s harder for the body to release heat\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 13",
+    "options": [
+     "i  A region whose geography allows a natural comparison",
+     "ii  How moisture in the air interferes with the body's cooling",
+     "iii  The cost of upgrading ageing hospitals",
+     "iv  Humid heat linked to a larger rise in hospital visits",
+     "v  Why insects thrive in tropical climates"
+    ],
+    "answer": "i",
+    "why": "13문단 \"we can analyse and compare humid and dry heatwaves across these environments\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 15",
+    "options": [
+     "i  A region whose geography allows a natural comparison",
+     "ii  How moisture in the air interferes with the body's cooling",
+     "iii  The cost of upgrading ageing hospitals",
+     "iv  Humid heat linked to a larger rise in hospital visits",
+     "v  Why insects thrive in tropical climates"
+    ],
+    "answer": "iv",
+    "why": "15문단 \"humid heatwaves were worse... 6.1% more people attending emergency departments\" (건조 폭염은 4.4%)"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a type of living conditions that increases people's risk from heat?",
+    "options": [
+     "11",
+     "20",
+     "24",
+     "26"
+    ],
+    "answer": "26",
+    "why": "26문단 \"low-quality housing... also boost risks from heat\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions a reduced ability of the body to recover?",
+    "options": [
+     "7",
+     "9",
+     "10",
+     "21"
+    ],
+    "answer": "10",
+    "why": "10문단 \"poor sleep, reducing the body’s ability to recover\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "When humid heatwaves affected the dry inland parts of the Territory, emergency visits increased by",
+    "options": [
+     "A 4.4%",
+     "B 6.1%",
+     "C 8.7%",
+     "D 35%"
+    ],
+    "answer": "C",
+    "why": "16문단 \"When arid areas of the Territory were hit by humid heatwaves... emergency visits rose 8.7%\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "According to the article, how do heatwave warnings help health services?",
+    "options": [
+     "A They allow services to increase staff numbers.",
+     "B They help services obtain extra government funding.",
+     "C They give time to repair storm-damaged buildings.",
+     "D They allow services to cancel non-urgent treatment."
+    ],
+    "answer": "A",
+    "why": "20문단 \"health services can boost staffing numbers\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Sweat cools the body as it leaves the skin, but in humid weather ____ is less effective, so the body struggles to release heat.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "evaporation"
+    ],
+    "why": "8문단 \"When humidity is high, evaporation doesn’t work as well\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Mosquitoes, ticks and parasites, which flourish in hot and wet conditions, act as ____ that spread major tropical diseases.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "vectors"
+    ],
+    "why": "11문단 \"mosquitoes, ticks and parasites, which are vectors for the spread of key tropical diseases\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "What is the period before the wet season in northern Australia, when heat and humidity increase, called?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "the build-up",
+     "build-up"
+    ],
+    "why": "1문단 \"It’s the build-up in northern Australia – the time of year when heat and humidity get worse ahead of the wet season\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    7,
+    12,
+    14
+   ]
+  }
+ }
+}

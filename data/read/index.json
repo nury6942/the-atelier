@@ -1,6 +1,34 @@
 {
- "updated": "2026-11-05T22:11:36.791Z",
+ "updated": "2026-11-06T22:11:34.683Z",
  "items": [
+  {
+   "id": "2026-11-07-conv-from-church-pews-to-ballroom-floors",
+   "date": "2026-11-07",
+   "source": "The Conversation",
+   "title": "From church pews to ballroom floors, AGO’s ‘Sunday Best’ showcases the power and glory of Black style",
+   "url": "https://theconversation.com/from-church-pews-to-ballroom-floors-agos-sunday-best-showcases-the-power-and-glory-of-black-style-293182",
+   "author": "Cornel Grey",
+   "minutes": 6,
+   "level": "C1",
+   "words": 1090,
+   "topic": "패션",
+   "gist": "토론토 AGO 미술관의 흑인 패션 전시 'Sunday Best' 리뷰.\n교회 나들이옷부터 볼룸 문화까지, 옷차림이 흑인 공동체에서 품위·존중·자기표현의 수단이었음을 다룬다.",
+   "file": "data/read/2026-11-07-conv-from-church-pews-to-ballroom-floors.json"
+  },
+  {
+   "id": "2026-11-07-conv-humidity-can-make-heatwaves-more",
+   "date": "2026-11-07",
+   "source": "The Conversation",
+   "title": "Humidity can make heatwaves more dangerous. It’s time to warn Australians about this threat",
+   "url": "https://theconversation.com/humidity-can-make-heatwaves-more-dangerous-its-time-to-warn-australians-about-this-threat-295453",
+   "author": "Alyson Wright, Mark de Souza, Sharon Campbell",
+   "minutes": 5,
+   "level": "B2+",
+   "words": 816,
+   "topic": "환경",
+   "gist": "습도가 높은 폭염이 건조한 폭염보다 건강에 더 위험하다는 호주 북부 연구 결과를 소개하는 글.\n온도만 보는 현재 폭염 경보를 습도까지 반영하도록 바꾸고 의료 체계를 대비시켜야 한다고 주장한다.",
+   "file": "data/read/2026-11-07-conv-humidity-can-make-heatwaves-more.json"
+  },
   {
    "id": "2026-11-06-conv-as-diesel-from-the-gulf-and-russia",
    "date": "2026-11-06",
@@ -411,6 +439,24 @@
  "links": [
   {
    "source": "BoF",
+   "title": "Confirmed: Martine Rose Is Balenciaga’s New Creative Director",
+   "url": "https://www.businessoffashion.com/articles/luxury/confirmed-martine-rose-is-balenciagas-new-creative-director/",
+   "date": "2026-11-07"
+  },
+  {
+   "source": "BoF",
+   "title": "What’s Driving Supreme’s Quiet Comeback",
+   "url": "https://www.businessoffashion.com/articles/retail/whats-driving-supremes-quiet-comeback/",
+   "date": "2026-11-07"
+  },
+  {
+   "source": "BoF",
+   "title": "Why Dior’s Holiday Ad Sparked Debate",
+   "url": "https://www.businessoffashion.com/articles/marketing-pr/why-diors-holiday-ad-sparked-debate/",
+   "date": "2026-11-07"
+  },
+  {
+   "source": "BoF",
    "title": "Pierpaolo Piccioli Exits Balenciaga",
    "url": "https://www.businessoffashion.com/articles/luxury/pierpaolo-piccioli-exits-balenciaga/",
    "date": "2026-11-06"
@@ -431,6 +477,12 @@
    "source": "BoF",
    "title": "How AI Is Changing the Way Business Leaders Make Decisions",
    "url": "https://www.businessoffashion.com/articles/artificial-intelligence/aily-labs-bianca-anghelina-ai-decision-intelligence-business-leaders/",
+   "date": "2026-11-06"
+  },
+  {
+   "source": "BBC Future",
+   "title": "The crisis facing the world's most expensive spice",
+   "url": "https://www.bbc.com/future/article/20261105-kashmiri-saffron-why-the-worlds-most-expensive-spice-is-disappearing",
    "date": "2026-11-06"
   },
   {
@@ -563,30 +615,6 @@
    "source": "BoF",
    "title": "Inside the Battle for Luxury’s Million-Dollar Salespeople",
    "url": "https://www.businessoffashion.com/articles/workplace-talent/the-battle-for-luxurys-million-dollar-salespeople/",
-   "date": "2026-10-30"
-  },
-  {
-   "source": "BoF",
-   "title": "Lady Gaga Is Haus Labs’ New CEO",
-   "url": "https://www.businessoffashion.com/articles/beauty/lady-gaga-haus-labs-ceo/",
-   "date": "2026-10-30"
-  },
-  {
-   "source": "BoF",
-   "title": "Puig’s Plan to Go It Alone",
-   "url": "https://www.businessoffashion.com/articles/beauty/puig-vision-2032-capital-markets-day-charlotte-tilbury-byredo/",
-   "date": "2026-10-30"
-  },
-  {
-   "source": "BoF",
-   "title": "How to Measure the Marketing Impact of Desirability",
-   "url": "https://www.businessoffashion.com/articles/performance-marketing/launchmetrics-alison-bringe-lucinda-bounsall-strategy/",
-   "date": "2026-10-30"
-  },
-  {
-   "source": "BoF",
-   "title": "The Jennifer Lawrence Beauty Experiment",
-   "url": "https://www.businessoffashion.com/articles/beauty/the-jennifer-lawrence-beauty-experiment/",
    "date": "2026-10-30"
   }
  ]
