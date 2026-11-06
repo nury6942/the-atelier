@@ -10,8 +10,9 @@
 (function() {
   'use strict';
 
-  var MON_EN = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
-  var WD_EN = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  // (2026-11-06 3차) 메뉴·제목은 Title Case — 대문자+자간 키커를 걷어냄
+  var MON_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var WD_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var WD_KR = ['일','월','화','수','목','금','토'];
   var KEY_MODE = 'wbc_mode';
 
@@ -608,7 +609,7 @@
     var hol = getKoreanHolidays(d.getFullYear())[_sel] || '';
     var h = '<div class="wbc-ag-head"><span class="n' + (_sel === td ? ' is-today' : '') + '">' + d.getDate() + '</span>' +
       '<span class="m"><b>' + WD_EN[d.getDay()] + ' · ' + MON_EN[d.getMonth()] + '</b><em>' +
-      [(_sel === td ? 'TODAY' : ''), hol].filter(Boolean).join(' · ') + '</em></span></div>';
+      [(_sel === td ? 'Today' : ''), hol].filter(Boolean).join(' · ') + '</em></span></div>';
 
     var gs = gtmAllOn(_sel);
     if (gs.length) {
@@ -637,11 +638,146 @@
     el.innerHTML = h;
   }
 
+  // ─────────────── 폰 (<768px): 점 달력 + '오늘부터' 일정 목록 (2026-11-06 3차) ───────────────
+  //   7칸 달력에 일정 이름을 넣으면 전부 "27FW MD - Shar…" 로 잘린다 → 폰에선 칸엔 점만, 이름은 아래 목록에.
+  //   점·칩 색은 데스크탑과 같은 4색 문법(업무 마일스톤 코발트 · 업무 일정 회색 선 · 개인 잉크 선 · 연차·여행 모래).
+  var _mFrom = null;   // 목록 시작일 (지난 날을 누르면 그날부터)
+  function isPhone() { return !!(window.matchMedia && window.matchMedia('(max-width:767.98px)').matches); }
+  function dayRows(ds) {
+    var mine = attOn(ds), offs = mine.filter(function(x){ return x.full; });
+    var partLabels = mine.filter(function(x){ return !x.full; }).map(function(x){ return normLabel(x.label); });
+    var evs = eventsOn(ds).filter(function(r) {
+      var tl = normLabel(r[1]);
+      if (partLabels.some(function(l){ return tl.indexOf(l) >= 0; })) return false;
+      if (rowCoveredByAtt(r, tl)) return false;
+      if (offs.length && /^(연차|휴가|반차)/.test(tl)) return false;
+      return true;
+    });
+    return { gtm: gtmAllOn(ds), evs: evs, att: mine.filter(function(x){ return x.kind !== 'otEarn'; }) };
+  }
+  function evKind(ev) { return ((ev[3]||'').trim() === 'deadline' || ev[2] === '데드라인') ? 'key' : (isTrip(ev) ? 'off' : 'me'); }
+  function dayKinds(ds) {
+    var r = dayRows(ds), k = {};
+    r.gtm.forEach(function(g){ k[g.key ? 'key' : 'work'] = 1; });
+    r.evs.forEach(function(ev){ k[evKind(ev)] = 1; });
+    if (r.att.length) k.off = 1;
+    return ['key', 'work', 'me', 'off'].filter(function(x){ return k[x]; });
+  }
+  function miniCell(d) {
+    var ds = _dFmt(d), dow = d.getDay(), td = today();
+    var other = d.getMonth() !== plannerMonth;
+    var hol = getKoreanHolidays(d.getFullYear())[ds] || '';
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'wbc-mc' + (ds === td ? ' is-today' : '') + (ds === _sel ? ' is-sel' : '') + (hol ? ' is-hol' : '') +
+      (dow === 0 || dow === 6 ? ' is-wknd' : '') + (other ? ' is-other' : '') + (ds < td ? ' is-past' : '');
+    b.dataset.date = ds;
+    b.setAttribute('aria-label', (d.getMonth() + 1) + '월 ' + d.getDate() + '일' + (hol ? ' ' + hol : ''));
+    var ks = other ? [] : dayKinds(ds);
+    b.innerHTML = '<span class="n">' + d.getDate() + '</span><span class="dots">' + ks.map(function(k){ return '<i class="k-' + k + '"></i>'; }).join('') + '</span>';
+    b.onclick = function() { wbcPhoneTap(ds); };
+    return b;
+  }
+  function mlRow(kind, title, meta, onclick) {
+    return '<div class="wbc-ml-row"' + (onclick ? ' role="button" tabindex="0" onclick="' + onclick + '"' : '') + '>' +
+      '<i class="wbc-ml-k k-' + kind + '" aria-hidden="true"></i><span class="t">' + esc(title) + '</span>' +
+      (meta ? '<span class="m">' + esc(meta) + '</span>' : '') + '</div>';
+  }
+  function md(ds) { return (+ds.slice(5, 7)) + '/' + (+ds.slice(8, 10)); }
+  function renderPhoneList(days) {
+    var host = document.getElementById('wbc-mlist');
+    if (!host) {
+      var grid = document.getElementById('planner-grid');
+      host = document.createElement('div'); host.id = 'wbc-mlist'; host.className = 'wbc-mlist';
+      grid.parentNode.insertBefore(host, grid.nextSibling);
+    }
+    var td = today();
+    var mS = _dFmt(new Date(plannerYear, plannerMonth, 1)), mE = _dFmt(new Date(plannerYear, plannerMonth + 1, 0));
+    var from = _mFrom || (td > mS && td <= mE ? td : mS);
+    var h = '', any = false, kr = ['일','월','화','수','목','금','토'];
+    for (var d = new Date(from + 'T00:00:00'); _dFmt(d) <= mE; d = addDays(d, 1)) {
+      var ds = _dFmt(d), first = ds === from || ds === td, r = dayRows(ds), rows = '';
+      r.gtm.forEach(function(g) {
+        var rng = gtmIsRange(g);
+        if (rng && ds !== g.date && !first) return;
+        rows += mlRow(g.key ? 'key' : 'work', g.title, [(g.key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM'), rng ? md(g.date) + '~' + md(g.end) : ''].filter(Boolean).join(' · '));
+      });
+      r.att.forEach(function(x) {
+        if (x.full && ds !== x.start && !first) return;
+        rows += mlRow('off', '누리 ' + x.label, [x.full ? (x.start !== x.end ? md(x.start) + '~' + md(x.end) : '종일') : (x.time || fmtH(x.hours)), x.plan ? '결재 전' : ''].filter(Boolean).join(' · '));
+      });
+      r.evs.forEach(function(ev) {
+        var s = (ev[0]||'').toString(), e = (ev[5]||'').toString(), rng = e && e > s;
+        if (rng && ds !== s && !first) return;
+        rows += mlRow(evKind(ev), (isWriting(ev) ? '✎ ' : (isTrip(ev) ? '✈ ' : '')) + ev[1],
+          [ev[2] || '', rng ? md(s) + '~' + md(e) : ''].filter(Boolean).join(' · '), 'openPlannerModal(' + idxRef(ev) + ')');
+      });
+      var isSel = ds === _sel;
+      if (!rows && !isSel) continue;
+      any = true;
+      var hol = getKoreanHolidays(d.getFullYear())[ds] || '';
+      h += '<div class="wbc-ml-day' + (ds === td ? ' is-today' : '') + (isSel && ds !== td ? ' is-sel' : '') + '" data-date="' + ds + '">' +
+        '<h3 class="wbc-ml-d"><b>' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일</b><span>' + kr[d.getDay()] + '요일' + (hol ? ' · ' + esc(hol) : '') + '</span>' +
+        (ds === td ? '<em>오늘</em>' : '') + '</h3>' +
+        (rows || '<p class="wbc-ml-empty">일정 없음 <button type="button" onclick="openPlannerModal(null,\'' + ds + '\')">+ 이 날 일정</button></p>') + '</div>';
+    }
+    if (!any) h = '<p class="wbc-ml-empty">' + (from === td ? '오늘부터 이달 끝까지 일정 없음' : '이달 일정 없음') + '</p>';
+    host.innerHTML = '<p class="wbc-ml-cap">' + (from === td ? '오늘부터' : md(from) + '부터') + ' · ' + (plannerMonth + 1) + '월 말까지</p>' + h;
+  }
+  window.wbcPhoneTap = function(ds) {
+    _sel = ds; selectedPlannerDate = ds;
+    var td = today(), mS = _dFmt(new Date(plannerYear, plannerMonth, 1));
+    var from = _mFrom || (td > mS ? td : mS);
+    if (ds < from) _mFrom = ds;
+    document.querySelectorAll('#planner-grid .wbc-mc').forEach(function(c){ c.classList.toggle('is-sel', c.dataset.date === ds); });
+    renderPhoneList();
+    var sec = document.querySelector('#wbc-mlist .wbc-ml-day[data-date="' + ds + '"]');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  // 폰 ↔ 데스크탑: 연차 숫자 줄은 폰에선 목록 아래로, + 일정은 떠 있는 네모 버튼으로
+  function placePhoneChrome(ph) {
+    var wbc = document.getElementById('wbc'); if (!wbc) return;
+    wbc.classList.toggle('is-phone', ph);
+    var stats = document.getElementById('wbc-stats'), bar = wbc.querySelector('.wbc-bar'), list = document.getElementById('wbc-mlist');
+    if (stats && bar) {
+      if (ph && list && stats.parentNode !== list.parentNode) list.parentNode.insertBefore(stats, list.nextSibling);
+      if (!ph && stats.parentNode !== bar) bar.insertBefore(stats, bar.querySelector('.wbc-ctrl'));
+    }
+    if (list) list.hidden = !ph;
+    var fab = document.getElementById('wbc-fab');
+    if (!fab) {
+      fab = document.createElement('button'); fab.type = 'button'; fab.id = 'wbc-fab'; fab.className = 'wbc-fab';
+      fab.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">add</span>일정';
+      fab.setAttribute('aria-label', '일정 추가');
+      fab.onclick = function() { openPlannerModal(null, _sel); };
+      wbc.appendChild(fab);
+    }
+  }
+  var _lastPh = null;
+  window.addEventListener('resize', function() { var p = isPhone(); if (p !== _lastPh) rerender(); });
+
   // ─────────────── 메인 렌더 (기존 renderCalendar 대체) ───────────────
   function renderCalendarWb() {
     _sidName = null;   // 시리즈 이름표는 그릴 때마다 새로
     var grid = document.getElementById('planner-grid');
     if (!grid) return;
+    var ph = isPhone();
+    _lastPh = ph;
+    if (ph) {
+      var keep = _mode; _mode = 'month';
+      var mdays;
+      try { mdays = visibleDays(); renderHeader(mdays); } finally { _mode = keep; }
+      grid.className = 'wbc-grid month wbc-mini';
+      grid.innerHTML = '';
+      var mf = document.createDocumentFragment();
+      mdays.forEach(function(d) { mf.appendChild(miniCell(d)); });
+      grid.appendChild(mf);
+      renderPhoneList(mdays);
+      placePhoneChrome(true);
+      renderHeaderStats();
+      return;
+    }
+    placePhoneChrome(false);
     var days = visibleDays();
     renderHeader(days);
     var lanes = computeLanes(_dFmt(days[0]), _dFmt(days[days.length - 1]));
@@ -662,7 +798,8 @@
   window.nextMonth = function() { wbcGo(1); };
   window.calNavToday = function() { wbcToday(); };
   window.wbcGo = function(dir) {
-    if (_mode === 'week') {
+    _mFrom = null;
+    if (_mode === 'week' && !isPhone()) {
       var s0 = startOfWeek(_anchor || new Date());
       _anchor = addDays(s0, dir * 7);
       var mid = addDays(_anchor, 3);
@@ -679,7 +816,7 @@
   window.wbcToday = function() {
     var n = new Date();
     plannerYear = n.getFullYear(); plannerMonth = n.getMonth();
-    _anchor = n; _sel = _dFmt(n);
+    _anchor = n; _sel = _dFmt(n); _mFrom = null;
     renderCalendarWb();
     try { updatePlannerTracks(); } catch(e) {}
   };
@@ -694,7 +831,7 @@
       var on = _pickY === plannerYear && m === plannerMonth, nw = _pickY === now.getFullYear() && m === now.getMonth();
       h += '<button type="button" class="' + (on ? 'on' : '') + (nw ? ' now' : '') + '" onclick="wbcJump(' + _pickY + ',' + m + ')">' + MON_EN[m].slice(0, 3) + '</button>';
     }
-    h += '</div><div class="wbc-pick-f"><button type="button" onclick="wbcPickerClose();wbcToday()">TODAY</button></div>';
+    h += '</div><div class="wbc-pick-f"><button type="button" onclick="wbcPickerClose();wbcToday()">Today</button></div>';
     el.innerHTML = h;
   }
   window.wbcPickerToggle = function(e) {
@@ -710,7 +847,7 @@
   };
   window.wbcPickYear = function(d) { _pickY += d; renderPicker(); };
   window.wbcJump = function(y, m) {
-    plannerYear = y; plannerMonth = m;
+    plannerYear = y; plannerMonth = m; _mFrom = null;
     _anchor = _mode === 'week' ? new Date(y, m, 1) : null;
     wbcPickerClose();
     renderCalendarWb();
@@ -749,7 +886,88 @@
     }
   };
 
+  // ─────────────── (2026-11-06 3차) 화면 다듬기 CSS — index.html 대신 여기서 넣는다 ───────────────
+  var R3_CSS = [
+    /* 제목: NOVEMBER 2026 ▾ → November 2026 + 눌리는 네모 꺾쇠 */
+    '.wbc .wbc-title .cap { flex-direction:row; align-items:baseline; gap:8px; padding-bottom:4px; }',
+    '.wbc .wbc-title .cap b { font-size:20px; font-weight:600; letter-spacing:0; }',
+    '.wbc .wbc-title .cap em { font-size:20px; font-weight:400; letter-spacing:0; color:#5B5B66; }',
+    '.wbc .wbc-caret { width:32px; height:32px; display:inline-grid; place-items:center; margin:0 0 0 2px; padding:0; border:1px solid #D5D8DD; color:#15171c; align-self:flex-end; }',
+    '.wbc .wbc-caret .material-symbols-outlined { font-size:20px; line-height:1; }',
+    '.wbc .wbc-title:hover .wbc-caret { border-color:#15171c; }',
+    '.wbc .wbc-wds span { letter-spacing:0; }',
+    /* 날짜 숫자: 주말·지난 날·다른 달도 읽히게 (보조 회색은 #5B5B66 / #6E6E7A) */
+    '.wbc .wbc-cd.is-past .wbc-cd-num { opacity:1; }',
+    '.wbc .wbc-cd.is-past:not(.is-today) .wbc-cd-num, .wbc .wbc-cd.is-sun .wbc-cd-num, .wbc .wbc-cd.is-sat .wbc-cd-num { color:#5B5B66; }',
+    '.wbc .wbc-cd.is-other .wbc-cd-num { opacity:1; color:#6E6E7A; }',
+    '.wbc .wbc-cd.is-other .wbc-evs, .wbc .wbc-cd.is-other .wbc-gtms { opacity:.6; }',
+    /* 주간 GTM 칩: 세로 여백 4px */
+    '.wbc .wbc-gtm, .wbc .wbc-gtm.is-key, .wbc .wbc-gtm.s-q2.is-key { padding-top:4px; padding-bottom:4px; line-height:1.4; }',
+    /* 시리즈 타임라인: 8~10px 글자 → 11px, 흐린 회색 → #5B5B66 */
+    '#cal-work-timeline-section .text-\\[8px\\], #cal-work-timeline-section .text-\\[9px\\], #cal-work-timeline-section .text-\\[10px\\] { font-size:11px !important; }',
+    '#cal-work-timeline-section .text-slate-400 { color:#5B5B66 !important; }',
+    /* ── 폰: 점 달력 + 목록 ── */
+    '#wbc-fab { display:none; }',
+    '@media (max-width:767.98px) {',
+    '  .wbc.is-phone { padding:12px 0 104px; }',
+    '  .wbc.is-phone .wbc-bar { flex-wrap:nowrap; align-items:center; gap:8px; padding-bottom:12px; }',
+    '  .wbc.is-phone .wbc-title { align-items:center; gap:6px; min-width:0; }',
+    '  .wbc.is-phone .wbc-title .big { display:none; }',
+    '  .wbc.is-phone .wbc-title .cap { padding:0; gap:6px; }',
+    '  .wbc.is-phone .wbc-title .cap b, .wbc.is-phone .wbc-title .cap em { font-size:18px; }',
+    '  .wbc.is-phone .wbc-caret { align-self:center; }',
+    '  .wbc.is-phone .wbc-ctrl { flex-wrap:nowrap; gap:4px; margin-left:auto; }',
+    '  .wbc.is-phone .wbc-ctrl .wbc-mode, .wbc.is-phone .wbc-ctrl .wbc-sep, .wbc.is-phone .wbc-ctrl > .atl-btn:not([onclick^="wbcToday"]) { display:none !important; }',
+    '  .wbc.is-phone .wbc-ctrl > .atl-btn { height:36px; min-height:36px; padding:0 10px; }',
+    '  .wbc.is-phone .wbc-legend { justify-content:flex-start; gap:4px 12px; font-size:11px; margin-top:10px; }',
+    '  .wbc.is-phone .wbc-legend span::before { width:10px; height:10px; }',
+    '  .wbc.is-phone .wbc-wds span { padding:8px 0 6px; text-align:center; font-size:11px; }',
+    '  #planner-grid.wbc-mini { border-top:1px solid var(--hair); border-left:0; }',
+    '  .wbc-mc { all:unset; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 0 8px; min-height:48px; cursor:pointer; border-bottom:1px solid #ECECF0; }',
+    '  .wbc-mc .n { font-family:var(--num); font-size:15px; line-height:24px; min-width:26px; text-align:center; color:var(--ink); font-variant-numeric:tabular-nums; }',
+    '  .wbc-mc.is-wknd .n, .wbc-mc.is-hol .n, .wbc-mc.is-past .n { color:#5B5B66; }',
+    '  .wbc-mc.is-other .n { color:#6E6E7A; }',
+    '  .wbc-mc.is-sel .n { box-shadow:inset 0 0 0 1px var(--ink); }',
+    '  .wbc-mc.is-today .n { background:#1F4BD8; color:#fff; box-shadow:none; }',
+    '  .wbc-mc:focus-visible { outline:2px solid #1F4BD8; outline-offset:-2px; }',
+    '  .wbc-mc .dots { display:flex; gap:3px; height:6px; }',
+    '  .wbc-mc .dots i, .wbc-ml-k { display:block; width:6px; height:6px; }',
+    '  .wbc-mc .dots i.k-key, .wbc-ml-k.k-key { background:#1F4BD8; }',
+    '  .wbc-mc .dots i.k-work, .wbc-ml-k.k-work { background:#fff; box-shadow:inset 0 0 0 1px #8A8A95; }',
+    '  .wbc-mc .dots i.k-me, .wbc-ml-k.k-me { background:#fff; box-shadow:inset 0 0 0 1px #15171c; }',
+    '  .wbc-mc .dots i.k-off, .wbc-ml-k.k-off { background:#F0A647; }',
+    '  .wbc-mlist { margin-top:20px; }',
+    '  .wbc-ml-cap { font-size:12px; font-weight:600; color:#5B5B66; margin:0 0 4px; }',
+    '  .wbc-ml-day { border-top:1px solid var(--ink); padding:10px 0 6px; scroll-margin-top:72px; }',
+    '  .wbc-ml-day.is-sel { background:#EEF2FD; box-shadow:-16px 0 0 #EEF2FD, 16px 0 0 #EEF2FD; }',
+    '  .wbc-ml-d { display:flex; align-items:baseline; gap:8px; margin:0 0 6px; font-size:15px; font-weight:700; color:var(--ink); }',
+    '  .wbc-ml-d span { font-size:12px; font-weight:500; color:#5B5B66; }',
+    '  .wbc-ml-d em { font-style:normal; font-size:11px; font-weight:700; color:#fff; background:#1F4BD8; padding:1px 6px; }',
+    '  .wbc-ml-row { display:grid; grid-template-columns:12px minmax(0,1fr); column-gap:10px; align-items:baseline; padding:7px 0; border-top:1px solid #ECECF0; }',
+    '  .wbc-ml-d + .wbc-ml-row { border-top:0; }',
+    '  .wbc-ml-row[role=button] { cursor:pointer; }',
+    '  .wbc-ml-row .wbc-ml-k { width:12px; height:12px; align-self:start; margin-top:3px; grid-row:1 / span 2; }',
+    '  .wbc-ml-row .t { font-size:14px; font-weight:600; color:var(--ink); line-height:1.4; overflow-wrap:anywhere; }',
+    '  .wbc-ml-row .m { grid-column:2; font-size:12px; color:#5B5B66; margin-top:1px; }',
+    '  .wbc-ml-empty { font-size:13px; color:#5B5B66; margin:4px 0; display:flex; align-items:center; gap:10px; }',
+    '  .wbc-ml-empty button { border:1px solid #D5D8DD; background:#fff; font-size:12px; font-weight:600; color:var(--ink); padding:4px 8px; cursor:pointer; }',
+    '  .wbc.is-phone #wbc-stats { margin:24px 0 0; padding:16px 0 0; border-top:1px solid #ECECF0; flex-wrap:wrap; gap:12px 24px; }',
+    '  .wbc.is-phone #wbc-fab { display:inline-flex; position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom)); z-index:40; height:52px; padding:0 18px 0 14px; align-items:center; gap:4px; border:0; background:#1F4BD8; color:#fff; font-size:15px; font-weight:700; box-shadow:0 4px 14px rgba(21,23,28,.18); cursor:pointer; }',
+    '  .wbc.is-phone #wbc-fab:active { background:#1A3FB5; }',
+    '  .wbc.is-phone #wbc-fab .material-symbols-outlined { font-size:22px; }',
+    '}'
+  ].join('\n');
+  function injectCss() {
+    if (document.getElementById('atl-r3y-cal')) return;
+    var st = document.createElement('style'); st.id = 'atl-r3y-cal'; st.textContent = R3_CSS;
+    document.head.appendChild(st);
+    var c = document.querySelector('#wbc .wbc-caret');
+    if (c) c.innerHTML = '<span class="material-symbols-outlined">expand_more</span>';
+    document.querySelectorAll('#wbc .wbc-wds span').forEach(function(sp, i) { sp.textContent = WD_EN[i]; });
+  }
+
   function boot() {
+    injectCss();
     wbInit();
     // 연차 총계 모달을 body로 (매트릭스 페이지 안에 갇혀 있던 문제)
     var m = document.getElementById('leave-edit-modal');
