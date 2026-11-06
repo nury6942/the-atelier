@@ -490,7 +490,7 @@ function ldgBoardMonth(ym, plain) {
 
 // 2026-11-06 4차: '생활비' 뜻 하나 — 나의 규칙 카드 기준 (고정비·연간 적립·여행 뺀 돈). 폰(m-ledger)·데스크톱 같은 글
 var LIVING_FX = '생활비 = 쓴 돈 − 고정비 − 연간 적립 − 여행';
-var TOTAL_FX = '전체 = 한도 정한 칸 합 (고정비 포함)';
+var TOTAL_FX = '전체 = 한도 정한 칸 합';
 function _bLivingSplit(L) {
   return { fix: _bSum(L, function(t) { return _bS(t) && _bFixed(t) && !_bAnnual(t); }), ann: _bSum(L, function(t) { return _bS(t) && _bAnnual(t); }),
            liv: _bSum(L, function(t) { return _bS(t) && !_bFixed(t) && !_bAnnual(t) && t['대분류'] !== '여행' && t['대분류'] !== '미분류'; }) };
@@ -1104,7 +1104,7 @@ function ldgRenderBoard() {
       '<div class="lb-hero-n"><span class="lb-n" style="color:' + (m.leftLife >= 0 ? BK.judge : BK.red) + '">' + (m.leftLife >= 0 ? '+' : '') + _bMan(m.leftLife) + '만</span><small>' + (m.salaryDue ? '남을 예정' : '남음') + '</small></div>' +
       '<p class="lb-fx">' + LF.html + '</p>' +
       '<p class="lb-fx2">' + LF.breakdown + '</p>' +
-      '<div style="margin-top:10px">' + _bStack([['고정', LF.fix, '#16161A'], ['연간 적립', LF.ann, '#5B5B66'], ['생활비', LF.liv, '#A1A1AA'], ['남음', Math.max(0, m.leftLife), '#9DB0EE']], Math.max(incAll, m.life) * 1.02, 12) + '</div>' +
+      '<div style="margin-top:auto;padding-top:14px">' + _bStack([['고정', LF.fix, '#16161A'], ['연간 적립', LF.ann, '#5B5B66'], ['생활비', LF.liv, '#A1A1AA'], ['남음', Math.max(0, m.leftLife), '#9DB0EE']], Math.max(incAll, m.life) * 1.02, 12) + '</div>' +
       (m.travel ? '<p class="lb-fx2" style="margin-top:6px">여행 ' + _bMan(m.travel) + '만은 여행 통장(' + MIRROR_TRAVEL_ACCOUNT + ')에서 → 여기 안 셈</p>' : '') + '</div>' +
     '<div class="lb-c lb-6"><p class="lb-t"><span>나의 규칙 4개 · 이 달 지키는 중?</span><span>' + [m.side > 0 && netSave >= m.side, livingNow <= livCap, m.life <= salBase, shopBig.length < 2].filter(Boolean).length + ' / 4 지킴</span></p>' + rules + '</div></div>';
 
@@ -1435,11 +1435,11 @@ window.ldgRenderCatHero = function(v, cap) {
   var livLine = '';
   try {
     var ymS = _ldgYear + '-' + String(_ldgMonth).padStart(2, '0'), bm = ldgBoardMonth(ymS), lc = _bPlan(ymS).living, lv = _bLivingSplit(bm.L).liv;
-    if (bm.L.length) livLine = ' · 나의 규칙 생활비는 ' + M(lv) + ' / ' + M(lc) + (lc - lv >= 0 ? ' (' + M(lc - lv) + ' 남음)' : ' (' + M(lv - lc) + ' 넘음)') + ' — ' + LIVING_FX;
+    if (bm.L.length) livLine = '<br>나의 규칙 「생활비」는 따로 셈: ' + _bMan(lv) + ' / ' + _bMan(lc) + '만 (' + (lc - lv >= 0 ? _bMan(lc - lv) + '만 남음' : _bMan(lv - lc) + '만 넘음') + ') · ' + LIVING_FX;
   } catch (e) {}
   el.innerHTML = '<div style="display:flex;align-items:baseline;gap:4px 14px;flex-wrap:wrap;padding:14px 18px;background:#fff;border:1px solid #ECECF0;border-radius:0;margin-bottom:14px">' +
     '<span style="font-size:13px;color:' + BK.ink + ';font-weight:600">' + mk + ' 쓰는 돈 전체 <span style="font-weight:400;color:' + BK.sub + '">(고정비 포함)</span></span>' +
     '<span style="font-size:26px;font-weight:800;font-feature-settings:\'tnum\'">' + big + '</span>' +
     '<span style="font-size:12.5px;color:' + BK.sub + '">' + sub + '</span>' +
-    '<span class="ch-fx">' + TOTAL_FX + ' · 수입·저축·여행 빼고 · 예정된 고정 거래 포함' + livLine + '</span></div>' + legend;
+    '<span class="ch-fx">' + TOTAL_FX + ' · 수입·저축·여행 빼고 · 이 달 예정된 고정 거래까지' + livLine + '</span></div>' + legend;
 };
