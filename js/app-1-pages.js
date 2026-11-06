@@ -15034,11 +15034,11 @@
     var finalBal = curBal + plannedDep - plannedExp;
     var fsFmt = function(n) { return (n < 0 ? '-' : '') + '₩' + Math.round(Math.abs(n)).toLocaleString('ko-KR'); };
     var fsCur = document.getElementById('fin-stat-current');
-    if (fsCur) { fsCur.textContent = fsFmt(curBal); fsCur.style.color = curBal < 0 ? '#e11d48' : '#0f172a'; }
+    if (fsCur) { fsCur.textContent = fsFmt(curBal); fsCur.style.color = curBal < 0 ? '#DC2626' : '#0f172a'; }
     var fsPln = document.getElementById('fin-stat-planned');
     if (fsPln) fsPln.textContent = fsFmt(plannedExp);
     var fsFin = document.getElementById('fin-stat-final');
-    if (fsFin) { fsFin.textContent = fsFmt(finalBal); fsFin.style.color = finalBal < 0 ? '#e11d48' : '#334155'; }
+    if (fsFin) { fsFin.textContent = fsFmt(finalBal); fsFin.style.color = finalBal < 0 ? '#DC2626' : '#334155'; }
     console.log('[Finance Stats] 입금=' + depositTotal + ', 출금=' + expenseTotal + ', 잔액=' + balance);
     var depEl = document.getElementById('finance-main-deposit');
     if (depEl) depEl.textContent = '₩' + Math.round(depositTotal).toLocaleString('ko-KR');
@@ -15046,7 +15046,7 @@
     var balEl = document.getElementById('finance-main-balance');
     if (balEl) {
       balEl.textContent = (balance < 0 ? '-' : '') + '₩' + Math.round(Math.abs(balance)).toLocaleString('ko-KR');
-      balEl.style.color = balance < 0 ? '#e11d48' : '#0f172a';  // 에디토리얼 밴드(밝은 배경)용
+      balEl.style.color = balance < 0 ? '#DC2626' : '#0f172a';  // 에디토리얼 밴드(밝은 배경)용
     }
     document.getElementById('finance-main-label').textContent = '총 지출';
     document.getElementById('finance-item-count').textContent = financeFiltered.length;
@@ -15121,7 +15121,7 @@
       bar.classList.toggle('is-over', over);
     }
     var leftEl = document.getElementById('fin-cash-left');
-    if (leftEl) leftEl.style.color = over ? '#e11d48' : '#0f172a';
+    if (leftEl) leftEl.style.color = over ? '#DC2626' : '#0f172a';
     var noteEl = document.getElementById('fin-cash-note');
     if (noteEl) noteEl.textContent = over ? '경비를 넘겼어요 — 초과분은 카드로 나가요' : '이 항목들은 잔액에 안 잡혀요';
   }
@@ -15298,7 +15298,7 @@
     var badge = function(rem, b, mini) {
       var style, label;
       if (b <= 0) { style = 'background:#f1f5f9;color:#64748b'; label = '예산 없음'; }
-      else if (rem < 0) { style = 'background:#fff1f2;color:#e11d48'; label = fmtW(rem) + ' 초과'; }
+      else if (rem < 0) { style = 'background:#FEF2F2;color:#DC2626'; label = fmtW(rem) + ' 초과'; }
       else { style = 'background:#ecfdf5;color:#059669'; label = fmtW(rem) + ' 남음'; }
       return '<span class="font-bold rounded-full flex-shrink-0" style="' + style +
         ';font-size:' + (mini ? '10px' : '11px') + ';padding:' + (mini ? '2px 8px' : '3px 10px') +
@@ -15311,7 +15311,7 @@
         var basePct = (b / s) * 100;
         return '<div class="' + hCls + ' bg-slate-100 rounded-full overflow-hidden flex">' +
           '<div style="width:' + basePct.toFixed(1) + '%;background:' + color + '"></div>' +
-          '<div style="width:' + (100 - basePct).toFixed(1) + '%;background:#e11d48"></div>' +
+          '<div style="width:' + (100 - basePct).toFixed(1) + '%;background:#DC2626"></div>' +
         '</div>';
       }
       var pct = b > 0 ? Math.min(100, (s / b) * 100) : 0;
@@ -15756,7 +15756,7 @@
           ((r.unlinked && r.unlinked.length) ? '<span class="flb-warn" title="finance 장부에 연결되지 않아 「숙소」 예산 카드에는 빠져 있어요.&#10;' + r.unlinked.join('&#10;').replace(/"/g, '&quot;') + '">장부 미연결 ' + r.unlinked.length + '</span>' : '') + '</div>' +
         '<div class="flb-money"><span class="flb-k">지출</span><b>₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</b><span class="flb-k">예산</span>' + budgetHtml + '</div>' +
         '<div class="flb-rem"><b>' + remNum + '</b><span>' + remWord + '</span></div>' +
-        '<div class="flb-bar"><i style="width:' + r.pct + '%;background:' + (r.isOver ? '#e11d48' : (r.noBudget ? '#9a9ca3' : (isOrphan ? '#d97706' : '#6b38d4'))) + '"></i></div>' +
+        '<div class="flb-bar"><i style="width:' + r.pct + '%;background:' + (r.isOver ? '#DC2626' : (r.noBudget ? '#9a9ca3' : (isOrphan ? '#d97706' : '#6b38d4'))) + '"></i></div>' +
       '</div>';
     });
     html += '</div>';
@@ -15767,7 +15767,7 @@
       '<div class="flb-total-l"><span class="flb-k">전체</span><b>' + totalNights + '박</b></div>' +
       '<div class="flb-money"><span class="flb-k">지출</span><b>₩' + Math.round(totalSpent).toLocaleString('ko-KR') + '</b><span class="flb-k">예산</span><b>₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</b></div>' +
       '<div class="flb-rem' + (totalRem < 0 ? ' is-over' : '') + '"><b>₩' + Math.round(Math.abs(totalRem)).toLocaleString('ko-KR') + '</b><span>' + (totalRem >= 0 ? '남음' : '초과') + '</span></div>' +
-      '<div class="flb-bar"><i style="width:' + totalBarPct + '%;background:' + (totalSpent > totalBudget ? '#e11d48' : '#6b38d4') + '"></i></div>' +
+      '<div class="flb-bar"><i style="width:' + totalBarPct + '%;background:' + (totalSpent > totalBudget ? '#DC2626' : '#6b38d4') + '"></i></div>' +
     '</div>';
 
     window._ldgEstimates = _ldgEstIds;

@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=412" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=413" as="script">
   <link rel="preload" href="js/app-2-init.js?v=194" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -376,8 +376,8 @@
     .text-\[9px\],.text-\[9\.5px\],.text-\[10px\],.text-\[10\.5px\]{font-size:11px!important}
     /* 인라인 두 번 누르기 확인 (atlTapConfirm) */
     .atl-tapdel{padding:2px;color:var(--atl-text-2);background:none;border:0;cursor:pointer}
-    .atl-tapdel:hover{color:#E11D48}
-    .is-armed{color:#E11D48!important;font-size:12px;font-weight:700;opacity:1!important}
+    .atl-tapdel:hover{color:#DC2626}
+    .is-armed{color:#DC2626!important;font-size:12px;font-weight:700;opacity:1!important}
     .atl-horizon{height:48px;background:url('assets/home/band-horizon.webp') center/cover no-repeat;border:0;border-radius:0;box-shadow:none}
     body.atl-on-home .atl-horizon{display:none}
     @media (max-width:767px){.atl-horizon{height:4px;background:#1F4BD8;border-bottom:2px solid #F0A647}}
@@ -5947,7 +5947,7 @@
     .flb-est-clean button { border:1px solid #15161a; background:#fff; padding:5px 12px; font-size:11.5px; font-weight:700; color:#15161a; cursor:pointer; border-radius:0; }
     .flb-est-clean button:hover { background:#15161a; color:#fff; }
     .flb-est { display:block; margin-top:4px; font-size:11px; font-weight:600; color:#475569; }
-    .flb-warn { display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:#e11d48; border:1px solid #e11d48; padding:1px 5px; cursor:help; }
+    .flb-warn { display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:#DC2626; border:1px solid #DC2626; padding:1px 5px; cursor:help; }
     .flb-money { display:grid; grid-template-columns:auto 1fr; column-gap:8px; row-gap:2px; align-items:baseline; font-variant-numeric:tabular-nums; }
     .flb-k { font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; color:#475569; }
     .flb-money b { font-family:'Manrope',sans-serif; font-size:13.5px; font-weight:700; color:#15161a; }
@@ -5960,7 +5960,7 @@
     .flb-rem { text-align:right; }
     .flb-rem b { display:block; font-family:'Manrope',sans-serif; font-size:19px; font-weight:800; color:#17348F; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
     .flb-rem span { font-size:11px; font-weight:700; color:#5f6168; }
-    .flb-row.is-over .flb-rem b, .flb-rem.is-over b { color:#e11d48; }
+    .flb-row.is-over .flb-rem b, .flb-rem.is-over b { color:#DC2626; }
     .flb-bar { grid-column:1 / -1; height:3px; background:#ECECF0; margin-top:12px; }
     .flb-bar i { display:block; height:100%; }
     .flb-total { border-bottom:1px solid #15161a; padding-bottom:0; margin-top:10px; }
@@ -6325,7 +6325,7 @@
     .wbc .wbc-stat .l.is-leave, .wbc .wbc-stat .l.is-ot { color:var(--sub); }
     .wbc .wbc-stat .l.is-leave::before { background:var(--me); }
     .wbc .wbc-stat .l.is-ot::before { background:#fff; box-shadow:inset 0 0 0 1px #DCDCE3; }
-    .wbc .wbc-stat b.neg { color:#E11D48; }
+    .wbc .wbc-stat b.neg { color:#DC2626; }
     .wbc .wbc-fresh.is-stale { color:#B45309; }
     .wbc-legend { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px 18px; margin:10px 0 0; font-size:12px; font-weight:500; color:var(--sub); }
     .wbc-legend span { display:inline-flex; align-items:center; gap:6px; }
@@ -6466,7 +6466,7 @@
     .fin-cash-sum b { color:#0f172a; font-weight:700; }
     .fin-cash-track { height:8px; background:#f1f5f9; border-radius:999px; overflow:hidden; }
     .fin-cash-bar { height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,#34d399,#15803d); transition:width .35s ease; }
-    .fin-cash-bar.is-over { background:linear-gradient(90deg,#fb7185,#e11d48); }
+    .fin-cash-bar.is-over { background:#DC2626; }
     .fin-cash-foot { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-top:14px; flex-wrap:wrap; }
     .fin-cash-left-l { font-size:11px; color:#475569; letter-spacing:0.02em; }
     .fin-cash-left-v { font-size:21px; font-weight:800; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
@@ -6475,10 +6475,10 @@
     .fin-amt-exp { color:#dc2626; }
     .fin-amt-dep { color:#059669; }
     .fin-bal { font-family:'Manrope','Pretendard',sans-serif; font-size:12.5px; font-weight:700; color:#334155; font-variant-numeric:tabular-nums; }
-    .fin-bal-neg { color:#e11d48; }
+    .fin-bal-neg { color:#DC2626; }
     .fin-bal-skip { color:#475569; font-weight:600; }
     .fin-bal-proj { color:#1F4BD8; font-weight:700; } /* 예상 잔액 — 진한 바이올렛 (실잔액은 슬레이트) */
-    .fin-bal-proj.fin-bal-neg { color:#e11d48; }
+    .fin-bal-proj.fin-bal-neg { color:#DC2626; }
     .fin-acts { display:flex; gap:4px; justify-content:center; }
     .fin-act-btn { padding:4px; border-radius:8px; border:none; background:none; color:#475569; cursor:pointer; opacity:0; transition:all .12s; }
     .fin-row:hover .fin-act-btn { opacity:1; }
@@ -6486,7 +6486,7 @@
     .fin-act-btn .material-symbols-outlined { font-size:16px; display:block; }
     .fin-act-on { opacity:1 !important; color:#b45309; }
     .fin-act-on:hover { background:#fffbeb; color:#b45309; }
-    .fin-act-del:hover { background:#ffe4e6; color:#e11d48; }
+    .fin-act-del:hover { background:#FEE2E2; color:#DC2626; }
     .fin-input-row { background:#fcfbff; }
     .fin-input-row td { border-bottom:1px solid #EEF2FD; }
     .trav-act .material-symbols-outlined { font-size:15px; }
@@ -6537,13 +6537,13 @@
     .rec-pill.is-accent { background:#f3eeff; color:#1F4BD8; }
     .rec-pill.is-ok { background:#ecfdf5; color:#059669; }
     .rec-pill.is-warn { background:#fffbeb; color:#b45309; }
-    .rec-pill.is-danger { background:#fff1f2; color:#e11d48; }
+    .rec-pill.is-danger { background:#FEF2F2; color:#DC2626; }
     .rec-actions { display:flex; gap:2px; flex-shrink:0; }
     .rec-abtn { border:none; background:transparent; cursor:pointer; padding:4px; border-radius:8px;
       color:inherit; opacity:0; transition:opacity .15s, background .15s, color .15s; display:inline-flex; }
     .rec-fl-card:hover .rec-abtn, .rec-lg-card:hover .rec-abtn, .rec-tr-card:hover .rec-abtn { opacity:.7; }
     .rec-abtn:hover { opacity:1; background:rgba(148,163,184,.18); }
-    .rec-abtn.danger:hover { color:#e11d48; background:rgba(225,29,72,.1); }
+    .rec-abtn.danger:hover { color:#DC2626; background:rgba(220,38,38,.1); }
     .rec-abtn .material-symbols-outlined { font-size:16px; display:block; }
     /* ★ (2026-07-23) 브랜드/항공사 로고 — CDN 차단 시 onerror로 사라지고 기존 아이콘이 남음 */
     .rec-fl-logo { height:22px; width:auto; max-width:72px; object-fit:contain; flex-shrink:0;
@@ -6653,7 +6653,7 @@
     .rec-lg-cancel { font-size:11px; font-weight:600; margin:10px 0 0; }
     .rec-lg-cancel.is-ok { color:#059669; }
     .rec-lg-cancel.is-warn { color:#b45309; }
-    .rec-lg-cancel.is-danger { color:#e11d48; }
+    .rec-lg-cancel.is-danger { color:#DC2626; }
     .rec-lg-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
     .rec-lg-foot { display:flex; justify-content:space-between; align-items:center; gap:10px;
       padding:10px 16px; background:#f8fafc; border-top:1px solid #eef2f7; }
@@ -16603,7 +16603,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=412" defer></script>
+<script src="js/app-1-pages.js?v=413" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17489,8 +17489,8 @@
 <script src="js/app-4-roadmap.js?v=165" defer></script>
 <script src="js/app-5-ledger-export.js?v=164" defer></script>
 <script src="js/app-6-postype-analytics.js?v=172" defer></script>
-<script src="js/app-7-mirror.js?v=90" defer></script>
-<script src="js/money-tax.js?v=4" defer></script>
+<script src="js/app-7-mirror.js?v=91" defer></script>
+<script src="js/money-tax.js?v=5" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
 <script src="js/english-study.js?v=26" defer></script>
 <script src="js/english-read.js?v=2" defer></script>

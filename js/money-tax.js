@@ -12,7 +12,7 @@
   function injectStyle() {
     if (document.getElementById('tax-style')) return;
     var css = [
-      '#page-tax{--tx-up:#15803D;--tx-down:#E11D48;--tx-ink:#16161A;--tx-sub:#475569;--tx-line:#ECECF0}',
+      '#page-tax{--tx-up:#15803D;--tx-down:#DC2626;--tx-ink:#16161A;--tx-sub:#475569;--tx-line:#ECECF0}',
       '#page-tax *{border-radius:0!important}',
       '#page-tax .tx-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:8px 0 28px}',
       '#page-tax .tx-head p{font-size:14px;color:var(--tx-sub)}',
@@ -48,7 +48,7 @@
       '#page-tax .tx-fill{position:absolute;top:0;bottom:0;left:0;background:var(--atl-accent,#1F4BD8)}',
       '#page-tax .tx-fill.soft{background:#BFCDF5}',
       '#page-tax .tx-fill.gap{background:#15803D}',
-      '#page-tax .tx-fill.cut{background:#E11D48}',
+      '#page-tax .tx-fill.cut{background:#DC2626}',
       // 소득 구성 (쌓인 막대)
       '#page-tax .tx-stack{display:flex;height:34px;margin-top:20px}',
       '#page-tax .tx-stack>div{display:flex;align-items:center;padding:0 10px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden}',
