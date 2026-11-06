@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=421" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=422" as="script">
   <link rel="preload" href="js/app-2-init.js?v=198" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -378,7 +378,7 @@
     .atl-tapdel{padding:2px;color:var(--atl-text-2);background:none;border:0;cursor:pointer}
     .atl-tapdel:hover{color:#DC2626}
     .is-armed{color:#DC2626!important;font-size:12px;font-weight:700;opacity:1!important}
-    .atl-horizon{height:48px;background:url('assets/home/band-horizon.webp') center/cover no-repeat;border:0;border-radius:0;box-shadow:none}
+    .atl-horizon{display:none !important;height:48px;background:url('assets/home/band-horizon.webp') center/cover no-repeat;border:0;border-radius:0;box-shadow:none}
     body.atl-on-home .atl-horizon{display:none}
     @media (max-width:767px){.atl-horizon{height:4px;background:#1F4BD8;border-bottom:2px solid #F0A647}}
     #sidebar .nav-group{padding:18px 24px 6px;font-size:12px;font-weight:700;letter-spacing:0;color:var(--atl-text-2)}
@@ -11397,7 +11397,7 @@
        ════════════════════════════════════════════════════════════ */
     .j-toc {
       position: fixed;
-      top: 136px; /* 상단바 64 + 지평선 띠 48 + 24 (2026-11-06) */
+      top: 90px; /* (11/06 밤) 지평선 띠 뺌 → 원래 값 */
       width: 120px;
       z-index: 30;
       display: none;
@@ -11700,54 +11700,30 @@
       <span class="material-symbols-outlined text-[19px] transition-colors">monitoring</span>
       <span class="text-[13.5px] font-medium">Money</span>
     </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-sub-assets" onclick="navigate('finance-hub'); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">account_balance</span>
-      <span class="text-[13.5px] font-medium">Assets</span>
-    </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-ledger" onclick="navigate('ledger'); return false;">
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-ledger" onclick="navigate('ledger'); return false;" style="display:none">
       <span class="material-symbols-outlined text-[19px] transition-colors">wallet</span>
       <span class="text-[13.5px] font-medium">Daily Ledger</span>
     </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-income" onclick="navigate('income'); return false;">
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-income" onclick="navigate('income'); return false;" style="display:none">
       <span class="material-symbols-outlined text-[19px] transition-colors">account_balance_wallet</span>
       <span class="text-[13.5px] font-medium">Side Jobs</span>
-    </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-sub-tax" onclick="navigate('tax'); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">receipt_long</span>
-      <span class="text-[13.5px] font-medium">Tax</span>
     </a>
     <div class="nav-group">Travel</div>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-journey" onclick="navigate('journey'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">explore</span>
       <span class="text-[13.5px] font-medium">Travel</span>
     </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-sub-itin" onclick="navigate('journey'); setTimeout(function(){ try{ switchTravelTab('schedule'); }catch(e){} }, 60); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">route</span>
-      <span class="text-[13.5px] font-medium">Itinerary</span>
-    </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-sub-spots" onclick="navigate('journey'); setTimeout(function(){ try{ switchTravelTab('places'); }catch(e){} }, 60); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">push_pin</span>
-      <span class="text-[13.5px] font-medium">Spots</span>
-    </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-sub-bookings" onclick="navigate('journey'); setTimeout(function(){ try{ switchTravelTab('records'); }catch(e){} }, 60); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">receipt_long</span>
-      <span class="text-[13.5px] font-medium">Bookings</span>
-    </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-finance" onclick="navigate('finance'); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">payments</span>
-      <span class="text-[13.5px] font-medium">Budget</span>
-    </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-packing" onclick="navigate('packing'); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">fact_check</span>
-      <span class="text-[13.5px] font-medium">Checklist</span>
-    </a>
-    <a href="#" class="nav-item nav-sub flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-sub-atlas" onclick="navigate('journey'); setTimeout(function(){ try{ switchTravelTab('atlas'); }catch(e){} }, 60); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">public</span>
-      <span class="text-[13.5px] font-medium">Atlas</span>
-    </a>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-deals" onclick="navigate('deals'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">sell</span>
       <span class="text-[13.5px] font-medium">Flight Deals</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-finance" onclick="navigate('finance'); return false;" style="display:none">
+      <span class="material-symbols-outlined text-[19px] transition-colors">payments</span>
+      <span class="text-[13.5px] font-medium">Travel Budget</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-packing" onclick="navigate('packing'); return false;" style="display:none">
+      <span class="material-symbols-outlined text-[19px] transition-colors">fact_check</span>
+      <span class="text-[13.5px] font-medium">Travel Checklist</span>
     </a>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-nomad-master" onclick="navigate('nomad-master'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">flight_takeoff</span>
@@ -16749,7 +16725,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=421" defer></script>
+<script src="js/app-1-pages.js?v=422" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->

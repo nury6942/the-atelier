@@ -24,7 +24,7 @@
   button{font:inherit;cursor:pointer;color:inherit}
   .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 96px}
   /* 안쪽 페이지 공통 지평선 띠 (홈 그림의 하늘·모래) — 좁은 화면은 코발트 4px + 모래 2px 두 줄 */
-  .hband{height:48px;background:url(assets/home/band-horizon.webp) center/cover}
+  .hband{display:none !important;height:48px;background:url(assets/home/band-horizon.webp) center/cover}
   @media (max-width:767px){ .hband{height:6px;box-sizing:border-box;background:#1F4BD8;border-bottom:2px solid #F0A647} }  /* 코발트 4px + 모래 2px (m-ledger 와 같은 방식) */
   /* (2026-11-06 3차) 제목 줄바꿈 고르게 — 마지막 줄에 한 단어만 남지 않게 */
   h1,h2,h3{text-wrap:balance}

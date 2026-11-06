@@ -1,3 +1,9 @@
+## 2026-11-06 밤 · 맥북 · 사이드바·지평선 띠 원래대로
+
+- 누리: 사이드바 하위 줄이 위 탭과 중복·너무 김 → critique 전 사이드바로(Money·Travel·Flight Deals·Nomad Master), 메뉴 강조 규칙도 원래대로
+- 지평선 띠는 뺌(index .atl-horizon·ai-brief .hband·m-ledger .horizon·Job Hunt gen.py 모두 display:none), Travel 목차 top 136→90
+- 캘린더 조기퇴근 「결재 전」 잘림 → .wbc-att flex-wrap
+
 ## 2026-11-06 밤 · 맥북 · 누리 요청으로 되돌림
 
 - 캘린더: 4색 문법 취소 → 일정마다 고른 색(SOLID·WRITE_HEX·PINK_TO_YELLOW), 기간 GTM 회색+시즌 띠, ★ 빨강(--key #E8283F), 연차 산호(--me #FF6F5B), 범례 삭제, 폰 점·목록 칩도 일정 색, 타임라인 원래 색(e12bdd7)
