@@ -1,3 +1,12 @@
+## 2026-11-06 밤 · 맥북 · 공공데이터 연결 (한국은행·DART·국토부 → 읽기만)
+
+- 아이맥 `scripts/public-data/fetch-public-data.js` (launchd com.nuri.atelier-public-data 매일 08:10, 로그 ~/Library/Logs/atelier-public-data.log) → Firestore `appSettings/publicData` 한 장: fx(ECOS 매매기준율 EUR·DKK·USD·GBP·CAD·AUD·CHF·JPY100 + 전 영업일) · rate(기준금리) · rateHistory(기준금리·정기예금 신규 가중평균 24달) · cpi(901Y009 전년동월비) · fnf(DART 연결 분기 매출·영업이익·공시 3) · home(염창역한강투웨니퍼스트 29.98㎡ 매매·전세·월세 건수)
+- 키는 아이맥 ~/.config/korea-apis/keys.env(600)에만 — 저장소·사이트·로그에 없음. 인증은 ai-worker 와 같은 ADC, firebase-admin 도 ai-worker 것을 씀. 국토부 3달 넘은 달은 ~/.cache/atelier-public-data 캐시
+- 사이트 `js/public-data.js`(app-1-pages 앞에 로드): 환율 함수들(getFxEurKrw·getFxKrw·fxFetchKRW·_fetchKrwRate·GBP 수강료)이 ECOS 먼저, 무료 API 는 예비. 여행 예산 환율 칩·영어 수강료 환율 글자에 「한국은행 매매기준율 · MM/DD」
+- Assets 머리 아래 한 줄 띠(우리 집 · 기준금리 · 물가) + 「금리 추이 ▾」(접힘 기억 atelier_pd_rate_open): 24달 그래프(코발트=기준금리, 먹색=정기예금 평균) + 내 파킹통장 실효 금리(「이자 자동 계산」 규칙 × 이번 달 초 유동자산)
+- Job Hunt gen.py: RATE 를 rates.json(아이맥 잡이 씀)에서, 없으면 고정값 · Playbook 머리에 F&F 분기 실적·공시 3 상자 (RTDB 업로드는 아침 루틴 몫)
+- ?v= app-1-pages 427, public-data 1 · SW v1699
+
 ## 2026-11-06 밤 · 맥북 · My Notes 질문 카드 + 답 받기 (구독)
 
 - Annie 리뷰 오른쪽 My Notes: 자유 메모 → 질문 카드 목록 `englishSessions/<날짜>.myNotesItems=[{id,text,at}]` (Q1·Q2… 번호 자동, 글 누르거나 ✎ 로 고치기, 두 번 눌러 삭제, 아래 「+ 새 질문」 ⌘/Ctrl+Enter)

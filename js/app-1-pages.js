@@ -14734,6 +14734,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   ];
   // 실패해도 reject 하지 않고 null 을 돌려준다 — 호출부가 캐시로 넘어갈 수 있게
   function fxFetchKRW(currency) {
+    // ★ (2026-11-06) 한국은행 매매기준율(아이맥 → publicData, js/public-data.js) 먼저, 무료 API 는 예비
+    var _ec = window.atelierEcosFx && window.atelierEcosFx(currency);
+    if (_ec) return Promise.resolve(_ec);
     var i = 0;
     function tryNext() {
       if (i >= _FX_URLS.length) return Promise.resolve(null);
@@ -14752,6 +14755,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   function getFxEurKrw(cb) {
     var CACHE_KEY = 'atelier_fx_eur_krw';
     if (_fxEurKrwRate) { if (cb) cb(_fxEurKrwRate); return; }
+    var _ec = window.atelierEcosFx && window.atelierEcosFx('EUR');
+    if (_ec) { _fxEurKrwRate = _ec; if (cb) cb(_ec); return; }
     try {
       var c = JSON.parse(localStorage.getItem(CACHE_KEY));
       if (c && c.rate && (Date.now() - c.at < 43200000)) {
@@ -14794,6 +14799,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   function getFxKrw(cur, cb) {
     if (cur === 'EUR') return getFxEurKrw(cb);
     if (_fxRates[cur]) return cb(_fxRates[cur]);
+    var _ec = window.atelierEcosFx && window.atelierEcosFx(cur);
+    if (_ec) { _fxRates[cur] = _ec; return cb(_ec); }
     var key = 'atelier_fx_' + cur.toLowerCase() + '_krw';
     try { var c = JSON.parse(localStorage.getItem(key)); if (c && c.rate && Date.now() - c.at < 43200000) { _fxRates[cur] = c.rate; return cb(c.rate); } } catch(e) {}
     fxFetchKRW(cur).then(function(rate) {
@@ -14835,7 +14842,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           var mul = cur === 'JPY' ? 100 : 1;
           parts[i] = rate ? (_FX_SYM[cur] || ('1 ' + cur)) + ' = ₩' + Math.round(rate * mul).toLocaleString('ko-KR') : cur + ' —';
           if (--left === 0) el.innerHTML = parts.join('<span style="color:#475569;margin:0 8px">·</span>') +
-            '<span style="font-size:11px;font-weight:600;color:#475569"> · 오늘</span>';
+            '<span style="font-size:11px;font-weight:600;color:#475569"> · ' + ((window.atelierEcosFxLabel && window.atelierEcosFxLabel()) || '오늘') + '</span>';
         });
       });
     });
@@ -14846,10 +14853,16 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     getFxEurKrw(function(rate) {
       if (!rate) { el.textContent = '—'; return; }
       el.innerHTML = '€1 = ₩' + Math.round(rate).toLocaleString('ko-KR') +
-        '<span style="font-size:11px;font-weight:600;color:#475569"> · 오늘</span>';
+        '<span style="font-size:11px;font-weight:600;color:#475569"> · ' + ((window.atelierEcosFxLabel && window.atelierEcosFxLabel()) || '오늘') + '</span>';
     });
   }
   try { updateFinanceFxChip(); } catch(e) {}
+  // publicData 가 새로 도착하면(아이맥 08:10 갱신) 메모리 환율을 비우고 칩만 다시
+  window.addEventListener('atelier-public-data', function() {
+    if (!(window.atelierEcosFx && window.atelierEcosFx('EUR'))) return;
+    _fxEurKrwRate = 0; _fxRates = {};
+    try { updateFinanceFxChip(); } catch(e) {}
+  });
 
   // ═══════════════════════════════════════════════════════════
   //  예산 — '유로 환율 반영' (콘솔 스크립트 data/set_finance_fx_amount.js 를 화면 버튼으로)
@@ -15950,6 +15963,14 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
   async function fetchGbpKrwRate(forceRefresh) {
     var cacheKey = 'atelier_gbp_krw_rate';
+    var _ec = window.atelierEcosFx && window.atelierEcosFx('GBP');
+    if (_ec) {
+      _gbpKrwMarket = _ec;
+      _gbpKrwPurchase = Math.round(_ec * FX_MARKUP_RATE);
+      _gbpKrwFetchDate = window.atelierEcosFxLabel();
+      _gbpKrwFallback = false;
+      return _gbpKrwPurchase;
+    }
     // 캐시 확인 (12시간)
     if (!forceRefresh) {
       try {
@@ -32722,6 +32743,8 @@ async function _fetchKrwRate(currency) {
   if (key === 'KRW') return 1;
   var markup = (typeof FX_MARKUP_RATE !== 'undefined') ? FX_MARKUP_RATE : 1.0175;
   var cacheKey = 'atelier_fx_' + key + '_krw';
+  var _ec = window.atelierEcosFx && window.atelierEcosFx(key);
+  if (_ec) return Math.round(_ec * markup);
   try {
     var cached = JSON.parse(localStorage.getItem(cacheKey));
     if (cached && cached.rate && (Date.now() - cached.fetchedAt < 43200000)) {
