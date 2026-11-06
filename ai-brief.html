@@ -110,7 +110,7 @@
   .ex{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
   .ex a{display:block;min-width:0}
   .ex .img{aspect-ratio:1.91/1}
-  .ex span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden;word-break:keep-all;overflow-wrap:normal;text-wrap:pretty}  /* (11/06 4차) 단어 중간에서 잘리지 않게: 단어 단위 줄바꿈 + 3줄까지 */
+  .ex span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:unset;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:visible;word-break:keep-all;overflow-wrap:normal;text-wrap:pretty}  /* (11/06 4차) 말줄임 없이 단어 단위로 다 보이게 (제목이 짧다) */
   .ex .ph,.vrow .ph{padding:4px;font-size:11px;line-height:1.2}
   .ex .ph small,.vrow .ph small{display:none}  /* 작은 칸은 출처 주소만 */
   .side .ex{grid-template-columns:1fr;gap:6px}  /* 좁은 옆 카드는 예시를 '작은 사진 + 제목' 목록으로 */
