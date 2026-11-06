@@ -1,0 +1,311 @@
+{
+ "date": "2026-11-07",
+ "collectedAt": "2026-11-07T06:30:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2118374993696575996",
+   "at": "2026-11-05T16:08:50.000Z",
+   "likes": 2300,
+   "replies": 263,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "독학 워킹맘의 9분 AI 판타지 영화, 뉴욕 영화제 4관왕",
+   "points": [
+    "독학으로 AI 영상을 익힌 워킹맘이 9분짜리 판타지 단편을 완성",
+    "뉴욕 국제영화제에서 최우수 AI 영화·각본상 등 4개 부문 수상",
+    "글에 붙은 영상으로 결과물 확인 가능 — 'AI 슬롭' 반론 사례로 공유됨"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2118371068930912257/img/sFmQH8QKnwqhNdOd.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118371068930912257/vid/avc1/640x360/cIxFAE5FMQtSSURR.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2118797478057349462",
+   "at": "2026-11-06T20:07:38.000Z",
+   "likes": 24,
+   "replies": 9,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code 모델 분담을 설정 파일 하나로 고정",
+   "points": [
+    "~/.claude/settings.json 에 model: sonnet, advisorModel: opus, env CLAUDE_CODE_SUBAGENT_MODEL: haiku",
+    "메인은 Sonnet, 하위 에이전트(검색·grep·테스트)는 Haiku, Opus는 자문역으로 대기",
+    "Opus는 계획 확정 직전·같은 오류 2번·완료 직전에만 호출 — CLAUDE.md 규칙으로 명시",
+    "/advisor 로 파일 수정 없이 자문 모델 전환 가능하다고 함"
+   ],
+   "try": "settings.json에 subagent 모델만 haiku로 바꿔 사용량 차이 보기",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2118797315620118528/img/JtJat1cE8g_gEJOp.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118797315620118528/vid/avc1/480x600/TEWi0T-KSwk9mQ_L.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@jh3yy",
+   "url": "https://x.com/jh3yy/status/2118769965260210494",
+   "at": "2026-11-06T18:18:19.000Z",
+   "likes": 91,
+   "replies": 16,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "에이전트가 짠 CSS :has() 는 좁게 — 성능 함정",
+   "points": [
+    ".component:has(.something) button 처럼 넓은 대상·와일드카드는 피하라",
+    "에이전트는 랜드마크 요소에 :has()를 붙이는 경향이 있음",
+    "관련 없어 보이는 규칙까지 대규모 스타일 재계산을 유발할 수 있다",
+    "영상에 재계산 비교 데모"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2118769817301782528/img/7gsAMiXX7oIo1A7w.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118769817301782528/vid/avc1/540x540/OGqyyGioERue1M_n.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@DesignArena",
+   "url": "https://x.com/DesignArena/status/2118427512883892529",
+   "at": "2026-11-05T19:37:32.000Z",
+   "likes": 179,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Gemini Omni 1.2 vs 1.1 콜로세움 FPV 비교",
+   "points": [
+    "같은 FPV 프롬프트(지하 미로→외벽 아치→포럼 위로 후퇴)로 두 버전 생성",
+    "1.2는 1분28초 걸림(1.1은 53초), 비용은 $1.04 vs $1.01로 비슷",
+    "1.2는 최대 15초 생성이라 초당 31% 저렴",
+    "1.2는 아치 리듬·벽 높이 유지, 1.1은 줌아웃 때 벽이 사라졌다 다시 생김"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2118427422148415488/img/bYI0fe76eAja-2uB.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2118427422148415488/vid/avc1/480x542/GlUw7SNoekwYKdC4.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@_doubleAI_",
+   "url": "https://x.com/_doubleAI_/status/2118733156069032292",
+   "at": "2026-11-06T15:52:03.000Z",
+   "likes": 424,
+   "replies": 26,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "LLM 에이전트가 학습 중 모델 구조를 직접 고침",
+   "points": [
+    "코딩 에이전트가 학습 중인 신경망에 코드 레이어를 이식 — 'mechanistic intervention'",
+    "nanochat에서 새 코드 레이어마다 일반 학습보다 loss가 낮아짐, 알고리즘 추론 정확도 55→84%",
+    "DeepSeek-V4.1-Flash가 스스로를 고쳐 AIME·HMMT 점수 64→71%",
+    "구조 변경은 학습 초반보다 중간에 넣을 때 효과 — 초반 투입 시 recall 72→55%"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HWc96MuWMAA8vOE.jpg"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@claudeai",
+   "url": "https://www.threads.com/@claudeai/post/DfXoOIuEXu-",
+   "at": "2026-11-05T18:02:44.000Z",
+   "likes": 1100,
+   "replies": 118,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude에 개인 재무(Personal Finance) 베타 — 미국",
+   "points": [
+    "고른 계좌를 연결하면 잔액·거래내역 기준으로 돈 질문에 답함",
+    "읽기 전용 — 송금·관리·투자는 못 함, 투자 조언용 아님",
+    "광고·스폰서 추천 없음",
+    "미국 Pro·Max·Ultra 플랜부터 순차 배포"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@oyuo_o_",
+   "url": "https://www.threads.com/@oyuo_o_/post/DfY4UFclLeo",
+   "at": "2026-11-06T05:41:46.000Z",
+   "likes": 75,
+   "replies": 110,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "AI 비서 어사이드·피클·인스팅트 동시 사용 후기",
+   "points": [
+    "어사이드: 지난 대화 읽고 내 말투로 카톡채널 답장, 귀찮은 웹 작업 대행 — 화면이 실시간으로 보이고 빠름",
+    "피클: 전화·네이버 적립·아침 브리핑, 홈택스 업무가 제일 좋았음. 단점은 안 시킨 것도 함",
+    "인스팅트: 가장 똑똑한 '고급비서' 느낌, 문서 작성도 잘함",
+    "정리: 반복 웹·답장=어사이드, 생활 잡무=피클, 알아서 척척=인스팅트"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@aiwork_flow",
+   "url": "https://www.threads.com/@aiwork_flow/post/DfWoZYfD29V",
+   "at": "2026-11-05T08:44:20.000Z",
+   "likes": 96,
+   "replies": 4,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "AI 티 나는 화면을 지워 주는 깃허브 디자인 스킬 4개",
+   "points": [
+    "taste-skill(별 11만): 만들기 전 화면 방향·참고 이미지를 잡고 브라우저로 결과 확인",
+    "impeccable(별 10만): polish·bolder·quieter 등 명령 24개 + 규칙 62개로 AI 티 검출, npx impeccable install",
+    "hallmark(별 4.8만): 테마 50개 중 3개 제안, /hallmark redesign·audit",
+    "frontend-design: 앤트로픽 공식 — 색·서체·레이아웃 계획 후 흔한 AI 기본값과 닮았는지 자체 점검"
+   ],
+   "try": "아뜰리에 화면에 /hallmark audit 한 번 돌려 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@miki__7018",
+   "url": "https://www.threads.com/@miki__7018/post/DfXWvDyHxUG",
+   "at": "2026-11-05T15:29:13.000Z",
+   "likes": 117,
+   "replies": 10,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "클로드 디자인은 DESIGN.md 하나로 좋아진다 — 구하는 곳 4곳",
+   "points": [
+    "디자인이 별로인 건 프롬프트 탓, 해법은 DESIGN.md 파일 추가(원글 북마크 1,100+)",
+    "designmd.me·design-md.hyperbrowser.ai: 아무 URL을 DESIGN.md로 변환",
+    "styles.refero.design: 실제 사이트 스타일을 md로 제공",
+    "designmd.supply: 완성된 DESIGN.md 모음"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@chihuahua_ai.lab",
+   "url": "https://www.threads.com/@chihuahua_ai.lab/post/DfZ2Lj9E6AI",
+   "at": "2026-11-06T14:42:22.000Z",
+   "likes": 84,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "NVIDIA Auto Ontology를 MCP로 — 답변 정확도 향상",
+   "points": [
+    "NVIDIA 베를린 GTC에서 발표된 Auto Ontology 의미 계층을 MCP 서버로 만든 오픈소스(gogoymh/auto-ontology-mcp)",
+    "개인 지식베이스까지 묶어 Claude·ChatGPT 등 MCP 클라이언트에서 사용",
+    "LLM API 키 없이 동작, 클로드·코덱스 등 지원",
+    "작성자는 설치 후 답변 정확도가 크게 좋아졌다고 함"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@centive.income",
+   "url": "https://www.threads.com/@centive.income/post/DfZ3VBZAdRu",
+   "at": "2026-11-06T14:52:24.000Z",
+   "likes": 44,
+   "replies": 19,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 필수 명령 10개와 사용량 아끼는 습관",
+   "points": [
+    "/init(CLAUDE.md 생성), Shift+Tab 계획 모드, @파일명으로 파일 지정, Esc 두 번 되감기",
+    "/clear 새 일은 새 대화, /compact 요약, /context 창 점유 확인, /usage 한도 확인",
+    "/btw 기록 없이 옆 질문, claude -c 로 어제 대화 이어가기",
+    "사용량은 대화 길이에 비례 — 일 끝나면 /clear, 길어지면 /compact"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@eddy0217",
+   "url": "https://www.threads.com/@eddy0217/post/DfWX_x5iV_7",
+   "at": "2026-11-05T06:20:56.000Z",
+   "likes": 54,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "ChatGPT가 계획·Codex는 실행 — codex-with-chatgpt",
+   "points": [
+    "계획·검토는 이미 구독 중인 ChatGPT 웹이 맡고 Codex는 실제 작업만 해 사용량 절약",
+    "API 키 없이 공식 ChatGPT 화면을 그대로 사용",
+    "내 코드는 올라가지 않고 필요한 줄만 읽음",
+    "설치 안내문을 Codex에 붙여 넣으면 알아서 설치 — 68일 만에 별 7,645개"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@whaledigital.ai",
+   "url": "https://www.threads.com/@whaledigital.ai/post/DfYvc8iD2SC",
+   "at": "2026-11-06T04:24:20.000Z",
+   "likes": 27,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "클로드로 블렌더 장면 배치 → 힉스필드로 바로 이미지 생성",
+   "points": [
+    "클로드 블렌더 MCP로 흰 호리존 스튜디오에 50년대 미국 다이닝 세트·올드카·인물 5명 배치",
+    "힉스필드 블렌더 MCP로 블렌더 안에서 바로 이미지 생성",
+    "클로드에게 말만 하면 블렌더와 힉스필드를 모두 조작 — 결과는 첨부 이미지"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@read.write.erase",
+   "url": "https://www.threads.com/@read.write.erase/post/DfYUskYE2SN",
+   "at": "2026-11-06T00:30:32.000Z",
+   "likes": 66,
+   "replies": 4,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "피그마 재무팀이 AI 코딩으로 해커톤 우승한 사례",
+   "points": [
+    "재무팀이 외주 없이 미수금 회수·경비 정산 AI 툴을 직접 만들어 개발자들을 제치고 우승",
+    "인수 검토 때 비개발자 실무진이 주말에 대상 제품을 AI로 복제해 기술 해자 판별",
+    "CEO·CFO 성향을 흉내 낸 AI로 보고 전 압박 질문 리허설",
+    "출처: The a16z Show"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@ai_investor_kr",
+   "url": "https://www.threads.com/@ai_investor_kr/post/DfYfA0uiIdq",
+   "at": "2026-11-06T02:00:41.000Z",
+   "likes": 233,
+   "replies": 11,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "항공권 싸게 사는 ChatGPT 프롬프트 6개",
+   "points": [
+    "수요 타이밍 분석: 노선·기간 넣고 최저가 요일·시간·예약 시점 묻기",
+    "분리 발권 조합, 마일리지 포인트 이전·제휴사 교환 전략",
+    "운임 클래스 코드별 유연성·업그레이드·적립 비교, 부가 수수료 제거법",
+    "예약 후 가격 인하 보장·카드 가격 보호 청구 — 1,180 vs 141달러는 작성자 주장"
+   ]
+  }
+ ]
+}
