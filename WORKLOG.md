@@ -1,3 +1,11 @@
+## 2026-11-06 밤 · 맥북 · 누리 요청으로 되돌림
+
+- 캘린더: 4색 문법 취소 → 일정마다 고른 색(SOLID·WRITE_HEX·PINK_TO_YELLOW), 기간 GTM 회색+시즌 띠, ★ 빨강(--key #E8283F), 연차 산호(--me #FF6F5B), 범례 삭제, 폰 점·목록 칩도 일정 색, 타임라인 원래 색(e12bdd7)
+- 데스크톱 가계부: critique 전(a8848b6)으로 — js/app-7-mirror.js·app-2-init.js 되돌림(메모 저장 글자색·Assets 다시 그리기 두 줄만 유지), 월별 뷰/연간 뷰/자산/설정 토글 복구, 0원 소분류 — 줄·0원 카테고리 카드 그대로
+- 폰 m-ledger 는 새 판 유지 → 4차 계산을 js/app-7-mirror-m.js 로 떼어 냄
+- 사이드바 하위 줄 = 탭과 같게: Money(Assets·Daily Ledger·Side Jobs·Tax), Travel(Itinerary·Spots·Bookings·Budget·Checklist·Atlas) + Flight Deals
+- 교훈: 카테고리 색·안 쓴 목록 같은 「정보」를 깔끔함 때문에 지우지 말 것
+
 ## 2026-11-06 · 맥북 · 다듬기 3차 (critique 25/40 뒤)
 
 - X(c4a0345·a91568e·8238f20·ef50612): 가계부 0원 카테고리 한 줄로 접기·빈 줄 숨김·막대 범례, 돈 색 문법(수입 #15803D·지출 #DC2626·잉크, 판정 코발트, 수입 막대 코발트 단계·지출 잉크 단계, 결제수단 보라 제거), 저장 버튼 코발트 단색, Monthly/Annual·Travel 탭 영어, 대문자 머리말 제거, 홈 새 버전 알림 얇은 띠, Travel ⋯ More 메뉴(삭제 안으로) · index 173→155

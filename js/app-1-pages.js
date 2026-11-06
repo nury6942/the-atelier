@@ -21700,6 +21700,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   };
 
   function switchTravelTab(tab) {
+    // (11/06 밤) 사이드바 하위 줄(Itinerary·Spots·Bookings·Atlas)도 같이 켠다
+    try { var _sm = { schedule: 'nav-sub-itin', places: 'nav-sub-spots', records: 'nav-sub-bookings', atlas: 'nav-sub-atlas' }[tab];
+      if (_sm) { document.querySelectorAll('#sidebar .nav-item').forEach(function(n){ n.classList.remove('is-active'); }); var _e = document.getElementById(_sm); if (_e) _e.classList.add('is-active'); } } catch (e) {}
     // ★ (2026-10-08) 여행 선택 하나로 통일 — 마지막으로 고른 여행(atelier_current_trip_id)이
     //   지금 불러온 여행과 다르면 먼저 그 여행으로 바꾼다 (예산에서 캐나다 → 예약 탭도 캐나다)
     var _tripSync = null;
@@ -21965,7 +21968,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     // Year Matrix는 Calendar 사이드바 (nav-planner) 활성 처리
     if (pageId === 'matrix') activeNavId = 'planner';
     // Daily Ledger / Side Jobs는 Money 사이드바 (nav-finance-hub) 활성 처리
-    if (pageId === 'tax') activeNavId = 'finance-hub';
+    if (pageId === 'tax') activeNavId = 'sub-tax';
+    if (pageId === 'finance-hub') activeNavId = 'sub-assets';  // (11/06 밤) 사이드바 하위 줄 = 탭과 같은 4개
+    if (pageId === 'journey') activeNavId = 'sub-itin';
     const a = document.getElementById('nav-'+activeNavId);
     if(a) {
       a.classList.add('is-active');

@@ -189,7 +189,7 @@ function ldgLoadGoals() { try { return JSON.parse(localStorage.getItem('atelier_
 async function fbRead(name) { const s = await db.collection(name).get(); return s.docs.map(function(d) { var x = d.data(); x._id = d.id; return x; }); }
 </script>
 <!-- 판정·규칙·한 해 숫자는 데스크톱과 같은 함수로 계산 (ldgBoardMonth · _bActual · _bProj · _bPlan …) -->
-<script src="js/app-7-mirror.js?v=93"></script>
+<script src="js/app-7-mirror-m.js?v=1"></script>
 </head>
 <body>
 
