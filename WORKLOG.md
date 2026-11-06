@@ -1,3 +1,8 @@
+## 2026-11-06 밤 · 맥북 · My Notes 답 읽기 쉽게
+
+- 누리: 답 글자 작고 줄글이라 읽기 힘듦 → 질문·답 15px, 답은 문장마다 줄바꿈(옛 답도 화면에서 …다./…요. 끝마다 나눔), 프롬프트에 "한 문장마다 줄 바꿈·예문 따로 한 줄"
+- AI Brief 오늘 꼭 해볼 것 검정 판 되살림(2cc19cc)
+
 ## 2026-11-06 밤 · 맥북 · 공공데이터 연결 (한국은행·DART·국토부 → 읽기만)
 
 - 아이맥 `scripts/public-data/fetch-public-data.js` (launchd com.nuri.atelier-public-data 매일 08:10, 로그 ~/Library/Logs/atelier-public-data.log) → Firestore `appSettings/publicData` 한 장: fx(ECOS 매매기준율 EUR·DKK·USD·GBP·CAD·AUD·CHF·JPY100 + 전 영업일) · rate(기준금리) · rateHistory(기준금리·정기예금 신규 가중평균 24달) · cpi(901Y009 전년동월비) · fnf(DART 연결 분기 매출·영업이익·공시 3) · home(염창역한강투웨니퍼스트 29.98㎡ 매매·전세·월세 건수)

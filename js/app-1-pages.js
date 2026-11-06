@@ -30633,6 +30633,7 @@ var NOTEQA_PROMPT_TEMPLATE = `너는 한국인 성인 학습자의 영어 과외
 
 답 쓰는 법:
 - 한국어로 2~5문장, 간결하게. 메모에 궁금한 게 여러 개면 모두 짧게 다룬다.
+- **한 문장마다 줄을 바꾼다.** 영어 예문은 따로 한 줄에 둔다. 궁금증이 여러 개면 그 사이에 빈 줄 하나.
 - 도움이 되면 자연스러운 영어 예문 1~2개를 문장 안에 넣는다.
 - 학습자가 잘못 이해한 부분이 있으면 부드럽게 바로잡는다.
 - 제목·머리말·마크다운·목록·별표·따옴표 장식 없이 평범한 글만 쓴다.
@@ -30642,7 +30643,12 @@ var _engNoteTimer = null, _engNoteUnsub = null;
 function engNoteId(){ return 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function engNoteEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
 // 답: 전부 이스케이프하고 <i>영어 표현</i> 만 살린다
-function engNoteAnsHtml(a){ return engNoteEsc(a).replace(/&lt;i&gt;([\s\S]*?)&lt;\/i&gt;/g, '<i class="enq-en">$1</i>'); }
+// (11/06 밤 누리: 줄글이라 읽기 힘듦) 줄바꿈 없는 옛 답도 한국어 문장 끝(…다. …요. …죠.)마다 줄을 나눠 문단처럼 보이게
+function engNoteAnsHtml(a){
+  var t = String(a == null ? '' : a).replace(/\r/g, '');
+  if (t.indexOf('\n') < 0) t = t.replace(/((?:다|요|죠|까|니다)[.!?])\s+(?=\S)/g, '$1\n').replace(/([:：])\s+(?=<i>)/g, '$1\n');
+  return t.split(/\n+/).map(function(line){ line = line.trim(); return line ? '<p>' + engNoteEsc(line).replace(/&lt;i&gt;([\s\S]*?)&lt;\/i&gt;/g, '<i class="enq-en">$1</i>') + '</p>' : ''; }).join('');
+}
 // 옛 메모 → 카드: 줄 머리의 "19." / "20. " 에서 새 카드, 첫 번호 앞 글은 따로 한 장. 번호는 떼고 글은 하나도 안 버린다
 function engNoteMigrate(text){
   var items = [], cur = null, at = new Date().toISOString(), n = 0;

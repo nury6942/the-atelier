@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=427" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=428" as="script">
   <link rel="preload" href="js/app-2-init.js?v=198" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11514,13 +11514,15 @@
   .eng-notes .enq-tool{border:1px solid transparent;background:#fff;color:#5B5B66;font-size:11px;line-height:1;padding:3px 6px;border-radius:0;cursor:pointer}
   .eng-notes .enq-tool:hover{border-color:#DCDCE3;color:#16161A}
   .eng-notes .enq-del.is-armed{color:#fff;background:#b42318;border-color:#b42318}
-  .eng-notes .enq-txt{white-space:pre-wrap;word-break:break-word;font:500 14px/1.7 'Pretendard',sans-serif;color:#16161A;cursor:text}
-  .eng-notes .enq-edit{width:100%;resize:none;border:1px solid #1F4BD8;outline:0;border-radius:0;padding:6px 8px;font:500 14px/1.7 'Pretendard',sans-serif;color:#16161A;background:#fff;overflow:hidden}
-  .eng-notes .enq-ans{margin-top:8px;background:#EEF2FD;border-left:3px solid #1F4BD8;padding:8px 10px;font-size:12.5px;line-height:1.65;color:#16161A}
+  .eng-notes .enq-txt{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;font:500 15px/1.7 'Pretendard',sans-serif;color:#16161A;cursor:text}
+  .eng-notes .enq-edit{width:100%;resize:none;border:1px solid #1F4BD8;outline:0;border-radius:0;padding:6px 8px;font:500 15px/1.7 'Pretendard',sans-serif;color:#16161A;background:#fff;overflow:hidden}
+  .eng-notes .enq-ans{margin-top:10px;background:#EEF2FD;border-left:3px solid #1F4BD8;padding:10px 12px;font-size:15px;line-height:1.7;color:#16161A}
   .eng-notes .enq-ans.dim{opacity:.55}
-  .eng-notes .enq-ans-h{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:700;color:#1A3FB5;margin-bottom:3px}
+  .eng-notes .enq-ans-h{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;color:#1A3FB5;margin-bottom:3px}
   .eng-notes .enq-ans-h span+span{font-weight:500;font-variant-numeric:tabular-nums}
-  .eng-notes .enq-ans-b{white-space:pre-wrap;word-break:break-word}
+  .eng-notes .enq-ans-b{word-break:keep-all;overflow-wrap:anywhere}
+  .eng-notes .enq-ans-b p{margin:0 0 8px}
+  .eng-notes .enq-ans-b p:last-child{margin-bottom:0}
   .eng-notes .enq-en{font-style:normal;font-weight:500;color:#1A3FB5}
   .eng-notes .enq-act{display:flex;align-items:center;gap:8px;margin-top:8px}
   .eng-notes .enq-ask{border:1px solid #1F4BD8;background:#fff;color:#1F4BD8;font-size:12px;font-weight:600;padding:4px 10px;border-radius:0;cursor:pointer}
@@ -16767,7 +16769,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script src="js/public-data.js?v=1" defer></script>
-<script src="js/app-1-pages.js?v=427" defer></script>
+<script src="js/app-1-pages.js?v=428" defer></script>
 <script src="js/flight-deals.js?v=12" defer></script>
 
   <!-- PACKING PAGE -->
