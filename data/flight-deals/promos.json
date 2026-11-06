@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-06T07:37",
+ "generatedAt": "2026-11-06T19:38",
  "sites": [
   "KE",
   "OZ",
@@ -8,24 +8,23 @@
  ],
  "items": [
   {
-   "key": "promo|KE|미주의 겨울을 LINK 하세요",
+   "key": "promo|KE|차가운 겨울마저 낭만이 된 유럽",
    "code": "KE",
    "airline": "대한항공",
-   "title": "미주의 겨울을 LINK 하세요",
-   "sub": "삼성카드 미주 일반석 8% 할인",
-   "start": "2026-11-01",
+   "title": "차가운 겨울마저 낭만이 된 유럽",
+   "sub": "카카오페이 유럽 일반석 8% 할인",
+   "start": "2026-11-06",
    "end": "2026-11-30",
    "regions": [
-    "캐나다",
-    "미국"
+    "유럽"
    ],
    "all": false,
    "pct": 8,
-   "link": "https://www.koreanair.com/contents/promotion/list/2026/2611sslink?pageNum=1",
-   "firstSeen": "2026-11-05",
+   "link": "https://www.koreanair.com/contents/promotion/list/2026/2611kapay?pageNum=1",
+   "firstSeen": "2026-11-06",
    "detail": {
     "buy": {
-     "from": "2026-11-01",
+     "from": "2026-11-06",
      "to": "2026-11-30"
     },
     "travel": [
@@ -36,28 +35,30 @@
     ],
     "exclude": [
      {
-      "from": "2027-01-01",
-      "to": "2027-01-10"
+      "from": "2027-01-02",
+      "to": "2027-01-11"
+     },
+     {
+      "from": "2027-02-05",
+      "to": "2027-02-08"
      }
     ],
     "discounts": [
      {
-      "region": "미국",
+      "region": "유럽",
       "cities": [
-       "뉴욕",
-       "로스앤젤레스",
-       "샌프란시스코",
-       "시애틀",
-       "호놀룰루"
-      ],
-      "pct": 8,
-      "amount": null,
-      "cabin": "일반석"
-     },
-     {
-      "region": "캐나다",
-      "cities": [
-       "밴쿠버"
+       "런던",
+       "로마",
+       "리스본",
+       "마드리드",
+       "밀라노",
+       "부다페스트",
+       "비엔나",
+       "암스테르담",
+       "이스탄불",
+       "파리",
+       "프라하",
+       "프랑크푸르트"
       ],
       "pct": 8,
       "amount": null,
@@ -65,97 +66,97 @@
      }
     ],
     "on": "운임",
-    "how": "삼성카드 LINK에서 쿠폰 번호 발급 후 결제 단계 '쿠폰/할인권'에 코드 입력",
+    "how": "결제 화면에서 쿠폰(카카오페이 항공권 8% 할인) 적용 후 카카오페이 결제",
     "code": null,
     "conditions": [
-     "삼성카드 LINK 후 삼성카드 신용카드 결제",
-     "대한항공 홈페이지/앱 로그인",
-     "세이버·스탠다드만",
-     "대한항공 운항편만 (공동운항·다구간 제외)"
+     "카카오페이 결제",
+     "홈페이지/앱 로그인",
+     "세이버·스탠다드만(플렉스 제외)",
+     "대한항공 운항편만(공동운항·보너스·다구간 제외)"
     ],
     "fares": [],
-    "url": "https://www.koreanair.com/contents/promotion/list/2026/2611sslink?pageNum=1"
+    "url": "https://www.koreanair.com/contents/promotion/list/2026/2611kapay?pageNum=1"
    },
    "plan": [
     {
-     "slug": "honolulu",
+     "slug": "istanbul",
      "pct": 8,
-     "region": "미국",
-     "google": 1235400,
+     "region": "유럽",
+     "google": 998600,
      "out": "2026-12-01",
      "back": "2026-12-10"
     },
     {
-     "slug": "los-angeles",
+     "slug": "budapest",
      "pct": 8,
-     "region": "미국",
-     "google": 1515800,
+     "region": "유럽",
+     "google": 1269100,
      "out": "2026-12-01",
      "back": "2026-12-10"
     },
     {
-     "slug": "vancouver",
+     "slug": "milan",
      "pct": 8,
-     "region": "캐나다",
-     "google": 1872400,
+     "region": "유럽",
+     "google": 1304200,
      "out": "2026-12-01",
      "back": "2026-12-10"
     }
    ],
    "est": [
     {
-     "slug": "honolulu",
-     "city": "호놀룰루",
-     "cc": "us",
-     "region": "미국",
-     "out": "2026-12-01",
-     "back": "2026-12-10",
-     "price": 1241500,
-     "src": "sky",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/hnl/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
+     "slug": "istanbul",
+     "city": "이스탄불",
+     "cc": "tr",
+     "region": "유럽",
+     "out": null,
+     "back": null,
+     "price": 998600,
+     "src": "google",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/ist/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 509800,
-     "tax": 93000,
-     "fare": 638700,
-     "discount": 51100,
-     "final": 1190400
+     "tax": 63000,
+     "fare": 425800,
+     "discount": 34100,
+     "final": 964500
     },
     {
-     "slug": "los-angeles",
-     "city": "로스앤젤레스",
-     "cc": "us",
-     "region": "미국",
+     "slug": "budapest",
+     "city": "부다페스트",
+     "cc": "hu",
+     "region": "유럽",
      "out": "2026-12-01",
      "back": "2026-12-10",
-     "price": 1761800,
+     "price": 3945831,
      "src": "sky",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/bud/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 928600,
-     "discount": 74300,
-     "final": 1687500
+     "fare": 3112631,
+     "discount": 249000,
+     "final": 3696831
     },
     {
-     "slug": "vancouver",
-     "city": "밴쿠버",
-     "cc": "ca",
-     "region": "캐나다",
-     "out": "2026-12-01",
-     "back": "2026-12-10",
-     "price": 1795300,
-     "src": "sky",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/yvr/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
+     "slug": "milan",
+     "city": "밀라노",
+     "cc": "it",
+     "region": "유럽",
+     "out": null,
+     "back": null,
+     "price": 1304200,
+     "src": "google",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/mila/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 740200,
-     "tax": 98000,
-     "fare": 957100,
-     "discount": 76600,
-     "final": 1718700
+     "tax": 93000,
+     "fare": 471000,
+     "discount": 37700,
+     "final": 1266500
     }
    ]
   },
@@ -219,10 +220,10 @@
     "how": "로그인 후 항공권 조회 화면 왼쪽 하단 프로모션 코드 버튼에서 코드 입력",
     "code": "BLKFRIGO",
     "conditions": [
-     "에어프레미아 회원 전용",
+     "에어프레미아 회원 로그인",
+     "에어프레미아 쿠폰과 중복 불가",
      "일부 일자·운임은 코드 적용 제한",
-     "탑승 기간에 따라 할인율 상이",
-     "에어프레미아 쿠폰과 중복 불가"
+     "탑승 기간에 따라 할인율 다름"
     ],
     "fares": [
      {
@@ -266,7 +267,7 @@
      "slug": "san-francisco",
      "pct": 72,
      "region": "전 노선",
-     "google": 1182000,
+     "google": 1172871,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -297,16 +298,16 @@
      "region": "전 노선",
      "out": null,
      "back": null,
-     "price": 1182000,
+     "price": 1172871,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 72,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 348800,
-     "discount": 251100,
-     "final": 930900
+     "fare": 339671,
+     "discount": 244600,
+     "final": 928271
     }
    ]
   },
@@ -340,13 +341,13 @@
      }
     ],
     "on": "운임",
-    "how": "항공권 검색 후 화면 하단 프로모션 코드 버튼 클릭, 코드 입력",
+    "how": "항공권 검색 후 하단 프로모션 코드 버튼에서 코드 입력",
     "code": "WELCOMEV",
     "conditions": [
-     "에어프레미아 신규 회원 가입",
-     "가입일로부터 14일 이내 사용",
-     "에어프레미아 쿠폰과 중복 불가",
-     "일부 일자·운임 적용 제외"
+     "신규 회원 가입",
+     "가입 후 14일 이내 사용",
+     "일부 운임·일자 제외",
+     "쿠폰 중복 불가"
     ],
     "fares": [],
     "url": "https://www.airpremia.com/event/promotionDetail?detailId=370"
@@ -364,7 +365,7 @@
      "slug": "san-francisco",
      "pct": 5,
      "region": "전 노선",
-     "google": 1182000,
+     "google": 1172871,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -395,16 +396,16 @@
      "region": "전 노선",
      "out": null,
      "back": null,
-     "price": 1182000,
+     "price": 1172871,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 5,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 348800,
-     "discount": 17400,
-     "final": 1164600
+     "fare": 339671,
+     "discount": 17000,
+     "final": 1155871
     }
    ]
   }
