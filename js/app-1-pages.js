@@ -251,7 +251,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   //   일반 기간 일정(꽉 찬 바)과 달리 "이 구간 내내 이랬다"는 배경 정보를 칸을 안 먹고 보여준다.
   //   예: 야근 기간, 지연 출근 기간, 생리 주기, 프로젝트 스프린트
   const IV_HEX = {
-    rose:'#e11d48', orange:'#ea580c', amber:'#d97706', lime:'#65a30d',
+    rose:'#e11d48', orange:'#ea580c', amber:'#B45309', lime:'#65a30d',
     cyan:'#0891b2', blue:'#2563eb', violet:'#7c3aed', fuchsia:'#c026d3', slate:'#64748b'
   };
   function _ivIsInterval(row) { return (row && (row[2]||'').trim()) === '인터벌'; }
@@ -698,7 +698,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           var pubPrefix = isPub ? '🎯 ' : '';
           // ★ (2026-07-15) 인덱스 하드코딩 → 클릭 시점 ID 해석 (_pi). ID 없는 행만 인덱스 폴백.
           var idxRef = docId ? "_pi('" + docId + "')" : String(realIdx);
-          return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#3563DF') + ';border-left-color:rgba(0,0,0,0.2)' : '') + (isOutMonth ? ';opacity:0.5' : '') + '" ' +
+          return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#1F4BD8') + ';border-left-color:rgba(0,0,0,0.2)' : '') + (isOutMonth ? ';opacity:0.5' : '') + '" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + idxRef + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
@@ -1826,7 +1826,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var wrap = document.getElementById('atl-confirm-icon-wrap');
     var okBtn = document.getElementById('atl-confirm-ok');
     if (opts.type === 'danger') { wrap.style.background = 'linear-gradient(135deg,#fee2e2,#fef2f2)'; okBtn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)'; okBtn.style.boxShadow = '0 2px 8px rgba(239,68,68,0.25)'; }
-    else { wrap.style.background = 'linear-gradient(135deg,#eef2ff,#F5F7FE)'; okBtn.style.background = 'linear-gradient(135deg,#3563DF,#3563DF)'; okBtn.style.boxShadow = '0 2px 8px rgba(53,99,223,0.25)'; }
+    else { wrap.style.background = 'linear-gradient(135deg,#eef2ff,#F5F7FE)'; okBtn.style.background = 'linear-gradient(135deg,#1F4BD8,#1F4BD8)'; okBtn.style.boxShadow = '0 2px 8px rgba(53,99,223,0.25)'; }
     okBtn.textContent = opts.confirmText || '확인';
     document.getElementById('atl-confirm-cancel').textContent = opts.cancelText || '취소';
     _atlConfirmCb = opts.onConfirm || null;
@@ -2339,8 +2339,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
   // 순서 뱃지: 영어 ordinal 자동 생성
   function ordinalStop(n) {
-    var s = ['TH','ST','ND','RD'], v = n % 100;
-    return n + (s[(v-20)%10]||s[v]||s[0]) + ' STOP';
+    var s = ['th','st','nd','rd'], v = n % 100;
+    return n + (s[(v-20)%10]||s[v]||s[0]) + ' Stop';
   }
 
   // 도시명 정규화 (특수문자 → 라틴, 영어 국제 표기 폴백)
@@ -2479,7 +2479,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         if (city.start_date) dateRange = city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '');
         var nights = city.nights || 0;
         var nightsText = nights > 0 ? nights + ' Night' + (nights > 1 ? 's' : '') : (city.start_date ? 'Day Trip' : '— Nights');
-        var stopLabel = ordinalStop(i + 1).toUpperCase() + ' STOP';
+        var stopLabel = ordinalStop(i + 1);
         // city id (LS/Firestore 키)
         var cityKey = city._id || ('idx-' + i);
         var safeKey = String(cityKey).replace(/'/g, "\\'");
@@ -3905,7 +3905,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var currentCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
       if (currentCity && currentCity.transit_guide && dateStr === currentCity.start_date) {
         var tg = _spotPriceHtml(String(currentCity.transit_guide)).replace(/\n/g,'<br>');
-        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#F5F7FE);border-left-color:#3563DF">' +
+        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#F5F7FE);border-left-color:#1F4BD8">' +
           '<div class="flex items-start gap-3">' +
             '<span class="material-symbols-outlined text-indigo-500 mt-0.5" style="font-size: var(--font-size-h2)">directions_transit</span>' +
             '<div class="flex-1 min-w-0">' +
@@ -4438,7 +4438,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   var _geocodeCache = {};
 
   var WMO_WEATHER = {
-    0: {desc:'맑음', icon:'☀️', bg:'linear-gradient(135deg,#fef3c7 0%,#fde68a 100%)'},
+    0: {desc:'맑음', icon:'☀️', bg:'linear-gradient(135deg,#fef3c7 0%,#FEF3C7 100%)'},
     1: {desc:'대체로 맑음', icon:'🌤️', bg:'linear-gradient(135deg,#e0f2fe 0%,#fef3c7 100%)'},
     2: {desc:'구름 조금', icon:'⛅', bg:'linear-gradient(135deg,#e0ecff 0%,#f0e6ff 100%)'},
     3: {desc:'흐림', icon:'☁️', bg:'linear-gradient(135deg,#e2e8f0 0%,#cbd5e1 100%)'},
@@ -4450,15 +4450,15 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     61: {desc:'가벼운 비', icon:'🌧️', bg:'linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)'},
     63: {desc:'비', icon:'🌧️', bg:'linear-gradient(135deg,#bfdbfe 0%,#93c5fd 100%)'},
     65: {desc:'폭우', icon:'🌧️', bg:'linear-gradient(135deg,#93c5fd 0%,#3b82f6 100%)'},
-    71: {desc:'가벼운 눈', icon:'🌨️', bg:'linear-gradient(135deg,#DDE5FB 0%,#c7d2fe 100%)'},
+    71: {desc:'가벼운 눈', icon:'🌨️', bg:'linear-gradient(135deg,#EEF2FD 0%,#c7d2fe 100%)'},
     73: {desc:'눈', icon:'❄️', bg:'linear-gradient(135deg,#c7d2fe 0%,#a5b4fc 100%)'},
     75: {desc:'폭설', icon:'❄️', bg:'linear-gradient(135deg,#a5b4fc 0%,#818cf8 100%)'},
     80: {desc:'소나기', icon:'🌦️', bg:'linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)'},
     81: {desc:'강한 소나기', icon:'🌧️', bg:'linear-gradient(135deg,#bfdbfe 0%,#60a5fa 100%)'},
     82: {desc:'폭우 소나기', icon:'⛈️', bg:'linear-gradient(135deg,#93c5fd 0%,#3b82f6 100%)'},
-    95: {desc:'뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#BCCBF7 0%,#3563DF 100%)'},
+    95: {desc:'뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#BCCBF7 0%,#1F4BD8 100%)'},
     96: {desc:'우박 뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#5B7FE6 0%,#1F4BD8 100%)'},
-    99: {desc:'강한 우박', icon:'⛈️', bg:'linear-gradient(135deg,#3563DF 0%,#1A3FB5 100%)'},
+    99: {desc:'강한 우박', icon:'⛈️', bg:'linear-gradient(135deg,#1F4BD8 0%,#1A3FB5 100%)'},
   };
 
   function cleanCityName(name) {
@@ -5120,7 +5120,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     // ★ (2026-07-23) wk4 가로 진행선 — 컬럼과 정렬되는 점 + 그 아래 "OCT 12 • DEPARTURE" 라벨
     var prog = document.getElementById('dlv-progress');
     if (prog) {
-      var _MONS2 = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      var _MONS2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       var pastN = 0, todayPos = -1;
       chunk.forEach(function(e, i) {
         if (e.date && e.date === todayStr) todayPos = i;
@@ -5133,11 +5133,11 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         var cls = 'dlv-prog-dot' + (isT ? ' is-today' : (isP ? ' is-past' : ''));
         // 라벨: 오늘=CURRENT, 첫날=DEPARTURE, 마지막날=RETURN, 도시 바뀌는 날=ARRIVAL, 나머지=DAY NN
         var kind;
-        if (isT) kind = 'CURRENT';
-        else if (actual === 0) kind = 'DEPARTURE';
-        else if (actual === dayMap.length - 1) kind = 'RETURN';
-        else if (actual > 0 && dayMap[actual - 1] && (dayMap[actual - 1].cityName || '') !== (e.cityName || '')) kind = 'ARRIVAL';
-        else kind = 'DAY ' + String(e.day).padStart(2, '0');
+        if (isT) kind = 'Today';
+        else if (actual === 0) kind = 'Departure';
+        else if (actual === dayMap.length - 1) kind = 'Return';
+        else if (actual > 0 && dayMap[actual - 1] && (dayMap[actual - 1].cityName || '') !== (e.cityName || '')) kind = 'Arrival';
+        else kind = 'Day ' + String(e.day).padStart(2, '0');
         var md = '';
         if (e.date) {
           try {
@@ -7317,11 +7317,11 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var legs = _TRANSIT_RECS[trip.name];
     if (!legs || !legs.length) { el.style.display = 'none'; return; }
 
-    var html = '<div style="background:linear-gradient(135deg,#eef2ff,#DDE5FB);border:1px solid #c7d2fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
+    var html = '<div style="background:linear-gradient(135deg,#eef2ff,#EEF2FD);border:1px solid #c7d2fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="color:#1A3FB5;font-size: var(--font-size-h1)">route</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#3730a3;letter-spacing:-0.01em;margin:0">도시 간 이동 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#3563DF;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">기차·버스·렌터카</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#1F4BD8;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">기차·버스·렌터카</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#1A3FB5;margin:0 0 16px;font-style:italic">추천 루트 + 소요시간·대략 가격. "Rome2Rio" 버튼으로 실시간 시각표·전체 옵션 비교</p>';
 
@@ -7331,7 +7331,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       html += '<div style="background:#fff;border:1px solid #c7d2fe;border-radius: var(--radius-lg);padding:13px 14px 11px">' +
         '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-2);flex-wrap:wrap">' +
           '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + leg.fromKr + '</span>' +
-          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:#818cf8">arrow_forward</span>' +
+          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:#1F4BD8">arrow_forward</span>' +
           '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + leg.toKr + '</span>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
@@ -7341,7 +7341,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           '<span style="font-size: var(--font-size-tiny);color:#64748b">' + _spotPriceHtml(leg.price) + '</span>' +
         '</div>' +
         '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + _spotPriceHtml(leg.detail) + '</p>' +
-        '<a href="' + r2r + '" target="_blank" rel="noopener" title="Rome2Rio에서 ' + leg.fromKr + '→' + leg.toKr + ' 실시간 교통편 비교" style="display:inline-flex;align-items:center;gap: var(--space-1);background:linear-gradient(135deg,#1A3FB5,#3563DF);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);text-decoration:none"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Rome2Rio 실시간 비교</a>' +
+        '<a href="' + r2r + '" target="_blank" rel="noopener" title="Rome2Rio에서 ' + leg.fromKr + '→' + leg.toKr + ' 실시간 교통편 비교" style="display:inline-flex;align-items:center;gap: var(--space-1);background:linear-gradient(135deg,#1A3FB5,#1F4BD8);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);text-decoration:none"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Rome2Rio 실시간 비교</a>' +
       '</div>';
     });
     html += '</div></div>';
@@ -7362,7 +7362,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size: var(--font-size-h1)">recommend</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#3563DF;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">예산·취향·동선 종합</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#1F4BD8;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">예산·취향·동선 종합</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#1F4BD8;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
 
@@ -7375,7 +7375,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       html += '<div style="margin-bottom: var(--space-4-5)">';
       html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5);flex-wrap:wrap">' +
         '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#3563DF;background:rgba(53,99,223,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + cityRec.nights + '박 · 예산 ' + _spotPriceHtml(cityRec.budget) + dateRange + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#1F4BD8;background:rgba(53,99,223,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + cityRec.nights + '박 · 예산 ' + _spotPriceHtml(cityRec.budget) + dateRange + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap: var(--space-2-5)">';
       cityRec.options.forEach(function(opt, oi) {
@@ -13161,7 +13161,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     }
 
     // 헤더 카드
-    html += '<div class="rounded-2xl p-5" style="background:linear-gradient(135deg,#fff7ed 0%,#fce7f3 100%);border:1px solid #fed7aa;">';
+    html += '<div class="rounded-2xl p-5" style="background:linear-gradient(135deg,#fff7ed 0%,#FEF2F2 100%);border:1px solid #fed7aa;">';
     html += '<div class="flex items-start gap-3 mb-2.5">';
     html += '<div style="font-size: var(--font-size-h1-lg);line-height:1">📅</div>';
     html += '<div class="flex-1 min-w-0">';
@@ -13176,7 +13176,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var insightsBody = '<ol class="space-y-4">';
       a.actionableInsights.forEach(function(s, i) {
         insightsBody += '<li class="flex gap-3 pb-4' + (i < a.actionableInsights.length - 1 ? ' border-b border-slate-100' : '') + '">' +
-          '<div class="flex items-center justify-center rounded-full text-white font-black text-[13px] shrink-0" style="width:28px;height:28px;background:linear-gradient(135deg,#10b981,#059669);">' + (i + 1) + '</div>' +
+          '<div class="flex items-center justify-center rounded-full text-white font-black text-[13px] shrink-0" style="width:28px;height:28px;background:linear-gradient(135deg,#15803D,#15803D);">' + (i + 1) + '</div>' +
           '<div class="flex-1 min-w-0">' + formatInsight(s) + '</div>' +
         '</li>';
       });
@@ -13285,7 +13285,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       sideBySide += sectionCard({
         icon: '💰', title: '유료/무료 분포',
         gradientFrom: '#fefce8', gradientTo: '#fef9c3',
-        borderColor: '#fde68a', titleColor: '#854d0e',
+        borderColor: '#FEF3C7', titleColor: '#854d0e',
         body: moneyBody
       });
     }
@@ -13298,7 +13298,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       sideBySide += sectionCard({
         icon: '🏷️', title: '태그 분포',
         gradientFrom: '#fffbeb', gradientTo: '#fef3c7',
-        borderColor: '#fde68a', titleColor: '#92400e',
+        borderColor: '#FEF3C7', titleColor: '#92400e',
         body: td
       });
     }
@@ -13561,7 +13561,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var yearDetailStr = thisYr + '년 예상 총수익';
 
     if (ytdEl) ytdEl.textContent = ytdStr;
-    if (ytdTrendEl) { ytdTrendEl.textContent = ytdTrendStr; ytdTrendEl.style.color = ytdGrowthPct >= 0 ? '#10b981' : '#dc2626'; }
+    if (ytdTrendEl) { ytdTrendEl.textContent = ytdTrendStr; ytdTrendEl.style.color = ytdGrowthPct >= 0 ? '#15803D' : '#dc2626'; }
     if (nextQEl) nextQEl.textContent = nextQStr;
     if (nextQDetailEl) nextQDetailEl.textContent = nextQDetailStr;
     if (yearEl) yearEl.textContent = yearStr;
@@ -13765,7 +13765,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
       // 카드로 렌더
       var html = recs.map(function(r, i){
-        var grad = ['#fce7f3,#fbcfe8', '#EEF2FD,#ddd6fe', '#dbeafe,#bfdbfe'][i] || '#f1f5f9,#e2e8f0';
+        var grad = ['#FEF2F2,#FEF2F2', '#EEF2FD,#ddd6fe', '#dbeafe,#bfdbfe'][i] || '#f1f5f9,#e2e8f0';
         var iconColor = ['#ec4899','#a855f7','#3b82f6'][i] || '#64748b';
         var highlights = (r.highlights||[]).map(function(h){ return '<span class="inline-flex items-center gap-0.5 text-[11px] px-2 py-0.5 bg-white/70 rounded-full font-medium text-slate-700">📍 ' + String(h).replace(/</g,'&lt;') + '</span>'; }).join(' ');
         return '<div class="rounded-2xl p-4 border" style="background:linear-gradient(135deg,' + grad + ');border-color:' + iconColor + '33">' +
@@ -14975,7 +14975,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<button onclick="finFxClose()" class="text-xs font-bold px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100">닫기</button>' +
       '<button id="fin-fx-apply" onclick="finFxApply()" class="text-sm font-bold px-4 py-2 rounded-xl text-white"' +
         (pend.length ? '' : ' disabled style="opacity:0.4;cursor:not-allowed"') +
-        ' style="background:linear-gradient(135deg,#3563DF,#5B7FE6)">' + pend.length + '건 반영</button></div>';
+        ' style="background:linear-gradient(135deg,#1F4BD8,#5B7FE6)">' + pend.length + '건 반영</button></div>';
     box.innerHTML = html;
   }
 
@@ -15129,7 +15129,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   }
 
   // ===== 항목별 지출 도넛 =====
-  var FIN_CAT_HEX = {'항공':'#0ea5e9','이동':'#6366f1','숙소':'#3b82f6','환전':'#f97316','렌트':'#ec4899','티켓':'#f59e0b','통신':'#8b5cf6','보험':'#06b6d4','교통':'#84cc16','식비':'#a855f7','여가':'#14b8a6','쇼핑':'#f43f5e','기타':'#94a3b8'};
+  var FIN_CAT_HEX = {'항공':'#0ea5e9','이동':'#334155','숙소':'#3b82f6','환전':'#f97316','렌트':'#B45309','티켓':'#f59e0b','통신':'#5B5B66','보험':'#06b6d4','교통':'#84cc16','식비':'#a855f7','여가':'#14b8a6','쇼핑':'#f43f5e','기타':'#94a3b8'};
 
   function renderFinanceDonut() {
     var el = document.getElementById('finance-category-breakdown');
@@ -15226,7 +15226,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   const BUDGET_GROUPS = {
     // ★ (2026-08-05) 동의어를 함께 받는다. 예전엔 '숙소'만 인식해서, 스크립트로 넣은
     //   '숙박' 카테고리 거래가 통째로 '생활비'로 흘러가 좌우 카드 금액이 어긋났다.
-    '항공권': { cats: ['항공','항공권','비행기'], icon: 'flight', color: '#3563DF' },
+    '항공권': { cats: ['항공','항공권','비행기'], icon: 'flight', color: '#1F4BD8' },
     '숙소':   { cats: ['숙소','숙박','호텔'], icon: 'bed', color: '#3b82f6' },
     '교통':   { cats: ['이동','렌트','교통','렌트카','대중교통'], icon: 'directions_car', color: '#ec4899' },
     '생활비': { cats: ['식비','티켓','여가','쇼핑','통신','보험','환전','기타'], icon: 'restaurant', color: '#f97316' },
@@ -15301,7 +15301,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var style, label;
       if (b <= 0) { style = 'background:#f1f5f9;color:#64748b'; label = '예산 없음'; }
       else if (rem < 0) { style = 'background:#FEF2F2;color:#DC2626'; label = fmtW(rem) + ' 초과'; }
-      else { style = 'background:#ecfdf5;color:#059669'; label = fmtW(rem) + ' 남음'; }
+      else { style = 'background:#ecfdf5;color:#15803D'; label = fmtW(rem) + ' 남음'; }
       return '<span class="font-bold rounded-full flex-shrink-0" style="' + style +
         ';font-size:' + (mini ? '10px' : '11px') + ';padding:' + (mini ? '2px 8px' : '3px 10px') +
         ';font-variant-numeric:tabular-nums;white-space:nowrap">' + label + '</span>';
@@ -15334,7 +15334,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         '<span class="font-manrope text-2xl font-extrabold text-slate-400" style="font-variant-numeric:tabular-nums">₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</span>' +
         '<span class="text-[11px] font-semibold text-slate-400 ml-1">지출 / 예산 · ' + totalUsePct + '%</span>' +
       '</div>' +
-      bar(totalSpent, totalBudget, 'linear-gradient(90deg,#3563DF,#1F4BD8)', 'h-3') +
+      bar(totalSpent, totalBudget, 'linear-gradient(90deg,#1F4BD8,#1F4BD8)', 'h-3') +
     '</div>';
 
     html += '<div class="grid grid-cols-2 gap-3 md:gap-4">';
@@ -15758,7 +15758,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           ((r.unlinked && r.unlinked.length) ? '<span class="flb-warn" title="finance 장부에 연결되지 않아 「숙소」 예산 카드에는 빠져 있어요.&#10;' + r.unlinked.join('&#10;').replace(/"/g, '&quot;') + '">장부 미연결 ' + r.unlinked.length + '</span>' : '') + '</div>' +
         '<div class="flb-money"><span class="flb-k">지출</span><b>₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</b><span class="flb-k">예산</span>' + budgetHtml + '</div>' +
         '<div class="flb-rem"><b>' + remNum + '</b><span>' + remWord + '</span></div>' +
-        '<div class="flb-bar"><i style="width:' + r.pct + '%;background:' + (r.isOver ? '#DC2626' : (r.noBudget ? '#9a9ca3' : (isOrphan ? '#d97706' : '#6b38d4'))) + '"></i></div>' +
+        '<div class="flb-bar"><i style="width:' + r.pct + '%;background:' + (r.isOver ? '#DC2626' : (r.noBudget ? '#9a9ca3' : (isOrphan ? '#B45309' : '#6b38d4'))) + '"></i></div>' +
       '</div>';
     });
     html += '</div>';
@@ -18505,7 +18505,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   // ── ③ Day-Pins 지도: 일자별 색 핀(방문 순서 번호) + 저장소(pool) 회색 핀 ──
   var _dayPinsMap = null, _dayPinsLayer = null, _dayPinsFilter = 'all';
   var _dayPinsSig = '', _dayPinsFitW = 0, _dayPinsLastBounds = null; // 변경 감지 — 같은 데이터면 지도 뷰를 건드리지 않음
-  var _DAY_COLORS = ['#7c3aed', '#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#ec4899', '#6366f1', '#14b8a6'];
+  var _DAY_COLORS = ['#1F4BD8', '#0ea5e9', '#f59e0b', '#15803D', '#ef4444', '#B45309', '#334155', '#14b8a6'];
 
   // ★ (2026-07-24) 지도 일차 칩 → Daily Log 패널 양방향 동기화.
   //   기존엔 패널 ‹ › → 지도 한 방향만 있어서, 지도에서 9일차를 눌러도 옆 패널은 1일차 그대로였다.
@@ -18847,7 +18847,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<span style="display:flex;align-items:baseline;gap:8px;justify-content:center;margin-bottom:10px">' +
         '<span style="font-size:13px;color:#475569;text-decoration:line-through">' + before.toFixed(1) + 'km</span>' +
         '<span style="font-size:20px;font-weight:800;color:#1F4BD8">' + after.toFixed(1) + 'km</span>' +
-        '<span style="font-size:11px;font-weight:800;color:#059669;background:#ecfdf5;border-radius:99px;padding:2px 8px">-' + pct + '%</span>' +
+        '<span style="font-size:11px;font-weight:800;color:#15803D;background:#ecfdf5;border-radius:99px;padding:2px 8px">-' + pct + '%</span>' +
       '</span>' +
       '<ol style="list-style:none;margin:0;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;max-height:230px;overflow-y:auto">' + listHtml + '</ol>' +
       '<span style="display:block;font-size:10px;color:#475569;margin-top:8px">' + (hotel ? '🏨 ' + String(hotel.title || '숙소').replace(/</g, '&lt;').slice(0, 20) + ' 출발·복귀 기준 · ' : '') + '시간대는 유지 · 방문 순서만 변경 · 예약/이동/일몰 일정은 자리 고정</span>';
@@ -20464,7 +20464,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var dots = pts.map(function(p) {
       var lo = p.v === min, hi = p.v === max;
       return '<circle cx="' + X(p).toFixed(1) + '" cy="' + Y(p).toFixed(1) + '" r="' + (lo || hi ? 4.5 : 3) +
-        '" fill="' + (lo ? '#059669' : (hi ? '#e11d48' : '#7c3aed')) + '"><title>' +
+        '" fill="' + (lo ? '#15803D' : (hi ? '#DC2626' : '#1F4BD8')) + '"><title>' +
         p.label + ' · ₩' + p.v.toLocaleString('ko-KR') + '</title></circle>';
     }).join('');
     var xa = '<text x="' + PL + '" y="' + (H - 7) + '" class="flt-svg-x">' + pts[0].label + '</text>' +
@@ -24637,7 +24637,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   var _seriesHexMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316', fuchsia:'#d946ef' };
   function _getSeriesHex(seriesName) {
     var c = getSeriesColor(seriesName);
-    return _seriesHexMap[c] || '#3563DF';
+    return _seriesHexMap[c] || '#1F4BD8';
   }
 
   function _wpProgress(w) {
@@ -24816,7 +24816,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var rowsHtml = '';
     sorted.forEach(function(w) {
       var s = seriesById[w.series_id]; if (!s) { s = seriesData.find(function(x){return x.name===w.series_name;})||{name:'?',color:'slate'}; }
-      var sColor = _seriesFixedHex(s.name) || (_seriesHexMap[s.color]||'#3563DF');
+      var sColor = _seriesFixedHex(s.name) || (_seriesHexMap[s.color]||'#1F4BD8');
       var sShort = (s.name||'?').charAt(0);
         rowsHtml += '<div class="flex items-stretch" style="height:36px;border-bottom: 1px solid var(--slate-50)">';
         var isDraft = w.status !== 'confirmed';
@@ -24943,14 +24943,14 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     // Series rows — prep phases + publishing
     var rowsHtml = '';
     var hasRows = false;
-    var prepColors = { synopsis:'#ddd6fe', draft:'#bfdbfe', revision:'#fde68a' };
+    var prepColors = { synopsis:'#ddd6fe', draft:'#bfdbfe', revision:'#FEF3C7' };
     series.forEach(function(s) {
       var sWorks = _works.filter(function(w) { return (w.series_id === s.id || w.series_name === s.name) && w.publish_start; });
       sWorks = sWorks.filter(function(w) { var pe = new Date((w.publish_end||w.publish_start)+'T00:00:00'); return pe >= rangeStart; });
       sWorks.sort(function(a,b){ return (a.publish_start||'9999').localeCompare(b.publish_start||'9999'); });
       if (sWorks.length === 0) return;
       hasRows = true;
-      var sColor = _seriesFixedHex(s.name) || scMap[s.color] || '#3563DF';
+      var sColor = _seriesFixedHex(s.name) || scMap[s.color] || '#1F4BD8';
       rowsHtml += '<div class="flex items-center" style="height:62px;margin-bottom: var(--space-1-5)">';
       rowsHtml += '<div class="shrink-0 text-[11px] font-bold text-right pr-2 truncate" style="width:60px;color:' + sColor + '">' + s.name + '</div>';
       rowsHtml += '<div class="relative flex-1" style="height:52px;background:#f8fafc;border-radius: var(--radius-xs)">';
@@ -29505,7 +29505,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     e.dataTransfer.dropEffect = 'move';
     var row = e.target.closest('.pk-item-row');
     document.querySelectorAll('.pk-item-row').forEach(function(el) { el.style.borderTop = ''; });
-    if (row) row.style.borderTop = '2px solid #3563DF';
+    if (row) row.style.borderTop = '2px solid #1F4BD8';
   }
 
   async function pkDrop(e, toDate, toIdx) {
@@ -30361,7 +30361,7 @@ function openSessionDetail(dateId) {
     if (!freq) return '';
     var map = {
       '매우 흔함': 'background:#dcfce7;color:#15803d',
-      '흔함':      'background:#DDE5FB;color:#17348F',
+      '흔함':      'background:#EEF2FD;color:#17348F',
       '상황별':    'background:#fef9c3;color:#a16207',
       '문어체':    'background:#f3e8ff;color:#7e22ce',
       '드묾':      'background:#fee2e2;color:#b91c1c'
@@ -31722,16 +31722,12 @@ function openBookingScanModal() {
 }
 
 function _updateTravelApiKeyBtn() {
-  var btn = document.getElementById('travel-api-key-btn');
+  // 2026-11-06 3차: 키 버튼은 Travel ⋯ 메뉴 안의 한 줄 — 상태만 오른쪽에 글로
+  var btn = document.getElementById('travel-api-key-btn'), note = document.getElementById('travel-api-key-note');
   if (!btn) return;
   var apiKey = localStorage.getItem('atelier_anthropic_api_key');
-  if (apiKey) {
-    btn.className = 'w-7 h-7 rounded-lg bg-slate-100 hover:bg-violet-100 text-slate-400 hover:text-violet-600 flex items-center justify-center transition-colors';
-    btn.title = 'API 설정 (키 설정됨)';
-  } else {
-    btn.className = 'w-7 h-7 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-500 hover:text-rose-700 flex items-center justify-center transition-colors';
-    btn.title = 'API 키 미설정 — 클릭해서 설정';
-  }
+  btn.title = apiKey ? 'API 설정 (키 설정됨)' : 'API 키 미설정 — 눌러서 설정';
+  if (note) { note.textContent = apiKey ? '설정됨' : '미설정'; note.style.color = apiKey ? '#5B5B66' : '#DC2626'; }
 }
 
 function closeBookingScanModal() {

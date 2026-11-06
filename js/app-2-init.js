@@ -872,7 +872,7 @@ var _ldgBudgetEditingCat = null; // 카테고리 카드에서 예산 인라인 �
 var _ldgChartIncome = null, _ldgChartExpense = null, _ldgChartDaily = null;
 var _ldgMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var _ldgMonthKo = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-var _ldgPaymentColors = {'신한카드':'#6366f1','현대카드':'#f59e0b','체크카드':'#10b981','카카오페이':'#3b82f6','현금/이체':'#8b5cf6'};
+var _ldgPaymentColors = {'신한카드':'#16161A','현대카드':'#3F3F46','체크카드':'#5B5B66','카카오페이':'#8A8A95','현금/이체':'#B4B4BE'}; // 2026-11-06 3차: 결제수단 점은 잉크→회색 단계 (보라·인디고 제거)
 
 function switchLedgerTab(tab) {
   _ledgerTabActive = tab;
@@ -1648,11 +1648,11 @@ function ldgRenderAnnualGoal() {
     var diffPct = goal > 0 ? Math.abs(diff) / goal * 100 : 0;
     var status, color, statusEmoji;
     if (isGoodHigh) {
-      if (diff >= 0) { status = '페이스 달성'; statusEmoji = '🟢'; color = '#10b981'; }
+      if (diff >= 0) { status = '페이스 달성'; statusEmoji = '🟢'; color = '#15803D'; }
       else if (diffPct < 5) { status = '약간 뒤처짐'; statusEmoji = '🟡'; color = '#f59e0b'; }
       else { status = '부족'; statusEmoji = '🔴'; color = '#ef4444'; }
     } else {
-      if (diff <= 0) { status = '페이스 안정'; statusEmoji = '🟢'; color = '#10b981'; }
+      if (diff <= 0) { status = '페이스 안정'; statusEmoji = '🟢'; color = '#15803D'; }
       else if (diffPct < 5) { status = '약간 초과'; statusEmoji = '🟡'; color = '#f59e0b'; }
       else { status = '초과 위험'; statusEmoji = '🔴'; color = '#ef4444'; }
     }
@@ -1683,9 +1683,9 @@ function ldgRenderAnnualGoal() {
     '<span class="text-[10px] text-slate-400">올해 ' + pctYearDisplay + '% 경과 · 검정 마커가 목표 페이스</span>' +
   '</div>';
   html += '<div class="flex gap-3">';
-  html += bar('수입', incA, incGoal, true, '#10b981');
+  html += bar('수입', incA, incGoal, true, '#15803D');
   html += bar('지출', expA, expGoal, false, '#ef4444');
-  html += bar('저축', savA, savGoal, true, '#3563DF');
+  html += bar('저축', savA, savGoal, true, '#1F4BD8');
   html += '</div>';
 
   // 부업 sub-progress (수입 하위 목표) — 설정된 경우만 표시
@@ -1695,7 +1695,7 @@ function ldgRenderAnnualGoal() {
     var subDiff = subA - subExpected;
     var subDiffPct = subGoal > 0 ? Math.abs(subDiff) / subGoal * 100 : 0;
     var subStatus, subColor, subEmoji;
-    if (subDiff >= 0) { subStatus = '페이스 달성'; subEmoji = '🟢'; subColor = '#10b981'; }
+    if (subDiff >= 0) { subStatus = '페이스 달성'; subEmoji = '🟢'; subColor = '#15803D'; }
     else if (subDiffPct < 5) { subStatus = '약간 뒤처짐'; subEmoji = '🟡'; subColor = '#f59e0b'; }
     else { subStatus = '부족'; subEmoji = '🔴'; subColor = '#ef4444'; }
     var subDiffSign = subDiff >= 0 ? '+' : '';
@@ -1762,7 +1762,7 @@ function ldgRenderKPI() {
   function momLine(cur, prev, goodUp) {
     if (cur === 0 && prev === 0) return '';
     var diff = cur - prev;
-    var color = diff === 0 ? '#94a3b8' : (((diff > 0) === goodUp) ? '#10b981' : '#ef4444');
+    var color = diff === 0 ? '#94a3b8' : (((diff > 0) === goodUp) ? '#15803D' : '#ef4444');
     var arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '─');
     var label = (_ldgYear === new Date().getFullYear() && _ldgMonth === new Date().getMonth()+1)
       ? '전월 동일' : '전월비';
@@ -1936,7 +1936,7 @@ function ldgRenderDonuts() {
     renderMobileSummary('ldg-donut-expense', expenseByCategory, '지출');
     return;
   }
-  var donutColors = ['#6366f1','#a855f7','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#8b5cf6'];
+  var donutColors = ['#1F4BD8','#16161A','#4E6FE0','#15803D','#B45309','#DC2626','#5B5B66','#0F766E','#9DB0EE','#A1A1AA'];
   function renderDonut(canvasId, dataObj, chartRef) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return null;
@@ -2007,7 +2007,7 @@ function ldgRenderTopCats() {
   el.innerHTML = sorted.map(function(cat) {
     var pct = totalExp > 0 ? (sums[cat] / totalExp * 100).toFixed(1) : 0;
     var barW = max > 0 ? (sums[cat] / max * 100) : 0;
-    return '<div class="space-y-1"><div class="flex justify-between text-xs mb-1"><span class="text-slate-600">' + cat + ' <span class="text-slate-400">(' + pct + '%)</span></span><span class="font-bold" style="font-feature-settings:\'tnum\'">' + ldgFmt(sums[cat]) + '</span></div><div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + barW + '%;background:linear-gradient(90deg,#3563DF,#5B7FE6)"></div></div></div>';
+    return '<div class="space-y-1"><div class="flex justify-between text-xs mb-1"><span class="text-slate-600">' + cat + ' <span class="text-slate-400">(' + pct + '%)</span></span><span class="font-bold" style="font-feature-settings:\'tnum\'">' + ldgFmt(sums[cat]) + '</span></div><div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + barW + '%;background:linear-gradient(90deg,#1F4BD8,#5B7FE6)"></div></div></div>';
   }).join('');
 }
 
@@ -2053,7 +2053,7 @@ function ldgRenderDailyChart() {
       labels: labels,
       datasets: [{
         data: daily, fill: true,
-        borderColor: '#3563DF', borderWidth: 2,
+        borderColor: '#1F4BD8', borderWidth: 2,
         backgroundColor: function(ctx) {
           var g = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
           g.addColorStop(0, 'rgba(53,99,223,0.15)');
@@ -2104,7 +2104,7 @@ function ldgRenderCatGrid() {
       rebalance.suggestions.forEach(function(s) {
         var pctOfNeed = Math.min(s.saveable / rebalance.totalOver * 100, 100);
         html += '<div class="flex items-center justify-between text-[11px]">' +
-          '<span class="text-slate-700"><b>' + s.cat + '</b>: 약 <b style="color:#059669;">' + ldgFmt(s.saveable) + '</b> 절감 가능 ' +
+          '<span class="text-slate-700"><b>' + s.cat + '</b>: 약 <b style="color:#15803D;">' + ldgFmt(s.saveable) + '</b> 절감 가능 ' +
             '<span class="text-[9px] text-slate-400">(현 페이스 ' + ldgFmt(s.projected) + ' / 과거 최저 ' + ldgFmt(s.minHistorical) + ')</span></span>' +
           '<span class="text-[10px] text-slate-500">초과액의 ' + Math.round(pctOfNeed) + '%</span>' +
         '</div>';
@@ -2117,13 +2117,13 @@ function ldgRenderCatGrid() {
       var over2 = p.projected - p.budget;
       var bgStyle = p.status === 'danger'
         ? 'background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fecaca'
-        : 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a';
-      var iconColor = p.status === 'danger' ? '#dc2626' : '#d97706';
+        : 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #FEF3C7';
+      var iconColor = p.status === 'danger' ? '#dc2626' : '#B45309';
       var overText = over2 > 0 ? ('월말 예상 <b>' + ldgFmt(p.projected) + '</b> (예산 ' + ldgFmt(p.budget) + ' 대비 <b style="color:' + iconColor + ';">+' + ldgFmt(over2) + '</b>)') : '예산 내 진행';
       var sim = ldgAISimulateSavingImpact(alert_.catName, _ldgYear, _ldgMonth);
       var simText = '';
       if (sim && sim.monthlyDelta > 5000 && sim.annualImpact > 50000) {
-        simText = ' 💡 <b>AI 추천 ' + ldgFmt(sim.recommended) + '</b>로 맞추면 연 약 <b style="color:#059669;">+' + ldgFmt(sim.annualImpact) + ' 저축</b> 효과';
+        simText = ' 💡 <b>AI 추천 ' + ldgFmt(sim.recommended) + '</b>로 맞추면 연 약 <b style="color:#15803D;">+' + ldgFmt(sim.annualImpact) + ' 저축</b> 효과';
       }
       insightEl.innerHTML = '<div class="rounded-2xl p-4 flex items-start gap-3" style="' + bgStyle + ';">' +
         '<span style="font-size: var(--font-size-h2-lg)">🤖</span>' +
@@ -2199,7 +2199,9 @@ function ldgRenderCatGrid() {
     return ai - bi;
   });
   var _heroV = 0, _heroCap = 0;
+  var _zeroCats = [], _zeroHtml = '';
   catKeys.forEach(function(catName) {
+    var _cardStart = html.length;
     var subs = cats[catName] || [];
     var hasTx = !!catSums[catName];
     var totalAmt = 0;
@@ -2255,7 +2257,7 @@ function ldgRenderCatGrid() {
     var cmpLine = function(prevVal, label, tip) {
       if (totalAmt === 0 && prevVal === 0) return '';
       var d = totalAmt - prevVal;
-      var color = (d === 0) ? '#94a3b8' : (catName === '포인트') ? '#475569' : (((d > 0) === isGoodUp) ? '#10b981' : '#ef4444');  // 포인트는 많이 써도 나쁜 게 아님 → 중립색
+      var color = (d === 0) ? '#94a3b8' : (catName === '포인트') ? '#475569' : (((d > 0) === isGoodUp) ? '#15803D' : '#ef4444');  // 포인트는 많이 써도 나쁜 게 아님 → 중립색
       var arrow = d > 0 ? '▲' : (d < 0 ? '▼' : '');
       var txt = (d === 0) ? (label + ' ─') : (arrow + ' ' + label + ' ' + (d > 0 ? '+' : '') + d.toLocaleString('ko-KR'));
       return '<p class="text-[10px] text-right mt-0.5" style="color:' + color + ';font-feature-settings:\'tnum\'" title="' + tip + '">' + txt + '</p>';
@@ -2269,14 +2271,13 @@ function ldgRenderCatGrid() {
     // 누리 2026-11-05: 같은 날까지 비교는 의미 없음 → 늘 지난달 한 달 전체·작년 같은 달 전체와. 둘 다 0이어도 '─'로 보여 줌
     var cmpA = cmpPart(prevTotalFull, '전월', '지난달 한 달 전체와 비교');
     var cmpB = cmpPart(lyCatTotalsFull[catName] || 0, '전년', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 한 달 전체와 비교');
-    if (cmpA || cmpB) html += '<p class="text-[10.5px] text-right mt-0.5 font-semibold" style="font-feature-settings:\'tnum\'">' + [cmpA, cmpB].filter(Boolean).join(' <span style="color:#475569">·</span> ') + '</p>';
+    if (cmpA || cmpB) html += '<p class="text-[12px] text-right mt-0.5 font-semibold" style="font-feature-settings:\'tnum\'">' + [cmpA, cmpB].filter(Boolean).join(' <span style="color:#475569">·</span> ') + '</p>';
     html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
+    // 2026-11-06 3차: 0원 소분류("—") 줄은 숨김 — 쓴 것만 보인다
     subAmts.forEach(function(s) {
       if (s.amt > 0) {
-        html += '<li class="text-xs leading-relaxed tracking-wide flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
-      } else {
-        html += '<li class="text-xs leading-relaxed tracking-wide flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-300">—</span></li>';
+        html += '<li class="text-xs leading-relaxed flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
       }
     });
     html += '</ul>';
@@ -2291,11 +2292,11 @@ function ldgRenderCatGrid() {
       var curVal = hasBudget ? Math.round(budgetTotal / 10000) : ''; // 만원 단위
       html += '<div class="pt-2 border-t border-slate-50">' +
         '<div class="flex items-center gap-1">' +
-          '<span class="text-[10px] text-slate-400 shrink-0">예산</span>' +
-          '<input type="text" id="ldg-cat-budget-input-' + safeCatId + '" value="' + curVal + '" placeholder="만원" class="flex-1 min-w-0 text-[10px] px-1.5 py-0.5 border border-indigo-200 rounded outline-none focus:ring-1 focus:ring-indigo-300 text-right" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCatBudget(\'' + catNameEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCatBudget();}"/>' +
-          '<span class="text-[10px] text-slate-400 shrink-0">만</span>' +
+          '<span class="text-[12px] text-slate-600 shrink-0">예산</span>' +
+          '<input type="text" id="ldg-cat-budget-input-' + safeCatId + '" value="' + curVal + '" placeholder="만원" class="flex-1 min-w-0 text-[12px] px-1.5 py-0.5 border border-indigo-200 rounded outline-none focus:ring-1 focus:ring-indigo-300 text-right" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCatBudget(\'' + catNameEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCatBudget();}"/>' +
+          '<span class="text-[12px] text-slate-600 shrink-0">만</span>' +
           '<button onclick="ldgSaveCatBudget(\'' + catNameEsc + '\')" class="p-0.5 rounded bg-indigo-600 text-white shrink-0" title="저장"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check</span></button>' +
-          '<button onclick="ldgCancelEditCatBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400 shrink-0" title="취소"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
+          '<button onclick="ldgCancelEditCatBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-600 shrink-0" title="취소"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
         '</div>' +
       '</div>';
     } else if (catName === '포인트' || catName === '미분류') {
@@ -2305,12 +2306,12 @@ function ldgRenderCatGrid() {
     } else if (hasBudget && budgetTotal === 0) {
       // 예산 명시적으로 0 — "이번 달 사용 안 함" 의도 (AI 추천 표시 X)
       var zeroUsed = totalAmt > 0;
-      var zeroColor = zeroUsed ? '#ef4444' : '#10b981';
+      var zeroColor = zeroUsed ? '#DC2626' : '#15803D';
       var zeroLabel = zeroUsed ? ldgFmt(totalAmt) + ' 사용됨' : '✓ 0 유지';
       html += '<div class="pt-2 border-t border-slate-50">' +
         '<div class="cursor-pointer hover:bg-indigo-50/20 -mx-5 px-5 py-1.5 transition-colors" onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" title="클릭하여 예산 수정">' +
-          '<div class="flex justify-between items-center text-[10px] font-medium">' +
-            '<span class="text-slate-400">예산 <b>0</b> (사용 안 함) <span class="text-[9px] text-slate-300">✏️</span></span>' +
+          '<div class="flex justify-between items-center text-[12px] font-medium">' +
+            '<span class="text-slate-600">예산 <b>0</b> (사용 안 함) <span class="material-symbols-outlined" style="font-size:13px;vertical-align:-2px">edit</span></span>' +
             '<span style="color:' + zeroColor + ';font-weight:700;">' + zeroLabel + '</span>' +
           '</div>' +
         '</div>' +
@@ -2321,7 +2322,23 @@ function ldgRenderCatGrid() {
       if (window.ldgCatBar && hasBudget && budgetTotal > 0 && !isGoodUp && catName !== '포인트' && catName !== '미분류' && catName !== '여행') { _heroV += totalAmt; _heroCap += budgetTotal; }
     }
     html += '</div>';
+    // 2026-11-06 3차: 이번 달 쓴 돈도 예산도 없는 카테고리는 카드 대신 한 줄로 접는다
+    if (totalAmt <= 0 && !(hasBudget && budgetTotal > 0) && _ldgBudgetEditingCat !== catName) {
+      _zeroHtml += html.slice(_cardStart);
+      html = html.slice(0, _cardStart);
+      _zeroCats.push(catName);
+    }
   });
+  if (_zeroCats.length) {
+    var _zOpen = !!window._ldgZeroOpen;
+    html += '<div style="grid-column:1/-1" class="ldg-zero-line">' +
+      '<button type="button" onclick="window._ldgZeroOpen=!window._ldgZeroOpen;ldgRenderCatGrid()" style="background:none;border:0;padding:6px 0;cursor:pointer;font-size:13px;font-weight:600;color:#5B5B66;display:flex;align-items:center;gap:6px">' +
+        '<span class="material-symbols-outlined" style="font-size:16px">' + (_zOpen ? 'expand_less' : 'expand_more') + '</span>' +
+        '그 밖 ' + _zeroCats.length + '개 0원' +
+        '<span style="font-weight:400">· ' + _zeroCats.join(' · ') + '</span>' +
+      '</button></div>';
+    if (_zOpen) html += _zeroHtml;
+  }
   el.innerHTML = html;
   try { ldgLaneLabels(el); ldgRenderCatHero(_heroV, _heroCap); } catch (e) { console.error("[cat bar]", e); }
 }
@@ -2573,11 +2590,11 @@ function ldgAIPaceStatus(catName, year, month) {
 
   var isIncomeSavings = (catName === '수입' || catName === '저축');
   if (isIncomeSavings) {
-    if (ratio >= 0.95) return { status: 'good', color: '#10b981', emoji: '🟢', label: '목표 페이스', projected: projected, budget: budget, breakdown: breakdown };
+    if (ratio >= 0.95) return { status: 'good', color: '#15803D', emoji: '🟢', label: '목표 페이스', projected: projected, budget: budget, breakdown: breakdown };
     if (ratio >= 0.75) return { status: 'warning', color: '#f59e0b', emoji: '🟡', label: '뒤처짐', projected: projected, budget: budget, breakdown: breakdown };
     return { status: 'danger', color: '#ef4444', emoji: '🔴', label: '미달 위험', projected: projected, budget: budget, breakdown: breakdown };
   } else {
-    if (ratio <= 0.95) return { status: 'good', color: '#10b981', emoji: '🟢', label: '안정', projected: projected, budget: budget, breakdown: breakdown };
+    if (ratio <= 0.95) return { status: 'good', color: '#15803D', emoji: '🟢', label: '안정', projected: projected, budget: budget, breakdown: breakdown };
     if (ratio <= 1.1) return { status: 'warning', color: '#f59e0b', emoji: '🟡', label: '주의', projected: projected, budget: budget, breakdown: breakdown };
     return { status: 'danger', color: '#ef4444', emoji: '🔴', label: '초과 위험', projected: projected, budget: budget, breakdown: breakdown };
   }
@@ -3615,7 +3632,7 @@ function ldgRenderPastePreview() {
       '<td class="px-2 py-1">' + badge + '</td></tr>';
   });
   html += '</tbody></table></div>';
-  html += '<div class="flex justify-end mt-3"><button onclick="ldgConfirmPasteImport()" class="text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,#3563DF,#5B7FE6)"><span class="material-symbols-outlined align-middle" style="font-size:16px">add</span> ' + incl.length + '건 가계부에 추가</button></div>';
+  html += '<div class="flex justify-end mt-3"><button onclick="ldgConfirmPasteImport()" class="text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,#1F4BD8,#5B7FE6)"><span class="material-symbols-outlined align-middle" style="font-size:16px">add</span> ' + incl.length + '건 가계부에 추가</button></div>';
   box.innerHTML = html;
 }
 
@@ -4240,7 +4257,7 @@ function ldgJumpToMonth(year, month) {
 function ldgRenderAnnual() {
   if (!_ledgerData.transactions) return;
   var y = _ldgAnnualYear;
-  document.getElementById('ldg-annual-title').textContent = y + ' 연간 뷰';
+  document.getElementById('ldg-annual-title').textContent = y + ' Annual';
   document.getElementById('ldg-annual-prev').textContent = '‹ ' + (y-1) + '년';
   document.getElementById('ldg-annual-next').textContent = (y+1) + '년 ›';
 
@@ -4376,7 +4393,7 @@ function ldgRenderAnnualFlow(monthly, activeMonths) {
     data: {
       labels: labels,
       datasets: [
-        { label: '수입', data: incomeData, backgroundColor: '#3563DF', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
+        { label: '수입', data: incomeData, backgroundColor: '#1F4BD8', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
         { label: '저축', data: savingData, backgroundColor: '#eae0b5', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
         { label: '지출', data: expenseData, backgroundColor: '#f4a6a6', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
         { label: '(미입력)', data: placeholderData, backgroundColor: '#e2e8f0', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
@@ -4414,7 +4431,7 @@ function ldgRenderAnnualFlow(monthly, activeMonths) {
 }
 
 function ldgRenderAnnualDonuts(txs) {
-  var donutColors = ['#6366f1','#a855f7','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#8b5cf6','#06b6d4','#84cc16','#e11d48','#7c3aed'];
+  var donutColors = ['#1F4BD8','#16161A','#4E6FE0','#15803D','#B45309','#DC2626','#5B5B66','#0F766E','#9DB0EE','#A1A1AA','#0E7490','#65A30D','#334155','#DCDCE3'];
 
   function renderADonut(canvasId, legendId, dataObj, chartRef) {
     var canvas = document.getElementById(canvasId);
@@ -4545,7 +4562,7 @@ function ldgSetSubTab(tab) {
   if (panel) panel.style.display = 'block';
   document.querySelectorAll('.ldg-stab').forEach(function(btn) {
     if (btn.dataset.stab === tab) {
-      btn.style.background = 'linear-gradient(135deg,#3563DF,#5B7FE6)'; btn.style.color = '#fff';
+      btn.style.background = 'linear-gradient(135deg,#1F4BD8,#5B7FE6)'; btn.style.color = '#fff';
     } else {
       btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
     }
@@ -4952,7 +4969,7 @@ function ldgSetBudgetView(view) {
   _ldgBudgetView = view;
   document.querySelectorAll('.ldg-bview').forEach(function(btn) {
     if (btn.dataset.bview === view) {
-      btn.style.background = 'linear-gradient(135deg,#3563DF,#5B7FE6)'; btn.style.color = '#fff';
+      btn.style.background = 'linear-gradient(135deg,#1F4BD8,#5B7FE6)'; btn.style.color = '#fff';
     } else {
       btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
     }
@@ -5639,7 +5656,7 @@ function ldgRenderCoach() {
   var html = '<div class="flex items-center justify-between mb-6"><div><h3 class="text-lg font-bold text-slate-900">🎯 ' + _ldgCoachYear + ' 목표 트래커</h3>' +
     '<p class="text-xs text-slate-400 mt-1">' + curMonth + '월 ' + curDay + '일 현재 · 데이터 ' + dataDays + '일' + (remainDays>0?' · 남은 '+remainDays+'일':'') + '</p></div>' +
     '<div class="flex gap-1">' +
-    [2024,2025,2026,2027].map(function(yr){var ac=yr===_ldgCoachYear;return '<button onclick="_ldgCoachYear='+yr+';ldgRenderCoach()" class="px-3 py-1 rounded-full text-xs font-semibold '+(ac?'text-white" style="background:linear-gradient(135deg,#3563DF,#5B7FE6)':'text-slate-500" style="background:#f1f5f9')+'">' + yr + '</button>';}).join('') +
+    [2024,2025,2026,2027].map(function(yr){var ac=yr===_ldgCoachYear;return '<button onclick="_ldgCoachYear='+yr+';ldgRenderCoach()" class="px-3 py-1 rounded-full text-xs font-semibold '+(ac?'text-white" style="background:linear-gradient(135deg,#1F4BD8,#5B7FE6)':'text-slate-500" style="background:#f1f5f9')+'">' + yr + '</button>';}).join('') +
     '</div></div>';
 
   // Summary box
@@ -5691,12 +5708,12 @@ function ldgCoachKPICard(label, current, goal, pace, avgMonthly, remainMonths, t
   // Progress bar color
   var barColor;
   if (isExpense) {
-    if (pct < 50) barColor = '#10b981';
+    if (pct < 50) barColor = '#15803D';
     else if (pct < 80) barColor = '#f59e0b';
     else if (pct <= 100) barColor = '#f97316';
     else barColor = '#ef4444';
   } else {
-    barColor = pct >= 100 ? '#10b981' : '#6366f1';
+    barColor = pct >= 100 ? '#15803D' : '#1F4BD8';
   }
   // Status
   var diff = pace - goal;
@@ -6221,7 +6238,7 @@ function ldgRenderGoals() {
   // Year buttons
   document.querySelectorAll('.ldg-goal-yr').forEach(function(btn) {
     if (parseInt(btn.dataset.yr) === _ldgGoalYear) {
-      btn.style.background = 'linear-gradient(135deg,#3563DF,#5B7FE6)'; btn.style.color = '#fff';
+      btn.style.background = 'linear-gradient(135deg,#1F4BD8,#5B7FE6)'; btn.style.color = '#fff';
     } else {
       btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
     }
@@ -6829,8 +6846,10 @@ if ('serviceWorker' in navigator) {
           updateToastShown = true;
           var t = document.createElement('div');
           t.id = 'sw-update-toast';
-          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#1F4BD8,#3563DF);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(31,75,216,0.35);z-index:99999;display:flex;align-items:center;gap:12px;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;cursor:pointer;animation:slideInRight .3s ease;max-width:320px;';
-          t.innerHTML = '<span class="material-symbols-outlined">refresh</span><span>새 버전이 있어요. 클릭해서 업데이트</span>';
+          // 2026-11-06 3차: 큰 코발트 상자 → 작은 흰 줄 (Home 에선 그림 맨 아래 가는 띠, 스타일은 index.html #atl-round3)
+          t.setAttribute('role', 'status');
+          t.title = '눌러서 새 버전으로 새로고침';
+          t.innerHTML = '<i class="swu-dot"></i><span>새 버전 · 눌러서 새로고침</span>';
           t.onclick = function() { window.location.reload(); };
           document.body.appendChild(t);
         }

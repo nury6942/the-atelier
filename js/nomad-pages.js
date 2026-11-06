@@ -1783,10 +1783,10 @@ window.NOMAD_PAGES = (function(){
 
     // Phase별 hero 그라데이션 (이미지 fallback)
     var phaseGrads = {
-      'A': 'linear-gradient(135deg,#fef3c7 0%,#fbbf24 60%,#f59e0b 100%)', // Foundation: warm gold
-      'B': 'linear-gradient(135deg,#dbeafe 0%,#818cf8 60%,#3563DF 100%)', // Build: blue indigo
-      'C': 'linear-gradient(135deg,#fce7f3 0%,#f472b6 60%,#db2777 100%)', // Exit: rose
-      'D': 'linear-gradient(135deg,#5B7FE6 0%,#1F4BD8 60%,#312E81 100%)', // Departure: violet (active)
+      'A': '#F0A647', // Foundation: 모래 (그라데이션 제거 2026-11-06)
+      'B': '#4E6FE0', // Build
+      'C': '#16161A', // Exit
+      'D': '#1F4BD8', // Departure (active)
     };
 
     // 이미지 박스 헬퍼 (LEFT/RIGHT 공통)
@@ -5082,10 +5082,10 @@ window.NOMAD_PAGES = (function(){
   function _renderCityExperiencesV2(experiencesSections) {
     if (!experiencesSections || !experiencesSections.length) return '';
     var colors = [
-      { bg:'#eef2ff', border:'#DDE5FB', iconBg:'#1A3FB5', iconShadow:'rgba(26,63,181,0.25)', titleColor:'#1e1b4b', subColor:'#3730a3', noteColor:'#17348F' },
-      { bg:'#fffbeb', border:'#fef3c7', iconBg:'#d97706', iconShadow:'rgba(217,119,6,0.25)',  titleColor:'#451a03', subColor:'#92400e', noteColor:'#b45309' },
+      { bg:'#eef2ff', border:'#EEF2FD', iconBg:'#1A3FB5', iconShadow:'rgba(26,63,181,0.25)', titleColor:'#1e1b4b', subColor:'#3730a3', noteColor:'#17348F' },
+      { bg:'#fffbeb', border:'#fef3c7', iconBg:'#B45309', iconShadow:'rgba(217,119,6,0.25)',  titleColor:'#451a03', subColor:'#92400e', noteColor:'#b45309' },
       { bg:'#fff1f2', border:'#ffe4e6', iconBg:'#e11d48', iconShadow:'rgba(225,29,72,0.25)',  titleColor:'#4c0519', subColor:'#9f1239', noteColor:'#be123c' },
-      { bg:'#ecfdf5', border:'#d1fae5', iconBg:'#059669', iconShadow:'rgba(5,150,105,0.25)',  titleColor:'#022c22', subColor:'#065f46', noteColor:'#047857' },
+      { bg:'#ecfdf5', border:'#d1fae5', iconBg:'#15803D', iconShadow:'rgba(5,150,105,0.25)',  titleColor:'#022c22', subColor:'#065f46', noteColor:'#047857' },
     ];
     var html = '<section class="nm-city-v2-section">';
     html += '<h2 class="nm-city-v2-h2 nm-city-v2-h2-serif"><span class="material-symbols-outlined">stars</span>Experiences <span class="nm-city-v2-h2-sub">경험</span></h2>';
