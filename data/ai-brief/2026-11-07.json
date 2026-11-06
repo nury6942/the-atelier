@@ -1,0 +1,187 @@
+{
+ "date": "2026-11-07",
+ "generatedAt": "2026-11-07T07:20:00+09:00",
+ "sourcesNote": "웹 검색 13회 + GitHub 검색 API로 11-03 이후 새 저장소 별·생성일·라이선스 확인, README 원문 대조 · 맥 수집(social) 15개 글 참고 · 실행 환경에서 X·Threads·개별 사이트 직접 열기가 막혀 링크는 검색·README로 확인",
+ "cards": [
+  {
+   "cat": "tool",
+   "title": "그림 한 장이 말하고 눈 깜빡이는 캐릭터로",
+   "url": "https://github.com/livliv-dev/player",
+   "image": null,
+   "source": "GitHub @livliv-dev · 별 943 · 11-04",
+   "how": "웹캠 얼굴 추적·입모양 맞춤을 코드 몇 줄로",
+   "examples": [
+    {
+     "title": "바로 보기: 예시 캐릭터 데모",
+     "url": "https://livliv-dev.github.io/player/",
+     "image": null
+    }
+   ],
+   "chips": [
+    "캐릭터 21종 포함",
+    "핵심 약 30KB",
+    "플레이어 Apache-2.0"
+   ],
+   "forMe": "포함된 캐릭터는 개인·비상업 용도만 무료예요. 포트폴리오 사이트에 숨 쉬고 고개 돌리는 마스코트를 붙여 보는 실험용으로 좋습니다."
+  },
+  {
+   "cat": "hack",
+   "title": "말로 블렌더 세트 짜고 그대로 사진까지",
+   "url": "https://www.threads.com/@whaledigital.ai/post/DfYvc8iD2SC",
+   "image": null,
+   "source": "Threads @whaledigital.ai · ♥27",
+   "how": "클로드 블렌더 MCP로 배치, 힉스필드 MCP로 이미지",
+   "chips": [
+    "50년대 다이닝 세트",
+    "인물 5명·올드카",
+    "흰 호리존 스튜디오"
+   ],
+   "forMe": "흰 호리존에 인물·소품을 말로 배치해 두고 바로 이미지를 뽑는 흐름이라, 저지 룩 촬영 전에 구도 시안을 잡아 보는 데 그대로 쓸 수 있어요."
+  },
+  {
+   "cat": "vibe",
+   "title": "독학 워킹맘의 9분 AI 영화, 영화제 4관왕",
+   "url": "https://x.com/minchoi/status/2118374993696575996",
+   "image": null,
+   "source": "X @minchoi · ♥2,300",
+   "how": "독학으로 익힌 AI 영상 도구로 판타지 단편 완성",
+   "chips": [
+    "9분 판타지 단편",
+    "뉴욕 국제영화제 4개 부문",
+    "최우수 AI 영화·각본상"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "영상 감독 스킬, 정지 컷부터 고르게 한다",
+   "url": "https://github.com/SallyRS/video-director",
+   "image": null,
+   "source": "GitHub @SallyRS · 별 17 · 11-06",
+   "how": "영화 59편 실측 규칙, 시안 2~3개 중 고르기",
+   "chips": [
+    "6초~3분",
+    "영상 유형 8종",
+    "HyperFrames로 렌더"
+   ],
+   "forMe": "움직이기 전에 스토리보드를 정지 컷으로 승인하는 방식이라 디자이너 시안 리뷰와 같아요. 시즌 티저 모션을 포트폴리오용으로 만들 때 맞습니다."
+  },
+  {
+   "cat": "vibe",
+   "title": "사진 한 장이 바람에 흔들리는 글자 영상으로",
+   "url": "https://github.com/yusen-dev/living-ascii",
+   "image": null,
+   "source": "GitHub @yusen-dev · 별 24 · 11-04",
+   "how": "three.js 셰이더, 이음새 없는 반복 MP4로 내보냄",
+   "chips": [
+    "4K 배경화면 예시",
+    "MIT 무료",
+    "클로드 스킬로도 설치"
+   ],
+   "forMe": "원단 텍스처나 그래픽 사진을 넣으면 색은 그대로 두고 결을 따라 흔들리는 루프가 나와요. 상세페이지·SNS용 움직이는 배경으로 쓸 만합니다."
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "내 사진 한 장을 흔들리는 글자 루프로",
+   "minutes": 25,
+   "why": "누리님 원단·그래픽 사진 한 장을 이음새 없이 반복되는 글자 영상으로 바꿔 보는 거예요. 무료이고 Claude Code에 맡기면 설치·내보내기까지 해 줘서 MP4 한 편이 남습니다.",
+   "from": {
+    "label": "GitHub @yusen-dev · 별 24",
+    "url": "https://github.com/yusen-dev/living-ascii"
+   },
+   "steps": [
+    {
+     "text": "저장소 열어 예시 보기",
+     "url": "https://github.com/yusen-dev/living-ascii"
+    },
+    {
+     "text": "클로드 코드에 붙여넣기",
+     "copy": "https://github.com/yusen-dev/living-ascii 를 ~/.claude/skills/living-ascii 에 git clone 하고 npm install 해줘. 그다음 내 이미지(~/Desktop/sample.jpg)를 input/ 폴더에 복사하고, npm start 로 띄운 뒤 ?img=input/sample.jpg&export=ascii 주소로 이음새 없는 반복 MP4를 만들어줘. npm run check 로 루프가 튀지 않는지 확인하고 out/ 폴더를 열어줘."
+    },
+    {
+     "text": "out 폴더 MP4 저장"
+    }
+   ]
+  },
+  {
+   "title": "클로드 코드 모델 분담 설정",
+   "minutes": 10,
+   "why": "평소 작업은 가벼운 모델로, 막힐 때만 Opus에게 자문을 받게 하면 사용량이 덜 듭니다. 공식 문서에 있는 설정이라 아뜰리에 작업에 바로 써도 돼요.",
+   "from": {
+    "label": "X @skunzu · ♥24",
+    "url": "https://x.com/skunzu/status/2118797478057349462"
+   },
+   "steps": [
+    {
+     "text": "공식 안내 열기",
+     "url": "https://code.claude.com/docs/en/advisor"
+    },
+    {
+     "text": "클로드 코드에 입력",
+     "copy": "/advisor"
+    },
+    {
+     "text": "며칠 뒤 /usage 비교"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "free",
+   "title": "HTML 발표 템플릿 20종",
+   "url": "https://github.com/cclank/lanshu-html-ppt-templates",
+   "image": null,
+   "source": "GitHub @cclank · 예시 226장 · 신규 코드 MIT",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "말로 주문하는 세로 쇼츠 키트",
+   "url": "https://github.com/howznguyen/shorts-kit",
+   "image": null,
+   "source": "GitHub @howznguyen · 별 97 · MIT",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "안 올리는 브라우저 이미지 압축",
+   "url": "https://github.com/q1054710965/tiny-image",
+   "image": null,
+   "source": "GitHub @q1054710965 · 별 57 · MIT",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "에이전트가 내 아이폰을 직접 조작",
+   "url": "https://github.com/JosssphZhou/poki",
+   "image": null,
+   "source": "GitHub @JosssphZhou · 별 406 · AGPL-3.0",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "스프링처럼 변하는 알림창 부품",
+   "url": "https://github.com/YusufCeng1z/ding",
+   "image": null,
+   "source": "GitHub @YusufCeng1z · 별 65 · MIT",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "MiniMax H3를 내 Colab GPU로",
+   "url": "https://github.com/dseditor/h3-colab-skill",
+   "image": null,
+   "source": "GitHub @dseditor · 별 43 · 그림·말하는 영상·TTS",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Gemini Omni 1.2 Flash",
+   "url": "https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemini-omni-1-2-flash/",
+   "date": "2026-11-05",
+   "note": "DesignArena 1.1 대비 FPV 비교 1건(X) · 사람들이 만든 사례 1개 더 필요"
+  }
+ ]
+}
