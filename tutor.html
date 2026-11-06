@@ -13,7 +13,7 @@
      ═══════════════════════════════════════════════════════════ */
   :root{
     --accent:#1F4BD8; --accent-soft:rgba(31,75,216,.08);
-    --ink:#0b0b0c; --mut:rgba(0,0,0,.58); --dim:rgba(0,0,0,.38);
+    --ink:#0b0b0c; --mut:rgba(0,0,0,.62); --dim:#5B5B66;  /* (2026-11-06 3차) 흐린 회색 .38(2.7:1) → #5B5B66 */
     --line:rgba(0,0,0,.1); --panel:#fafafa; --paper:#fff; --danger:#d4351c;
   }
   *{box-sizing:border-box;border-radius:0}
@@ -45,7 +45,7 @@
   .hist button{display:block;width:100%;text-align:left;padding:9px 10px}
   .hist button:hover{background:rgba(0,0,0,.04)}
   .hist .t{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hist .m{font-size:11.5px;color:var(--dim);margin-top:2px}
+  .hist .m{font-size:12px;color:var(--dim);margin-top:2px}
   .hist .empty{padding:8px 10px;color:var(--dim);font-size:12.5px;line-height:1.5}
 
   /* ── 메인 ── */
@@ -57,7 +57,7 @@
   #mic{max-width:180px;text-overflow:ellipsis}
   .miclvl{width:46px;height:6px;background:rgba(0,0,0,.08);position:relative;overflow:hidden}
   .miclvl i{position:absolute;left:0;top:0;bottom:0;width:0;background:#18a957;transition:width .08s}
-  .mictest{font-size:11.5px;font-weight:700;color:var(--accent)}
+  .mictest{font-size:12px;font-weight:700;color:var(--accent)}
 
   /* 홈 화면 */
   .home{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px 48px}
@@ -73,7 +73,7 @@
   .topic:focus-within{border-color:var(--accent)}
   .topic input{flex:1;border:0;outline:none;font-size:14px;background:transparent}
   .topic .ms{color:var(--dim)}
-  .sugg-h{display:flex;justify-content:space-between;width:min(560px,100%);margin:18px 0 8px;font-size:11.5px;color:var(--dim)}
+  .sugg-h{display:flex;justify-content:space-between;width:min(560px,100%);margin:18px 0 8px;font-size:12px;color:var(--dim)}
   .sugg-h button{color:var(--dim);display:flex;align-items:center;gap:4px}
   .sugg-h button:hover{color:var(--ink)}
   .cards{display:grid;grid-template-columns:repeat(3,1fr);width:min(560px,100%);border-left:1px solid var(--line);border-top:1px solid var(--line)}
@@ -124,10 +124,10 @@
   .card.speaking{outline:2px solid var(--accent);outline-offset:-2px}
   .card .foot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;font-size:12.5px}
   .card .foot b{font-weight:700;display:inline-flex;align-items:center;gap:6px}
-  .card .foot .sub{font-size:11.5px;color:var(--dim);display:inline-flex;align-items:center;gap:5px}
+  .card .foot .sub{font-size:12px;color:var(--dim);display:inline-flex;align-items:center;gap:5px}
   /* 튜터 사진: 4:3 원본을 카드에 꽉 차게(cover). 입 사진 두 장은 입 둘레만 보이게 겹쳐 목소리 크기로 바꿔 끼움 */
   .card.emma{background:#e9e9ec;color:#fff}
-  .card.emma .foot{background:linear-gradient(transparent,rgba(0,0,0,.5));z-index:2}
+  .card.emma .foot{background:rgba(0,0,0,.55);z-index:2}  /* 그라데이션 금지 → 단색 받침 */
   .card.emma .foot .sub{color:rgba(255,255,255,.8)}
   .tframe{position:absolute;left:50%;top:50%;width:100%;aspect-ratio:4/3;transform:translate(-50%,-50%)}
   .tframe img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
@@ -230,7 +230,7 @@
   .cue .clock.go{color:#7fe0a7}
   .cue .body{display:grid;grid-template-columns:1fr 1fr;gap:0}
   .cue .card{padding:14px 16px;border-right:1px solid var(--line)}
-  .cue h5{margin:0 0 8px;font-size:16px;font-weight:800;line-height:1.4}
+  .cue h3{margin:0 0 8px;font-size:16px;font-weight:800;line-height:1.4}
   .cue .card p{margin:0 0 4px;font-size:12px;color:var(--dim)}
   .cue ul{margin:0;padding-left:18px;font-size:14px;line-height:1.7}
   .cue textarea{width:100%;height:100%;min-height:120px;border:0;resize:none;outline:none;padding:14px 16px;font:inherit;font-size:13.5px;line-height:1.6;background:var(--panel)}
@@ -238,7 +238,7 @@
   .spend{border-top:1px solid var(--line);padding:14px 20px 16px;font-variant-numeric:tabular-nums}
   .spend .k{font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:700;text-transform:uppercase}
   .spend .v{font-size:18px;font-weight:800;margin-top:4px}
-  .spend .s{font-size:11.5px;color:var(--dim);margin-top:2px}
+  .spend .s{font-size:12px;color:var(--dim);margin-top:2px}
 
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;font-size:12.5px;display:none;z-index:20;max-width:90vw}
 
@@ -378,7 +378,7 @@
           <div class="cue" id="cue">
             <div class="top"><span id="cueLabel">PART 2 · 준비 시간</span><span class="clock" id="cueClock">1:00</span></div>
             <div class="body">
-              <div class="card"><h5 id="cueTopic"></h5><p>You should say:</p><ul id="cuePoints"></ul></div>
+              <div class="card"><h3 id="cueTopic"></h3><p>You should say:</p><ul id="cuePoints"></ul></div>
               <textarea id="cueNotes" placeholder="메모 — 언제 · 어디 · 무슨 일 · 왜 (실제 시험처럼 키워드만)"></textarea>
             </div>
           </div>

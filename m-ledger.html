@@ -116,13 +116,20 @@
   }
 
   /* ── + 버튼 */
+  /* (2026-11-06 3차) 떠 있는 + 가 오른쪽 끝 숫자(모으기 금액)를 덮었다 → 아래에 붙은 흰 막대 안으로.
+     막대가 불투명해서 숫자가 버튼 밑에 깔리지 않고, 본문 아래 여백(104px)이 막대 높이보다 커서 끝까지 보인다 */
+  .fab-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    background: #FFFFFF; border-top: 1px solid var(--line, #ECECF0);
+    padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+    display: flex; justify-content: flex-end;
+  }
   .fab {
-    position: fixed; right: var(--gutter); bottom: calc(20px + env(safe-area-inset-bottom)); z-index: 20;
-    width: 56px; height: 56px; background: var(--accent); color: #FFFFFF;
-    display: flex; align-items: center; justify-content: center;
+    height: 52px; padding: 0 20px 0 16px; gap: 6px; background: var(--accent); color: #FFFFFF;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700;
   }
   .fab:active { background: var(--accent-ink); }
-  .fab svg { width: 26px; height: 26px; }
+  .fab svg { width: 22px; height: 22px; }
 
   /* ── 거래 입력 (아래에서 올라오는 판) */
   .sheet-bg { position: fixed; inset: 0; z-index: 50; background: rgba(22,22,26,.4); display: none; align-items: flex-end; }
@@ -196,10 +203,10 @@ async function fbRead(name) { const s = await db.collection(name).get(); return 
     </div>
   </div>
   <nav class="tabs" aria-label="Money">
-    <a href="./?nav=finance-hub">자산</a>
-    <span class="on" aria-current="page">가계부</span>
-    <a href="./?nav=income">부업</a>
-    <a href="./?nav=tax">세금</a>
+    <a href="./?nav=finance-hub">Assets</a>
+    <span class="on" aria-current="page">Ledger</span>
+    <a href="./?nav=income">Side Jobs</a>
+    <a href="./?nav=tax">Tax</a>
   </nav>
 </header>
 
@@ -231,9 +238,11 @@ async function fbRead(name) { const s = await db.collection(name).get(); return 
   </section>
 </main>
 
-<button class="fab" onclick="openSheet()" aria-label="거래 추가">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16M4 12h16"/></svg>
-</button>
+<div class="fab-bar">
+  <button class="fab" onclick="openSheet()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>거래 추가
+  </button>
+</div>
 
 <div class="sheet-bg" id="sheet-bg" onclick="if(event.target===this)closeSheet()">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="s-title">

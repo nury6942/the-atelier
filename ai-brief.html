@@ -25,7 +25,11 @@
   .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 96px}
   /* 안쪽 페이지 공통 지평선 띠 (홈 그림의 하늘·모래) — 좁은 화면은 코발트 4px + 모래 2px 두 줄 */
   .hband{height:48px;background:url(assets/home/band-horizon.webp) center/cover}
-  @media (max-width:767px){ .hband{height:0;background:none;border-top:4px solid #1F4BD8;border-bottom:2px solid #F0A647} }
+  @media (max-width:767px){ .hband{height:6px;box-sizing:border-box;background:#1F4BD8;border-bottom:2px solid #F0A647} }  /* 코발트 4px + 모래 2px (m-ledger 와 같은 방식) */
+  /* (2026-11-06 3차) 제목 줄바꿈 고르게 — 마지막 줄에 한 단어만 남지 않게 */
+  h1,h2,h3{text-wrap:balance}
+  .how,.why2,.step .t,.tt{text-wrap:pretty}
+  .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
   /* 머리 */
   .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px}
@@ -355,7 +359,8 @@
     // 수집기가 로그인 문제로 X·Threads 를 건너뛰었으면 조용히 줄어들지 말고 알린다 (10/17·18 아이맥 크롬 로그아웃 사고)
     var skipped = (S && S.skipped || []).filter(function(x){ return /로그인/.test(x); });
     if (skipped.length) h += '<div class="stale" style="margin:0 0 16px">오늘 '+esc(skipped.map(function(x){ return x.split(':')[0].toUpperCase(); }).join('·'))+' 수집이 로그인 문제로 빠졌어요 · 수집하는 컴퓨터(아이맥) 크롬에서 다시 로그인해 주세요</div>';
-    if (B.tryToday && B.tryToday.length) h += '<div class="tries">'+B.tryToday.slice(0,2).map(function(t,i){ return tryBlock(d,t,i); }).join('')+'</div>';
+    // 제목 순서 h1 → h2 → h3 (해볼 것 카드 h3 앞에 보이지 않는 h2 하나)
+    if (B.tryToday && B.tryToday.length) h += '<h2 class="sr">오늘 꼭 해볼 것</h2><div class="tries">'+B.tryToday.slice(0,2).map(function(t,i){ return tryBlock(d,t,i); }).join('')+'</div>';
     var cards = (B.cards || []).slice();
     // 큰 칸(hero)은 사진 있는 카드가 맡는다 — 사진 없는 카드가 큰 칸이면 아래가 텅 빔 (11/05). 사진 없는 건 순서대로 뒤로
     var hi = cards.findIndex(function(c){ return !!pic(c); });
