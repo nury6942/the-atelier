@@ -252,6 +252,18 @@
     });
   }
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
+  // ★ (2026-10-08) 칸 안 일정 색: 불투명 파스텔 배경 + 같은 계열 진한 글씨 (진한 단색은 너무 정신없어서 되돌림)
+  //   (2026-10-08 v4 · A안) 여린 바탕 + 왼쪽 3px 색띠 + 검정 글씨 — 개인 일정은 조용히, GTM만 튀게
+  //   (2026-10-11 B안) 파스텔이 GTM에 묻혀 안 보인다 → 바탕 한 톤 진하게 + 색띠 4px + 같은 계열 진한 글씨.
+  //   글쓰기(초고·퇴고·시놉 — 메모에 phase:/work_id:)는 흰 바탕 + 진한 보라 테두리 + ✎ 로 따로 띄운다.
+  var SOLID = { sky:["#CFE2FF","#2F6FD6","#143D80"], blue:["#D0DEFF","#2457C8","#12307A"], indigo:["#DDD2FF","#6A48D8","#3A2491"], violet:["#E3D0FF","#7E3BD6","#46197F"],
+    purple:["#E8CCFF","#9133CC","#521A75"], fuchsia:["#F8CCEE","#E52BB8","#6E1449"], pink:["#FFCCE3","#FF2E8C","#7A1745"], rose:["#F8D0D7","#C42747","#701326"],
+    cyan:["#C6EBF3","#13849E","#0A4A59"], teal:["#C5EDE2","#0F7F68","#08463A"], lime:["#DCEDB8","#558A12","#2F4D09"], amber:["#F8E2AE","#B07600","#5E3F00"],
+    orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
+  var PINK_TO_YELLOW = { pink: 1, fuchsia: 1 };
+  var WRITE_HEX = { indigo:'#4338CA', amber:['#FF9F1C','#2B1600'] /* 갈색(#B45309)은 못생겼다고 해서 탠저린 */, rose:'#E11D48', teal:'#0F766E', purple:'#7E22CE', blue:'#1D4ED8',
+    cyan:'#0E7490', orange:'#EA580C', fuchsia:'#A21CAF', sky:'#0369A1', violet:'#1A3FB5', pink:'#DB2777', lime:'#4D7C0F', slate:'#475569' };
+  var BAR_FULL = true;       // 여러 날 막대도 고른 색으로 꽉 채움
   // ★ (2026-10-11) 시리즈 이름으로 색 고정 — 일정마다 만들어질 때 색이 박혀 있어 같은 R 시리즈도 남색·파랑이 섞였고,
   //   남색이 IELTS 보라와 겹쳐 안 보였다. R 시리즈는 전부 청록 (글쓰기 진하게 · 연재 조금 밝게).
   var SERIES_FIXED = [ { re: /^R/i, write: '#0D9488', pub: '#14B8A6' } ];
@@ -280,22 +292,24 @@
   //   (2026-10-11 v2) 그래도 회사 일정만 보인다 → 하루짜리 개인 일정은 진한 색 꽉 채움 + 흰 글씨,
   //   글쓰기는 진한 남보라 꽉 채움 + ✎ + 조금 더 높게. 여러 날 기간 바는 넓어서 지금처럼 옅게 둔다.
   //   대신 GTM 일반 항목은 옅게(index.html .wbc-gtm), ★ 핵심만 빨강 그대로.
-  // (2026-11-06) 4색 문법 (DESIGN.md §2 달력 색): 일정마다 고른 색 대신 뜻으로 칠한다.
-  //   업무 마일스톤(데드라인) = 코발트 · 연차·여행 = 모래(잉크 글자) · 그 밖의 개인·글쓰기 = 흰 바탕 + 잉크 선.
-  //   (업무 일정 GTM 은 gtmBarHtml·.wbc-gtm 에서 회색 실선). 예전 고른 색(ev[3])은 데이터에 그대로 둔다.
-  var INK_OUTLINE = "background:#fff;color:#15171c;box-shadow:inset 0 0 0 1px #15171c;";
+  // (2026-11-06 밤) 누리: "카테고리별 색을 다 지우면 어떡해" → 4색 문법 되돌림, 일정마다 고른 색 그대로
+  var INK_OUTLINE = "__unused__";
   function solidStyle(ev, noBar, full) {
     var k = (ev[3]||"").trim();
-    if (k === "deadline" || ev[2] === '데드라인') return "background:#1F4BD8;color:#fff;";
+    if (k === "deadline") return "background:#FF3B00;color:#fff;";
+    // 글쓰기는 작품(시리즈) 색으로 — B·R 시리즈가 구분되게. 시리즈 색을 흰 글씨가 읽히는 진한 톤으로.
+    if (isWriting(ev)) { var so = seriesOverride(ev); if (so) return "background:" + so.write + ";color:#fff;";
+      var wh = WRITE_HEX[k] || "#3B23A8"; return "background:" + (Array.isArray(wh) ? wh[0] + ";color:" + wh[1] : wh + ";color:#fff") + ";"; }
+    // (2026-10-11 v3) 분홍 계열로 고른 일정만 핫 옐로우로 (누리: "핑크가 안 예뻐") — 나머지는 각자 고른 색 그대로.
+    //   하루짜리·여러 날 막대 모두 꽉 채움 (옅은 바탕 + 왼쪽 띠는 약해 보여서 뺌).
+    // (2026-10-11) 연차 카테고리(미리 잡은 여행·휴가 — 예전 기본색 청록이 R 시리즈 청록과 겹침)
+    //   (v2) 줄무늬는 못생겼다 → 하늘 → 라벤더 → 핑크 노을 그라데이션. 'fixed' 라 여러 칸에 걸친 막대도 한 장처럼 이어진다
+    //   (2026-11-01) 여행 = 모래 (홈 그림 색, DESIGN.md) — 모래 위 글자는 진한 잉크
     if (isTrip(ev)) return "background:#F0A647;color:#16161A;";
-    return INK_OUTLINE;
-  }
-  // 여러 날 막대는 칸마다 끊겨 보이지 않게 위·아래 선만, 시작 칸은 왼쪽·끝 칸은 오른쪽 선까지
-  function barOutline(color, head, tail) {
-    var sh = ['inset 0 1px 0 ' + color, 'inset 0 -1px 0 ' + color];
-    if (head) sh.push('inset 1px 0 0 ' + color);
-    if (tail) sh.push('inset -1px 0 0 ' + color);
-    return 'box-shadow:' + sh.join(',') + ';';
+    if (PINK_TO_YELLOW[k]) return "background:#FFE01A;color:#111;";
+    var c = SOLID[k] || SOLID.indigo;
+    if (full || BAR_FULL) return "background:" + c[1] + ";color:#fff;";
+    return "background:" + c[0] + ";color:" + c[2] + ";" + (noBar ? "" : "box-shadow:inset 4px 0 0 " + c[1] + ";");
   }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
@@ -463,7 +477,8 @@
   // 기간 GTM 막대 — ★ 핵심은 빨강, 일반은 회색 + 시즌색 띠 (칸 칩과 같은 말투)
   function gtmBarHtml(g, ds, dow) {
     var head = ds === g.date || dow === 0, tail = ds === g.end || dow === 6, key = gtmIsKey(g);
-    var st = key ? 'background:#1F4BD8;color:#fff;' : 'background:#fff;color:#2a2e35;' + barOutline('#DCDCE3', head, tail);
+    var stripe = g.series === 'q2' ? '#E0B800' : '#22B07A';
+    var st = key ? 'background:#E8283F;color:#fff;' : 'background:#F3F3F1;color:#3a3a3a;' + (head ? 'box-shadow:inset 3px 0 0 ' + stripe + ';' : '');
     var lbl = (key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM') + '  ' + g.title;
     return '<span class="wbc-rb wbc-gtmb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + st + '" title="' + esc((g.team || '') + ' · ' + g.title + ' (' + g.date.slice(5) + ' ~ ' + g.end.slice(5) + ')') + '">' +
       (head ? '<em>' + esc((key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM')) + '</em>' + esc(g.title) : '&nbsp;') + '</span>';
@@ -640,7 +655,7 @@
 
   // ─────────────── 폰 (<768px): 점 달력 + '오늘부터' 일정 목록 (2026-11-06 3차) ───────────────
   //   7칸 달력에 일정 이름을 넣으면 전부 "27FW MD - Shar…" 로 잘린다 → 폰에선 칸엔 점만, 이름은 아래 목록에.
-  //   점·칩 색은 데스크탑과 같은 4색 문법(업무 마일스톤 코발트 · 업무 일정 회색 선 · 개인 잉크 선 · 연차·여행 모래).
+  //   점·칩 색은 데스크탑 일정 색 그대로 (11/06 밤 누리: 카테고리 색 살리기).
   var _mFrom = null;   // 목록 시작일 (지난 날을 누르면 그날부터)
   function isPhone() { return !!(window.matchMedia && window.matchMedia('(max-width:767.98px)').matches); }
   function dayRows(ds) {
@@ -655,6 +670,8 @@
     });
     return { gtm: gtmAllOn(ds), evs: evs, att: mine.filter(function(x){ return x.kind !== 'otEarn'; }) };
   }
+  // (11/06 밤) 폰 점·목록 칩도 일정 색 그대로 — solidStyle 의 바탕색을 꺼내 쓴다
+  function evDot(ev) { var m = /background:([^;]+);/.exec(solidStyle(ev, true, true)); return m ? m[1] : '#5B5B66'; }
   function evKind(ev) { return ((ev[3]||'').trim() === 'deadline' || ev[2] === '데드라인') ? 'key' : (isTrip(ev) ? 'off' : 'me'); }
   function dayKinds(ds) {
     var r = dayRows(ds), k = {};
@@ -673,14 +690,24 @@
       (dow === 0 || dow === 6 ? ' is-wknd' : '') + (other ? ' is-other' : '') + (ds < td ? ' is-past' : '');
     b.dataset.date = ds;
     b.setAttribute('aria-label', (d.getMonth() + 1) + '월 ' + d.getDate() + '일' + (hol ? ' ' + hol : ''));
-    var ks = other ? [] : dayKinds(ds);
-    b.innerHTML = '<span class="n">' + d.getDate() + '</span><span class="dots">' + ks.map(function(k){ return '<i class="k-' + k + '"></i>'; }).join('') + '</span>';
+    var ks = other ? [] : dayDots(ds);
+    b.innerHTML = '<span class="n">' + d.getDate() + '</span><span class="dots">' + ks.map(function(c){ return '<i style="background:' + c + '"></i>'; }).join('') + '</span>';
     b.onclick = function() { wbcPhoneTap(ds); };
     return b;
   }
+  function gtmDot(g) { return g.key ? '#E8283F' : (g.series === 'q2' ? '#E0B800' : '#22B07A'); }
+  function dayDots(ds) {
+    var r = dayRows(ds), out = [];
+    r.gtm.forEach(function(g){ out.push(gtmDot(g)); });
+    r.evs.forEach(function(ev){ out.push(evDot(ev)); });
+    if (r.att.length) out.push('#F0A647');
+    return out.filter(function(c, i){ return out.indexOf(c) === i; }).slice(0, 4);
+  }
+  // kind 자리에 색(#…)을 받는다 — 일정마다 고른 색 그대로 (11/06 밤)
   function mlRow(kind, title, meta, onclick) {
+    var dot = /^(#|rgb)/.test(kind) ? ' style="background:' + kind + '"' : '';
     return '<div class="wbc-ml-row"' + (onclick ? ' role="button" tabindex="0" onclick="' + onclick + '"' : '') + '>' +
-      '<i class="wbc-ml-k k-' + kind + '" aria-hidden="true"></i><span class="t">' + esc(title) + '</span>' +
+      '<i class="wbc-ml-k' + (dot ? '' : ' k-' + kind) + '"' + dot + ' aria-hidden="true"></i><span class="t">' + esc(title) + '</span>' +
       (meta ? '<span class="m">' + esc(meta) + '</span>' : '') + '</div>';
   }
   function md(ds) { return (+ds.slice(5, 7)) + '/' + (+ds.slice(8, 10)); }
@@ -700,16 +727,16 @@
       r.gtm.forEach(function(g) {
         var rng = gtmIsRange(g);
         if (rng && ds !== g.date && !first) return;
-        rows += mlRow(g.key ? 'key' : 'work', g.title, [(g.key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM'), rng ? md(g.date) + '~' + md(g.end) : ''].filter(Boolean).join(' · '));
+        rows += mlRow(gtmDot(g), g.title, [(g.key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM'), rng ? md(g.date) + '~' + md(g.end) : ''].filter(Boolean).join(' · '));
       });
       r.att.forEach(function(x) {
         if (x.full && ds !== x.start && !first) return;
-        rows += mlRow('off', '누리 ' + x.label, [x.full ? (x.start !== x.end ? md(x.start) + '~' + md(x.end) : '종일') : (x.time || fmtH(x.hours)), x.plan ? '결재 전' : ''].filter(Boolean).join(' · '));
+        rows += mlRow('#F0A647', '누리 ' + x.label, [x.full ? (x.start !== x.end ? md(x.start) + '~' + md(x.end) : '종일') : (x.time || fmtH(x.hours)), x.plan ? '결재 전' : ''].filter(Boolean).join(' · '));
       });
       r.evs.forEach(function(ev) {
         var s = (ev[0]||'').toString(), e = (ev[5]||'').toString(), rng = e && e > s;
         if (rng && ds !== s && !first) return;
-        rows += mlRow(evKind(ev), (isWriting(ev) ? '✎ ' : (isTrip(ev) ? '✈ ' : '')) + ev[1],
+        rows += mlRow(evDot(ev), (isWriting(ev) ? '✎ ' : (isTrip(ev) ? '✈ ' : '')) + ev[1],
           [ev[2] || '', rng ? md(s) + '~' + md(e) : ''].filter(Boolean).join(' · '), 'openPlannerModal(' + idxRef(ev) + ')');
       });
       var isSel = ds === _sel;
@@ -962,19 +989,7 @@
   var TL = ['#cal-work-timeline-section', '#work-timeline-section'];
   function tl(sel) { return TL.map(function(r) { return r + ' div.relative.flex-1 > div.absolute.top-1\\.5' + sel; }).join(', '); }
   var R4_CSS = [
-    /* 글쓰기 단계(시놉·초고·퇴고·연재) = 개인·글쓰기 → 흰 바탕 + 잉크 1px 선, 잉크 글자 11px */
-    tl('') + ' { background:#fff !important; opacity:1 !important; border-radius:0 !important; box-shadow:inset 0 0 0 1px #15171C; }',
-    tl(' > span') + ' { font-size:11px !important; font-weight:600 !important; color:#15171C !important; line-height:20px; }',
-    /* 휴식 = 쉬는 칸 → 점선 회색, 보조 글자 */
-    tl('[title^="휴식"]') + ' { box-shadow:none; outline:1px dashed #8A8A95; outline-offset:-1px; }',
-    tl('[title^="휴식"] > span') + ' { color:#5B5B66 !important; }',
-    /* 연재 = 밖으로 나가는 마일스톤 → 코발트 꽉 채움 + 흰 글자 (6.9:1) */
-    tl('[title^="연재"]') + ' { background:#1F4BD8 !important; box-shadow:none; }',
-    tl('[title^="연재"] > span') + ' { color:#fff !important; }',
-    /* 머리줄 범례 견본도 같은 문법 (순서: 시놉·초고·퇴고·휴식·연재) */
-    TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span > span.w-2\\.5'; }).join(', ') + ' { width:14px; height:10px; border-radius:0; background:#fff !important; box-shadow:inset 0 0 0 1px #15171C; }',
-    TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span:nth-child(4) > span.w-2\\.5'; }).join(', ') + ' { box-shadow:none; outline:1px dashed #8A8A95; outline-offset:-1px; }',
-    TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span:nth-child(5) > span.w-2\\.5'; }).join(', ') + ' { background:#1F4BD8 !important; box-shadow:none; }',
+    tl(' > span') + ' { font-size:11px !important; font-weight:600 !important; line-height:20px; }',
     TL.map(function(r) { return r + ' .flex.gap-2\\.5'; }).join(', ') + ' { font-size:12px !important; color:#5B5B66 !important; flex-wrap:wrap; row-gap:4px; }',
     TL.map(function(r) { return r + ' .flex.gap-2\\.5 > span'; }).join(', ') + ' { white-space:nowrap; flex:none; }',
     TL.map(function(r) { return r + ' > div:first-child > div.flex.items-center.gap-2'; }).join(', ') + ' { flex-wrap:wrap; row-gap:6px; }',

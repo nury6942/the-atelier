@@ -2274,11 +2274,10 @@ function ldgRenderCatGrid() {
     if (cmpA || cmpB) html += '<p class="text-[12px] text-right mt-0.5 font-semibold" style="font-feature-settings:\'tnum\'">' + [cmpA, cmpB].filter(Boolean).join(' <span style="color:#475569">·</span> ') + '</p>';
     html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
-    // 2026-11-06 3차: 0원 소분류("—") 줄은 숨김 — 쓴 것만 보인다
+    // 0원 소분류도 "—" 로 보인다 — 목록이 있고 이 달 안 썼다는 뜻 (11/06 밤 누리: 지우지 말 것)
     subAmts.forEach(function(s) {
-      if (s.amt > 0) {
-        html += '<li class="text-xs leading-relaxed flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
-      }
+      html += '<li class="text-xs leading-relaxed flex justify-between"><span class="text-slate-700">' + s.name + '</span>' +
+        (s.amt > 0 ? '<span class="text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span>' : '<span style="color:#5B5B66">—</span>') + '</li>';
     });
     html += '</ul>';
     var safeCatId = catName.replace(/[^a-zA-Z0-9가-힣]/g, '_');
@@ -2322,8 +2321,8 @@ function ldgRenderCatGrid() {
       if (window.ldgCatBar && hasBudget && budgetTotal > 0 && !isGoodUp && catName !== '포인트' && catName !== '미분류' && catName !== '여행') { _heroV += totalAmt; _heroCap += budgetTotal; }
     }
     html += '</div>';
-    // 2026-11-06 3차: 이번 달 쓴 돈도 예산도 없는 카테고리는 카드 대신 한 줄로 접는다
-    if (totalAmt <= 0 && !(hasBudget && budgetTotal > 0) && _ldgBudgetEditingCat !== catName) {
+    // (11/06 밤) 0원 카테고리도 카드 그대로 — 접기 끔 (누리: 안 쓴 것도 보여야 함)
+    if (false && totalAmt <= 0 && !(hasBudget && budgetTotal > 0) && _ldgBudgetEditingCat !== catName) {
       _zeroHtml += html.slice(_cardStart);
       html = html.slice(0, _cardStart);
       _zeroCats.push(catName);
