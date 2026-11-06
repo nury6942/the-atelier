@@ -220,15 +220,11 @@
   .mast{border-bottom:1px solid var(--ink)}
   .card,.post,.try{border-color:var(--hair)}
   .post > .img,.post .peek{border-bottom-color:var(--hair)}
-  .try.must{background:#fff;color:var(--ink);border:1px solid var(--hair);border-top:3px solid var(--accent)}
-  .try.must .steps{background:var(--hair);border-color:var(--hair)}
-  .try.must .step{background:#fff}
-  .try.must .step .n{color:var(--accent);opacity:1}
   .try .min,.try .why2,.try .from{opacity:1}
   .try .why2{color:#475569}
+  .try.must .why2,.try.must .min,.try.must .from{color:rgba(255,255,255,.85)}  /* (11/06 밤) 누리: 검정 판 되살림 — 흰 글자 */
   .try .min{color:#5B5B66}
-  .try.must .done-btn,.done-btn{opacity:1;border-color:var(--hair)}
-  .try.must .step .act{border-color:var(--accent);color:var(--accent)}
+  .try:not(.must) .done-btn{opacity:1;border-color:var(--hair)}
   .try.done .done-btn,.try:not(.must).done .done-btn{background:#EEF2FD;color:#1A3FB5;border-color:#1F4BD8}
   /* 보기 전환 토글: 회색 칸 안에서 고른 것만 흰 바탕 + 선 (DESIGN.md 5장) */
   .seg{border:0;background:#F5F5F7;padding:3px;gap:3px}
