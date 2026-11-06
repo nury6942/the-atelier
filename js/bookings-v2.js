@@ -145,7 +145,7 @@
     if (!anchor) return false;
     var s = document.createElement('section');
     s.id = ID;
-    s.innerHTML = '<div class="trv-sec-head"><div><p class="trv-sec-eyebrow">Timeline</p><h3 class="trv-sec-title">날짜순 예약</h3></div></div><div id="' + ID + '-body"></div>';
+    s.innerHTML = '<div class="trv-sec-head"><div><h2 class="trv-sec-title">날짜순 예약</h2></div></div><div id="' + ID + '-body"></div>';
     anchor.parentNode.insertBefore(s, anchor);
     return true;
   }

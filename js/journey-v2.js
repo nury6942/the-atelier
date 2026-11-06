@@ -136,7 +136,7 @@
           'onclick="window.journeyStopJump && journeyStopJump(\'' + safeName + '\')" ' +
           'onmouseenter="window.journeyCityImageSetActive && journeyCityImageSetActive(\'' + key + '\')" ' +
           'onmouseleave="window.journeyCityImageClearActive && journeyCityImageClearActive(\'' + key + '\')">' +
-          '<div class="jv-stop-img"' + (img ? ' style="background-image:url(\'' + img.replace(/'/g, '%27') + '\')"' : '') + '>' +
+          '<div class="jv-stop-img' + (img ? '' : ' is-empty') + '"' + (img ? ' style="background-image:url(\'' + img.replace(/'/g, '%27') + '\')"' : '') + '>' +
             '<span class="jv-stop-no">' + String(i + 1).padStart(2, '0') + '</span>' +
             (function() {
               var cr = img && window.journeyCityImageCredit && window.journeyCityImageCredit(c._id || ('idx-' + i));
@@ -146,11 +146,11 @@
                 '<a class="nm" href="' + esc(cr.link) + '" target="_blank" rel="noopener">' + esc(cr.name) + '</a>' +
                 '<span class="sl">/</span><a href="https://unsplash.com/?utm_source=the_atelier&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></span>';
             })() +
-            (img ? '' : '<span class="jv-stop-ph">사진 없음 · Ctrl+V</span>') +
+            (img ? '' : '<span class="jv-stop-ph"><b>' + esc(en || kr) + '</b><i>Ctrl+V 로 사진</i></span>') +
             '<span class="jv-stop-ctl">' +
               '<button type="button" onclick="event.stopPropagation();journeyCityImageUpload(\'' + key + '\')">' + (img ? '사진 변경' : '사진 추가') + '</button>' +
               '<button type="button" onclick="event.stopPropagation();editCityEntry(' + i + ')">수정</button>' +
-              '<button type="button" onclick="event.stopPropagation();deleteCityEntry(' + i + ')">삭제</button>' +
+              '<button type="button" onclick="event.stopPropagation();atlTapConfirm(this,function(){deleteCityEntry(' + i + ')})">삭제</button>' +
             '</span>' +
             '<input type="file" accept="image/*" style="display:none" data-city-key="' + key + '" onchange="event.stopPropagation();journeyCityImageFileSelected(event,\'' + key + '\')">' +
           '</div>' +

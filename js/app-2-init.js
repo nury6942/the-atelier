@@ -452,7 +452,7 @@ function _refScheduleAutoSave() {
   var statusEl = document.getElementById('ref-save-status');
   if (statusEl) {
     statusEl.textContent = '편집 중...';
-    statusEl.style.color = '#7b7487';
+    statusEl.style.color = '#5B5B66';
     statusEl.style.opacity = '1';
   }
   _refAutoSaveTimer = setTimeout(function() {
@@ -1365,6 +1365,7 @@ async function loadLedgerData() {
   _ldgAssetYear = _ldgYear;
   ldgCheckDataAnomaly();
   ldgRenderMonthly();
+  if (_ledgerTabActive === 'assets' && typeof ldgRenderAssets === 'function') ldgRenderAssets();  // Assets 탭 '거래 기준 자산표'로 들어온 경우
 }
 
 var _ledgerLoaded = false;

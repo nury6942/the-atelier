@@ -10342,9 +10342,9 @@
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
   }
 
-  async function deleteTripEntry(tripId) {
+  async function deleteTripEntry(tripId, confirmedInline) {
     var trip = tripsData.find(function(t){ return t._id === tripId; });
-    if (!confirm('"' + (trip?trip.name:'') + '" 여행을 삭제할까요?')) return;
+    if (!confirmedInline && !confirm('"' + (trip?trip.name:'') + '" 여행을 삭제할까요?')) return;
     try {
       await fbDelete('trips', tripId);
       tripsData = tripsData.filter(function(t){ return t._id !== tripId; });
@@ -12514,7 +12514,7 @@
       }
       // 4개 카드 그리드 렌더 — 각 카드 다른 파스텔 컬러 (순서별 사이클)
       var BRIEF_CARD_PALETTE = [
-        { bg: 'linear-gradient(135deg,#F5F7FE 0%,#EEF2FD 100%)', iconBg: '#ddd6fe', iconColor: '#1F4BD8', border: '#e9d5ff', titleColor: '#3b0764', tagColor: '#6b21a8' },
+        { bg: 'linear-gradient(135deg,#F5F7FE 0%,#EEF2FD 100%)', iconBg: '#ddd6fe', iconColor: '#1F4BD8', border: '#e9d5ff', titleColor: '#3b0764', tagColor: '#1A3FB5' },
         { bg: 'linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%)', iconBg: '#fed7aa', iconColor: '#ea580c', border: '#fdba74', titleColor: '#7c2d12', tagColor: '#9a3412' },
         { bg: 'linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%)', iconBg: '#bbf7d0', iconColor: '#15803d', border: '#86efac', titleColor: '#14532d', tagColor: '#166534' },
         { bg: 'linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%)', iconBg: '#bfdbfe', iconColor: '#2563eb', border: '#93c5fd', titleColor: '#1e3a8a', tagColor: '#1e40af' }
@@ -13194,7 +13194,7 @@
         tp += '<div class="rounded-xl p-3.5 border" style="background:#faf5ff;border-color:#e9d5ff;">';
         tp += '<div class="flex items-baseline justify-between gap-2 mb-2">';
         tp += '<span class="font-bold text-[14px]" style="color:#581c87;">' + (p.pattern || '') + '</span>';
-        if (p.count) tp += '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:#e9d5ff;color:#6b21a8;">' + p.count + '개</span>';
+        if (p.count) tp += '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:#e9d5ff;color:#1A3FB5;">' + p.count + '개</span>';
         tp += '</div>';
         if (p.examples && p.examples.length) {
           tp += '<div class="space-y-1">';
@@ -21913,12 +21913,12 @@
       n.style.background=''; n.style.color=''; n.style.borderLeft=''; n.classList.remove('is-active');
     });
     // Travel / Travel Budget / Travel Checklist는 같은 사이드바 (nav-journey) 활성 처리
+    // (2026-11-06) 사이드바에 하위 줄(Travel Budget·Checklist·Daily Ledger·Side Jobs)이 생겨서 그 줄 자체를 켠다
     let activeNavId = pageId;
-    if (pageId === 'finance' || pageId === 'packing') activeNavId = 'journey';
     // Year Matrix는 Calendar 사이드바 (nav-planner) 활성 처리
     if (pageId === 'matrix') activeNavId = 'planner';
     // Daily Ledger / Side Jobs는 Money 사이드바 (nav-finance-hub) 활성 처리
-    if (pageId === 'ledger' || pageId === 'income' || pageId === 'tax') activeNavId = 'finance-hub';
+    if (pageId === 'tax') activeNavId = 'finance-hub';
     const a = document.getElementById('nav-'+activeNavId);
     if(a) {
       a.classList.add('is-active');
@@ -27021,7 +27021,7 @@
           baseInfo.textContent = '기초 자산: 유동 ' + base.cash.toLocaleString('ko-KR') + '만 / 비유동 ' + base.savings.toLocaleString('ko-KR') + '만';
         } else { baseInfo.style.display = 'none'; }
       }
-      monthlyGrid.innerHTML = allMonths.map(function(m, idx) {
+      var _cards = allMonths.map(function(m, idx) {
         var monthKey = yr + '-' + m;
         var monthItems = [];
         hubData.forEach(function(row, ri) {
@@ -27049,10 +27049,12 @@
         var isActive = idx === curMonth && curYear === hubYear;
         var isPending = !hasData;
 
+        // (2026-11-06) 지나간 빈 달은 카드 대신 한 줄로 묶는다 (아래 _cards 묶기)
+        if (isPending && (hubYear < curYear || (hubYear === curYear && idx < curMonth))) return { emptyPast: true, idx: idx, key: monthKey };
         if (isPending) {
           return '<div class="flex flex-col" style="background:#fff;border:1px dashed #DCDCE3;min-height:100%">' +
             '<div class="px-6 py-4 flex justify-between items-center">' +
-              '<h3 class="font-bold text-lg" style="color:#8A8A95">' + MONTHS_KR[idx] + '</h3>' +
+              '<h3 class="font-bold text-lg" style="color:var(--atl-text-2)">' + MONTHS_KR[idx] + '</h3>' +
               '<span class="atl-chip">Planned</span>' +
             '</div>' +
             '<div class="p-5 flex-grow flex flex-col items-center justify-center gap-2">' +
@@ -27084,7 +27086,7 @@
             '<td class="hub-cell py-2 text-right text-xs font-bold ' + colorCls + '" data-col="2">' + sign + amt.toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + Math.round(itemRunning).toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right w-8"><div class="opacity-0 group-hover:opacity-100 transition-all">' +
-              '<button onclick="event.stopPropagation();deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
+              '<button onclick="event.stopPropagation();atlTapConfirm(this,function(){deleteHubRow(' + mi.idx + ')})" class="atl-tapdel" title="삭제 (한 번 더 누르면 지워져요)" aria-label="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
             '</div></td></tr>';
         }).join('');
 
@@ -27135,7 +27137,22 @@
               '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:var(--lavender-deep);') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
           '</div></div>';
-      }).join('');
+      });
+      var _out = [];
+      for (var ci = 0; ci < _cards.length; ci++) {
+        var c = _cards[ci];
+        if (typeof c === 'string') { _out.push(c); continue; }
+        var run = [c];
+        while (ci + 1 < _cards.length && typeof _cards[ci + 1] !== 'string') run.push(_cards[++ci]);
+        var lbl = run.length === 1 ? (run[0].idx + 1) + '월' : (run[0].idx + 1) + '–' + (run[run.length - 1].idx + 1) + '월';
+        _out.push('<div class="hub-empty-run col-span-full flex items-center gap-3 flex-wrap" style="border:1px dashed #DCDCE3;padding:10px 16px;font-size:13px;color:var(--atl-text-2)">' +
+          '<b style="color:var(--atl-text);font-weight:600">' + lbl + ' 기록 없음</b>' +
+          '<span style="margin-left:auto;display:flex;gap:4px">' +
+            '<button onclick="openHubModalForMonth(\'' + run[0].key + '\')" class="atl-btn atl-btn-ghost"><span class="material-symbols-outlined">add</span>항목 추가</button>' +
+            '<button onclick="openMonthCopyModal(\'' + run[0].key + '\')" class="atl-btn atl-btn-ghost"><span class="material-symbols-outlined">content_copy</span>다른 월에서 복사</button>' +
+          '</span></div>');
+      }
+      monthlyGrid.innerHTML = _out.join('');
     }
 
     // "이전 년도 복사" 버튼 토글: 현재 년도가 비어있고 이전 년도에 항목이 있을 때만 표시
@@ -28126,6 +28143,17 @@
   }
 
   function editHubRow(i){openHubModal(i);}
+  // (2026-11-06) 인라인 두 번 누르기 확인 — 모달·팝업 없이. 첫 클릭: 버튼이 '삭제?' 로 바뀜(3초), 두 번째 클릭: 실행
+  function atlTapConfirm(btn, fn) {
+    if (btn.dataset.armed === '1') { btn.dataset.armed = ''; clearTimeout(btn._atlT); fn(); return; }
+    btn.dataset.armed = '1';
+    btn._atlHtml = btn.innerHTML;
+    btn.classList.add('is-armed');
+    btn.textContent = '삭제?';
+    btn._atlT = setTimeout(function(){ btn.dataset.armed = ''; btn.classList.remove('is-armed'); btn.innerHTML = btn._atlHtml; }, 3000);
+  }
+  if (typeof window !== 'undefined') window.atlTapConfirm = atlTapConfirm;
+
   async function deleteHubRow(i){
     try{
       const id = hubData[i][5];
