@@ -11521,7 +11521,7 @@
 
   <!-- ★ (2026-11-06 2차 다듬기) Help 페이지 + 폰 폭(<768px) 정리. 다른 스타일보다 뒤에 둬서 이긴다 -->
   <style id="atl-round2">
-    #page-help .hp-wrap { max-width:880px; margin:0 auto; padding:32px 32px 80px; }
+    #page-help .hp-wrap { max-width:880px !important; margin:0 auto !important; padding:32px 32px 80px !important; }
     #page-help .hp-h { margin:0 0 6px; }
     #page-help .hp-lead { font-size:14px; color:#5B5B66; margin:0 0 36px; line-height:1.55; }
     #page-help .hp-sec { margin:0 0 40px; }
@@ -11538,7 +11538,7 @@
     #page-help .hp-del { color:#DC2626; font-weight:700; }
     #page-help .hp-note { font-size:13px; color:#5B5B66; margin:14px 0 0; line-height:1.55; }
     @media (max-width:767px) {
-      #page-help .hp-wrap { padding:24px 16px 64px; }
+      #page-help .hp-wrap { padding:24px 16px 64px !important; }
       #page-help .hp-list > div { grid-template-columns:minmax(0,1fr); gap:4px; padding:12px 0; }
       #page-help .hp-list dt a { display:inline-flex; min-height:32px; align-items:center; }
     }
