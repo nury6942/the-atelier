@@ -3,7 +3,7 @@
 // 큰 그림(집 마감 · 그달 판정 · 나의 규칙) → 연간 목표 → 이 달 플레이북(작년 같은 달) → 세부(봉투 5개 · 큰 결제 · 어디에 썼나) → 나라는 사람(지난 달들로 본 성향).
 
 // 글자색은 진하게만 (연회색 금지 — 누리)
-var BK = { ink: '#0f172a', sub: '#334155', mute: '#475569', red: '#d9695e', green: '#3fa37f', amber: '#334155', indigo: '#1d5fd1', data: '#2f7ff0', soft: '#9cc4fb', track: '#e5effe', dataText: '#1d5fd1' };
+var BK = { ink: '#0f172a', sub: '#334155', mute: '#475569', red: '#E11D48', green: '#15803D', amber: '#334155', indigo: '#1d5fd1', data: '#2f7ff0', soft: '#9cc4fb', track: '#e5effe', dataText: '#1d5fd1' };
 // 막대 밑 라벨을 '막대 끝 자리'에 단다 (왼쪽 정렬 줄글 금지 — 누리). tags: [{p: 0~100, h: html}]
 function _bTags(tags) {
   var html = tags.filter(function(t) { return t && t.h; }).map(function(t) {
@@ -515,7 +515,7 @@ function _boardCss() {
 // ── 연간 목표 (설정 → 연간 목표 값, 기존 '연간 목표 진행도'와 같은 계산)
 function _boardGoals() {
   var year = _ldgYear, goals = (typeof ldgLoadGoals === 'function' ? ldgLoadGoals() : {})[year] || {};
-  var keys = [['수입', true, '#2f7ff0'], ['지출', false, '#d9695e'], ['저축', true, '#2f7ff0'], ['부업', true, '#3fa37f']];
+  var keys = [['수입', true, '#2f7ff0'], ['지출', false, '#E11D48'], ['저축', true, '#2f7ff0'], ['부업', true, '#15803D']];
   if (!keys.some(function(k) { return goals[k[0]]; })) {
     return '<div class="lb-c" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#334155">' + year + '년 목표가 아직 없어요' +
       '<button class="lb-more" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 설정 →</button></div>';
@@ -535,7 +535,7 @@ function _boardGoals() {
     var goal = goals[k[0]] || 0, act = Math.round(tot[k[0]] / 10000);
     if (!goal) return '<div style="font-size:11px;color:#334155">' + k[0] + ' · 목표 없음</div>';
     var diff = act - goal * prog, good = k[1] ? diff >= 0 : diff <= 0;
-    var col = good ? '#3fa37f' : '#d9695e';
+    var col = good ? '#15803D' : '#E11D48';
     return '<div><div style="font-size:12px;color:#0f172a;font-weight:600">' + k[0] + '</div>' +
       '<div style="position:relative;height:15px;margin:4px 0 2px"><div style="position:absolute;left:0;top:4px;height:7px;width:62%;background:' + BK.track + '"></div>' +
         '<div style="position:absolute;left:0;top:4px;height:7px;width:' + (Math.min(100, act / goal * 100) * 0.62) + '%;background:' + col + '"></div>' +
@@ -572,7 +572,7 @@ var MIRROR_LEAK_GROUPS = [
   ['필수·고정', '#0f172a', '안 쓰면 안 되는 돈', '관리비·통신·주유·장보기·병원'],
   ['가치', '#0f172a', '내가 원해서 지키는 돈', '여행·가족·선물·영어·책'],
   ['일회성', '#0f172a', '가끔 크게 한 번', '30만↑ 물건·정체 모를 결제'],
-  ['습관성', '#d9695e', '자주·조금씩 새는 돈', '옷·외식·배달·카페… 줄일 곳']
+  ['습관성', '#E11D48', '자주·조금씩 새는 돈', '옷·외식·배달·카페… 줄일 곳']
 ];
 function _boardLeaks(ym) {
   var txs = (_ledgerData.transactions || []).filter(function(t) { return t['출처'] === '뱅샐' && t.date && _bS(t); });
@@ -629,7 +629,7 @@ var MIRROR_SPLIT = [
   ['연간 적립', 230000, '#334155', '영어 수업료·종소세 미리'],
   ['생활비', 1830000, '#2f7ff0', '카드 한 장 · 아래 칸별 한도'],
   ['여행', 0, '#2f7ff0', '매달 X · 200~300씩 한 번에'],
-  ['집 자금', 1690000, '#3fa37f', '2027-04부터 이주 자금']
+  ['집 자금', 1690000, '#15803D', '2027-04부터 이주 자금']
 ];
 // 생활비 칸별 한도 (원). 달별 예외는 MIRROR_MONTH_PLAN caps
 var MIRROR_LIVING = [
@@ -929,7 +929,7 @@ function _boardCats(ym, m, preview) {
 }
 
 function _boardSplit(ym, m) {
-  var L = m ? m.L : [], RED = '#d9695e', GREEN = '#3fa37f';
+  var L = m ? m.L : [], RED = '#E11D48', GREEN = '#15803D';
   var inc = _bSum(L, function(t) { return t['대분류'] === '수입'; });
   var sal = L.filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급'; });
   var bonus = sal.reduce(function(a, t) { return a + (t['금액'] > 4000000 ? t['금액'] - 3550000 : 0); }, 0);  // 평소 월급(≈355만) 넘는 몫 ≈ 상여
@@ -967,7 +967,7 @@ function _boardSplit(ym, m) {
 }
 
 function _boardLiving(ym, m, preview) {
-  var caps = _bPlan(ym).caps, RED = '#d9695e', GREEN = '#3fa37f';
+  var caps = _bPlan(ym).caps, RED = '#E11D48', GREEN = '#15803D';
   var sp = m ? m.L.filter(_bS) : [];
   var ly = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).L.filter(_bS); } catch (e) { return []; } })();
   var tot = 0, totCap = 0;
@@ -1017,7 +1017,7 @@ function ldgRenderBoard() {
     try { _bFixTags(el); } catch (e) {}
     return;
   }
-  var T = MIRROR_GOAL.amount, RED = '#d9695e', GREEN = '#3fa37f', h = '';
+  var T = MIRROR_GOAL.amount, RED = '#E11D48', GREEN = '#15803D', h = '';
   if (!m.L.some(function(t) { return t['출처'] === '뱅샐'; })) {
     h += '<div style="font-size:11px;color:#334155;background:#eef5fb;padding:6px 10px;margin-bottom:8px">' + mk + '은 손으로 적은 기록이에요 — 저축·여행 준비금 같은 이체가 섞여 있어 판정이 정확하지 않을 수 있어요</div>';
   }
