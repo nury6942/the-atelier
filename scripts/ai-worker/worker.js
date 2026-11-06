@@ -2,10 +2,11 @@
 // ═══════════════════════════════════════════════════════════
 //  Atelier AI 워커 — 사이트의 「구독으로 만들기」 대기열을 아이맥이 처리
 //
-//  사이트가 Firestore `aiJobs` 에 { kind:'study'|'annie', status:'queued', ... } 를 쓰면
+//  사이트가 Firestore `aiJobs` 에 { kind:'study'|'annie'|'noteqa', status:'queued', ... } 를 쓰면
 //  여기서 집어 와서 Claude 구독(`claude -p`)으로 만들고 결과를 저장한다.
 //    study → englishStudy/<docId>  (mode: deep=깊게 공부 · quick=보기 전 5분 → .quick · translate=전체 해석 → .translation · explain=하이라이트 풀이 → .marks.<key> · check=직접 해석 검수 → .practice.paras.<pi>)
 //    annie → englishSessions/<date>  (수업 트래커 'N회차' 는 사이트가 완료를 보고 만든다)
+//    noteqa → englishSessions/<docId>.myNotesQA.<qKey> = {q, a, at, status}  (My Notes 질문 카드 답 · 내 글은 안 건드림)
 //  API 요금 없음. 프롬프트는 사이트 원본(js/*.js)에서 매번 그대로 꺼낸다 — 사본 없음.
 //
 //  인증: 아이맥 gcloud 애플리케이션 기본 인증(ADC). 새 키 파일 없음.
@@ -199,6 +200,12 @@ async function saveResult(job, parsed) {
 }
 
 function validJob(job) {
+  if (job.kind === 'noteqa') {
+    if (!/^\d{4}-\d{2}-\d{2}/.test(job.docId || '') || /[\/]/.test(job.docId)) return 'docId 가 이상해요: ' + job.docId;
+    if (!/^\w{1,64}$/.test(job.qKey || '')) return 'qKey 가 없어요';
+    if (!String(job.question || '').trim()) return '질문이 비어 있어요';
+    return '';
+  }
   if (!job.transcript || !String(job.transcript).trim()) return '스크립트가 비어 있어요';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(job.date || '')) return '날짜 형식이 이상해요: ' + job.date;
   if (job.kind === 'study' && !/^[\w-]+$/.test(job.docId || '')) return 'docId 가 없어요';
@@ -213,7 +220,7 @@ async function claimNext() {
   const snap = await db.collection('aiJobs').where('status', '==', 'queued').get();
   if (snap.empty) return null;
   // 하이라이트 풀이(explain)는 짧고 누리가 화면 앞에서 기다리는 중 → 먼저
-  const pri = d => (d.get('mode') === 'explain' || d.get('mode') === 'check' ? 0 : 1);
+  const pri = d => (d.get('mode') === 'explain' || d.get('mode') === 'check' || d.get('kind') === 'noteqa' ? 0 : 1);
   const docs = snap.docs.sort((a, b) => pri(a) - pri(b) || String(a.get('createdAt')).localeCompare(String(b.get('createdAt'))));
   for (const d of docs) {
     const ok = await db.runTransaction(async t => {
@@ -227,6 +234,22 @@ async function claimNext() {
   return null;
 }
 
+// My Notes 답 칸 하나만 고친다 (다른 카드 답은 그대로) — 필드 경로로 update
+function setNoteQA(job, val) {
+  return db.collection('englishSessions').doc(job.docId).update(new admin.firestore.FieldPath('myNotesQA', job.qKey), val);
+}
+function noteqaPrompt(job) {
+  return readTemplate('js/app-1-pages.js', 'NOTEQA_PROMPT_TEMPLATE')
+    .replaceAll('{{LESSON}}', String(job.lesson || '(제목 없음)').slice(0, 300))
+    .replaceAll('{{QUESTION}}', String(job.context || job.question).slice(0, 4000));
+}
+// 답 정리: 앞에 붙는 안내 줄([F&F Policy Active] 등)·코드 울타리 제거, <i> 말고 태그는 지운다
+function cleanAnswer(raw) {
+  let t = String(raw || '').replace(/^\s*\[[^\]\n]*Policy[^\]\n]*\]\s*/i, '').replace(/^```\w*\n?|```\s*$/g, '').trim();
+  t = t.replace(/<(?!\/?i>)[^>]*>/g, '').replace(/\*\*/g, '');
+  return t;
+}
+
 async function failStale() {
   const snap = await db.collection('aiJobs').where('status', '==', 'running').get();
   const now = Date.now();
@@ -234,6 +257,7 @@ async function failStale() {
     const t = Date.parse(d.get('startedAt') || 0);
     if (t && now - t > STALE_RUNNING_MS) {
       await d.ref.update({ status: 'error', error: '처리 중 멈춤(30분 넘김) — 다시 시도해주세요', finishedAt: new Date().toISOString() });
+      if (d.get('kind') === 'noteqa') await setNoteQA(d.data(), { q: d.get('question') || '', status: 'error', err: '처리 중 멈춤', at: new Date().toISOString() }).catch(() => {});
       log('[stale]', d.id);
     }
   }
@@ -242,17 +266,28 @@ async function failStale() {
 async function processJob(job) {
   const t0 = Date.now();
   const bad = validJob(job);
-  if (bad) { await job.ref.update({ status: 'error', error: bad, finishedAt: new Date().toISOString() }); return; }
+  if (bad) { await job.ref.update({ status: 'error', error: bad, finishedAt: new Date().toISOString() }); if (job.kind === 'noteqa' && /^\w+$/.test(job.qKey || '') && job.docId) await setNoteQA(job, { q: job.question || '', status: 'error', err: bad, at: new Date().toISOString() }).catch(() => {}); return; }
   log('[start]', job.id, job.kind, job.date, (job.transcript || '').length + '자');
   let raw = '';
   try {
-    const quick = job.mode === 'check' || job.mode === 'explain';   // 누리가 화면 앞에서 기다리는 짧은 작업
+    const quick = job.mode === 'check' || job.mode === 'explain' || job.kind === 'noteqa';   // 누리가 화면 앞에서 기다리는 짧은 작업
     if (!quick) await pullRepo();                                  // 짧은 작업은 끝난 뒤에 받아 둔다(아래 finally)
     if (selfHash() !== BOOT_HASH) {           // 새 워커 코드가 내려옴 → 이 작업은 새 코드가 하게
       await job.ref.update({ status: 'queued', startedAt: admin.firestore.FieldValue.delete() });
       log('[worker] 코드가 바뀜 — 재시작'); process.exit(0);
     }
     let parsed;
+    if (job.kind === 'noteqa') {
+      await setNoteQA(job, { q: job.question, status: 'running', at: new Date().toISOString() }).catch(() => {});
+      raw = await runClaude(noteqaPrompt(job), job.model || 'sonnet');
+      const a = cleanAnswer(raw);
+      if (!a) throw new Error('빈 답이 왔어요');
+      await withTimeout(setNoteQA(job, { q: job.question, a, at: new Date().toISOString(), status: 'done' }), 60000, '답 저장');
+      await withTimeout(job.ref.update({ status: 'done', resultId: job.docId, finishedAt: new Date().toISOString(), ms: Date.now() - t0 }), 60000, '완료 표시');
+      log('[done]', job.id, 'noteqa →', job.docId, job.qKey, Math.round((Date.now() - t0) / 1000) + 's');
+      pullRepo();
+      return;
+    }
     if (job.mode === 'translate') parsed = await translateJob(job);
     else if (job.mode === 'explain') {
       const prompt = readTemplate('js/english-study.js', 'EXPLAIN_PROMPT_TEMPLATE').replaceAll('{{PHRASE}}', String(job.phrase || '')).replaceAll('{{CONTEXT}}', String(job.transcript));
@@ -278,8 +313,9 @@ async function processJob(job) {
   } catch (e) {
     log('[error]', job.id, e.message);
     await job.ref.update({ status: 'error', error: e.message.slice(0, 500), raw: raw.slice(0, 20000), finishedAt: new Date().toISOString() }).catch(() => {});
+    if (job.kind === 'noteqa') await setNoteQA(job, { q: job.question || '', status: 'error', err: e.message.slice(0, 120), at: new Date().toISOString() }).catch(() => {});
   }
-  if (job.mode === 'check' || job.mode === 'explain') pullRepo();   // 다음 작업용 최신 프롬프트 (기다리지 않음)
+  if (job.mode === 'check' || job.mode === 'explain' || job.kind === 'noteqa') pullRepo();   // 다음 작업용 최신 프롬프트 (기다리지 않음)
 }
 
 async function tick() {

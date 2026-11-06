@@ -1,3 +1,11 @@
+## 2026-11-06 밤 · 맥북 · My Notes 질문 카드 + 답 받기 (구독)
+
+- Annie 리뷰 오른쪽 My Notes: 자유 메모 → 질문 카드 목록 `englishSessions/<날짜>.myNotesItems=[{id,text,at}]` (Q1·Q2… 번호 자동, 글 누르거나 ✎ 로 고치기, 두 번 눌러 삭제, 아래 「+ 새 질문」 ⌘/Ctrl+Enter)
+- 처음 열 때 옛 myNotes 를 줄 머리 "19." 번호에서 쪼개 옮김(번호는 뗌, 글 손실 없음) — 옛 myNotes 문자열은 백업으로 그대로
+- 카드마다 「답 받기」 → aiJobs kind:'noteqa'(qKey=카드 id) → 아이맥 워커 claude -p(sonnet) → myNotesQA.<id>={q,a,at,status}. 질문이 바뀌면 옛 답 흐리게 + 다시 받기. 헤더 「질문 N개 · 답 M개」 + 남은 질문 일괄
+- 상세 여는 동안 문서 onSnapshot 으로 답이 바로 뜸, 프롬프트는 js/app-1-pages.js NOTEQA_PROMPT_TEMPLATE(워커가 꺼내 씀)
+- english-study.js: noteqa 는 ack·상단 대기열 띠에서 제외 · ?v= app-1-pages 426, english-study 27
+
 ## 2026-11-06 밤 · 맥북 · 폰 여행 예산 카드 A안
 
 - 폰(≤768)에서 카테고리 카드 「남음」 배지를 막대 아래로(.fbg-top 숨김 / .fbg-bot 표시) → 이름(항공권·숙소·생활비) 안 잘림, 데스크톱은 그대로

@@ -30596,46 +30596,206 @@ function openSessionDetail(dateId) {
   setTimeout(initEngScrollSpy, 300);
 }
 
-// ✍️ 수업 공책 (오른쪽 칸) — 누리가 자유롭게 적는 메모. englishSessions/<날짜>.myNotes 에 merge 저장
-//    쓰는 즉시 이 기기(localStorage)에 먼저 남기고, 0.8초 쉬면 Firestore 로. 실패해도 기기 사본이 있어 다음에 다시 보낸다.
-var _engNoteTimer = null;
+// ✍️ 수업 공책 (오른쪽 칸) — 질문 카드 목록 (2026-11-06 개편)
+//    englishSessions/<날짜>.myNotesItems = [{id, text, at}]  — 번호(Q1, Q2…)는 배열 순서로 자동
+//    옛 자유 메모 myNotes(문자열)는 백업으로 그대로 둔다(안 지우고 안 고침). 처음 열 때 "19." 같은 번호 줄로 쪼개 카드로 옮긴다.
+//    쓰는 즉시 이 기기(localStorage)에 먼저, 0.8초 쉬면 Firestore 로.
+//    「답 받기」 → aiJobs { kind:'noteqa', docId, qKey:카드 id, question } → 아이맥 워커(claude -p 구독)
+//      → myNotesQA.<카드 id> = {q, a, at, status}. 답은 따로 저장 — 내 글은 안 건드린다.
+// 아이맥 워커(scripts/ai-worker/worker.js kind:'noteqa')가 이 글을 그대로 꺼내 쓴다 — 사본 없음. ${} 쓰지 말 것
+var NOTEQA_PROMPT_TEMPLATE = `너는 한국인 성인 학습자의 영어 과외 선생님이다. 학습자는 패션 디자이너이고 독일 이직을 준비하며 C1·IELTS 수준을 목표로 공부한다.
+아래는 학습자가 영어 수업(Annie 회화 수업) 뒤 공책에 적은 메모 한 장이다. 메모 안에 학습자가 궁금해한 점(질문·의문·헷갈리는 점·요청)이 있다. 그 궁금증에 답하라.
+
+[수업] {{LESSON}}
+[학습자 메모]
+{{QUESTION}}
+
+답 쓰는 법:
+- 한국어로 2~5문장, 간결하게. 메모에 궁금한 게 여러 개면 모두 짧게 다룬다.
+- 도움이 되면 자연스러운 영어 예문 1~2개를 문장 안에 넣는다.
+- 학습자가 잘못 이해한 부분이 있으면 부드럽게 바로잡는다.
+- 제목·머리말·마크다운·목록·별표·따옴표 장식 없이 평범한 글만 쓴다.
+- 영어 단어·표현·예문은 반드시 <i>…</i> 로 감싼다. 다른 태그는 쓰지 않는다.
+- 인사말이나 "좋은 질문" 같은 말 없이 바로 답한다. 답 본문만 출력한다.`;
+var _engNoteTimer = null, _engNoteUnsub = null;
+function engNoteId(){ return 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function engNoteEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+// 답: 전부 이스케이프하고 <i>영어 표현</i> 만 살린다
+function engNoteAnsHtml(a){ return engNoteEsc(a).replace(/&lt;i&gt;([\s\S]*?)&lt;\/i&gt;/g, '<i class="enq-en">$1</i>'); }
+// 옛 메모 → 카드: 줄 머리의 "19." / "20. " 에서 새 카드, 첫 번호 앞 글은 따로 한 장. 번호는 떼고 글은 하나도 안 버린다
+function engNoteMigrate(text){
+  var items = [], cur = null, at = new Date().toISOString(), n = 0;
+  String(text || '').replace(/\r/g, '').split('\n').forEach(function(ln){
+    var m = ln.match(/^\s*\d{1,3}\s*\.(?!\d)\s*/);
+    if (m) { cur = { id: engNoteId() + (n++), text: ln.slice(m[0].length), at: at }; items.push(cur); }
+    else if (cur) cur.text += '\n' + ln;
+    else { cur = { id: engNoteId() + (n++), text: ln, at: at }; items.push(cur); }
+  });
+  return items.map(function(it){ it.text = it.text.replace(/\s+$/, '').replace(/^\n+/, ''); return it; }).filter(function(it){ return it.text.trim(); });
+}
+
 function renderEngNotes(dateId, s){
   var box = document.getElementById('eng-notes'); if (!box) return;
-  var KEY = 'atelier_eng_note_' + dateId, local = null;
+  if (_engNoteUnsub) { try { _engNoteUnsub(); } catch(e){} _engNoteUnsub = null; }
+  clearTimeout(_engNoteTimer); _engNoteTimer = null;
+  var KEY = 'atelier_eng_items_' + dateId, local = null;
   try { local = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
-  var remote = { text: s.myNotes || '', at: s.myNotesAt || '' };
-  // 기기 사본이 더 새것이면(저장 실패했던 것) 그쪽을 쓰고 다시 보낸다
-  var useLocal = local && local.text !== remote.text && (!remote.at || local.at > remote.at);
-  var text = useLocal ? local.text : remote.text;
+  var ref = (typeof db !== 'undefined' && db) ? db.collection('englishSessions').doc(dateId) : null;
+  var remoteAt = s.myNotesItemsAt || '';
+  var items, needSave = false;
+  if (local && Array.isArray(local.items) && (!remoteAt || local.at > remoteAt) && JSON.stringify(local.items) !== JSON.stringify(s.myNotesItems || null)) { items = local.items; needSave = true; }
+  else if (Array.isArray(s.myNotesItems)) items = s.myNotesItems;
+  else {
+    // 처음: 옛 메모(기기 사본이 더 새것이면 그것)에서 옮긴다
+    var old = null; try { old = JSON.parse(localStorage.getItem('atelier_eng_note_' + dateId) || 'null'); } catch(e){}
+    var oldText = (old && old.text && (!s.myNotesAt || old.at > s.myNotesAt)) ? old.text : (s.myNotes || '');
+    items = engNoteMigrate(oldText); needSave = items.length > 0;
+  }
+  items = JSON.parse(JSON.stringify(items || []));
+  var editing = null;   // 지금 고치는 카드 id
+
   box.innerHTML = '<div class="en-h"><b>My Notes</b><span class="en-st" id="eng-note-st"></span></div>' +
-    '<textarea id="eng-note-ta" spellcheck="false" placeholder="이 수업에서 적어 둘 것 — 자동으로 저장돼요"></textarea>' +
-    '<div class="en-f">이 수업에만 붙는 메모예요.</div>';
-  var ta = document.getElementById('eng-note-ta'), st = document.getElementById('eng-note-st');
-  ta.value = text;
+    '<div class="enq-bar" id="eng-note-bar"></div>' +
+    '<div class="enq-list" id="eng-note-list"></div>' +
+    '<div class="enq-new"><textarea id="eng-note-new" rows="2" spellcheck="false" placeholder="+ 새 질문 — ⌘/Ctrl+Enter 로 추가"></textarea><button type="button" class="atl-btn atl-btn-secondary enq-add">추가</button></div>' +
+    '<div class="en-f">내 글은 그대로 두고, 답은 따로 저장돼요</div>';
+  var st = document.getElementById('eng-note-st'), bar = document.getElementById('eng-note-bar'), list = document.getElementById('eng-note-list'), nw = document.getElementById('eng-note-new');
   function stamp(iso){ if (!iso) return ''; var d = new Date(iso); return '저장됨 · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
-  st.textContent = stamp(useLocal ? '' : remote.at);
+  st.textContent = stamp(remoteAt);
+  function alive(){ return document.getElementById('eng-note-list') === list; }
+  function keepLocal(at){ try { localStorage.setItem(KEY, JSON.stringify({ items: items, at: at })); } catch(e){} }
   function save(){
     clearTimeout(_engNoteTimer); _engNoteTimer = null;
-    var val = ta.value, at = new Date().toISOString();
-    try { localStorage.setItem(KEY, JSON.stringify({ text: val, at: at })); } catch(e){}
+    var at = new Date().toISOString(), snap = JSON.parse(JSON.stringify(items));
+    keepLocal(at);
     st.className = 'en-st'; st.textContent = '저장 중…';
-    var ref = (typeof db !== 'undefined' && db) ? db.collection('englishSessions').doc(dateId) : null;
     if (!ref) { st.className = 'en-st err'; st.textContent = '이 기기에만 보관됨'; return; }
-    ref.set({ myNotes: val, myNotesAt: at }, { merge: true }).then(function(){
-      s.myNotes = val; s.myNotesAt = at;
-      if (document.getElementById('eng-note-ta') === ta) st.textContent = stamp(at);
+    ref.set({ myNotesItems: snap, myNotesItemsAt: at }, { merge: true }).then(function(){
+      s.myNotesItems = snap; s.myNotesItemsAt = at;
+      if (alive()) st.textContent = stamp(at);
     }).catch(function(e){
       console.warn('[eng-notes] save failed', e);
-      if (document.getElementById('eng-note-ta') === ta) { st.className = 'en-st err'; st.textContent = '저장 실패 · 이 기기에 보관'; }
+      if (alive()) { st.className = 'en-st err'; st.textContent = '저장 실패 · 이 기기에 보관'; }
     });
   }
-  ta.addEventListener('input', function(){
-    st.className = 'en-st'; st.textContent = '쓰는 중…';
-    try { localStorage.setItem(KEY, JSON.stringify({ text: ta.value, at: new Date().toISOString() })); } catch(e){}
-    clearTimeout(_engNoteTimer); _engNoteTimer = setTimeout(save, 800);
+  function queueSave(){ st.className = 'en-st'; st.textContent = '쓰는 중…'; keepLocal(new Date().toISOString()); clearTimeout(_engNoteTimer); _engNoteTimer = setTimeout(save, 800); }
+
+  function fmtAt(iso){ if (!iso) return ''; var d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+  function norm(t){ return String(t || '').trim().replace(/\s+/g, ' '); }
+  function stateOf(it){
+    var r = (s.myNotesQA || {})[it.id];
+    if (!r) return 'none';
+    if (r.status === 'queued' || r.status === 'running') return 'wait';
+    if (r.status === 'error') return 'error';
+    if (r.status === 'done' && r.a) return norm(r.q) === norm(it.text) ? 'done' : 'stale';
+    return 'none';
+  }
+  function ansBox(r, dim){
+    return '<div class="enq-ans' + (dim ? ' dim' : '') + '"><div class="enq-ans-h"><span>답 · Claude</span><span>' + engNoteEsc(fmtAt(r.at)) + '</span></div><div class="enq-ans-b">' + engNoteAnsHtml(r.a) + '</div></div>';
+  }
+  function qaHtml(it){
+    var r = (s.myNotesQA || {})[it.id], k = engNoteEsc(it.id), stt = stateOf(it);
+    if (stt === 'done') return ansBox(r);
+    if (stt === 'stale') return ansBox(r, true) + '<div class="enq-act"><span class="enq-note">질문이 바뀌었어요</span><button type="button" class="enq-ask" data-ask="' + k + '">다시 받기</button></div>';
+    if (stt === 'wait') return '<div class="enq-wait"><i class="enq-dot"></i>답 받는 중… (구독으로, 2~3분)</div>';
+    if (stt === 'error') return '<div class="enq-act"><button type="button" class="enq-ask" data-ask="' + k + '">다시 받기</button><span class="enq-err">' + engNoteEsc(String(r.err || '실패').slice(0, 60)) + '</span></div>';
+    return '<div class="enq-act"><button type="button" class="enq-ask" data-ask="' + k + '">답 받기</button></div>';
+  }
+  function drawBar(){
+    var done = 0, pend = [];
+    items.forEach(function(it){ var x = stateOf(it); if (x === 'done') done++; else if (x !== 'wait' && it.text.trim()) pend.push(it); });
+    bar.innerHTML = '<span>질문 <b>' + items.length + '</b>개 · 답 <b>' + done + '</b>개</span>' +
+      (pend.length ? '<button type="button" class="atl-btn atl-btn-primary enq-all">남은 질문 ' + pend.length + '개 답 받기</button>' : '');
+    bar._pending = pend;
+  }
+  function draw(){
+    drawBar();
+    if (!items.length) { list.innerHTML = '<div class="enq-empty">아직 질문이 없어요. 아래에 적어 보세요.</div>'; return; }
+    list.innerHTML = items.map(function(it, i){
+      var k = engNoteEsc(it.id);
+      return '<div class="enq-card" data-id="' + k + '">' +
+        '<div class="enq-card-h"><span class="enq-no">Q' + (i + 1) + '</span><span class="enq-tools">' +
+          '<button type="button" class="enq-tool" data-edit="' + k + '" title="고치기" aria-label="고치기">✎</button>' +
+          '<button type="button" class="enq-tool enq-del" data-del="' + k + '" title="삭제 (한 번 더 누르면 지워져요)" aria-label="삭제">삭제</button></span></div>' +
+        (editing === it.id
+          ? '<textarea class="enq-edit" data-id="' + k + '" spellcheck="false">' + engNoteEsc(it.text) + '</textarea>'
+          : '<div class="enq-txt" data-edit="' + k + '">' + engNoteEsc(it.text) + '</div>') +
+        qaHtml(it) + '</div>';
+    }).join('');
+    var ed = list.querySelector('.enq-edit');
+    if (ed) { fit(ed); ed.focus(); ed.setSelectionRange(ed.value.length, ed.value.length); }
+  }
+  function fit(t){ t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
+  function find(id){ for (var i = 0; i < items.length; i++) if (items[i].id === id) return items[i]; return null; }
+  function ask(arr){
+    if (!ref || !arr.length) return;
+    var at = new Date().toISOString(), qa = s.myNotesQA = Object.assign({}, s.myNotesQA || {});
+    var sum = (s.summary && s.summary.heading) || '';
+    var lesson = String((s.title || '') + (sum ? ' — ' + sum : '')).replace(/<[^>]+>/g, '').slice(0, 160);
+    if (_engNoteTimer) save();
+    arr.forEach(function(it){
+      var q = it.text.trim();
+      qa[it.id] = { q: q, status: 'queued', at: at };
+      ref.set({ myNotesQA: { [it.id]: { q: q, status: 'queued', at: at } } }, { merge: true })
+        .then(function(){ return db.collection('aiJobs').add({ kind: 'noteqa', status: 'queued', docId: dateId, qKey: it.id, question: q, context: q, lesson: lesson, createdAt: new Date().toISOString() }); })
+        .catch(function(e){
+          console.warn('[eng-notes] ask', e);
+          ref.set({ myNotesQA: { [it.id]: { q: q, status: 'error', err: '맡기기 실패', at: at } } }, { merge: true }).catch(function(){});
+        });
+    });
+    draw();
+  }
+  function add(){
+    var t = nw.value.replace(/\s+$/, '');
+    if (!t.trim()) return;
+    items.push({ id: engNoteId(), text: t, at: new Date().toISOString() });
+    nw.value = ''; save(); draw();
+    list.scrollTop = list.scrollHeight;
+  }
+  box.addEventListener('click', function(e){
+    var b = e.target.closest('[data-edit],[data-del],[data-ask],.enq-all,.enq-add'); if (!b || !box.contains(b)) return;
+    if (b.hasAttribute('data-del')) {
+      var id = b.getAttribute('data-del');
+      var go = function(){ items = items.filter(function(x){ return x.id !== id; }); if (editing === id) editing = null; save(); draw(); };
+      if (typeof atlTapConfirm === 'function') atlTapConfirm(b, go);
+      else if (b.dataset.armed === '1') go();
+      else { b.dataset.armed = '1'; b.textContent = '삭제?'; b.classList.add('is-armed'); setTimeout(function(){ b.dataset.armed = ''; b.textContent = '삭제'; b.classList.remove('is-armed'); }, 3000); }
+      return;
+    }
+    if (b.hasAttribute('data-edit')) { if (editing !== b.getAttribute('data-edit')) { editing = b.getAttribute('data-edit'); draw(); } return; }
+    if (b.hasAttribute('data-ask')) { var it = find(b.getAttribute('data-ask')); if (it) ask([it]); return; }
+    if (b.classList.contains('enq-all')) return ask(bar._pending || []);
+    if (b.classList.contains('enq-add')) return add();
   });
-  ta.addEventListener('blur', function(){ if (_engNoteTimer) save(); });
-  if (useLocal) save();
+  list.addEventListener('input', function(e){
+    var t = e.target; if (!t.classList || !t.classList.contains('enq-edit')) return;
+    var it = find(t.getAttribute('data-id')); if (!it) return;
+    it.text = t.value; it.at = new Date().toISOString(); fit(t); queueSave();
+  });
+  list.addEventListener('focusout', function(e){
+    var t = e.target; if (!t.classList || !t.classList.contains('enq-edit')) return;
+    setTimeout(function(){
+      if (!alive() || list.contains(document.activeElement) && document.activeElement.classList.contains('enq-edit')) return;
+      if (_engNoteTimer) save();
+      editing = null; draw();
+    }, 120);
+  });
+  nw.addEventListener('keydown', function(e){ if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); add(); } });
+  draw();
+  if (needSave) save();
+  // 상세를 열어 둔 동안 이 수업 문서를 지켜본다 → 아이맥이 단 답이 새로고침 없이 뜬다
+  if (ref && typeof ref.onSnapshot === 'function') {
+    _engNoteUnsub = ref.onSnapshot(function(doc){
+      if (!alive()) { if (_engNoteUnsub) { _engNoteUnsub(); _engNoteUnsub = null; } return; }
+      var d = doc.data() || {};
+      s.myNotesQA = d.myNotesQA || {};
+      // 다른 기기에서 고친 카드: 여기서 쓰는 중이 아닐 때만 받아온다
+      if (Array.isArray(d.myNotesItems) && !editing && !_engNoteTimer && (d.myNotesItemsAt || '') > (s.myNotesItemsAt || '')) {
+        items = JSON.parse(JSON.stringify(d.myNotesItems)); s.myNotesItems = d.myNotesItems; s.myNotesItemsAt = d.myNotesItemsAt;
+      }
+      if (editing) drawBar(); else draw();
+    }, function(e){ console.warn('[eng-notes] watch', e); });
+  }
 }
 
 // ✏️ Drills 답 저장 — englishSessions/<날짜>.drillAnswers = { 'drill-0-3': {v:'답', g:1(채점함)} } merge 저장
@@ -30755,6 +30915,7 @@ function initEngScrollSpy() {
 }
 
 function closeSessionDetail() {
+  if (_engNoteUnsub) { try { _engNoteUnsub(); } catch(e){} _engNoteUnsub = null; }
   if (typeof engStopSpeak === 'function') engStopSpeak();
   _currentSessionId = null;
   // 뒤로가기 버튼 숨기기

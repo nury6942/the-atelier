@@ -1423,7 +1423,7 @@ window.annieRemoveAudio = async function(dateId){
 
 // ═══════════════════════════════════════════════════════════
 //  구독으로 만들기 — API 요금 없이 아이맥 워커(scripts/ai-worker)가 처리
-//  aiJobs/{id}: { kind:'study'|'annie', status: queued→running→done|error, ... }
+//  aiJobs/{id}: { kind:'study'|'annie'|'noteqa', status: queued→running→done|error, ... }
 //  완료를 보면 목록을 새로 그리고, ANNIE 는 수업 트래커 'N회차'도 여기서 만든다(ack).
 // ═══════════════════════════════════════════════════════════
 var _aiJobs = [];
@@ -1475,7 +1475,7 @@ window.watchAiJobs = function(){
   if (_aiJobsUnsub || typeof db === 'undefined') return;
   _aiJobsUnsub = db.collection('aiJobs').orderBy('createdAt', 'desc').limit(20).onSnapshot(function(snap){
     _aiJobs = snap.docs.map(function(d){ var x = d.data(); x._id = d.id; return x; });
-    _aiJobs.forEach(function(j){ if (j.status === 'done' && !j.acked) _ackAiJob(j); });
+    _aiJobs.forEach(function(j){ if (j.status === 'done' && !j.acked && j.kind !== 'noteqa') _ackAiJob(j); });   // noteqa(My Notes 답)는 공책 카드가 직접 지켜본다
     // 하이라이트 풀이는 어느 기기가 마무리했든 이 화면 카드에 바로 반영
     _aiJobs.forEach(function(j){ if (j.mode === 'explain' && j.status === 'done' && !_esExplainSeen[j._id]){ _esExplainSeen[j._id] = true; if (j.finishedAt && Date.now() - Date.parse(j.finishedAt) < 600000 && typeof listenMarkDone === 'function') listenMarkDone(j); } });
     _aiJobs.forEach(function(j){ if (j.mode === 'check' && j.status === 'done' && !_esExplainSeen[j._id]){ _esExplainSeen[j._id] = true; if (j.finishedAt && Date.now() - Date.parse(j.finishedAt) < 600000 && typeof listenPracticeDone === 'function') listenPracticeDone(j); } });
@@ -1533,7 +1533,7 @@ window.dismissAiJob = async function(id){
 function renderAiJobs(){
   var el = document.getElementById('eng-ai-jobs');
   if (!el) return;
-  var live = _aiJobs.filter(function(j){ return j.status === 'queued' || j.status === 'running' || j.status === 'error'; });
+  var live = _aiJobs.filter(function(j){ return j.kind !== 'noteqa' && (j.status === 'queued' || j.status === 'running' || j.status === 'error'); });
   if (!live.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
   var esc = function(s){ return String(s || '').replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); };
   el.style.display = 'block';
