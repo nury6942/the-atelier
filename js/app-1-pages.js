@@ -30506,6 +30506,7 @@ function openSessionDetail(dateId) {
 
   document.getElementById('eng-detail-content').innerHTML = html;
   renderEngNotes(dateId, s);
+  renderEngDrills(dateId, s);
   applyReviewFontSize();
   window.scrollTo({top: 0, behavior: 'smooth'});
   // 스크롤 스파이 초기화
@@ -30551,6 +30552,40 @@ function renderEngNotes(dateId, s){
     clearTimeout(_engNoteTimer); _engNoteTimer = setTimeout(save, 800);
   });
   ta.addEventListener('blur', function(){ if (_engNoteTimer) save(); });
+  if (useLocal) save();
+}
+
+// ✏️ Drills 답 저장 — englishSessions/<날짜>.drillAnswers = { 'drill-0-3': {v:'답', g:1(채점함)} } merge 저장
+//    My Notes 와 같은 방식: 쓰는 즉시 이 기기 사본, 0.5초 쉬면 Firestore. 다시 열면 답·채점 표시가 그대로.
+var _engDrillTimer = null, _engDrillSave = null;
+function renderEngDrills(dateId, s){
+  var inputs = document.querySelectorAll('#eng-detail-content input[id^="drill-"]');
+  if (!inputs.length) { _engDrillSave = null; return; }
+  var KEY = 'atelier_eng_drill_' + dateId, local = null;
+  try { local = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
+  var remoteAt = s.drillAt || '';
+  // 기기 사본이 더 새것이면(저장 실패했던 것) 그쪽을 쓰고 다시 보낸다
+  var useLocal = local && local.map && (!remoteAt || local.at > remoteAt);
+  var map = JSON.parse(JSON.stringify(useLocal ? local.map : (s.drillAnswers || {})));
+  inputs.forEach(function(inp){
+    var r = map[inp.id];
+    if (r && r.v) { inp.value = r.v; if (r.g) gradeDrillItem(inp.id, true); }
+    inp.addEventListener('input', function(){ map[inp.id] = { v: inp.value, g: (map[inp.id] && map[inp.id].g) || 0 }; queue(); });
+  });
+  function keep(at){ try { localStorage.setItem(KEY, JSON.stringify({ map: map, at: at || new Date().toISOString() })); } catch(e){} }
+  function save(){
+    clearTimeout(_engDrillTimer); _engDrillTimer = null;
+    var at = new Date().toISOString();
+    keep(at);  // 서버와 같은 시각 → 다음에 열 때 괜히 다시 보내지 않음
+    var ref = (typeof db !== 'undefined' && db) ? db.collection('englishSessions').doc(dateId) : null;
+    if (!ref) return;
+    ref.set({ drillAnswers: map, drillAt: at }, { merge: true }).then(function(){
+      s.drillAnswers = JSON.parse(JSON.stringify(map)); s.drillAt = at;
+    }).catch(function(e){ console.warn('[eng-drills] save failed', e); });
+  }
+  function queue(){ keep(); clearTimeout(_engDrillTimer); _engDrillTimer = setTimeout(save, 500); }
+  // 채점 누르면 그 문항은 '채점함' 으로 남김
+  _engDrillSave = function(id){ var inp = document.getElementById(id); if (!inp) return; map[id] = { v: inp.value, g: 1 }; queue(); };
   if (useLocal) save();
 }
 
@@ -31479,9 +31514,10 @@ function _normAnswer(s) {
     .replace(/[.,!?;:"'()‘’“”]/g, '')
     .replace(/\s+/g, ' ');
 }
-function gradeDrillItem(id) {
+function gradeDrillItem(id, restoring) {
   var input = document.getElementById(id);
   if (!input) return false;
+  if (!restoring && _engDrillSave) _engDrillSave(id);
   var correct = input.getAttribute('data-answer') || '';
   var explain = input.getAttribute('data-explain') || '';
   var result = document.getElementById(id + '-result');
