@@ -289,6 +289,13 @@
     if (isTrip(ev)) return "background:#F0A647;color:#16161A;";
     return INK_OUTLINE;
   }
+  // 여러 날 막대는 칸마다 끊겨 보이지 않게 위·아래 선만, 시작 칸은 왼쪽·끝 칸은 오른쪽 선까지
+  function barOutline(color, head, tail) {
+    var sh = ['inset 0 1px 0 ' + color, 'inset 0 -1px 0 ' + color];
+    if (head) sh.push('inset 1px 0 0 ' + color);
+    if (tail) sh.push('inset -1px 0 0 ' + color);
+    return 'box-shadow:' + sh.join(',') + ';';
+  }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
 
@@ -444,7 +451,9 @@
     var s = (ev[0]||'').toString(), e = (ev[5]||'').toString();
     var head = ds === s || dow === 0, tail = ds === e || dow === 6;
     var ref = idxRef(ev);
-    return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev, !head, isWriting(ev)) + '" draggable="true" ' +
+    var bst = solidStyle(ev, !head, isWriting(ev));
+    if (bst === INK_OUTLINE) bst = 'background:#fff;color:#15171c;' + barOutline('#15171c', head, tail);
+    return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + bst + '" draggable="true" ' +
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
       (head ? (isWriting(ev) ? '✎ ' : (isTrip(ev) ? '✈ ' : '')) + esc(ev[1]) : '&nbsp;') + '</span>';
@@ -453,7 +462,7 @@
   // 기간 GTM 막대 — ★ 핵심은 빨강, 일반은 회색 + 시즌색 띠 (칸 칩과 같은 말투)
   function gtmBarHtml(g, ds, dow) {
     var head = ds === g.date || dow === 0, tail = ds === g.end || dow === 6, key = gtmIsKey(g);
-    var st = key ? 'background:#1F4BD8;color:#fff;' : 'background:#fff;color:#2a2e35;box-shadow:inset 0 0 0 1px #DCDCE3;';
+    var st = key ? 'background:#1F4BD8;color:#fff;' : 'background:#fff;color:#2a2e35;' + barOutline('#DCDCE3', head, tail);
     var lbl = (key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM') + '  ' + g.title;
     return '<span class="wbc-rb wbc-gtmb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + st + '" title="' + esc((g.team || '') + ' · ' + g.title + ' (' + g.date.slice(5) + ' ~ ' + g.end.slice(5) + ')') + '">' +
       (head ? '<em>' + esc((key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM')) + '</em>' + esc(g.title) : '&nbsp;') + '</span>';
