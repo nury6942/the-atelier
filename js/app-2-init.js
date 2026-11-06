@@ -1815,7 +1815,7 @@ function ldgRenderCalendar() {
     }
     html += '<div class="h-14 ' + bg + ' rounded p-1 flex flex-col justify-between">';
     html += '<span class="text-[10px] font-bold' + (isToday ? ' text-indigo-600' : '') + '">' + d + '</span>';
-    if (amt > 0) html += '<span class="text-[9px] text-indigo-600 font-bold">₩' + ldgFmtShort(amt) + '</span>';
+    if (amt > 0) html += '<span class="text-[11px] font-bold" style="color:#16161A">₩' + ldgFmtShort(amt) + '</span>';  // 4차: 지출 금액은 잉크 (코발트는 판정 전용)
     html += '</div>';
   }
   // Next month leading days
@@ -2849,7 +2849,7 @@ function ldgRenderTxTable() {
     html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer"' + clk + dbl('소분류') + '><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (t['대분류'] === '저축' ? 'bg-blue-100 text-blue-700' : t['대분류'] === '포인트' ? 'bg-amber-50 text-amber-700' : 'bg-indigo-50 text-indigo-700') + '">' + (t['소분류']||'') + '</span></td>';
     // 지출 칸의 마이너스 = 환불·정산·통신비 지원처럼 지출을 깎는 돈 → 초록 −로 (ldgFmt 는 부호를 지워서 지출처럼 보였음 · 누리 2026-10-26)
     var isRefund = !isIncome && t['대분류'] !== '저축' && t['대분류'] !== '포인트' && (t['금액'] || 0) < 0;
-    html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome || isRefund ? 'text-emerald-600' : t['대분류'] === '저축' ? 'text-blue-600' : t['대분류'] === '포인트' ? 'text-amber-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + (isRefund ? ' title="환불·정산 — 지출에서 빠지는 돈"' : '') + '>' + ldgFmt(t['금액']) + '</td>';  // 환불은 초록 글자만 (− 표시는 안 붙임 · 누리)
+    html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + '" style="font-feature-settings:\'tnum\';color:' + (isIncome || isRefund ? '#15803D' : '#16161A') + '"' + clk + dbl('금액') + (isRefund ? ' title="환불·정산 — 지출에서 빠지는 돈"' : '') + '>' + ldgFmt(t['금액']) + '</td>';  // 환불은 초록 글자만 (− 표시는 안 붙임 · 누리)
     html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer"' + clk + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
     html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:230px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
     var assetMarker = t.excludeFromGoal ? '<span class="text-[10px] mr-1" title="자산이동 (목표 추적 제외)">🔁</span>' : '';

@@ -61,13 +61,16 @@
 
   /* ── 판정 */
   .verdict-n { font-size: 44px; font-weight: 800; line-height: 1.05; color: var(--accent); letter-spacing: -0.03em; }
-  .verdict-n.neg { color: var(--text); }
+  .verdict-n.neg { color: #DC2626; }
   .verdict-n small { font-size: 14px; font-weight: 600; color: var(--text-2); letter-spacing: 0; margin-left: 6px; }
   .formula { margin-top: 10px; font-size: 13px; color: var(--text-2); line-height: 1.6; }
   .formula b { color: var(--text); font-weight: 700; }
   .note { margin-top: 6px; font-size: 12px; color: var(--text-2); }
-  .gap-ok { color: var(--accent-ink); font-weight: 700; }
-  .gap-bad { color: var(--text); font-weight: 700; }
+  /* 4차: .h span(보조 회색)이 덮어 회색으로 보이던 것 → 데스크톱과 같은 코발트 / 부족은 빨강 */
+  .h .gap-ok { color: var(--accent); font-weight: 700; }
+  .h .gap-bad { color: #DC2626; font-weight: 700; }
+  .formula .fx2 { display: block; font-size: 12px; color: #475569; margin-top: 2px; }
+  .rules-fx { margin-top: 8px; font-size: 12px; color: #475569; }
 
   /* ── 규칙 */
   .rules { list-style: none; }
@@ -186,7 +189,7 @@ function ldgLoadGoals() { try { return JSON.parse(localStorage.getItem('atelier_
 async function fbRead(name) { const s = await db.collection(name).get(); return s.docs.map(function(d) { var x = d.data(); x._id = d.id; return x; }); }
 </script>
 <!-- 판정·규칙·한 해 숫자는 데스크톱과 같은 함수로 계산 (ldgBoardMonth · _bActual · _bProj · _bPlan …) -->
-<script src="js/app-7-mirror.js"></script>
+<script src="js/app-7-mirror.js?v=93"></script>
 </head>
 <body>
 
@@ -225,6 +228,7 @@ async function fbRead(name) { const s = await db.collection(name).get(); return 
       <li><span class="box"></span><span class="sk" style="height:14px;width:70%"></span><span></span></li>
       <li><span class="box"></span><span class="sk" style="height:14px;width:55%"></span><span></span></li>
     </ul>
+    <p class="rules-fx" id="r-fx"></p>
   </section>
 
   <section id="sec-year">
@@ -387,21 +391,17 @@ function render() {
   var V; try { V = monthVerdict(ym); } catch (e) { console.error('[m-ledger] verdict', e); V = { empty: true }; }
 
   // 판정
-  document.getElementById('v-title').textContent = mk + ' 판정 · ' + (isCur ? new Date().getDate() + '일째' : isPast ? '마감' : '아직');
+  document.getElementById('v-title').textContent = mk + ' · 이 달 남을 돈' + (isCur ? ' · ' + new Date().getDate() + '일째' : isPast ? ' · 마감' : '');
   var vb = document.getElementById('v-body'), vg = document.getElementById('v-gap');
   if (V.empty) {
     vg.textContent = '';
     vb.innerHTML = '<p class="empty">' + (isPast ? '이 달 기록이 없어요' : '아직 오지 않은 달이에요') + '</p>';
   } else {
-    var m = V.m, other = m.inc - m.salary - m.side;
-    vg.innerHTML = V.gap >= 0 ? '<span class="gap-ok num">목표보다 +' + man(V.gap) + '</span>' : '<span class="gap-bad num">목표까지 ' + man(-V.gap) + ' 부족</span>';
-    var parts = [];
-    parts.push('월급 <b class="num">' + man(m.salaryDue || m.salary) + '</b>' + (m.salaryDue ? ' 예정' : ''));
-    parts.push('부업 <b class="num">' + man(m.side) + '</b>');
-    if (Math.round(other / 1e4)) parts.push('기타 <b class="num">' + man(other) + '</b>');
+    var m = V.m, LF = ldgLeftFormula(m);  // 4차: 데스크톱 판정 카드와 같은 식·같은 이름
+    vg.innerHTML = V.gap >= 0 ? '<span class="gap-ok num">목표보다 +' + man(V.gap) + '만</span>' : '<span class="gap-bad num">목표까지 ' + man(-V.gap) + '만 부족</span>';
     vb.innerHTML =
       '<div class="verdict-n num' + (m.leftLife < 0 ? ' neg' : '') + '">' + signMan(m.leftLife) + '만<small>' + (m.salaryDue ? '남을 예정' : '남음') + '</small></div>' +
-      '<p class="formula">' + parts.join(' + ') + ' − 생활비 <b class="num">' + man(m.life) + '</b> = <b class="num">' + signMan(m.leftLife) + '</b></p>' +
+      '<p class="formula">' + LF.html + '<span class="fx2">' + LF.breakdown + '</span></p>' +
       (m.travel ? '<p class="note">여행 ' + man(m.travel) + '만은 여행 통장에서 · 여기 안 셈</p>' : '');
   }
 
@@ -416,6 +416,7 @@ function render() {
     }).join('');
   }
 
+  try { document.getElementById('r-fx').textContent = V.empty ? '' : LIVING_FX; } catch (e) {}
   renderYear();
   renderRecent(ym);
 }
