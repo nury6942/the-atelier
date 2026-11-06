@@ -226,7 +226,7 @@
       --font-size-display-lg: 32px;  /* 32px+ display 강조 */
 
       /* ── 12-extra. 폰트 사이즈 outlier 토큰 (2.5단계 추가) ── */
-      --font-size-nano:        9px;  /* chip/badge 미니 라벨 */
+      --font-size-nano:        11px;  /* chip/badge 미니 라벨 */
       --font-size-body-lg:    15px;  /* body(14)와 h3(16) 중간 */
       --font-size-display-md: 28px;  /* display(26)와 display-lg(32) 중간 */
       --font-size-display-2xl:36px;  /* hero 직전 강조 */
@@ -397,7 +397,7 @@
     /* html 접두로 기본 클래스만 이기고, hover:/group-hover: 같은 상태 색은 그대로 둔다 */
     html .text-slate-300,html .text-slate-400,html .text-gray-300,html .text-gray-400,html .text-stone-400,html .text-zinc-400,html .text-neutral-400,html .text-outline-variant{color:#475569}
     html .text-slate-500,html .text-gray-500{color:#334155}
-    .placeholder\:text-slate-300::placeholder,.placeholder\:text-slate-400::placeholder,input::placeholder,textarea::placeholder{color:#64748b !important}
+    .placeholder\:text-slate-300::placeholder,.placeholder\:text-slate-400::placeholder,input::placeholder,textarea::placeholder{color:#5B5B66 !important}
     body{font-family:'Pretendard', -apple-system, system-ui, 'Noto Color Emoji',sans-serif;background:#fff;color:var(--slate-800);line-height:1.55}
     /* Phase E — 살짝 더 여유 (line-height 미세 증가 + 헤딩 후 호흡) */
     h1,h2,h3,h4{margin-block-end:var(--space-2)}
@@ -12653,7 +12653,7 @@
           <div id="flight-add-form" class="bg-slate-50 rounded-[2rem] p-6">
             <div class="flex items-center gap-2 mb-5">
               <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">add_circle</span>
-              <h4 class="text-lg font-bold tracking-tight font-headline">Add New Flight</h4>
+              <h3 class="text-lg font-bold tracking-tight font-headline">Add New Flight</h3>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
@@ -12867,7 +12867,7 @@
                 <span class="material-symbols-outlined text-lg">add_business</span>
               </div>
               <div>
-                <h4 class="font-headline text-base font-bold text-slate-900">Add New Stay</h4>
+                <h3 class="font-headline text-base font-bold text-slate-900">Add New Stay</h3>
                 <p class="text-slate-500 text-[10px]">새로운 숙소를 등록하세요</p>
               </div>
             </div>
@@ -13170,7 +13170,7 @@
             <button onclick="closeTravelModal('transport-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
           <div class="rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
             <div class="mb-6">
-              <h4 class="text-xl font-extrabold tracking-tight text-slate-900">Add New Transport</h4>
+              <h3 class="text-xl font-extrabold tracking-tight text-slate-900">Add New Transport</h3>
               <p class="text-slate-500 text-xs mt-0.5">새로운 이동 수단을 등록하세요</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
@@ -13306,7 +13306,7 @@
                 <span class="material-symbols-outlined text-lg">directions_car</span>
               </div>
               <div>
-                <h4 class="font-headline text-base font-bold text-slate-900">Add New Rental Car</h4>
+                <h3 class="font-headline text-base font-bold text-slate-900">Add New Rental Car</h3>
                 <p class="text-slate-500 text-[10px]">새로운 렌트카를 등록하세요</p>
               </div>
             </div>
@@ -13541,9 +13541,9 @@
           <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto relative">
             <button onclick="closeTravelModal('souvenir-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
           <div class="rounded-2xl p-6" style="background:#f3f4f5;">
-            <h4 class="text-base font-bold font-headline mb-4 flex items-center gap-2">
+            <h3 class="text-base font-bold font-headline mb-4 flex items-center gap-2">
               <span class="material-symbols-outlined text-indigo-600">add_circle</span> New Souvenir
-            </h4>
+            </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">대상 (Recipient)</label>
@@ -13853,7 +13853,7 @@
           <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden h-full">
             <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
               <div>
-                <h4 class="font-manrope font-bold text-slate-800">예산 vs 지출</h4>
+                <h3 class="font-manrope font-bold text-slate-800">예산 vs 지출</h3>
                 <p id="finance-budget-status" class="text-[10px] text-slate-400 font-medium mt-0.5">—</p>
               </div>
               <button onclick="openBudgetModal()" id="finance-budget-edit-btn" class="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-xs hover:bg-indigo-100 transition-colors flex items-center gap-1.5">
