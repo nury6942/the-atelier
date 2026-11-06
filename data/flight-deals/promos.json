@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-06T19:38",
+ "generatedAt": "2026-11-07T07:37",
  "sites": [
   "KE",
   "OZ",
@@ -66,13 +66,13 @@
      }
     ],
     "on": "운임",
-    "how": "결제 화면에서 쿠폰(카카오페이 항공권 8% 할인) 적용 후 카카오페이 결제",
+    "how": "결제 화면에서 카카오페이 항공권 8% 할인 쿠폰 적용 후 카카오페이 결제",
     "code": null,
     "conditions": [
      "카카오페이 결제",
      "홈페이지/앱 로그인",
-     "세이버·스탠다드만(플렉스 제외)",
-     "대한항공 운항편만(공동운항·보너스·다구간 제외)"
+     "세이버·스탠다드만",
+     "대한항공 운항편만 (공동운항·다구간·보너스 제외)"
     ],
     "fares": [],
     "url": "https://www.koreanair.com/contents/promotion/list/2026/2611kapay?pageNum=1"
@@ -82,7 +82,7 @@
      "slug": "istanbul",
      "pct": 8,
      "region": "유럽",
-     "google": 998600,
+     "google": 998800,
      "out": "2026-12-01",
      "back": "2026-12-10"
     },
@@ -90,7 +90,7 @@
      "slug": "budapest",
      "pct": 8,
      "region": "유럽",
-     "google": 1269100,
+     "google": 1269300,
      "out": "2026-12-01",
      "back": "2026-12-10"
     },
@@ -98,7 +98,7 @@
      "slug": "milan",
      "pct": 8,
      "region": "유럽",
-     "google": 1304200,
+     "google": 1304400,
      "out": "2026-12-01",
      "back": "2026-12-10"
     }
@@ -111,16 +111,16 @@
      "region": "유럽",
      "out": null,
      "back": null,
-     "price": 998600,
+     "price": 998800,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/ist/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 509800,
      "tax": 63000,
-     "fare": 425800,
+     "fare": 426000,
      "discount": 34100,
-     "final": 964500
+     "final": 964700
     },
     {
      "slug": "budapest",
@@ -129,16 +129,16 @@
      "region": "유럽",
      "out": "2026-12-01",
      "back": "2026-12-10",
-     "price": 3945831,
+     "price": 3946031,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/bud/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 3112631,
+     "fare": 3112831,
      "discount": 249000,
-     "final": 3696831
+     "final": 3697031
     },
     {
      "slug": "milan",
@@ -147,16 +147,16 @@
      "region": "유럽",
      "out": null,
      "back": null,
-     "price": 1304200,
+     "price": 1304400,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/mila/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 471000,
+     "fare": 471200,
      "discount": 37700,
-     "final": 1266500
+     "final": 1266700
     }
    ]
   },
@@ -221,9 +221,9 @@
     "code": "BLKFRIGO",
     "conditions": [
      "에어프레미아 회원 로그인",
-     "에어프레미아 쿠폰과 중복 불가",
+     "에어프레미아 발행 쿠폰과 중복 불가",
      "일부 일자·운임은 코드 적용 제한",
-     "탑승 기간에 따라 할인율 다름"
+     "탑승 기간에 따라 할인율 상이"
     ],
     "fares": [
      {
@@ -267,7 +267,7 @@
      "slug": "san-francisco",
      "pct": 72,
      "region": "전 노선",
-     "google": 1172871,
+     "google": 1182000,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -298,16 +298,16 @@
      "region": "전 노선",
      "out": null,
      "back": null,
-     "price": 1172871,
+     "price": 1182000,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 72,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 339671,
-     "discount": 244600,
-     "final": 928271
+     "fare": 348800,
+     "discount": 251100,
+     "final": 930900
     }
    ]
   },
@@ -341,13 +341,13 @@
      }
     ],
     "on": "운임",
-    "how": "항공권 검색 후 하단 프로모션 코드 버튼에서 코드 입력",
+    "how": "신규 회원 가입 후 항공권 검색 화면 하단에서 프로모션 코드 입력",
     "code": "WELCOMEV",
     "conditions": [
-     "신규 회원 가입",
-     "가입 후 14일 이내 사용",
-     "일부 운임·일자 제외",
-     "쿠폰 중복 불가"
+     "신규 회원 전용",
+     "가입일로부터 14일 이내 사용",
+     "에어프레미아 쿠폰과 중복 불가",
+     "일부 일자·운임 적용 제외"
     ],
     "fares": [],
     "url": "https://www.airpremia.com/event/promotionDetail?detailId=370"
@@ -365,7 +365,7 @@
      "slug": "san-francisco",
      "pct": 5,
      "region": "전 노선",
-     "google": 1172871,
+     "google": 1182000,
      "out": "2026-11-24",
      "back": "2026-12-03"
     }
@@ -396,16 +396,16 @@
      "region": "전 노선",
      "out": null,
      "back": null,
-     "price": 1172871,
+     "price": 1182000,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 5,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 339671,
-     "discount": 17000,
-     "final": 1155871
+     "fare": 348800,
+     "discount": 17400,
+     "final": 1164600
     }
    ]
   }
