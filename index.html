@@ -73,13 +73,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=422" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=423" as="script">
   <link rel="preload" href="js/app-2-init.js?v=198" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
   <link rel="preload" href="js/daily-guides.js?v=163" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=165" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=166" as="script">
   <link rel="preload" href="js/app-5-ledger-export.js?v=164" as="script">
   <link rel="preload" href="js/nomad-data.js?v=172" as="script">
   <link rel="preload" href="js/nomad-cities.js?v=163" as="script">
@@ -8058,8 +8058,8 @@
     .flt-svg-wrap { margin-top:8px; width:100%; overflow-x:auto; }
     .flt-svg { max-width:100%; height:auto; display:block; }
     .flt-svg-n { font-family:'Manrope','Pretendard',sans-serif; font-size:11px; font-weight:800; fill:#1F4BD8; }
-    .flt-svg-x { font-family:'Manrope','Pretendard',sans-serif; font-size:11px; font-weight:700; fill:#94a3b8; }
-    .flt-svg-y { font-family:'Manrope','Pretendard',sans-serif; font-size:11px; font-weight:700; fill:#94a3b8; }
+    .flt-svg-x { font-family:'Manrope','Pretendard',sans-serif; font-size:11px; font-weight:700; fill:#5B5B66; }
+    .flt-svg-y { font-family:'Manrope','Pretendard',sans-serif; font-size:11px; font-weight:700; fill:#5B5B66; }
     .flt-map-wrap { margin-top:18px; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden; background:#fff; }
     .flt-map-head { display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:12px 16px 10px; border-bottom:1px solid #eef2f7; }
@@ -16039,8 +16039,8 @@
               <span id="income-matrix-year-label" class="px-4 text-sm font-bold font-headline tracking-widest">2026</span>
               <button onclick="matrixNextYear()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
             </div>
-            <button onclick="_fullResyncWorks()" title="작품 일정으로 캘린더·매트릭스를 다시 맞춰요 (옛 값 정리)" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">sync</span>재동기화</button>
-            <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-[#1F4BD8] rounded-full text-[0.65rem] font-bold uppercase tracking-wider">Sync Active</span>
+            <button onclick="_fullResyncWorks()" title="작품 일정으로 캘린더·매트릭스를 다시 맞춰요 (옛 값 정리)" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">sync</span>재동기화</button>
+            <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-[#1F4BD8] rounded-full text-[11px] font-bold uppercase tracking-wider">Sync Active</span>
           </div>
         </header>
         <div id="matrix-desync-banner" style="display:none" class="mb-4 flex items-center gap-3 px-4 py-3 rounded-xl border border-amber-200 bg-amber-50">
@@ -16725,8 +16725,8 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=422" defer></script>
-<script src="js/flight-deals.js?v=11" defer></script>
+<script src="js/app-1-pages.js?v=423" defer></script>
+<script src="js/flight-deals.js?v=12" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -17663,14 +17663,14 @@
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
-<script src="js/app-4-roadmap.js?v=165" defer></script>
+<script src="js/app-4-roadmap.js?v=166" defer></script>
 <script src="js/app-5-ledger-export.js?v=164" defer></script>
-<script src="js/app-6-postype-analytics.js?v=172" defer></script>
+<script src="js/app-6-postype-analytics.js?v=173" defer></script>
 <script src="js/app-7-mirror.js?v=94" defer></script>
 <script src="js/money-tax.js?v=5" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
 <script src="js/english-study.js?v=26" defer></script>
-<script src="js/english-read.js?v=2" defer></script>
+<script src="js/english-read.js?v=3" defer></script>
 <script src="js/ielts-page.js?v=4" defer></script>
 <script src="js/ielts-bank.js?v=2" defer></script>
 <script src="js/ielts-links.js?v=2" defer></script>
@@ -17681,7 +17681,7 @@
 <script src="js/ielts-grade.js?v=2" defer></script>
 <script src="js/ielts-official.js?v=1" defer></script>
 <script src="js/ielts-topics.js?v=1" defer></script>
-<script src="js/ielts-app.js?v=14" defer></script>
+<script src="js/ielts-app.js?v=15" defer></script>
 <script src="js/work-english.js?v=3" defer></script>
 <script src="js/english-phrases.js?v=2" defer></script>
 <script src="js/english-ledger.js?v=1" defer></script>

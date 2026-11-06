@@ -1,3 +1,10 @@
+## 2026-11-06 밤 · 맥북 · 글자 품질만 (q7 — 색·배치·내용 손대지 않음)
+
+- 11px 미만 → 11px: Flight Deals 라벨 9곳(NEW 배지는 그대로), 부업 「재동기화」·Sync Active(10.4px), 여행 예산 남음 미니 배지(10px), 좌표 자동 찾기 버튼·출발/복귀 안내·hub 종류 선택(10px), tutor 라벨 3곳
+- 흐린 회색 글자 → #5B5B66: 캐시플로 SVG 축 글자(flt-svg-x/y), 포스타입 차트 축 3곳, Chart.js x축 눈금, IELTS 힌트·표 머리·카드 이름, Read 단어 메타·힌트 글자수
+- 제목 단계 건너뜀: 로드맵 h4→h3·h5→h4, 여행 일정 카드 h5→h4 (크기·글꼴·여백 그대로)
+- ?v=: app-1-pages 423, flight-deals 12, app-4-roadmap 166, app-6 173, english-read 3, ielts-app 15
+
 ## 2026-11-06 밤 · 맥북 · 사이드바·지평선 띠 원래대로
 
 - 누리: 사이드바 하위 줄이 위 탭과 중복·너무 김 → critique 전 사이드바로(Money·Travel·Flight Deals·Nomad Master), 메뉴 강조 규칙도 원래대로

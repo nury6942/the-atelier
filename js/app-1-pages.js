@@ -4014,7 +4014,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         (item.time ? '<div class="dlv-time text-[10px] font-black ' + timeColor + ' uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + badgeHtml + '</div>' : '') +
         '<div class="' + cardBg + ' p-3.5 rounded-xl border transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
-        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + (item.time ? '' : badgeHtml) + '</h5>' +
+        '<h4 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word;margin-block-end:0;font-family:inherit" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + (item.time ? '' : badgeHtml) + '</h4>' +
         '<div class="flex items-center gap-0.5 shrink-0">' +
           // ★ (2026-09-22) 구글맵 열기 / 이름 복사 — 모바일엔 hover 가 없으니 항상 보이게
           '<button onclick="event.stopPropagation();openGmap(' + realIdx + ')" class="p-0.5 hover:bg-emerald-100 rounded text-slate-400 hover:text-emerald-600" title="구글맵에서 열기"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">travel_explore</span></button>' +
@@ -15307,7 +15307,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       else if (rem < 0) { style = 'background:#FEF2F2;color:#B91C1C'; label = fmtW(rem) + ' 초과'; }
       else { style = 'background:#ecfdf5;color:#15803D'; label = fmtW(rem) + ' 남음'; }
       return '<span class="font-bold rounded-full flex-shrink-0" style="' + style +
-        ';font-size:' + (mini ? '10px' : '11px') + ';padding:' + (mini ? '2px 8px' : '3px 10px') +
+        ';font-size:11px;padding:' + (mini ? '2px 8px' : '3px 10px') +
         ';font-variant-numeric:tabular-nums;white-space:nowrap">' + label + '</span>';
     };
 
@@ -18711,7 +18711,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var foot = document.getElementById('daylog-map-foot');
     if (foot && !_geoBusy) {
       foot.innerHTML = '<span>핀 ' + latlngs.length + '개 · 색 = 일차 · 회색 = 저장소 미배치</span>' +
-        (missing ? '<button onclick="geocodeTripSpots()" class="px-2 py-0.5 rounded-md border border-indigo-200 text-[#1F4BD8] font-bold hover:bg-indigo-50" style="font-size:10px">📍 좌표 없는 ' + missing + '곳 자동 찾기</button>' : '');
+        (missing ? '<button onclick="geocodeTripSpots()" class="px-2 py-0.5 rounded-md border border-indigo-200 text-[#1F4BD8] font-bold hover:bg-indigo-50" style="font-size:11px">📍 좌표 없는 ' + missing + '곳 자동 찾기</button>' : '');
     }
 
     if (latlngs.length) {
@@ -18877,7 +18877,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         '<span style="font-size:11px;font-weight:800;color:#15803D;background:#ecfdf5;border-radius:99px;padding:2px 8px">-' + pct + '%</span>' +
       '</span>' +
       '<ol style="list-style:none;margin:0;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;max-height:230px;overflow-y:auto">' + listHtml + '</ol>' +
-      '<span style="display:block;font-size:10px;color:#475569;margin-top:8px">' + (hotel ? '🏨 ' + String(hotel.title || '숙소').replace(/</g, '&lt;').slice(0, 20) + ' 출발·복귀 기준 · ' : '') + '시간대는 유지 · 방문 순서만 변경 · 예약/이동/일몰 일정은 자리 고정</span>';
+      '<span style="display:block;font-size:11px;color:#475569;margin-top:8px">' + (hotel ? '🏨 ' + String(hotel.title || '숙소').replace(/</g, '&lt;').slice(0, 20) + ' 출발·복귀 기준 · ' : '') + '시간대는 유지 · 방문 순서만 변경 · 예약/이동/일몰 일정은 자리 고정</span>';
     if (typeof showConfirm === 'function' && document.getElementById('atl-confirm')) {
       showConfirm({ title: '동선 최적화', icon: '🧭', html: html, confirmText: '적용', onConfirm: function(){ applyRoute(); } });
     } else if (confirm('🧭 동선 최적화 — 총 이동 ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km (' + pct + '% 절감). 적용할까?')) {
@@ -23631,7 +23631,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         scales: {
           x: {
             grid: { display:false },
-            ticks: { font:{ family:'Inter', size:10, weight:'600' }, color:'#94a3b8' },
+            ticks: { font:{ family:'Inter', size:10, weight:'600' }, color:'#5B5B66' },
             border: { display:false }
           },
           y: {
@@ -27351,7 +27351,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '.hub-cell-in{all:unset;flex:1;min-width:0;width:100%;font:inherit;color:inherit;text-align:inherit;caret-color:transparent;box-sizing:border-box}' +
       '.hub-editing .hub-cell-in{caret-color:auto;cursor:text}' +
       '.hub-sel:not(.hub-editing) .hub-cell-in::selection{background:transparent}' +
-      '.hub-type-sel{font-size:10px;border:none;background:transparent;padding:0;color:#64748b;cursor:pointer}' +
+      '.hub-type-sel{font-size:11px;border:none;background:transparent;padding:0;color:#64748b;cursor:pointer}' +
       '.hub-new-row{border-top:1px dashed #BCCBF7 !important}' +
       '.hub-new-row .hub-cell{color:#475569;font-weight:500}' +
       '.hub-new-row .hub-cell.hub-has{color:#16161A}' +

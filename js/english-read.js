@@ -229,7 +229,7 @@
         return '<div class="rd-box" style="padding:12px"><div style="display:flex;justify-content:space-between;gap:8px"><div><b style="font-family:Arial,Helvetica,sans-serif;font-size:16px">'+esc(w.w||k)+'</b> <span style="color:'+ACC+';font-weight:700;font-size:13px">'+esc(w.ko||'')+'</span></div><button data-wdel="'+esc(k)+'" style="color:#8A8A95">'+icon('close',16)+'</button></div>'
           +(w.ctx?'<div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;color:#475569;margin-top:6px;line-height:1.5">'+esc(w.ctx)+'</div>':'')
           +(w.mine?'<div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;margin-top:6px;padding:4px 8px;background:#F0FDF4;border-left:3px solid '+OK+'">'+icon('edit',13)+' '+esc(w.mine)+'</div>':'')
-          +'<div style="font-size:11px;color:#8A8A95;margin-top:6px">'+esc(w.title||'')+' · '+esc(w.added||'')+' · 단계 '+(w.box||0)+'</div></div>'; }).join('')+'</div>';
+          +'<div style="font-size:11px;color:#5B5B66;margin-top:6px">'+esc(w.title||'')+' · '+esc(w.added||'')+' · 단계 '+(w.box||0)+'</div></div>'; }).join('')+'</div>';
   }
   function cloze(ctx, w){
     if (!ctx) return null; var re=new RegExp('\\b'+String(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\w*','i'); var m=ctx.match(re); if (!m) return null;
@@ -244,7 +244,7 @@
       :'<div style="font-size:16px;color:#5B5B66">뜻을 보고 영어 단어를 써요</div>';
     return '<div class="rd-box" style="max-width:760px">'
       +'<div style="display:flex;justify-content:space-between;margin-bottom:14px"><span class="rd-k">'+(R.i+1)+' / '+R.list.length+' · 문장 속 빈칸 채우기</span><span class="rd-k">'+esc(w.title||'')+'</span></div>'
-      +q+'<div style="margin-top:12px;font-size:15px;font-weight:800;color:'+ACC+'">힌트: '+esc(w.ko||'')+' <span style="color:#8A8A95;font-weight:600;font-size:12px">('+String(w.w||k).length+'글자'+(String(w.w||k)[0]?', '+esc(String(w.w||k)[0])+'…':'')+')</span></div>'
+      +q+'<div style="margin-top:12px;font-size:15px;font-weight:800;color:'+ACC+'">힌트: '+esc(w.ko||'')+' <span style="color:#5B5B66;font-weight:600;font-size:12px">('+String(w.w||k).length+'글자'+(String(w.w||k)[0]?', '+esc(String(w.w||k)[0])+'…':'')+')</span></div>'
       +(R.state==='ask'?'<div style="display:flex;gap:6px;margin-top:14px"><input class="rd-in" id="rd-rv-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="단어 입력 후 Enter" style="font-size:16px"><button class="rd-btn pri" data-act="rvcheck">확인</button><button class="rd-btn" data-act="rvskip">몰라요</button></div>'
         :'<div style="margin-top:14px;padding:10px 12px;background:'+(R.last?'#F0FDF4':'#FEF2F2')+'"><b style="color:'+(R.last?OK:BAD)+'">'+(R.last?'맞아요':'정답: '+esc(w.w||k))+'</b>'+(w.ex?'<div style="font-family:Arial,Helvetica,sans-serif;font-size:13.5px;margin-top:6px">'+esc(w.ex)+'</div>':'')+'</div>'
           +'<div class="rd-k" style="margin-top:14px;margin-bottom:6px">내 문장으로 써보기 (선택) — 내 일·생활 얘기로</div><input class="rd-in" id="rd-mine" value="'+esc(w.mine||'')+'" placeholder="I had to '+esc(w.w||k)+' …">'

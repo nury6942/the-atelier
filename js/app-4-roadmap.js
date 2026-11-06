@@ -362,7 +362,7 @@
           (isLast ? '' : '<div class="h-[1.5px] flex-1 ' + lineColor + ' ml-2"></div>') +
         '</div>' +
         '<span class="text-[10px] font-extrabold uppercase tracking-[0.2em] mb-1 ' + labelColor + '">' + label + '</span>' +
-        '<h4 class="text-lg font-bold leading-tight ' + titleColor + '">' + p.name + '</h4>' +
+        '<h3 class="text-lg font-bold leading-tight ' + titleColor + '">' + p.name + '</h3>' +
         '<p class="text-xs text-slate-500 mt-0.5">' + rmMonthLabel(p.start, p.end) + '</p>' +
       '</div>';
     }).join('');
@@ -480,7 +480,7 @@
             '<span class="text-xl font-extrabold tracking-tight ' + orderColor + '">' + String(p.order).padStart(2,'0') + '</span>' +
             '<div class="min-w-0">' +
               '<div class="flex items-center gap-2 flex-wrap">' +
-                '<h5 class="text-base font-bold ' + nameColor + '">' + String(p.name||'').replace(/</g,'&lt;') + '</h5>' +
+                '<h4 class="text-base font-bold ' + nameColor + '" style="margin-block-end:0;font-family:inherit">' + String(p.name||'').replace(/</g,'&lt;') + '</h4>' +
                 statusBadge +
               '</div>' +
               '<p class="text-xs text-slate-500 mt-0.5">' + rmDateRangeShort(p.start, p.end) + '</p>' +

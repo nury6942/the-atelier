@@ -836,7 +836,7 @@
     const gridLines = [0.25, 0.5, 0.75, 1].map(f => {
       const y = PT + innerH - innerH * f;
       return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="2,3"/>' +
-        '<text x="' + (PL - 6) + '" y="' + (y + 3) + '" text-anchor="end" fill="#94a3b8" font-size="9">' + _fmtShort(max * f) + '</text>';
+        '<text x="' + (PL - 6) + '" y="' + (y + 3) + '" text-anchor="end" fill="#5B5B66" font-size="9">' + _fmtShort(max * f) + '</text>';
     }).join('');
     const showEvery = n > 20 ? 2 : 1;
     const bars = eps.map((e, i) => {
@@ -850,7 +850,7 @@
           '<title>' + e.label + ' (' + e.date + ')&#10;매출 ' + KRW(e.rev) + ' · ' + e.tx + '건 · 평균 ' + KRW(e.unit) + (pct != null ? '&#10;전화 대비 ' + (pct >= 0 ? '+' : '') + pct + '%' : '') + '</title>' +
         '</rect>' +
         (n <= 24 ? '<text x="' + (x + bw/2) + '" y="' + (y - 3) + '" text-anchor="middle" fill="#64748b" font-size="8" font-weight="600">' + _fmtShort(e.rev) + '</text>' : '') +
-        (i % showEvery === 0 ? '<text x="' + (x + bw/2) + '" y="' + (H - 8) + '" text-anchor="middle" fill="#94a3b8" font-size="9">' + (e.ep != null ? e.ep : '') + '</text>' : '');
+        (i % showEvery === 0 ? '<text x="' + (x + bw/2) + '" y="' + (H - 8) + '" text-anchor="middle" fill="#5B5B66" font-size="9">' + (e.ep != null ? e.ep : '') + '</text>' : '');
     }).join('');
 
     const fmtN = v => v == null ? '<span class="text-slate-300">—</span>' : Math.round(v).toLocaleString('ko-KR');
@@ -1043,7 +1043,7 @@
         <rect x="${x}" y="${fY}" width="${innerBarW}" height="${forecastH}" fill="#a5b4fc" opacity="0.6" rx="2"/>
         ${m.actual !== null ? `<rect x="${x}" y="${aY}" width="${innerBarW}" height="${actualH}" fill="#3563DF" rx="2"/>` : ''}
         ${m.forecast ? `<text x="${x + innerBarW/2}" y="${fY - 6}" text-anchor="middle" fill="#475569" font-size="9" font-weight="600">${(m.forecast/10000).toFixed(0)}만</text>` : ''}
-        <text x="${x + innerBarW/2}" y="${H - 10}" text-anchor="middle" fill="#94a3b8" font-size="10">${monthLabelShort(m.ym)}</text>
+        <text x="${x + innerBarW/2}" y="${H - 10}" text-anchor="middle" fill="#5B5B66" font-size="10">${monthLabelShort(m.ym)}</text>
       `;
     }).join('');
     wrap.insertAdjacentHTML('afterbegin', `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">${bars}</svg>`);
