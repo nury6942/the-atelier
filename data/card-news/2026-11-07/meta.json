@@ -1,0 +1,892 @@
+{
+ "week": "2026-11-07",
+ "made": "2026-11-06T21:37:41.950Z",
+ "topics": [
+  {
+   "id": "travel",
+   "name": "여행",
+   "title": "오늘 여행길은 막히고, 표는 열린다",
+   "slides": [
+    {
+     "img": "travel/01.jpg",
+     "headline": "오늘 여행길은 막히고, 표는 열린다",
+     "type": "cover"
+    },
+    {
+     "img": "travel/02.jpg",
+     "headline": "나리타 익스프레스, 오늘 도쿄역까지만",
+     "type": "content-badge"
+    },
+    {
+     "img": "travel/03.jpg",
+     "headline": "프랑스 기차표, 판매 시작일",
+     "type": "content-stat"
+    },
+    {
+     "img": "travel/04.jpg",
+     "headline": "인천~멜버른 직항, 12월 18일 시작",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "travel/05.jpg",
+     "headline": "원·달러 환율, 하루 14.5원 급등",
+     "type": "content-highlight"
+    },
+    {
+     "img": "travel/06.jpg",
+     "headline": "오늘 한 줄 정리: 길은 막히고 표는 열렸다",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "나리타 익스프레스, 오늘 도쿄역까지만",
+     "date": "2026-11-07 (11/6 밤~11/8 아침 일부 열차 포함)",
+     "summary": "도쿄 시내 철도 터널을 고치는 공사 때문에 오늘 나리타 익스프레스가 신주쿠·오후나까지 가지 않고 도쿄역에서 멈춥니다. 9월에도 같은 공사가 있었고, 이번에는 11월 6일 밤부터 8일 아침까지 이어집니다.",
+     "why": "오늘이나 내일 나리타로 들어오고 나가는 사람은 도쿄역에서 숙소까지 가는 길을 미리 따로 정해 두어야 합니다.",
+     "points": [
+      "**왜?** JR동일본이 도쿄~시나가와 사이 **터널 보수 공사**를 함",
+      "**N'EX**(공항~신주쿠 직통 특급)는 **나리타공항~도쿄역** 구간만 운행",
+      "요코스카선 **도쿄~시나가와**는 첫차부터 막차까지 운휴",
+      "**타사 노선 대체수송 없음**, 도쿄역 이후 교통비는 별도"
+     ],
+     "slide": 2,
+     "image": "https://cdn.thetrippick.com/news/photo/202611/4521_17957_2623.jpg",
+     "sources": [
+      {
+       "name": "JR동일본",
+       "url": "https://www.jreast.co.jp/ko/yokosuka-tunnel-koji/"
+      },
+      {
+       "name": "여행픽",
+       "url": "https://www.thetrippick.com/news/articleView.html?idxno=4521"
+      }
+     ]
+    },
+    {
+     "title": "프랑스 기차표 11월 12일 판매 시작",
+     "date": "2026-11-12 판매 · 2027-01-07~07-02 여행분",
+     "summary": "프랑스 국철 SNCF가 11월 12일 2027년 겨울~초여름 TGV 표를 팝니다. 열차 종류와 노선마다 살 수 있는 기간이 달라 날짜를 잘못 넣으면 표가 안 보일 수 있습니다.",
+     "why": "내년 유럽 여행에서 프랑스 기차를 타려면 12일에 맞춰 날짜 범위를 확인하고, 안 보이면 매진이 아니라 아직 안 열린 것인지 먼저 봐야 합니다.",
+     "points": [
+      "**SNCF**(프랑스 국철)는 계절마다 **판매 구간을 나눠** 엽니다",
+      "**TGV INOUI**는 2027년 **1월 7일~7월 2일** 여행분",
+      "이탈리아·스페인행은 **4월 1일~7월 2일**분만 포함",
+      "왕복은 귀국일이 범위 밖이면 **편도만** 보일 수 있음"
+     ],
+     "slide": 3,
+     "image": "https://cdn.thetrippick.com/news/photo/202611/4501_17897_64.jpg",
+     "sources": [
+      {
+       "name": "SNCF Connect",
+       "url": "https://www.sncf-connect.com/en-en/article/l-ouverture-des-ventes-d-hiver-et-de-printemps-ete-2027"
+      },
+      {
+       "name": "여행픽",
+       "url": "https://www.thetrippick.com/news/articleView.html?idxno=4501"
+      }
+     ]
+    },
+    {
+     "title": "대한항공 인천~멜버른 직항 12월 18일 시작",
+     "date": "2026-12-18~2027-03-14 운항",
+     "summary": "대한항공이 12월 18일부터 2027년 3월 14일까지 인천과 멜버른을 잇는 직항을 주 3회 띄웁니다. 8월에 발표된 계획이고 시작이 6주 앞으로 다가와 다시 안내됐습니다.",
+     "why": "호주 여름휴가를 생각한다면 직항이 열리는 기간과 요일이 정해졌으니 일정과 운임을 지금부터 비교할 수 있습니다.",
+     "points": [
+      "호주 **여름 성수기·여객 수요**에 맞춘 **계절편**",
+      "**수·금·일 주 3회**, 보잉 787-9 투입",
+      "KE409 인천 **08:00** 출발 → 멜버른 **20:30** 도착",
+      "귀국 KE410 멜버른 **22:00** → 인천 다음날 **07:35**"
+     ],
+     "slide": 4,
+     "image": "https://cdn.thetrippick.com/news/photo/202611/4517_17945_3641.jpg",
+     "sources": [
+      {
+       "name": "대한항공",
+       "url": "https://www.koreanair.com/contents/promotion/list/2026/2607mel"
+      },
+      {
+       "name": "여행픽",
+       "url": "https://www.thetrippick.com/news/articleView.html?idxno=4517"
+      }
+     ]
+    },
+    {
+     "title": "원·달러 환율 하루 14.5원 급등",
+     "date": "2026-11-06",
+     "summary": "미국 선거 결과로 기술주가 크게 떨어지자 한국 증시에서도 외국인이 주식을 팔았고, 그 돈이 달러로 바뀌며 원화가 약해졌습니다. 환율은 3거래일 연속 올랐습니다.",
+     "why": "달러로 결제하는 항공권·숙소·해외 카드 사용 값이 하루 만에 올랐으니, 환전은 한 번에 하지 말고 나눠서 하는 편이 흔들림에 덜 노출됩니다.",
+     "points": [
+      "**원·달러 환율** 6일 종가 **1,356.6원**, 전날(1,342.1원) 대비 **+14.5원**",
+      "**미 중간선거**에서 민주당이 크게 이겨 AI 데이터센터 **규제 우려**가 커짐",
+      "필라델피아 반도체지수 **12%대 폭락**, 코스피 **-6.02%**",
+      "외국인이 코스피에서 **약 2조 7,700억원 순매도**, 원화가 약해짐"
+     ],
+     "slide": 5,
+     "image": "",
+     "sources": [
+      {
+       "name": "비즈니스코리아",
+       "url": "https://www.businesskorea.co.kr/news/articleView.html?idxno=280719"
+      },
+      {
+       "name": "토큰포스트",
+       "url": "https://www.tokenpost.kr/news/insights/433978"
+      },
+      {
+       "name": "CBC뉴스",
+       "url": "https://www.cbci.co.kr/news/articleView.html?idxno=624242"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.jreast.co.jp/ko/yokosuka-tunnel-koji/",
+     "host": "jreast.co.jp"
+    },
+    {
+     "url": "https://www.thetrippick.com/news/articleView.html?idxno=4521",
+     "host": "thetrippick.com"
+    },
+    {
+     "url": "https://cdn.thetrippick.com/news/photo/202611/4521_17957_2623.jpg",
+     "host": "cdn.thetrippick.com"
+    },
+    {
+     "url": "https://www.sncf-connect.com/en-en/article/l-ouverture-des-ventes-d-hiver-et-de-printemps-ete-2027",
+     "host": "sncf-connect.com"
+    },
+    {
+     "url": "https://www.thetrippick.com/news/articleView.html?idxno=4501",
+     "host": "thetrippick.com"
+    },
+    {
+     "url": "https://cdn.thetrippick.com/news/photo/202611/4501_17897_64.jpg",
+     "host": "cdn.thetrippick.com"
+    },
+    {
+     "url": "https://www.koreanair.com/contents/promotion/list/2026/2607mel",
+     "host": "koreanair.com"
+    },
+    {
+     "url": "https://www.thetrippick.com/news/articleView.html?idxno=4517",
+     "host": "thetrippick.com"
+    },
+    {
+     "url": "https://cdn.thetrippick.com/news/photo/202611/4517_17945_3641.jpg",
+     "host": "cdn.thetrippick.com"
+    },
+    {
+     "url": "https://www.businesskorea.co.kr/news/articleView.html?idxno=280719",
+     "host": "businesskorea.co.kr"
+    },
+    {
+     "url": "https://www.tokenpost.kr/news/insights/433978",
+     "host": "tokenpost.kr"
+    },
+    {
+     "url": "https://www.cbci.co.kr/news/articleView.html?idxno=624242",
+     "host": "cbci.co.kr"
+    }
+   ]
+  },
+  {
+   "id": "fashion",
+   "name": "패션",
+   "title": "신발이 의류보다 더 꺾였다",
+   "slides": [
+    {
+     "img": "fashion/01.jpg",
+     "headline": "신발이 의류보다 더 꺾였다",
+     "type": "cover"
+    },
+    {
+     "img": "fashion/02.jpg",
+     "headline": "언더아머 7~9월 매출",
+     "type": "content-stat"
+    },
+    {
+     "img": "fashion/03.jpg",
+     "headline": "언더아머, 신발이 더 약했다",
+     "type": "content-split"
+    },
+    {
+     "img": "fashion/04.jpg",
+     "headline": "BAPE × adidas 오늘 발매",
+     "type": "content-badge"
+    },
+    {
+     "img": "fashion/05.jpg",
+     "headline": "한국 패션사 오늘 소식",
+     "type": "content-list"
+    },
+    {
+     "img": "fashion/06.jpg",
+     "headline": "F&F MLB, 카리나 윈터 캠페인",
+     "type": "content-highlight"
+    },
+    {
+     "img": "fashion/07.jpg",
+     "headline": "오늘 한 줄: 신발은 약했고 협업은 이어졌다",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "언더아머 2분기, 신발이 더 꺾였다",
+     "date": "2026-11-06",
+     "summary": "언더아머는 7~9월 매출이 전년 같은 분기보다 7% 줄었다. 의류는 6%, 신발은 11% 줄어 신발이 더 약했다. 회사는 영업이익은 예상보다 낫다고 했지만 연료·운임 비용과 재고 정리 때문에 마진 개선 폭 전망은 낮췄다. 매출총이익률은 팔린 금액에서 원가를 뺀 이익이 차지하는 비율이다.",
+     "why": "같은 스포츠 시장에서 의류보다 신발이 먼저 약해지는 브랜드가 있다는 뜻이라, 의류 중심인 브랜드는 상대적으로 버틸 여지가 있다.",
+     "points": [
+      "**언더아머** 7~9월 매출 **12.4억 달러(약 1조 6,800억원)**, 전년 같은 분기 대비 **-7%**",
+      "의류 **-6%**(8.8억 달러, 약 1조 1,900억원), 신발 **-11%**(2.34억 달러, 약 3,170억원)",
+      "북미·해외 모두 **-7%**, 영업이익은 **1,500만 달러(약 200억원)**로 흑자 유지",
+      "연료·운임 상승과 재고 정리로 연간 **매출총이익률** 개선 폭 전망을 낮춤"
+     ],
+     "slide": 3,
+     "image": "https://footwearmagazine.com/under-armour-q2-fy2027-footwear-revenue-decline/share-image/photo-first-v3-e8356d13d30f5b31/",
+     "sources": [
+      {
+       "name": "Under Armour 보도자료(SEC)",
+       "url": "https://www.sec.gov/Archives/edgar/data/0001336917/000133691726000160/exhibit991-fiscal2027q2.htm"
+      },
+      {
+       "name": "Footwear Magazine",
+       "url": "https://footwearmagazine.com/under-armour-q2-fy2027-footwear-revenue-decline/"
+      },
+      {
+       "name": "GuruFocus",
+       "url": "https://www.gurufocus.com/news/9180993/under-armour-inc-reports-124-billion-revenue-gaap-loss-per-share-of-000-exceeds-analyst-estimates"
+      }
+     ]
+    },
+    {
+     "title": "BAPE × adidas 홀리데이 캡슐",
+     "date": "2026-11-07 발매",
+     "summary": "adidas와 BAPE가 올해 월드컵 캡슐에 이어 홀리데이 캡슐을 냈다. 농구 선수를 앞세운 캠페인에 BAPE의 카모 무늬를 입힌 신발과 옷을 한 묶음으로 판다. 가격은 매체마다 달라 확인하지 못했다.",
+     "why": "스포츠 브랜드가 선수 캠페인과 스트리트 브랜드 협업을 한 번에 묶어 파는 방식이라, 저지·아우터 협업을 기획할 때 참고할 구성이다.",
+     "points": [
+      "**BAPE × adidas** 홀리데이 캡슐, **11월 7일** 오늘 발매",
+      "농구화 **크레이지 에너지+(Crazy Energy+)** 실버 카모, 고카나는 11월 중 따로 발매",
+      "의류는 **바시티 재킷**, 퍼플 카모 후디, 웜업 탑",
+      "모델은 NBA **제일런 윌리엄스**, BAPE 매장·BAPE.com·CONFIRMED 앱에서 판매"
+     ],
+     "slide": 4,
+     "image": "https://sneakernews.com/wp-content/uploads/2026/10/bape-adidas-jalen-williams-16.jpg",
+     "sources": [
+      {
+       "name": "Sneaker News",
+       "url": "https://sneakernews.com/2026/10/29/bape-adidas-world-gone-mad-goukana-crazy-energy/"
+      },
+      {
+       "name": "Sole Retriever",
+       "url": "https://www.soleretriever.com/sneaker-release-dates/adidas/other/adidas-crazy-energy-bape-silver-kh8660"
+      },
+      {
+       "name": "Sneakerjagers",
+       "url": "https://www.sneakerjagers.com/en/n/adidas-x-bape-crazy-energy-gets-a-silver-camo-makeover/8134"
+      }
+     ]
+    },
+    {
+     "title": "한국 패션사 오늘 소식",
+     "date": "2026-11-05~11-07",
+     "summary": "신세계는 백화점 계열사를 묶어 관리하는 사장급 자리를 새로 만들었다. 코오롱FnC는 대학생 국제대회 유니폼 후원으로 스포츠웨어 제작 실력을 알린다. LF는 리복 패딩을 새로 내놓았다. 삼성물산 패션부문, 한섬, 이랜드, 무신사는 오늘 새 소식 없음.",
+     "why": "신세계는 조직, 코오롱FnC는 스포츠 후원, LF는 스포츠 브랜드 아우터로 움직여, MLB가 속한 스포츠웨어 시장에서 경쟁사들이 어디에 힘을 주는지 보인다.",
+     "points": [
+      "**신세계**: 이마트와 **계열분리**를 앞두고 이석구 사장이 초대 **백화점부문장**에 선임(11/6)",
+      "신세계인터내셔날 등 계열사 관리를 한 조직에서 맡도록 기획전략본부를 **둘로 나눔**",
+      "**코오롱FnC**: **2027 충청 유니버시아드**(2027년 8월) 유니폼 후원 협약(11/5), 헬리녹스 웨어로 제작",
+      "**LF**: 리복 26F/W **패딩**을 경량 라인과 프리미엄 **DMX AIR** 라인으로 공개(11/6)"
+     ],
+     "slide": 5,
+     "image": "https://cdn.apnews.kr/news/thumbnail/202611/3052910_86771_2823_v150.jpg",
+     "sources": [
+      {
+       "name": "AP신문",
+       "url": "https://www.apnews.kr/news/articleView.html?idxno=3052910"
+      },
+      {
+       "name": "메가경제",
+       "url": "https://www.megaeconomy.co.kr/news/newsview.php?ncode=1065593718298227"
+      },
+      {
+       "name": "이코노믹리뷰",
+       "url": "https://www.econovill.com/news/articleView.html?idxno=756350"
+      }
+     ]
+    },
+    {
+     "title": "F&F MLB, 카리나 윈터 캠페인",
+     "date": "2026-11-06",
+     "summary": "F&F가 전개하는 MLB가 앰버서더 카리나와 겨울 캠페인을 열었다. 야구공 패턴에서 따온 곡선 패딩을 앞세웠고, 지난해 카리나가 입은 제품이 품절됐다는 점을 내세웠다. 오늘 F&F 주가와 실적 발표일은 새로 확인하지 못했다.",
+     "why": "겨울 아우터를 앰버서더 한 명에 맞춰 밀어붙이는 방식이어서, 스포츠 브랜드가 시즌 핵심 제품 하나로 마케팅을 모으는 사례다.",
+     "points": [
+      "**MLB** 2026년 FW **윈터 캠페인**, 11월 6일 서울 용산에서 오픈 이벤트",
+      "주력 제품은 **커브 패딩**, 야구공 패턴에서 따온 곡선 실루엣과 초경량 소재",
+      "여성 **크롭 패딩**에 버니 비니, 숏패딩에 플러시 미야옹 비니를 맞춘 착장",
+      "MLB는 지난해 FW에 카리나가 입은 제품이 **품절**됐다고 설명"
+     ],
+     "slide": 6,
+     "image": "https://www.fashionn.com/files/board/2026/11/image/o_1k6o9uhja1e19qbdhon17019c0f.jpg",
+     "sources": [
+      {
+       "name": "한국섬유신문",
+       "url": "http://www.ktnews.com/news/articleView.html?idxno=149651"
+      },
+      {
+       "name": "패션엔",
+       "url": "http://www.fashionn.com/board/read_new.php?table=1023&number=63081"
+      },
+      {
+       "name": "스페셜타임스",
+       "url": "https://www.specialtimes.co.kr/news/articleView.html?idxno=478396"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.sec.gov/Archives/edgar/data/0001336917/000133691726000160/exhibit991-fiscal2027q2.htm",
+     "host": "sec.gov"
+    },
+    {
+     "url": "https://footwearmagazine.com/under-armour-q2-fy2027-footwear-revenue-decline/",
+     "host": "footwearmagazine.com"
+    },
+    {
+     "url": "https://www.gurufocus.com/news/9180993/under-armour-inc-reports-124-billion-revenue-gaap-loss-per-share-of-000-exceeds-analyst-estimates",
+     "host": "gurufocus.com"
+    },
+    {
+     "url": "https://sneakernews.com/2026/10/29/bape-adidas-world-gone-mad-goukana-crazy-energy/",
+     "host": "sneakernews.com"
+    },
+    {
+     "url": "https://www.soleretriever.com/sneaker-release-dates/adidas/other/adidas-crazy-energy-bape-silver-kh8660",
+     "host": "soleretriever.com"
+    },
+    {
+     "url": "https://www.sneakerjagers.com/en/n/adidas-x-bape-crazy-energy-gets-a-silver-camo-makeover/8134",
+     "host": "sneakerjagers.com"
+    },
+    {
+     "url": "http://www.ktnews.com/news/articleView.html?idxno=149651",
+     "host": "ktnews.com"
+    },
+    {
+     "url": "http://www.fashionn.com/board/read_new.php?table=1023&number=63081",
+     "host": "fashionn.com"
+    },
+    {
+     "url": "https://www.specialtimes.co.kr/news/articleView.html?idxno=478396",
+     "host": "specialtimes.co.kr"
+    }
+   ]
+  },
+  {
+   "id": "society",
+   "name": "사회 현상",
+   "title": "휴가도 폰값도 밥상도 달라졌다",
+   "slides": [
+    {
+     "img": "society/01.jpg",
+     "headline": "휴가도 폰값도 밥상도 달라졌다",
+     "type": "cover"
+    },
+    {
+     "img": "society/02.jpg",
+     "headline": "출산휴가, 회사 크기로 갈렸다",
+     "type": "content-split"
+    },
+    {
+     "img": "society/03.jpg",
+     "headline": "5인 미만은 해고돼도 구제가 어렵다",
+     "type": "content"
+    },
+    {
+     "img": "society/04.jpg",
+     "headline": "올해 세계 폰값 평균 15% 올랐다",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "society/05.jpg",
+     "headline": "AI 안 써도 폰값이 오르는 이유",
+     "type": "content-steps"
+    },
+    {
+     "img": "society/06.jpg",
+     "headline": "20~49세 곡류 섭취, 10년 새 줄었다",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "society/07.jpg",
+     "headline": "밥은 줄고 음료는 늘었다",
+     "type": "content-list"
+    },
+    {
+     "img": "society/08.jpg",
+     "headline": "오늘 한 줄 정리: 사는 조건이 일상을 바꾼다",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "5인 미만 사업장, 출산·육아휴직 못 쓴다",
+     "date": "2026-11-06",
+     "summary": "직장갑질119 온라인노조 설문에서 5인 미만 사업장 노동자 3명 중 1명만 출산휴가·육아휴직을 자유롭게 쓸 수 있다고 답했습니다. 휴가는 법으로 모두에게 보장되지만, 5인 미만은 부당해고 구제신청 규정이 적용되지 않아 휴가를 이유로 해고돼도 대응하기 어렵다는 것이 노조 주장입니다.",
+     "why": "법에 있는 권리를 쓸 수 있는지는 회사 규모에 따라 갈릴 수 있다는 점을 보여 주는 조사입니다.",
+     "points": [
+      "직장갑질119 온라인노조 설문(직장인 **1,000명**, 9월 1~7일 조사)",
+      "육아휴직 자유롭게 쓴다 **5인 미만 31.9%**, **300인 이상 72.0%**",
+      "**'전혀 그렇지 않다'** 5인 미만 **34.1%**, 300인 이상은 7.1%",
+      "5인 미만은 **부당해고 구제신청** 규정이 빠져 해고 대응이 어려움"
+     ],
+     "slide": 3,
+     "image": "https://img.khan.co.kr/news/2026/11/06/news-p.v1.20261106.138fd8d501854a91881abd015fbb52d2_P1.jpeg",
+     "sources": [
+      {
+       "name": "경향신문",
+       "url": "https://www.khan.co.kr/article/202611061457001"
+      },
+      {
+       "name": "뉴스1",
+       "url": "https://www.news1.kr/society/women-family/6345160"
+      },
+      {
+       "name": "이데일리",
+       "url": "https://www.edaily.co.kr/News/Read?newsId=04546086645643096&mediaCodeNo=257"
+      }
+     ]
+    },
+    {
+     "title": "AI 데이터센터가 폰·노트북값을 올린다",
+     "date": "2026-11-03 ~ 11-07",
+     "summary": "AI 서버가 메모리를 대량으로 쓰면서 폰·노트북에 들어갈 메모리 공급이 빠듯해졌고 가격이 오르고 있습니다. 제조사는 가격을 올리거나 저장용량·카메라 사양을 낮추는 방식으로 대응하고 있습니다. AI를 쓰지 않는 사람도 기기값으로 비용을 나눠 내는 구조입니다.",
+     "why": "기기를 바꿀 계획이 있다면 가격 부담이 당분간 이어질 수 있다는 전망입니다.",
+     "points": [
+      "**메모리**(D램·낸드)는 폰·노트북이 데이터를 저장하는 반도체",
+      "카운터포인트리서치: 올해 세계 스마트폰 평균 가격 **+15%**",
+      "트렌드포스: 4분기 D램 계약가 **+10~15%**, 낸드 **+15~20%** 전망(전 분기 대비)",
+      "**애플 CEO**는 11월 3일 메모리 가격을 **'전례 없는 수준'**이라 표현"
+     ],
+     "slide": 5,
+     "image": "https://thumb.mt.co.kr/cdn-cgi/image/f=avif/21/2026/11/2026110620083266668_1.jpg",
+     "sources": [
+      {
+       "name": "머니투데이",
+       "url": "https://www.mt.co.kr/tech/2026/11/07/2026110620083266668"
+      },
+      {
+       "name": "IT데일리",
+       "url": "https://www.itdaily.kr/news/articleView.html?idxno=242476"
+      },
+      {
+       "name": "뉴스프라임",
+       "url": "http://www.newsprime.co.kr/news/article.html?no=753866"
+      }
+     ]
+    },
+    {
+     "title": "한국인 식탁이 가벼워졌다",
+     "date": "2026-11-06 ~ 11-07",
+     "summary": "질병관리청 국민건강영양조사에서 20~49세의 곡류 섭취가 10년 새 줄고 음료 섭취는 늘었습니다. 혼자 사는 사람이 늘고 외식물가가 오른 점이 배경으로 꼽힙니다. 서울대 푸드비즈니스랩은 별도 조사로 식사 횟수도 줄었다고 분석했습니다.",
+     "why": "아침 한 끼, 점심 한 끼를 간단히 해결하는 습관이 통계에도 나타나기 시작했다는 뜻입니다.",
+     "points": [
+      "질병청 조사: 20~49세 하루 곡류 **296.8g**(2014) → **254.7g**(2024)",
+      "같은 기간 음료류 **236.8g → 377.2g**, 하루 열량 **-256Cal**",
+      "혼자 사는 사람이 늘어 **1인 가구 36.1%**(2024), 외식물가도 4년 연속 3%대↑",
+      "서울대 연구팀: 1인당 식사 **주 15.2회 → 14.7회**, **'감식 사회'**로 명명"
+     ],
+     "slide": 7,
+     "image": "https://dimg.donga.com/wps/NEWS/IMAGE/2026/11/06/134982188.1.jpg",
+     "sources": [
+      {
+       "name": "동아일보",
+       "url": "https://www.donga.com/news/Health/article/all/20261106/134981145/2"
+      },
+      {
+       "name": "중앙일보",
+       "url": "https://www.joongang.co.kr/article/25476553"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.khan.co.kr/article/202611061457001",
+     "host": "khan.co.kr"
+    },
+    {
+     "url": "https://www.news1.kr/society/women-family/6345160",
+     "host": "news1.kr"
+    },
+    {
+     "url": "https://www.edaily.co.kr/News/Read?newsId=04546086645643096&mediaCodeNo=257",
+     "host": "edaily.co.kr"
+    },
+    {
+     "url": "https://www.incheontoday.com/news/articleView.html?idxno=326020",
+     "host": "incheontoday.com"
+    },
+    {
+     "url": "https://www.mt.co.kr/tech/2026/11/07/2026110620083266668",
+     "host": "mt.co.kr"
+    },
+    {
+     "url": "https://www.itdaily.kr/news/articleView.html?idxno=242476",
+     "host": "itdaily.kr"
+    },
+    {
+     "url": "https://www.mt.co.kr/industry/2026/11/06/2026110414494745894",
+     "host": "mt.co.kr"
+    },
+    {
+     "url": "http://www.newsprime.co.kr/news/article.html?no=753866",
+     "host": "newsprime.co.kr"
+    },
+    {
+     "url": "https://www.donga.com/news/Health/article/all/20261106/134981145/2",
+     "host": "donga.com"
+    },
+    {
+     "url": "https://www.joongang.co.kr/article/25476553",
+     "host": "joongang.co.kr"
+    },
+    {
+     "url": "https://www.joongang.co.kr/article/25476475",
+     "host": "joongang.co.kr"
+    }
+   ]
+  },
+  {
+   "id": "news",
+   "name": "정치·사회 뉴스",
+   "title": "11월 7일 뉴스 한눈에",
+   "slides": [
+    {
+     "img": "news/01.jpg",
+     "headline": "11월 7일 뉴스 한눈에",
+     "type": "cover"
+    },
+    {
+     "img": "news/02.jpg",
+     "headline": "조작기소 특검법, 국회 통과",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/03.jpg",
+     "headline": "특검법, 여야 입장은",
+     "type": "content-split"
+    },
+    {
+     "img": "news/04.jpg",
+     "headline": "법무장관 후보에 이용철 지명",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/05.jpg",
+     "headline": "경제 | 코스피 하루 6% 하락",
+     "type": "content-bigdata"
+    },
+    {
+     "img": "news/06.jpg",
+     "headline": "백악관 비서실장 교체, 후임 밀러",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/07.jpg",
+     "headline": "이란 두고 공격 검토와 대화 병행",
+     "type": "content-list"
+    },
+    {
+     "img": "news/08.jpg",
+     "headline": "프랑스 하원, 예산안 세입 부문 부결",
+     "type": "content-badge"
+    },
+    {
+     "img": "news/09.jpg",
+     "headline": "오늘 한 줄 정리: 국내는 특검법 통과, 해외는 미 선거 여파",
+     "type": "cta"
+    }
+   ],
+   "stories": [
+    {
+     "title": "조작기소 특검법 국회 통과",
+     "date": "2026-11-06",
+     "summary": "윤석열 정부 검찰·국정원·감사원의 수사와 기소가 조작이었는지 가리는 특검법이 6일 본회의를 통과했다. 국민의힘은 대통령 관련 사건을 대통령이 임명한 특검이 다루는 것은 이해충돌이라고 주장했고, 민주당은 공소취소 권한과 이첩 요구권을 법안에서 삭제했다고 설명했다. 법은 공포 뒤 시행되며 민주당은 10일 공포, 22일께 임명을 예상했다.",
+     "why": "수사 대상에 이재명 대통령 관련 사건이 포함돼 있어, 특검 임명 방식과 수사 결과를 둘러싼 여야 공방이 이어질 전망이다.",
+     "points": [
+      "**특검이란?** 기존 수사기관과 별도로 꾸리는 임시 수사팀",
+      "**6일** 본회의 가결: 재석 **168명** 중 찬성 **167명**, 반대 1명(국힘 불참)",
+      "수사 대상 **12개 사건**, 인력 최대 **309명**, 기간 최장 **200일**",
+      "**7일** 국힘 경복궁역 장외집회. 특검 임명은 이르면 **22일께**(민주당 설명)"
+     ],
+     "slide": 3,
+     "image": "https://img4.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110614570001300_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스(11-06)",
+       "url": "https://www.yna.co.kr/view/AKR20261106131151001"
+      },
+      {
+       "name": "중앙일보",
+       "url": "https://www.joongang.co.kr/article/25476537"
+      },
+      {
+       "name": "세계일보",
+       "url": "https://www.segye.com/newsView/20261106516291"
+      },
+      {
+       "name": "한국일보",
+       "url": "https://www.hankookilbo.com/news/article/A2026110615210003402"
+      }
+     ]
+    },
+    {
+     "title": "법무장관 후보자에 이용철 지명",
+     "date": "2026-11-06",
+     "summary": "이재명 대통령이 6일 신임 법무부 장관 후보자로 이용철 방위사업청장을 지명했다. 청와대는 인권 변호사와 참여정부 경험을 이유로 들었고, 국민의힘은 이 후보자가 대장동 개발 의혹과 연관됐다고 주장하며 반대했다. 같은 날 정무수석에 최인호 주택도시보증공사 사장, 국세청장 후보자에 안덕수 서울지방국세청장도 지명됐다.",
+     "why": "법무부 장관은 검찰 사무를 총괄해, 특검법 통과와 같은 날 나온 인선이라 청문회에서 쟁점이 될 수 있다.",
+     "points": [
+      "**법무부 장관 후보자란?** 국회 인사청문회를 거쳐 임명되는 자리의 지명자",
+      "**6일** 이재명 대통령, 이용철 방위사업청장(**66세**) 지명",
+      "청와대: '인권 옹호 경험과 참여정부 법무비서관 경력' 설명",
+      "국힘: '**대장동 숨은 설계자**'라며 반발. 청와대 '청문회서 소명 기대'"
+     ],
+     "slide": 4,
+     "image": "https://img2.yna.co.kr/etc/inner/KR/2026/11/06/AKR20261106130851001_02_i_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261106130851001"
+      },
+      {
+       "name": "동아일보",
+       "url": "https://www.donga.com/news/Politics/article/all/20261106/134982624/2"
+      },
+      {
+       "name": "SBS",
+       "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008834863"
+      },
+      {
+       "name": "중앙일보",
+       "url": "https://www.joongang.co.kr/article/25476537"
+      }
+     ]
+    },
+    {
+     "title": "코스피 하루 6% 하락, 서킷브레이커",
+     "date": "2026-11-06",
+     "summary": "6일 코스피가 6.02% 내린 5,059.69에 마감했고 개장 직후 서킷브레이커가 발동됐다. 증권사 리서치센터장들은 미국 중간선거 뒤 데이터센터 규제 강화 가능성이 부각돼 AI 투자와 반도체 수요가 줄 수 있다는 우려가 퍼졌다고 분석했다. 트럼프 대통령은 AI 산업을 '황금'이라 부르며 규제론을 반박했다. 정부와 민주당은 긴급 간담회를 열고 시장 안정 조치를 준비하겠다고 밝혔다.",
+     "why": "삼성전자·SK하이닉스 비중이 큰 증시라 미국의 AI 정책 향방이 국내 투자자 자산에 곧바로 영향을 준다.",
+     "points": [
+      "**서킷브레이커란?** 지수가 8% 이상 떨어지면 거래를 20분 멈추는 장치",
+      "**6일** 코스피 **5,059.69**(-**6.02%**), 이틀간 **-10.98%**",
+      "삼성전자 **-6.35%**, SK하이닉스 **-10.44%**. 개장 3분 만에 발동",
+      "원인 진단: 미 민주당 당선인들의 **데이터센터 규제** 공약, AI 투자 위축 우려"
+     ],
+     "slide": 5,
+     "image": "https://img7.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110602130001300_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스(숫자로 본 증시급락)",
+       "url": "https://www.yna.co.kr/view/AKR20261106071651008"
+      },
+      {
+       "name": "연합뉴스(전문가 진단)",
+       "url": "https://www.yna.co.kr/view/AKR20261106085251008"
+      },
+      {
+       "name": "JTBC",
+       "url": "https://news.jtbc.co.kr/article/NB12326862"
+      },
+      {
+       "name": "동아일보",
+       "url": "https://www.donga.com/news/Economy/article/all/20261107/134982654/2"
+      }
+     ]
+    },
+    {
+     "title": "백악관 비서실장 교체, 후임 스티븐 밀러",
+     "date": "2026-11-06 (현지)",
+     "summary": "트럼프 대통령이 6일 트루스소셜로 수지 와일스 백악관 비서실장을 스티븐 밀러 부비서실장으로 교체한다고 밝혔다. 트럼프는 밀러를 가장 신뢰하는 참모 중 하나라고 했고, 와일스에게는 감사를 표하며 정치조직으로 옮길 것이라고 했다. 미국 언론은 중간선거 패배 뒤 백악관과 내각 추가 개편 가능성에 주목하고 있다.",
+     "why": "대통령 핵심 참모의 교체라 중간선거 이후 백악관의 정책 방향과 인사 개편에 관심이 쏠린다.",
+     "points": [
+      "**백악관 비서실장이란?** 대통령 일정과 참모진을 총괄하는 자리",
+      "**6일** 트럼프, 수지 와일스 교체 발표. 후임 **스티븐 밀러**(41세), **9일**부터",
+      "와일스는 '트럼프 정치조직'으로 이동. 트럼프 '변화를 주고 싶었다'",
+      "밀러는 반이민 정책을 이끌어 온 참모. 중간선거 패배 **사흘 만**"
+     ],
+     "slide": 6,
+     "image": "https://img3.yna.co.kr/etc/inner/KR/2026/11/07/AKR20261107005051071_01_i_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261107005051071"
+      },
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8706548"
+      },
+      {
+       "name": "SBS",
+       "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008834861"
+      },
+      {
+       "name": "뉴시스",
+       "url": "https://www.newsis.com/view/NISX20261107_0003858717"
+      }
+     ]
+    },
+    {
+     "title": "트럼프, 이란 공격 재개 검토와 대화 병행",
+     "date": "2026-11-05 ~ 2026-11-06 (현지)",
+     "summary": "중간선거 뒤 미국이 이란에 대한 군사작전을 다시 시작할 수 있다는 보도가 나오는 가운데, 트럼프 대통령은 6일 이란과 대화하고 있다고 밝혔다. 같은 날 중재국 카타르의 국왕과 통화해 긴장 완화 외교 노력을 논의했다고 카타르 왕실이 전했다. 이란은 항구 봉쇄 해제와 동결 자산 반환 등 7가지 조건이 먼저 충족돼야 협상이 가능하다는 입장을 유지하고 있다.",
+     "why": "공격 재개 여부에 따라 호르무즈 해협과 원유 수송이 영향을 받을 수 있어 주말 이후 결정이 주목된다.",
+     "points": [
+      "**배경:** 미국·이란 전쟁이 이어지는 가운데 호르무즈 해협 개방이 쟁점",
+      "**5일** 폭스뉴스: 트럼프, 안보 참모와 공격 재개 논의. 미 관리 '**9일**이 작전에 유리'",
+      "**6일** 트럼프: '이란과 **계속 대화해 왔다**'(상대·방식은 설명 안 함)",
+      "같은 날 카타르 국왕과 통화. 이란은 **7가지 조건** 충족이 먼저라는 입장"
+     ],
+     "slide": 7,
+     "image": "https://img0.yna.co.kr/etc/inner/KR/2026/11/07/AKR20261107008000071_01_i_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261107008000071"
+      },
+      {
+       "name": "한국일보",
+       "url": "https://www.hankookilbo.com/news/article/A2026110620570003574"
+      },
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8706558"
+      },
+      {
+       "name": "뉴스1",
+       "url": "https://www.news1.kr/world/middleeast-africa/6346205"
+      }
+     ]
+    },
+    {
+     "title": "프랑스 하원, 긴축 예산안 세입 부문 부결",
+     "date": "2026-11-04 (현지 심야)",
+     "summary": "프랑스 하원이 4일 밤 정부의 내년 예산안 중 세입 부문을 반대 458표, 찬성 0표로 부결했다. 정부안은 재정적자 축소가 목표였지만 여러 정당이 조항을 고쳐 원안과 달라졌고, 야권뿐 아니라 집권당도 반대했다. 5일에는 노조·학생 단체가 고물가에 항의하는 전국 시위를 벌였다.",
+     "why": "과반 세력이 없는 의회에서 예산안 합의가 어려워져, 연내 예산 확정 여부가 불투명하다.",
+     "points": [
+      "**예산안 세입 부문이란?** 내년에 세금 등으로 얼마를 걷을지 정한 부분",
+      "**4일** 밤 하원 1차 독회: 반대 **458**, 찬성 **0**, 기권 2",
+      "정부 목표: 내년 재정적자를 GDP 대비 **5%** 안팎으로 축소(올해 5.4%)",
+      "정당마다 조항을 고쳐 원안과 달라졌고, **집권당도 반대**"
+     ],
+     "slide": 8,
+     "image": "https://img5.yna.co.kr/photo/etc/af/2026/11/05/PAF20261105157101009_P4.jpg",
+     "sources": [
+      {
+       "name": "연합뉴스",
+       "url": "https://www.yna.co.kr/view/AKR20261107004500085"
+      },
+      {
+       "name": "조선일보",
+       "url": "https://www.chosun.com/international/international_general/2026/11/07/2UAXA6GPZBDP7DOHR3S2D7UTDI/"
+      },
+      {
+       "name": "KBS",
+       "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8706525"
+      },
+      {
+       "name": "연합뉴스TV",
+       "url": "http://www.yonhapnewstv.co.kr/news/AKR202611070429368dW"
+      }
+     ]
+    }
+   ],
+   "sources": [
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261106131151001",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.joongang.co.kr/article/25476537",
+     "host": "joongang.co.kr"
+    },
+    {
+     "url": "https://www.segye.com/newsView/20261106516291",
+     "host": "segye.com"
+    },
+    {
+     "url": "https://www.hankookilbo.com/news/article/A2026110615210003402",
+     "host": "hankookilbo.com"
+    },
+    {
+     "url": "https://img4.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110614570001300_P4.jpg",
+     "host": "img4.yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261106130851001",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.donga.com/news/Politics/article/all/20261106/134982624/2",
+     "host": "donga.com"
+    },
+    {
+     "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008834863",
+     "host": "news.sbs.co.kr"
+    },
+    {
+     "url": "https://img2.yna.co.kr/etc/inner/KR/2026/11/06/AKR20261106130851001_02_i_P4.jpg",
+     "host": "img2.yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261106071651008",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261106085251008",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://news.jtbc.co.kr/article/NB12326862",
+     "host": "news.jtbc.co.kr"
+    },
+    {
+     "url": "https://www.donga.com/news/Economy/article/all/20261107/134982654/2",
+     "host": "donga.com"
+    },
+    {
+     "url": "https://img7.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110602130001300_P4.jpg",
+     "host": "img7.yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261107005051071",
+     "host": "yna.co.kr"
+    },
+    {
+     "url": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8706548",
+     "host": "news.kbs.co.kr"
+    },
+    {
+     "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008834861",
+     "host": "news.sbs.co.kr"
+    },
+    {
+     "url": "https://www.newsis.com/view/NISX20261107_0003858717",
+     "host": "newsis.com"
+    },
+    {
+     "url": "https://img3.yna.co.kr/etc/inner/KR/2026/11/07/AKR20261107005051071_01_i_P4.jpg",
+     "host": "img3.yna.co.kr"
+    },
+    {
+     "url": "https://www.yna.co.kr/view/AKR20261107008000071",
+     "host": "yna.co.kr"
+    }
+   ]
+  }
+ ]
+}
