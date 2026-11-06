@@ -8,7 +8,16 @@
   'use strict';
   var ID = 'trv-timeline';
   var DOW = ['일', '월', '화', '수', '목', '금', '토'];
-  var MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  // (2026-11-06 3차) 대문자 라벨 → Title Case
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // (2026-11-06 3차) 라벨 자간(.12~.16em) 제거 — index.html 대신 여기서
+  (function() {
+    if (document.getElementById('atl-r3y-bk')) return;
+    var st = document.createElement('style'); st.id = 'atl-r3y-bk';
+    st.textContent = '.bk-sum span, .bk-date span, .bk-date i, .bk-tag, .bk-io span { letter-spacing:0 !important; text-transform:none !important; }';
+    (document.head || document.documentElement).appendChild(st);
+  })();
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function jd() { try { return journeyData || []; } catch(e) { return []; } }
   function trip() { try { return getCurrentTrip(); } catch(e) { return null; } }
@@ -47,7 +56,7 @@
     if (legs.length) r = [legs[0].from, legs[legs.length - 1].to];
     var code = function(x) { var m = /\b([A-Z]{3})\b/.exec(x); return m ? m[1] : x; };
     return '<article class="bk-card bk-flight">' +
-      '<header class="bk-fh"><span class="bk-tag">✈ FLIGHT</span><b>' + esc(it.title || '') + '</b><span class="bk-mute">' + esc(it.city || '') + (it.date ? ' · ' + dw(it.date) : '') + '</span>' + btns(idx) + '</header>' +
+      '<header class="bk-fh"><span class="bk-tag">✈ Flight</span><b>' + esc(it.title || '') + '</b><span class="bk-mute">' + esc(it.city || '') + (it.date ? ' · ' + dw(it.date) : '') + '</span>' + btns(idx) + '</header>' +
       '<div class="bk-route">' +
         '<div><p class="bk-code">' + esc(code(r[0])) + '</p><p class="bk-time">' + esc(it.time || '') + '</p></div>' +
         '<div class="bk-line"><span>' + esc(it.duration || '') + (legs.length > 1 ? ' · ' + (legs.length - 1) + '회 경유 ' + esc(legs.slice(0, -1).map(function(l){ return l.to + (legs[legs.indexOf(l) + 1].layover ? ' ' + legs[legs.indexOf(l) + 1].layover : ''); }).join(', ')) : (legs.length ? ' · 직항' : '')) + '</span></div>' +
@@ -69,16 +78,16 @@
     var cancel = it.cancel === '가능' ? '무료 취소' + (it.cancel_date ? ' ~' + dw(it.cancel_date) : '') :
       it.cancel === '조건부' ? '조건부 취소' + (it.cancel_date ? ' ~' + dw(it.cancel_date) : '') :
       it.cancel === '불가' ? '환불 불가' : esc(it.cancel || '');
-    var kind = /airbnb/i.test(it.description || '') ? 'AIRBNB' : 'HOTEL';
+    var kind = /airbnb/i.test(it.description || '') ? 'Airbnb' : 'Hotel';
     var d = function(s) { if (!isDate(s)) return esc(s || '—'); var x = new Date(s + 'T00:00:00'); return (x.getMonth() + 1) + '/' + x.getDate() + ' (' + DOW[x.getDay()] + ')'; };
     return '<article class="bk-card bk-stay">' +
       '<div class="bk-photo"' + (img ? ' style="background-image:url(&quot;' + String(img).replace(/"/g, '%22') + '&quot;)"' : '') + '>' + (img ? '' : '<span>🛏</span>') + '</div>' +
       '<div class="bk-sbody">' +
         '<header class="bk-fh"><span class="bk-tag">' + kind + '</span><span class="bk-mute">' + cityHtml(it.city) + '</span>' + btns(idx) + '</header>' +
         '<h4 class="bk-name">' + esc(it.title || '(숙소 이름)') + '</h4>' +
-        '<div class="bk-io"><div><span>IN</span><b>' + d(it.date) + '</b><i>' + esc(it.checkin || '') + '</i></div>' +
+        '<div class="bk-io"><div><span>In</span><b>' + d(it.date) + '</b><i>' + esc(it.checkin || '') + '</i></div>' +
           '<div class="bk-n">' + (n ? n + '박' : '') + '</div>' +
-          '<div><span>OUT</span><b>' + d(it.checkout_date) + '</b><i>' + esc(it.checkout || '') + '</i></div></div>' +
+          '<div><span>Out</span><b>' + d(it.checkout_date) + '</b><i>' + esc(it.checkout || '') + '</i></div></div>' +
         '<div class="bk-kvs">' + kv('취소', cancel) + kv('금액', money(it.amount || it.price)) + (pay(it) ? '<div class="bk-kv"><span>결제</span>' + pay(it) + '</div>' : '') + '</div>' +
       '</div></article>';
   }
@@ -100,8 +109,8 @@
     all.forEach(function(it, idx) {
       if (it.type === '항공편') ev.push({ d: it.date, t: it.time || '', k: 0, h: flightCard(it, idx), it: it });
       else if (it.type === '숙소') ev.push({ d: it.date, t: it.checkin || '15:00', k: 2, h: stayCard(it, idx), it: it });
-      else if (it.type === '렌트카') ev.push({ d: it.date, t: it.time || '', k: 1, h: miniCard(it, idx, '🚗', 'RENTAL'), it: it });
-      else if (it.type === '이동수단') ev.push({ d: it.date, t: it.time || '', k: 1, h: miniCard(it, idx, '🚆', 'TRANSIT'), it: it });
+      else if (it.type === '렌트카') ev.push({ d: it.date, t: it.time || '', k: 1, h: miniCard(it, idx, '🚗', 'Rental'), it: it });
+      else if (it.type === '이동수단') ev.push({ d: it.date, t: it.time || '', k: 1, h: miniCard(it, idx, '🚆', 'Transit'), it: it });
     });
     // 숙소 비는 밤 찾기 (여행 시작일 ~ 마지막 날 전날)
     var covered = {};
@@ -118,10 +127,10 @@
     var nFlight = ev.filter(function(e){ return e.k === 0; }).length;
     var nNights = Object.keys(covered).length, nAll = (isDate(t.start_date) && isDate(t.end_date)) ? nightsBetween(t.start_date, t.end_date) : 0;
     var sum = '<div class="bk-sum">' +
-      '<div><span>FLIGHTS</span><b>' + nFlight + '</b></div>' +
-      '<div><span>NIGHTS BOOKED</span><b>' + nNights + (nAll ? '<small>/' + nAll + '</small>' : '') + '</b></div>' +
-      '<div><span>RENTAL · TRANSIT</span><b>' + ev.filter(function(e){ return e.k === 1; }).length + '</b></div>' +
-      '<div class="' + (gaps.length ? 'is-warn' : '') + '"><span>EMPTY NIGHTS</span><b>' + gaps.length + '</b></div></div>';
+      '<div><span>Flights</span><b>' + nFlight + '</b></div>' +
+      '<div><span>Nights booked</span><b>' + nNights + (nAll ? '<small>/' + nAll + '</small>' : '') + '</b></div>' +
+      '<div><span>Rental · Transit</span><b>' + ev.filter(function(e){ return e.k === 1; }).length + '</b></div>' +
+      '<div class="' + (gaps.length ? 'is-warn' : '') + '"><span>Empty nights</span><b>' + gaps.length + '</b></div></div>';
 
     if (!ev.length) { box.innerHTML = sum + '<p class="bk-empty">아직 예약이 없어요 · 옆 탭에서 항공편·숙소를 추가하면 여기 날짜순으로 모여요</p>'; return; }
     ev.sort(function(a, b) { return (a.d || '').localeCompare(b.d || '') || a.k - b.k || String(a.t).localeCompare(String(b.t)); });
@@ -133,7 +142,7 @@
       if (isDate(g.d)) {
         var x = new Date(g.d + 'T00:00:00'), dn = dayNo(g.d), w = x.getDay();
         head = '<div class="bk-date' + (w === 0 || w === 6 ? ' is-wknd' : '') + '"><b>' + String(x.getDate()).padStart(2, '0') + '</b>' +
-          '<span>' + MON[x.getMonth()] + ' · ' + DOW[w] + '</span>' + (dn != null && dn >= 1 ? '<i>DAY ' + String(dn).padStart(2, '0') + '</i>' : '') + '</div>';
+          '<span>' + MON[x.getMonth()] + ' · ' + DOW[w] + '</span>' + (dn != null && dn >= 1 ? '<i>Day ' + String(dn).padStart(2, '0') + '</i>' : '') + '</div>';
       } else head = '<div class="bk-date"><b>—</b><span>날짜 미정</span></div>';
       return '<section class="bk-row">' + head + '<div class="bk-items">' + g.list.map(function(e){ return e.h; }).join('') + '</div></section>';
     }).join('');
