@@ -16870,12 +16870,12 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   // ═══ Travel 공통 탭바 (2026-07-22): 4개 탭에 흩어져 있던 복붙 탭바를 단일 렌더러로 ═══
   window._travelTabsHtml = function(active){
     var tabs = [
-      ['schedule', 'route', '일정'],
-      ['places', 'push_pin', '스팟'],
+      ['schedule', 'route', 'Itinerary'],
+      ['places', 'push_pin', 'Spots'],
       // ['flight', 'flight', '항공'],  // ★ (2026-10-08) 항공 탭 삭제 — 항공편은 '예약' 탭 Flights에
-      ['records', 'receipt_long', '예약'],
-      ['budget', 'payments', '예산'],
-      ['checklist', 'checklist', '체크리스트'],
+      ['records', 'receipt_long', 'Bookings'],
+      ['budget', 'payments', 'Budget'],
+      ['checklist', 'checklist', 'Checklist'],
       ['atlas', 'public', 'Atlas']
     ];
     return '<nav class="trav-tabs">' + tabs.map(function(t){
