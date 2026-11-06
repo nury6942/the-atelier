@@ -251,18 +251,6 @@
     });
   }
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
-  // ★ (2026-10-08) 칸 안 일정 색: 불투명 파스텔 배경 + 같은 계열 진한 글씨 (진한 단색은 너무 정신없어서 되돌림)
-  //   (2026-10-08 v4 · A안) 여린 바탕 + 왼쪽 3px 색띠 + 검정 글씨 — 개인 일정은 조용히, GTM만 튀게
-  //   (2026-10-11 B안) 파스텔이 GTM에 묻혀 안 보인다 → 바탕 한 톤 진하게 + 색띠 4px + 같은 계열 진한 글씨.
-  //   글쓰기(초고·퇴고·시놉 — 메모에 phase:/work_id:)는 흰 바탕 + 진한 보라 테두리 + ✎ 로 따로 띄운다.
-  var SOLID = { sky:["#CFE2FF","#2F6FD6","#143D80"], blue:["#D0DEFF","#2457C8","#12307A"], indigo:["#DDD2FF","#6A48D8","#3A2491"], violet:["#E3D0FF","#7E3BD6","#46197F"],
-    purple:["#E8CCFF","#9133CC","#521A75"], fuchsia:["#F8CCEE","#E52BB8","#6E1449"], pink:["#FFCCE3","#FF2E8C","#7A1745"], rose:["#F8D0D7","#C42747","#701326"],
-    cyan:["#C6EBF3","#13849E","#0A4A59"], teal:["#C5EDE2","#0F7F68","#08463A"], lime:["#DCEDB8","#558A12","#2F4D09"], amber:["#F8E2AE","#B07600","#5E3F00"],
-    orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
-  var PINK_TO_YELLOW = { pink: 1, fuchsia: 1 };
-  var WRITE_HEX = { indigo:'#4338CA', amber:['#FF9F1C','#2B1600'] /* 갈색(#B45309)은 못생겼다고 해서 탠저린 */, rose:'#E11D48', teal:'#0F766E', purple:'#7E22CE', blue:'#1D4ED8',
-    cyan:'#0E7490', orange:'#EA580C', fuchsia:'#A21CAF', sky:'#0369A1', violet:'#1A3FB5', pink:'#DB2777', lime:'#4D7C0F', slate:'#475569' };
-  var BAR_FULL = true;       // 여러 날 막대도 고른 색으로 꽉 채움
   // ★ (2026-10-11) 시리즈 이름으로 색 고정 — 일정마다 만들어질 때 색이 박혀 있어 같은 R 시리즈도 남색·파랑이 섞였고,
   //   남색이 IELTS 보라와 겹쳐 안 보였다. R 시리즈는 전부 청록 (글쓰기 진하게 · 연재 조금 밝게).
   var SERIES_FIXED = [ { re: /^R/i, write: '#0D9488', pub: '#14B8A6' } ];
@@ -291,22 +279,15 @@
   //   (2026-10-11 v2) 그래도 회사 일정만 보인다 → 하루짜리 개인 일정은 진한 색 꽉 채움 + 흰 글씨,
   //   글쓰기는 진한 남보라 꽉 채움 + ✎ + 조금 더 높게. 여러 날 기간 바는 넓어서 지금처럼 옅게 둔다.
   //   대신 GTM 일반 항목은 옅게(index.html .wbc-gtm), ★ 핵심만 빨강 그대로.
+  // (2026-11-06) 4색 문법 (DESIGN.md §2 달력 색): 일정마다 고른 색 대신 뜻으로 칠한다.
+  //   업무 마일스톤(데드라인) = 코발트 · 연차·여행 = 모래(잉크 글자) · 그 밖의 개인·글쓰기 = 흰 바탕 + 잉크 선.
+  //   (업무 일정 GTM 은 gtmBarHtml·.wbc-gtm 에서 회색 실선). 예전 고른 색(ev[3])은 데이터에 그대로 둔다.
+  var INK_OUTLINE = "background:#fff;color:#15171c;box-shadow:inset 0 0 0 1px #15171c;";
   function solidStyle(ev, noBar, full) {
     var k = (ev[3]||"").trim();
-    if (k === "deadline") return "background:#FF3B00;color:#fff;";
-    // 글쓰기는 작품(시리즈) 색으로 — B·R 시리즈가 구분되게. 시리즈 색을 흰 글씨가 읽히는 진한 톤으로.
-    if (isWriting(ev)) { var so = seriesOverride(ev); if (so) return "background:" + so.write + ";color:#fff;";
-      var wh = WRITE_HEX[k] || "#3B23A8"; return "background:" + (Array.isArray(wh) ? wh[0] + ";color:" + wh[1] : wh + ";color:#fff") + ";"; }
-    // (2026-10-11 v3) 분홍 계열로 고른 일정만 핫 옐로우로 (누리: "핑크가 안 예뻐") — 나머지는 각자 고른 색 그대로.
-    //   하루짜리·여러 날 막대 모두 꽉 채움 (옅은 바탕 + 왼쪽 띠는 약해 보여서 뺌).
-    // (2026-10-11) 연차 카테고리(미리 잡은 여행·휴가 — 예전 기본색 청록이 R 시리즈 청록과 겹침)
-    //   (v2) 줄무늬는 못생겼다 → 하늘 → 라벤더 → 핑크 노을 그라데이션. 'fixed' 라 여러 칸에 걸친 막대도 한 장처럼 이어진다
-    //   (2026-11-01) 여행 = 모래 (홈 그림 색, DESIGN.md) — 모래 위 글자는 진한 잉크
+    if (k === "deadline" || ev[2] === '데드라인') return "background:#1F4BD8;color:#fff;";
     if (isTrip(ev)) return "background:#F0A647;color:#16161A;";
-    if (PINK_TO_YELLOW[k]) return "background:#FFE01A;color:#111;";
-    var c = SOLID[k] || SOLID.indigo;
-    if (full || BAR_FULL) return "background:" + c[1] + ";color:#fff;";
-    return "background:" + c[0] + ";color:" + c[2] + ";" + (noBar ? "" : "box-shadow:inset 4px 0 0 " + c[1] + ";");
+    return INK_OUTLINE;
   }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
@@ -472,8 +453,7 @@
   // 기간 GTM 막대 — ★ 핵심은 빨강, 일반은 회색 + 시즌색 띠 (칸 칩과 같은 말투)
   function gtmBarHtml(g, ds, dow) {
     var head = ds === g.date || dow === 0, tail = ds === g.end || dow === 6, key = gtmIsKey(g);
-    var stripe = g.series === 'q2' ? '#E0B800' : '#22B07A';
-    var st = key ? 'background:#E8283F;color:#fff;' : 'background:#F3F3F1;color:#3a3a3a;' + (head ? 'box-shadow:inset 3px 0 0 ' + stripe + ';' : '');
+    var st = key ? 'background:#1F4BD8;color:#fff;' : 'background:#fff;color:#2a2e35;box-shadow:inset 0 0 0 1px #DCDCE3;';
     var lbl = (key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM') + '  ' + g.title;
     return '<span class="wbc-rb wbc-gtmb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + st + '" title="' + esc((g.team || '') + ' · ' + g.title + ' (' + g.date.slice(5) + ' ~ ' + g.end.slice(5) + ')') + '">' +
       (head ? '<em>' + esc((key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM')) + '</em>' + esc(g.title) : '&nbsp;') + '</span>';
