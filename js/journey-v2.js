@@ -72,7 +72,7 @@
   };
   window.cityCountryHtml = function(name, cls) {
     var c = window.cityCountry(name);
-    return c ? '<span class="jv-cty' + (cls ? ' ' + cls : '') + '"><span class="jv-flag">' + c.flag + '</span>' + c.ko + '</span>' : '';
+    return c ? '<span class="jv-cty' + (cls ? ' ' + cls : '') + '"><span class="jv-flag">' + c.cc + '</span>' + c.ko + '</span>' : '';
   };
 
   function cities() { return (typeof citiesData !== 'undefined' && citiesData) ? citiesData : []; }
@@ -165,11 +165,52 @@
     });
     box.innerHTML = h;
     try { if (typeof _syncStopStrip === 'function') _syncStopStrip(); } catch(e) {}
+    routeNavInit(box);
+  }
+
+  // ★ (2026-11-06 2차) 경로 띠가 화면보다 길면 — 넘친다는 걸 보이게: 양 끝 흐림 + 머리줄 ‹ › 버튼 + 카드 단위 스냅
+  function routeNavSync() {
+    var box = document.getElementById('journey-city-cards'); if (!box) return;
+    var max = box.scrollWidth - box.clientWidth;
+    var l = box.scrollLeft > 2, r = max > 2 && box.scrollLeft < max - 2;
+    box.classList.toggle('can-l', l); box.classList.toggle('can-r', r);
+    var nav = document.getElementById('jv-route-nav');
+    if (nav) {
+      nav.hidden = max <= 2;
+      var bs = nav.querySelectorAll('button');
+      if (bs[0]) bs[0].disabled = !l;
+      if (bs[1]) bs[1].disabled = !r;
+    }
+  }
+  function routeNavInit(box) {
+    if (!box.__jvNav) {
+      box.__jvNav = 1;
+      box.addEventListener('scroll', function() { routeNavSync(); }, { passive: true });
+      window.addEventListener('resize', routeNavSync);
+      var head = box.parentNode && box.parentNode.querySelector('.jv-sec-h');
+      if (head && !document.getElementById('jv-route-nav')) {
+        var meta = document.getElementById('jv-route-meta');
+        var nav = document.createElement('span');
+        nav.id = 'jv-route-nav'; nav.className = 'jv-route-nav'; nav.hidden = true;
+        nav.innerHTML = '<button type="button" aria-label="경로 앞으로">' + msi('chevron_left') + '</button>' +
+                        '<button type="button" aria-label="경로 뒤로">' + msi('chevron_right') + '</button>';
+        nav.addEventListener('click', function(e) {
+          var b = e.target.closest('button'); if (!b) return;
+          var d = b === nav.firstChild ? -1 : 1;
+          box.scrollBy({ left: d * Math.max(272, box.clientWidth * 0.8), behavior: 'smooth' });
+        });
+        if (meta && meta.nextSibling) head.insertBefore(nav, meta.nextSibling); else head.appendChild(nav);
+      }
+    }
+    routeNavSync();
+    setTimeout(routeNavSync, 600);
   }
 
   // ★ (2026-10-08) 도시 사이 이동 — 일정에 넣은 이동 항목(기차·비행·차)을 먼저 쓰고, 없으면 거리로 추정.
   //   기차·차로 가는 긴 구간은 비행기로 가면 얼마나 걸리는지도 같이 (구글 항공편 검색 링크)
-  var LEG_MODE = { train:['🚆','기차'], flight:['✈','비행기'], car:['🚗','차'], bus:['🚌','버스'], boat:['⛴','배'], metro:['🚇','지하철'] };
+  // (2026-11-06 2차) 이모지 → Material Symbols — 사이트 아이콘 한 벌로
+  var LEG_MODE = { train:['train','기차'], flight:['flight','비행기'], car:['directions_car','차'], bus:['directions_bus','버스'], boat:['directions_boat','배'], metro:['subway','지하철'] };
+  function msi(n) { return '<span class="material-symbols-outlined" aria-hidden="true">' + n + '</span>'; }
   function hmTxt(m) { m = Math.round(m / 5) * 5; return (Math.floor(m / 60) ? Math.floor(m / 60) + 'H ' : '') + (m % 60 ? (m % 60) + 'M' : ''); }
   function minsOf(a, b) { if (!a || !b) return 0; var p = a.split(':'), q = b.split(':'); var d = (+q[0] * 60 + +q[1]) - (+p[0] * 60 + +p[1]); return d > 0 ? d : 0; }
   function legHtml(a, b) {
@@ -195,10 +236,10 @@
     if (mode !== 'flight' && straight > 280 && mins > 240) {
       var fm = straight / 750 * 60 + 35;
       var q = 'Flights from ' + (enOf(a.name) || a.name) + ' to ' + (enOf(b.name) || b.name) + (day ? ' on ' + day : '');
-      alt = '<a class="jv-leg-alt" href="https://www.google.com/travel/flights?q=' + encodeURIComponent(q) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="비행기로 가면 · 구글 항공편 검색">✈ 비행 ≈' + hmTxt(fm) + '</a>';
+      alt = '<a class="jv-leg-alt" href="https://www.google.com/travel/flights?q=' + encodeURIComponent(q) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="비행기로 가면 · 구글 항공편 검색">' + msi('flight') + '비행 ≈' + hmTxt(fm) + '</a>';
     }
     return '<div class="jv-leg is-' + mode + '"><span>' +
-      '<em>' + md[0] + ' ' + md[1] + '</em>' +
+      '<em>' + msi(md[0]) + md[1] + '</em>' +
       '<b>' + (best ? '' : '≈') + hmTxt(mins) + '</b>' +
       (dist ? '<i>' + dist + ' KM</i>' : '') + alt +
     '</span></div>';
@@ -309,8 +350,8 @@
 
   // ── 일정 줄 꾸미기: 이동·식사·선셋 태그, "한국어 (English)"의 영어는 옅게 ──
   var TAG = {
-    train: ['🚆', '기차'], metro: ['🚇', '지하철·트램'], bus: ['🚌', '버스'], car: ['🚗', '드라이브'], walk: ['🚶', '걸어서'], flight: ['✈', '비행'], boat: ['⛴', '배'], cable: ['🚡', '케이블카'],
-    breakfast: ['☕', 'BREAKFAST'], lunch: ['🍽', 'LUNCH'], dinner: ['🍷', 'DINNER'], cafe: ['☕', 'CAFÉ'], sunset: ['🌅', 'SUNSET'], sunrise: ['🌄', 'SUNRISE'], night: ['🌙', 'NIGHT']
+    train: ['train', '기차'], metro: ['subway', '지하철·트램'], bus: ['directions_bus', '버스'], car: ['directions_car', '드라이브'], walk: ['directions_walk', '걸어서'], flight: ['flight', '비행'], boat: ['directions_boat', '배'], cable: ['gondola_lift', '케이블카'],
+    breakfast: ['bakery_dining', 'BREAKFAST'], lunch: ['restaurant', 'LUNCH'], dinner: ['wine_bar', 'DINNER'], cafe: ['local_cafe', 'CAFÉ'], sunset: ['wb_twilight', 'SUNSET'], sunrise: ['wb_sunny', 'SUNRISE'], night: ['bedtime', 'NIGHT']
   };
   var MOVES = { train:1, metro:1, bus:1, car:1, walk:1, flight:1, boat:1, cable:1 };
   function dur(a, b) {
@@ -334,7 +375,7 @@
       el.classList.add(isMove ? 'jv-mv' : 'jv-tg', 'jv-tg-' + tag);
       var label = isMove ? t[1] + (dur(it.time, it.end_time) ? ' · ' + dur(it.time, it.end_time) : '') : t[1];
       var line = el.querySelector('.wk4-line');
-      if (line) line.insertAdjacentHTML('afterbegin', '<span class="jv-pill"><i>' + t[0] + '</i>' + label + '</span>');
+      if (line) line.insertAdjacentHTML('afterbegin', '<span class="jv-pill"><i class="material-symbols-outlined" aria-hidden="true">' + t[0] + '</i>' + label + '</span>');
     });
   }
   // ★ (2026-10-08) 플랜 일정 좌표 채우기 — plans-v2-coords.js 표(날짜|제목 → 좌표)로 지도 핀이 바로 뜨게.

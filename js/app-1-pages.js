@@ -9100,7 +9100,7 @@
     return '<div class="sv-country">' +
       '<div class="sv-country-h">' +
         '<div class="sv-country-title">' +
-          '<span class="sv-flag">' + g.country.flag + '</span>' +
+          '<span class="sv-flag">' + Array.from(String(g.country.flag || '')).map(function(ch){ var c = ch.codePointAt(0); return (c >= 127462 && c <= 127487) ? String.fromCharCode(c - 127397) : ''; }).join('') + '</span>' +
           '<h3>' + g.country.name + '</h3>' +
         '</div>' +
         '<p class="sv-country-sub">' + g.country.kr + ' • ' + g.items.length + ' items</p>' +
@@ -16861,7 +16861,8 @@
     "jobhunt": { "title": "Job Hunt" },
     "aibrief": { "title": "AI Brief" },
     "deals": { "title": "Flight Deals" },
-    "trends": { "title": "Trends" }
+    "trends": { "title": "Trends" },
+    "help": { "title": "Help" }
   };
   // ── Travel/Travel Budget 통합 탭 ──
   // ═══ Travel 공통 탭바 (2026-07-22): 4개 탭에 흩어져 있던 복붙 탭바를 단일 렌더러로 ═══

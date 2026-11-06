@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=413" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=414" as="script">
   <link rel="preload" href="js/app-2-init.js?v=194" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5708,7 +5708,24 @@
     .jv-btn-accent { background:#17348F; border-color:#17348F; color:#fff; }
     .jv-btn-accent:hover { background:#15161a; border-color:#15161a; }
     #page-journey .jv-route { margin-top:44px; }
-    .jv-route-strip { display:flex; align-items:stretch; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin; }
+    .jv-route-strip { display:flex; align-items:stretch; overflow-x:auto; padding-bottom:12px; scrollbar-width:thin; scrollbar-color:#5B5B66 #ECECF0; scroll-snap-type:x proximity; scroll-padding-left:0; overscroll-behavior-x:contain; }
+    /* ★ (2026-11-06 2차) 넘치는 경로 띠 — 넘친 쪽 끝을 흐리게(끝에 닿으면 사라짐) + 스크롤바를 팔레트 색으로 늘 보이게 + ‹ › 버튼 */
+    .jv-route-strip.can-r { -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 72px),transparent); mask-image:linear-gradient(90deg,#000 calc(100% - 72px),transparent); }
+    .jv-route-strip.can-l { -webkit-mask-image:linear-gradient(90deg,transparent,#000 72px); mask-image:linear-gradient(90deg,transparent,#000 72px); }
+    .jv-route-strip.can-l.can-r { -webkit-mask-image:linear-gradient(90deg,transparent,#000 72px,#000 calc(100% - 72px),transparent); mask-image:linear-gradient(90deg,transparent,#000 72px,#000 calc(100% - 72px),transparent); }
+    .jv-route-strip::-webkit-scrollbar { height:6px; }
+    .jv-route-strip::-webkit-scrollbar-track { background:#ECECF0; }
+    .jv-route-strip::-webkit-scrollbar-thumb { background:#5B5B66; }
+    .jv-route-strip .jv-stop { scroll-snap-align:start; }
+    .jv-route-nav { display:inline-flex; align-self:center; }
+    .jv-route-nav[hidden] { display:none; }
+    .jv-route-nav button { width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; background:#fff; border:1px solid #DCDCE3; color:#16161A; cursor:pointer; }
+    .jv-route-nav button + button { border-left:0; }
+    .jv-route-nav button:hover:not(:disabled) { background:#16161A; color:#fff; border-color:#16161A; }
+    .jv-route-nav button:disabled { color:#8A8A95; cursor:default; }
+    .jv-route-nav button:focus-visible { outline:2px solid #1F4BD8; outline-offset:2px; }
+    .jv-route-nav .material-symbols-outlined { font-size:22px; }
+    @media (max-width:767px) { .jv-route-nav { display:none !important; } }
     #page-journey .jv-route-strip .j-stop-card.jv-stop { flex:0 0 168px; display:grid; gap:3px; align-content:start; cursor:pointer; transform:none; background:none; border:0; opacity:1; box-shadow:none; }
     .jv-stop-img { position:relative; aspect-ratio:4/5; background:var(--jv-tint) center/cover no-repeat; border:1px solid var(--jv-soft); }
     .jv-stop-no { position:absolute; left:-1px; top:-1px; background:#fff; font-family:'Manrope',sans-serif; font-size:12px; font-weight:800; padding:4px 7px; border:1px solid var(--jv-line); color:var(--jv-ink); }
@@ -5749,7 +5766,9 @@
     /* ★ (2026-10-08) 이동수단 + 시간 + 거리 + 비행 대안 */
     .jv-leg { flex-basis:104px !important; }
     .jv-leg span { display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 6px; }
-    .jv-leg em { font-style:normal; font-family:'Pretendard','Noto Color Emoji',sans-serif; font-size:11px; font-weight:700; color:var(--jv-ink); letter-spacing:0; white-space:nowrap; }
+    .jv-leg em { font-style:normal; font-family:'Pretendard',sans-serif; font-size:11px; font-weight:700; color:var(--jv-ink); letter-spacing:0; white-space:nowrap; display:inline-flex; align-items:center; gap:3px; }
+    .jv-leg em .material-symbols-outlined, .jv-leg-alt .material-symbols-outlined { font-size:15px; line-height:1; }
+    .jv-leg-alt { display:inline-flex; align-items:center; gap:2px; }
     .jv-leg b { font-family:'Manrope',sans-serif; font-size:13px; font-weight:800; color:var(--jv-ink); letter-spacing:-.01em; white-space:nowrap; }
     .jv-leg i { font-style:normal; font-size:11px; color:var(--jv-mute); }
     .jv-leg.is-flight b { color:var(--jv-accent); }
@@ -5836,7 +5855,7 @@
     @media (max-width:640px) { #page-journey #journey-week-grid.wk4 .wk4-travel.j-slot-travel { padding-left:108px !important; } }
     #page-journey #journey-week-grid.wk4 .j-slot-empty { padding-left:150px; }
     .jv-pill { display:inline-flex; align-items:center; gap:5px; flex:none; margin:1px 8px 0 0; padding:2px 8px 2px 6px; font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:700; letter-spacing:.04em; line-height:1.5; white-space:nowrap; border:1px solid var(--jv-ink); color:var(--jv-ink); background:#fff; }
-    .jv-pill i { font-style:normal; font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif; font-size:11px; }
+    .jv-pill i.material-symbols-outlined { font-style:normal; font-family:'Material Symbols Outlined'; font-size:14px; line-height:1; letter-spacing:0; }
     /* 이동 줄: 점선 연결선 + 작은 회색 글씨 — 일정 사이 '길'로 보이게 */
     #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv { padding-top:8px !important; padding-bottom:8px !important; background:linear-gradient(90deg,transparent 0 8px,var(--jv-tint) 8px) !important; position:relative; }
     #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv::before { content:''; position:absolute; left:3px; top:4px; bottom:4px; border-left:2px dotted var(--jv-mute); }
@@ -5845,9 +5864,9 @@
     #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv .wk4-sub-desc { font-size:11.5px; color:var(--jv-mute); }
     #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv .jv-pill { border-color:var(--jv-soft); color:var(--jv-sub); background:#fff; }
     .jv-tg-lunch .jv-pill, .jv-tg-dinner .jv-pill, .jv-tg-breakfast .jv-pill, .jv-tg-cafe .jv-pill { border-color:#b5523b; color:#b5523b; }
-    .jv-tg-sunset .jv-pill, .jv-tg-sunrise .jv-pill { border:0; color:#fff; background:linear-gradient(90deg,#f0803c,#d6457a); }
+    .jv-tg-sunset .jv-pill, .jv-tg-sunrise .jv-pill { border:0; color:#16161A; background:#F0A647; }
     .jv-tg-night .jv-pill { border:0; color:#fff; background:#1d2147; }
-    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-tg-sunset { background:linear-gradient(90deg,#fff4ec,transparent 70%) !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-tg-sunset { background:#fff !important; }
     .jv-sun { display:inline-flex; gap:10px; margin-left:12px; padding-left:12px; border-left:1px solid var(--jv-soft); font-family:'Inter','Pretendard',sans-serif; font-size:11px; letter-spacing:.06em; color:var(--jv-sub); }
     .jv-sun b { font-family:'Manrope',sans-serif; font-weight:800; color:var(--jv-ink); font-variant-numeric:tabular-nums; letter-spacing:0; }
     .jv-sun-s b { color:#d6457a; }
@@ -5924,8 +5943,8 @@
     #page-finance .fin-tbody td { font-variant-numeric:tabular-nums; }
     #page-finance input, #page-finance select { border-color:var(--jv-soft); }
     /* ★ (2026-10-08) 나라 + 국기 */
-    .jv-cty { display:inline-flex; align-items:center; gap:4px; font-family:'Inter','Pretendard','Noto Color Emoji',sans-serif; font-size:11px; font-weight:700; letter-spacing:.06em; color:#5f6168; }
-    .jv-flag { font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif; font-size:13px; letter-spacing:0; line-height:1; }
+    .jv-cty { display:inline-flex; align-items:center; gap:6px; font-family:'Pretendard',sans-serif; font-size:11px; font-weight:700; letter-spacing:.02em; color:#5B5B66; }
+    .jv-flag { font-family:'Pretendard',sans-serif; font-size:11px; font-weight:700; letter-spacing:.04em; line-height:1; padding:2px 4px; border:1px solid #DCDCE3; color:#16161A; }
     .jv-stop-cty { margin:8px 0 -4px; min-height:15px; }
     #page-journey #journey-week-grid.wk4 .wk4-title .jv-cty { display:flex; margin-bottom:2px; font-size:11px; }
     /* ★ (2026-10-08) 도시별 숙소 예산 — 표처럼 읽히는 줄 */
@@ -6841,8 +6860,8 @@
     .sv-country { min-width:0; }
     .sv-country-h { border-bottom:1px solid #e2e8f0; padding-bottom:14px; margin-bottom:24px; }
     .sv-country-title { display:flex; align-items:center; gap:11px; margin-bottom:6px; }
-    .sv-flag { font-size:21px; line-height:1;
-      font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif; }
+    .sv-flag:empty { display:none; }
+    .sv-flag { font-size:12px; font-weight:700; letter-spacing:.04em; line-height:1; padding:4px 6px; border:1px solid #DCDCE3; color:#16161A; font-family:'Pretendard',sans-serif; }
     .sv-country-title h3 { font-family:'Manrope','Pretendard',sans-serif; font-size:26px; font-weight:800;
       letter-spacing:-0.02em; text-transform:uppercase; color:#0f172a; margin:0; line-height:1.1; }
     .sv-country-sub { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11px; font-weight:600; letter-spacing:0.16em;
@@ -11498,6 +11517,65 @@
     .eng-notes textarea{min-height:300px}
   }
 </style>
+
+  <!-- ★ (2026-11-06 2차 다듬기) Help 페이지 + 폰 폭(<768px) 정리. 다른 스타일보다 뒤에 둬서 이긴다 -->
+  <style id="atl-round2">
+    #page-help .hp-wrap { max-width:880px; margin:0 auto; padding:32px 32px 80px; }
+    #page-help .hp-h { margin:0 0 6px; }
+    #page-help .hp-lead { font-size:14px; color:#5B5B66; margin:0 0 36px; line-height:1.55; }
+    #page-help .hp-sec { margin:0 0 40px; }
+    #page-help .hp-sec h3 { font-size:15px; font-weight:700; color:#16161A; margin:0 0 4px; padding-bottom:10px; border-bottom:1px solid #16161A; }
+    #page-help .hp-list { margin:0; }
+    #page-help .hp-list > div { display:grid; grid-template-columns:200px minmax(0,1fr); gap:16px; padding:11px 0; border-bottom:1px solid #ECECF0; align-items:baseline; }
+    #page-help .hp-list dt { font-size:14px; font-weight:600; color:#16161A; display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+    #page-help .hp-list dd { margin:0; font-size:14px; line-height:1.55; color:#16161A; }
+    #page-help .hp-list dt a { color:#1F4BD8; text-decoration:none; }
+    #page-help .hp-list dt a:hover { text-decoration:underline; text-underline-offset:3px; }
+    #page-help .hp-list dt a:focus-visible { outline:2px solid #1F4BD8; outline-offset:2px; }
+    #page-help kbd { font-family:'Pretendard',sans-serif; font-size:12px; font-weight:600; color:#16161A; background:#fff; border:1px solid #DCDCE3; border-bottom-width:2px; padding:1px 6px; min-width:22px; text-align:center; line-height:1.5; }
+    #page-help .hp-when { font-size:11.5px; font-weight:600; color:#5B5B66; padding:1px 6px; border:1px solid #DCDCE3; margin-left:4px; font-variant-numeric:tabular-nums; }
+    #page-help .hp-del { color:#DC2626; font-weight:700; }
+    #page-help .hp-note { font-size:13px; color:#5B5B66; margin:14px 0 0; line-height:1.55; }
+    @media (max-width:767px) {
+      #page-help .hp-wrap { padding:24px 16px 64px; }
+      #page-help .hp-list > div { grid-template-columns:minmax(0,1fr); gap:4px; padding:12px 0; }
+      #page-help .hp-list dt a { display:inline-flex; min-height:32px; align-items:center; }
+    }
+
+    /* ── 폰 폭 정리 ── */
+    @media (max-width:767px) {
+      /* 좌우 여백 16px (캘린더는 7칸 폭이 모자라 8px 유지) */
+      body #main-wrapper .page:not(.calendar-page):not(#page-help) .page-content-wrap { padding-left:16px !important; padding-right:16px !important; }
+      /* 큰 탭: 한 줄 고정, 넘치면 가로로 밀기 (글자 한 자씩 꺾이던 것) */
+      body #main-wrapper .trav-tabs { flex-wrap:nowrap !important; overflow-x:auto; scrollbar-width:none; gap:18px !important; }
+      body #main-wrapper .trav-tabs::-webkit-scrollbar { display:none; }
+      body #main-wrapper .trav-tabs .trav-tab { flex:none !important; white-space:nowrap !important; min-height:44px; }
+      body #main-wrapper .trav-tabs .trav-tab .material-symbols-outlined { display:none !important; }
+      body #main-wrapper .atl-tabs { flex-wrap:nowrap !important; overflow-x:auto; scrollbar-width:none; gap:18px !important; }
+      body #main-wrapper .atl-tabs::-webkit-scrollbar { display:none; }
+      body #main-wrapper .atl-tabs > button, body #main-wrapper .atl-tabs .travel-tab-btn { flex:none !important; white-space:nowrap !important; min-height:44px; }
+      /* Travel 표지 숫자: 남은 예산이 두 줄로 꺾이지 않게 */
+      #page-journey .jv-facts b { font-size:20px !important; white-space:nowrap; }
+      #page-journey .jv-facts > div { padding-left:0 !important; padding-right:12px !important; }
+      #page-journey .jv-facts > div:nth-child(even) { padding-left:16px !important; }
+      #page-journey .jv-btn { min-height:40px; }
+      /* Calendar: 칸 안쪽 여백을 줄여 일정 글자가 한 자씩 꺾이지 않게 */
+      #wbc .wbc-stats { flex-wrap:wrap; gap:12px 20px; padding-left:0; }
+      #wbc .wbc-stat b { font-size:20px; white-space:nowrap; }
+      #wbc .wbc-stat .s { white-space:normal; }
+      #wbc .wbc-grid.month .wbc-cd { padding:6px 3px 8px; min-height:96px; }
+      #wbc .wbc-rb { margin:0 -4px; padding:0 4px; }
+      #wbc .wbc-rb.head { margin-left:0; } #wbc .wbc-rb.tail { margin-right:0; }
+      #planner-grid.wbc-grid { overflow:hidden; }
+      #wbc .wbc-gtm { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; word-break:keep-all; overflow-wrap:anywhere; padding:2px 3px 2px 4px !important; }
+      #wbc .wbc-gtm em { letter-spacing:0 !important; margin-right:3px; }
+      #wbc .wbc-ev { padding:2px 2px 2px 3px; }
+      #wbc .wbc-ctrl button { min-height:40px; }
+      /* Money: 연도 ‹ › 누르기 쉽게 */
+      #page-finance-hub button[onclick*="switchHubYear"] { min-width:40px; min-height:40px; display:inline-flex; align-items:center; justify-content:center; }
+      #page-finance-hub button[onclick*="switchHubYear"] .material-symbols-outlined { color:#5B5B66 !important; }
+    }
+  </style>
 </head>
 <body class="overflow-x-hidden" style="overscroll-behavior:none;">
 
@@ -11642,10 +11720,10 @@
       <span class="text-[13.5px] font-medium">Trends</span>
     </a>
   </nav>
-  <div class="px-4 pt-4 border-t border-slate-100 space-y-1">
-    <a href="#" class="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-slate-600 rounded-xl transition-all">
-      <span class="material-symbols-outlined text-sm">help</span>
-      <span class="font-manrope uppercase tracking-wider text-xs font-bold">도움말</span>
+  <div class="pt-3 border-t border-slate-100">
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-help" onclick="navigate('help'); return false;">
+      <span class="material-symbols-outlined text-[19px] transition-colors">help</span>
+      <span class="text-[13.5px] font-medium">Help</span>
     </a>
   </div>
 </aside>
@@ -16603,7 +16681,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=413" defer></script>
+<script src="js/app-1-pages.js?v=414" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17431,6 +17509,61 @@
     </div>
 
   <!-- ════════ NOMAD MASTER 페이지 — 내부 sub-sidebar + 메인 콘텐츠 ════════ -->
+  <!-- ════════ HELP — 사이드바 맨 아래 'Help'. 곳마다 한 줄 · 단축키 · 데이터가 어디서 오나 (2026-11-06 2차) ════════ -->
+  <div id="page-help" class="page" style="display:none">
+    <div class="page-content-wrap hp-wrap">
+      <h2 class="atelier-page-h2 hp-h">Help</h2>
+      <p class="hp-lead">어디서 무엇을 하는지, 손에 익으면 빨라지는 것, 저절로 들어오는 데이터.</p>
+
+      <section class="hp-sec" aria-labelledby="hp-areas">
+        <h3 id="hp-areas">곳마다 한 줄</h3>
+        <dl class="hp-list">
+          <div><dt><a href="#" onclick="navigate('home');return false;">Home</a></dt><dd>그림 한 장과 전체 메뉴. 여기서 어디로든 간다.</dd></div>
+          <div><dt><a href="#" onclick="navigate('planner');return false;">Calendar</a></dt><dd>업무·개인·연차 일정. 연차 잔여와 연장근무도 위에 보인다.</dd></div>
+          <div><dt><a href="#" onclick="navigate('reference');return false;">Memo</a></dt><dd>짧은 메모와 자료. 위 칸에서 검색.</dd></div>
+          <div><dt><a href="#" onclick="navigate('finance-hub');return false;">Money › Assets</a></dt><dd>월별 수입·지출·저축과 총 자산.</dd></div>
+          <div><dt><a href="#" onclick="navigate('ledger');return false;">Money › Ledger</a></dt><dd>하루하루 가계부와 이달 전략 보드. 폰에선 전용 화면으로 열린다.</dd></div>
+          <div><dt><a href="#" onclick="navigate('income');return false;">Money › Side Jobs</a></dt><dd>부업 수입(포스타입 등) 기록과 정산.</dd></div>
+          <div><dt><a href="#" onclick="navigate('tax');return false;">Money › Tax</a></dt><dd>올해 소득분 세금 세 번(연말정산·5월 종소세·퇴직)과 연금저축 효과.</dd></div>
+          <div><dt><a href="#" onclick="navigate('journey');return false;">Travel</a></dt><dd>여행 하나의 일정·스팟·예약·예산·체크리스트·Atlas.</dd></div>
+          <div><dt><a href="#" onclick="navigate('deals');return false;">Flight Deals</a></dt><dd>관심 도시 항공권 특가.</dd></div>
+          <div><dt><a href="#" onclick="navigate('nomad-master');return false;">Nomad Master</a></dt><dd>12개월 노마드 여행 계획과 예산.</dd></div>
+          <div><dt><a href="#" onclick="navigate('english');return false;">English</a></dt><dd>Annie 수업, 틀린 표현, 말하기·듣기·읽기 연습, IELTS.</dd></div>
+          <div><dt><a href="#" onclick="navigate('roadmap');return false;">Roadmap</a></dt><dd>노마드 준비 + 새 수익 7단계 체크리스트.</dd></div>
+          <div><dt><a href="#" onclick="navigate('jobhunt');return false;">Job Hunt</a></dt><dd>해외 이직 공고와 준비 플레이북.</dd></div>
+          <div><dt><a href="#" onclick="navigate('aibrief');return false;">AI Brief</a></dt><dd>매일 아침 AI 소식 요약.</dd></div>
+          <div><dt><a href="#" onclick="navigate('trends');return false;">Trends</a></dt><dd>분야별 매일 카드뉴스.</dd></div>
+        </dl>
+      </section>
+
+      <section class="hp-sec" aria-labelledby="hp-keys">
+        <h3 id="hp-keys">손에 익히면 빠른 것</h3>
+        <dl class="hp-list hp-keys">
+          <div><dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>검색·AI 질문 칸으로 (맥은 ⌘도 됨)</dd></div>
+          <div><dt><kbd>Ctrl</kbd><kbd>B</kbd></dt><dd>사이드바 열고 닫기</dd></div>
+          <div><dt><kbd>Ctrl</kbd><kbd>V</kbd></dt><dd>Travel 도시 카드에 마우스를 올리고 붙이면 그 도시 사진이 된다</dd></div>
+          <div><dt><kbd>Ctrl</kbd><kbd>C</kbd> → <kbd>Ctrl</kbd><kbd>V</kbd></dt><dd>Calendar 일정 복사 → 날짜 누르고 붙이기. 끌면 이동, Ctrl 누르고 끌면 복사</dd></div>
+          <div><dt><kbd>‹</kbd><kbd>›</kbd> <kbd>Today</kbd></dt><dd>Calendar·Money 달 이동, 오늘로 돌아오기</dd></div>
+          <div><dt><kbd>Ctrl</kbd><kbd>Enter</kbd></dt><dd>일정 내용 칸에서 바로 저장</dd></div>
+          <div><dt>지우기 두 번</dt><dd>첫 번째에 빨간 <b class="hp-del">삭제?</b> 로 바뀌고, 3초 안에 한 번 더 누르면 지워진다</dd></div>
+        </dl>
+      </section>
+
+      <section class="hp-sec" aria-labelledby="hp-data">
+        <h3 id="hp-data">저절로 들어오는 데이터</h3>
+        <dl class="hp-list">
+          <div><dt>Ledger <span class="hp-when">주 1회</span></dt><dd>뱅크샐러드 내보내기만 하면, 메일로 받은 파일을 정리해 가계부에 자동 반영</dd></div>
+          <div><dt>AI Brief <span class="hp-when">매일 07:00</span></dt><dd>아침 루틴이 소식을 모아 요약</dd></div>
+          <div><dt>Job Hunt <span class="hp-when">매일</span></dt><dd>루틴이 새 공고를 찾아 넣음</dd></div>
+          <div><dt>Trends <span class="hp-when">매일 06:30</span></dt><dd>분야별 카드뉴스 생성</dd></div>
+          <div><dt>Flight Deals <span class="hp-when">매일</span></dt><dd>노선별 특가 점검</dd></div>
+          <div><dt>Side Jobs <span class="hp-when">매일 09:30</span></dt><dd>포스타입 매출 동기화</dd></div>
+        </dl>
+        <p class="hp-note">들어와야 할 게 비어 있으면 그 루틴이 멈춘 것. 일정·메모·여행은 직접 쓰는 대로 모든 기기에 바로 저장된다.</p>
+      </section>
+    </div>
+  </div>
+
   <!-- ════════ TRENDS — 매일 카드뉴스 (trends.html, 데이터 data/card-news/ 는 아이맥이 매일 06:30) ════════ -->
   <div id="page-trends" class="page" style="display:none;padding:0;background:#fff">
     <iframe id="trends-frame" title="Trends" loading="lazy" src="./trends.html?v=5"
@@ -17530,7 +17663,7 @@
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
 <script src="js/travel-toc.js?v=7" defer></script>
-<script src="js/journey-v2.js?v=16" defer></script>
+<script src="js/journey-v2.js?v=17" defer></script>
 <script src="js/plans-v2.js?v=2" defer></script>
 <script src="js/plans-v3-nordic.js?v=1" defer></script>
 <script src="js/plans-v2-coords.js?v=1" defer></script>
