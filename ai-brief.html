@@ -110,7 +110,7 @@
   .ex{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
   .ex a{display:block;min-width:0}
   .ex .img{aspect-ratio:1.91/1}
-  .ex span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden}
+  .ex span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden;word-break:keep-all;overflow-wrap:normal;text-wrap:pretty}  /* (11/06 4차) 단어 중간에서 잘리지 않게: 단어 단위 줄바꿈 + 3줄까지 */
   .ex .ph,.vrow .ph{padding:4px;font-size:11px;line-height:1.2}
   .ex .ph small,.vrow .ph small{display:none}  /* 작은 칸은 출처 주소만 */
   .side .ex{grid-template-columns:1fr;gap:6px}  /* 좁은 옆 카드는 예시를 '작은 사진 + 제목' 목록으로 */
@@ -210,11 +210,47 @@
     .vrow{grid-template-columns:84px minmax(0,1fr) 30px;gap:12px}
   }
   @media (max-width:420px){ .steps{grid-template-columns:1fr} .step{flex-direction:row;align-items:center} .step .n{font-size:1.1rem} }
+
+  /* ═══ (2026-11-06 4차) 아뜰리에와 같은 집처럼: 검정 꽉 채움 대신 흰 바탕 + 가는 선 + 코발트 하나 ═══ */
+  :root{ --hair:#DCDCE3; }
+  .apphead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}
+  .apphead a{display:inline-flex;align-items:center;min-height:36px;padding:0 2px;font-size:13px;font-weight:600;color:#5B5B66}
+  .apphead a:hover{color:var(--accent)}
+  .mast{border-bottom:1px solid var(--ink)}
+  .card,.post,.try{border-color:var(--hair)}
+  .post > .img,.post .peek{border-bottom-color:var(--hair)}
+  .try.must{background:#fff;color:var(--ink);border:1px solid var(--hair);border-top:3px solid var(--accent)}
+  .try.must .steps{background:var(--hair);border-color:var(--hair)}
+  .try.must .step{background:#fff}
+  .try.must .step .n{color:var(--accent);opacity:1}
+  .try .min,.try .why2,.try .from{opacity:1}
+  .try .why2{color:#475569}
+  .try .min{color:#5B5B66}
+  .try.must .done-btn,.done-btn{opacity:1;border-color:var(--hair)}
+  .try.must .step .act{border-color:var(--accent);color:var(--accent)}
+  .try.done .done-btn,.try:not(.must).done .done-btn{background:#EEF2FD;color:#1A3FB5;border-color:#1F4BD8}
+  /* 보기 전환 토글: 회색 칸 안에서 고른 것만 흰 바탕 + 선 (DESIGN.md 5장) */
+  .seg{border:0;background:#F5F5F7;padding:3px;gap:3px}
+  .seg button{border:1px solid transparent !important;color:#5B5B66}
+  .seg button.on{background:#fff;color:var(--ink);border-color:var(--ink) !important}
+  .days button.on,.flt button.on{background:#fff;color:var(--accent);border-color:var(--accent)}
+  .chip{background:#fff;color:var(--ink);border:1px solid var(--hair)}
+  .tag{border-color:var(--hair)}
+  .tag.solid{background:#fff;color:var(--accent);border-color:var(--accent)}
+  .post .who .pf{background:#EEF2FD;color:#1A3FB5}
+  .wk-top{background:var(--hair);border-color:var(--hair)}
+  .tried{border-top-color:var(--hair)}
+  .vlist{border-top-color:var(--hair)}
+  .vbar input{border-color:var(--hair)}
+  .vbar input:focus{border-color:var(--accent)}
+  /* 목록 끝줄에 한 글자만 남지 않게 */
+  .post .pts li,.vrow .vp li,.flow li,.rv a,.tried a,.post .sm,.card .how{text-wrap:pretty}
 </style>
 </head>
 <body>
 <div class="hband" aria-hidden="true"></div>
 <div class="wrap">
+  <nav class="apphead" aria-label="아뜰리에로 돌아가기"><a href="./">← Atelier</a></nav>
   <header class="mast">
     <h1>AI Brief</h1>
     <div class="seg" id="seg">

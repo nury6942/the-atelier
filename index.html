@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=418" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=419" as="script">
   <link rel="preload" href="js/app-2-init.js?v=196" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -83,7 +83,7 @@
   <link rel="preload" href="js/app-5-ledger-export.js?v=164" as="script">
   <link rel="preload" href="js/nomad-data.js?v=172" as="script">
   <link rel="preload" href="js/nomad-cities.js?v=163" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=195" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=196" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Color+Emoji&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -272,14 +272,14 @@
       theme:{extend:{
         colors:{
           /* 2026-10-18 포인트 색 보라 → 코발트: indigo·violet·purple 클래스가 전부 코발트로 나온다 */
-          "indigo":{"50":"#EEF2FD","100":"#EEF2FD","200":"#BCCBF7","300":"#8FA8F0","400":"#5B7FE6","500":"#1F4BD8","600":"#1F4BD8","700":"#1A3FB5","800":"#17348F","900":"#142C72","950":"#0D1C4A"},"violet":{"50":"#EEF2FD","100":"#EEF2FD","200":"#BCCBF7","300":"#8FA8F0","400":"#5B7FE6","500":"#1F4BD8","600":"#1F4BD8","700":"#1A3FB5","800":"#17348F","900":"#142C72","950":"#0D1C4A"},"purple":{"50":"#EEF2FD","100":"#EEF2FD","200":"#BCCBF7","300":"#8FA8F0","400":"#5B7FE6","500":"#1F4BD8","600":"#1F4BD8","700":"#1A3FB5","800":"#17348F","900":"#142C72","950":"#0D1C4A"},
+          "indigo":{"50":"#EEF2FD","100":"#EEF2FD","200":"#BCCBF7","300":"#8FA8F0","400":"#5B7FE6","500":"#1F4BD8","600":"#1F4BD8","700":"#1A3FB5","800":"#17348F","900":"#142C72","950":"#0D1C4A"},"violet":{"50":"#EEF2FD","100":"#EEF2FD","200":"#BCCBF7","300":"#8FA8F0","400":"#5B7FE6","500":"#1F4BD8","600":"#1F4BD8","700":"#1A3FB5","800":"#17348F","900":"#142C72","950":"#0D1C4A"},"rose":{"50":"#FEF2F2","100":"#FEE2E2","200":"#FECACA","300":"#FCA5A5","400":"#F87171","500":"#DC2626","600":"#DC2626","700":"#B91C1C","800":"#991B1B","900":"#7F1D1D","950":"#450A0A"},"purple":{"50":"#EEF2FD","100":"#EEF2FD","200":"#BCCBF7","300":"#8FA8F0","400":"#5B7FE6","500":"#1F4BD8","600":"#1F4BD8","700":"#1A3FB5","800":"#17348F","900":"#142C72","950":"#0D1C4A"},
           "primary":"#1F4BD8","primary-dark":"#1A3FB5","primary-light":"#EEF2FD",
-          "on-primary":"#ffffff","secondary":"#1F4BD8","tertiary":"#ec4899",
+          "on-primary":"#ffffff","secondary":"#1F4BD8","tertiary":"#1F4BD8",
           "surface":"#ffffff","background":"#ffffff",
           "on-surface":"#1e293b","on-surface-variant":"#475569","outline-variant":"#94a3b8",
           "pastel-purple":"#BCCBF7","pastel-purple-light":"#EEF2FD","pastel-purple-dark":"#1A3FB5",
           "pastel-blue":"#bbdefb","pastel-blue-text":"#1565c0",
-          "pastel-rose":"#f8bbd0","pastel-rose-text":"#c2185b",
+          "pastel-rose":"#FECACA","pastel-rose-text":"#B91C1C",
           "pastel-amber":"#fcd34d","pastel-amber-dark":"#b45309",
           "pastel-indigo":"#BCCBF7","pastel-indigo-dark":"#1A3FB5",
           "pastel-lavender":"#EEF2FD","pastel-lavender-text":"#1F4BD8",
@@ -293,17 +293,17 @@
           "pastel-orange":"#ffedd5","pastel-orange-text":"#c2410c",
           "pastel-lime":"#d9f99d","pastel-lime-text":"#3f6212",
           "accent-mint":"#4db6ac","accent-blue":"#64b5f6","accent-peach":"#ffb74d",
-          "accent-rose":"#f06292","accent-lavender":"#ba68c8","accent-lemon":"#fdd835","accent-sage":"#9ccc65",
-          "accent-sky":"#38bdf8","accent-amber":"#fbbf24","accent-violet":"#1F4BD8","accent-cyan":"#22d3ee","accent-orange":"#fb923c","accent-lime":"#a3e635","accent-fuchsia":"#d946ef",
-          "lavender":"#e1bee7","on-lavender":"#6a1b9a","periwinkle":"#c5cae9","sky":"#b2ebf2",
+          "accent-rose":"#DC2626","accent-lavender":"#5B7FE6","accent-lemon":"#fdd835","accent-sage":"#9ccc65",
+          "accent-sky":"#38bdf8","accent-amber":"#fbbf24","accent-violet":"#1F4BD8","accent-cyan":"#22d3ee","accent-orange":"#fb923c","accent-lime":"#a3e635","accent-fuchsia":"#1F4BD8",
+          "lavender":"#EEF2FD","on-lavender":"#1A3FB5","periwinkle":"#c5cae9","sky":"#b2ebf2",
           "surface-container":"#f1f5f9","surface-container-low":"#fafafa",
           "surface-container-high":"#f1f5f9","surface-container-lowest":"#ffffff",
           "surface-container-highest":"#e0e0e0","surface-alt":"#f8fafc",
           "surface-variant":"#f8fafc","surface-dim":"#f8f9fa","surface-bright":"#ffffff",
           "error":"#ef5350","error-container":"#ffcdd2","on-error":"#ffffff",
           "secondary-container":"#EEF2FD","primary-container":"#EEF2FD",
-          "tertiary-container":"#e1bee7","on-secondary-container":"#0d47a1",
-          "on-primary-container":"#142C72","on-tertiary-container":"#4a148c",
+          "tertiary-container":"#EEF2FD","on-secondary-container":"#0d47a1",
+          "on-primary-container":"#142C72","on-tertiary-container":"#142C72",
           "on-secondary":"#ffffff","on-tertiary":"#ffffff",
           "inverse-primary":"#EEF2FD","surface-tint":"var(--indigo-500)"
         },
@@ -3378,7 +3378,7 @@
         background: #f8f1fe !important;
       }
       /* 주말/오늘/월구분 행의 첫 칼럼 배경 유지 */
-      #matrix-table-wrap table tr.bg-rose-50 td:first-child { background: #fff1f2 !important; }
+      #matrix-table-wrap table tr.bg-rose-50 td:first-child { background: #FEF2F2 !important; }
       #matrix-table-wrap table tr.bg-indigo-50 td:first-child { background: #eef2ff !important; }
       #matrix-table-wrap table tr[class*="month-divider"] td:first-child { background: #F5F7FE !important; }
 
@@ -4428,8 +4428,8 @@
       color: var(--slate-600); font-weight: 700; white-space: nowrap;
     }
     /* 주말은 색으로 구분 — 원래 보라 글자로 하던 것을 칸 색까지 바꿔서 확실하게 */
-    #page-packing .pk-card-eyebrow.weekend .pk-day-badge { background: #e11d48; }
-    #page-packing .pk-card-eyebrow.weekend .pk-day-date { color: #be123c; }
+    #page-packing .pk-card-eyebrow.weekend .pk-day-badge { background: #DC2626; }
+    #page-packing .pk-card-eyebrow.weekend .pk-day-date { color: #B91C1C; }
     /* ★ (2026-09-19) 옷 목록 맞바꾸기 — 고른 날은 칠하고, 나머지 날은 대상임을 알린다 */
     #page-packing .pk-day-act-btn.swapping {
       background: var(--lavender-deep) !important; color: #fff !important;
@@ -5685,6 +5685,9 @@
     .jv-title-row { display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; margin-top:10px; }
     .jv-title { font-family:'Manrope','Pretendard',sans-serif; font-weight:800; font-size:clamp(34px,5vw,60px); line-height:1; letter-spacing:-.035em; margin:0; color:var(--jv-ink); text-wrap:balance; }
     .jv-ico { border:0; border-bottom:1px solid var(--jv-soft); background:none; color:var(--jv-mute); font-size:11px; font-weight:700; padding:0 0 1px; margin-left:6px; cursor:pointer; }
+    /* (2026-11-06 4차) 제목 옆 「수정」: 12px 이상 · 보조 회색 이상 · 누르기 쉬운 크기 */
+    #journey-trip-edit-btn.jv-ico { display:inline-flex; align-items:center; min-height:32px; padding:0 10px; margin-left:8px; font-size:13px; font-weight:600; color:#5B5B66; border:1px solid #DCDCE3; background:#fff; vertical-align:middle; }
+    #journey-trip-edit-btn.jv-ico:hover { color:#16161A; border-color:#16161A; }
     .jv-ico:hover { color:var(--jv-ink); border-bottom-color:var(--jv-ink); }
     .jv-dates { font-family:'Manrope','Pretendard',sans-serif; font-size:15px; font-weight:600; color:var(--jv-sub); margin:14px 0 0; font-variant-numeric:tabular-nums; }
     #journey-days-badge, #journey-km-badge { display:none !important; } /* 예전 표지 배지 — JS가 켜도 숨김 (날짜 줄과 중복) */
@@ -5729,8 +5732,10 @@
     #page-journey .jv-route-strip.has-active .jv-stop:not(.is-active) .jv-stop-img { filter:saturate(.35) opacity(.75); }
     #page-journey .jv-route-strip .jv-stop.is-active .jv-stop-img { outline:3px solid var(--jv-accent); outline-offset:-3px; }
     #page-journey .jv-route-strip .jv-stop.is-active .jv-stop-no { background:var(--jv-accent); border-color:var(--jv-accent); color:#fff; }
-    /* (2026-11-06) 사진 없는 도시: 빈 액자 대신 밤하늘 코발트 판 + 모래 지평선 + 도시 이름 크게 (Ctrl+V 붙여넣기는 그대로) */
-    .jv-stop-img.is-empty { background:#1F4BD8; border-color:#1F4BD8; box-shadow:inset 0 -6px 0 #F0A647; }
+    /* (2026-11-06 4차) 사진 없는 도시: 코발트 판 반복 대신 흰 바탕 + 코발트 1px 선 + 모래 지평선 6px + 도시 이름 잉크 크게 (Ctrl+V 붙여넣기는 그대로) */
+    .jv-stop-img.is-empty { background:#fff; border:1px solid #1F4BD8; box-shadow:inset 0 -6px 0 #F0A647; }
+    .jv-stop-img.is-empty .jv-stop-ph { color:#16161A; }
+    .jv-stop-img.is-empty .jv-stop-ph i { color:#5B5B66 !important; }
     .jv-stop-ph { position:absolute; inset:0 0 6px; display:flex; flex-direction:column; justify-content:flex-end; gap:6px; padding:12px 12px 14px; color:#fff; text-align:left; }
     .jv-stop-ph b { font-size:22px; font-weight:800; line-height:1.1; letter-spacing:-0.02em; word-break:keep-all; overflow-wrap:anywhere; }
     .jv-stop-ph i { font-style:normal; font-size:11px; font-weight:500; color:rgba(255,255,255,.86); }
@@ -5867,7 +5872,7 @@
     #page-journey #journey-week-grid.wk4 .wk4-slot.jv-tg-sunset { background:#fff !important; }
     .jv-sun { display:inline-flex; gap:10px; margin-left:12px; padding-left:12px; border-left:1px solid var(--jv-soft); font-family:'Inter','Pretendard',sans-serif; font-size:11px; letter-spacing:.06em; color:var(--jv-sub); }
     .jv-sun b { font-family:'Manrope',sans-serif; font-weight:800; color:var(--jv-ink); font-variant-numeric:tabular-nums; letter-spacing:0; }
-    .jv-sun-s b { color:#d6457a; }
+    .jv-sun-s b { color:#DC2626; }
     /* ★ (2026-10-08 v3) 날짜 머리 정렬 — 번호 | (날짜·일출일몰 / 도시 + 나라) | 날씨 · 동선, 한 줄 기준선에 맞춤 */
     #page-journey #journey-week-grid.wk4 .j-day-head.wk4-head { grid-template-columns:76px minmax(0,1fr) auto auto !important; grid-template-areas:"no eb eb eb" "no ti wx rt" "no dt dt dt" !important; column-gap:12px !important; row-gap:8px !important; align-items:center !important; padding:20px 16px 16px 20px !important; position:relative; }
     #page-journey #journey-week-grid.wk4 .jv-dno { grid-area:no; align-self:end !important; justify-self:start; margin:0 !important; padding:0 !important; background:none !important; color:var(--jv-accent) !important; font-size:52px; line-height:.8; }
@@ -6035,11 +6040,11 @@
     .bk-sum span { display:block; font-family:'Inter',sans-serif; font-size:11px; font-weight:700; letter-spacing:.16em; color:var(--bk-sub); }
     .bk-sum b { font-family:'Manrope',sans-serif; font-size:30px; font-weight:800; letter-spacing:-.03em; color:var(--bk-ink); font-variant-numeric:tabular-nums; }
     .bk-sum small { font-size:15px; color:var(--bk-mute); font-weight:700; margin-left:2px; }
-    .bk-sum .is-warn b { color:#d6457a; }
+    .bk-sum .is-warn b { color:#DC2626; }
     .bk-row { display:grid; grid-template-columns:120px minmax(0,1fr); gap:24px; padding:18px 0; border-top:1px solid var(--bk-ink); }
     .bk-date b { display:block; font-family:'Manrope',sans-serif; font-size:44px; font-weight:800; line-height:.9; letter-spacing:-.04em; color:var(--bk-ink); font-variant-numeric:tabular-nums; }
     .bk-date span { display:block; margin-top:6px; font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:700; letter-spacing:.16em; color:var(--bk-sub); }
-    .bk-date.is-wknd span { color:#d6457a; }
+    .bk-date.is-wknd span { color:#DC2626; }
     .bk-date i { display:inline-block; margin-top:6px; padding:1px 6px; font-style:normal; font-family:'Inter',sans-serif; font-size:11px; font-weight:800; letter-spacing:.12em; color:#fff; background:var(--bk-acc); }
     .bk-items { display:flex; flex-direction:column; gap:12px; min-width:0; }
     .bk-card { border:1px solid var(--bk-ink); background:#fff; }
@@ -6086,8 +6091,8 @@
     .bk-mini-r { display:inline-flex; gap:8px; align-items:center; font-size:12px; color:var(--bk-sub); font-variant-numeric:tabular-nums; }
     .bk-mini .bk-act { margin-left:0; }
     .bk-mini .bk-mini-r { margin-left:auto; }
-    .bk-gap { padding:12px 16px; border:1px dashed #d6457a; color:#d6457a; font-size:12.5px; }
-    .bk-gap b { margin-right:8px; font-family:'Inter',sans-serif; font-size:11px; letter-spacing:.16em; padding:1px 6px; color:#fff; background:#d6457a; }
+    .bk-gap { padding:12px 16px; border:1px dashed #DC2626; color:#DC2626; font-size:12.5px; }
+    .bk-gap b { margin-right:8px; font-family:'Inter',sans-serif; font-size:11px; letter-spacing:.16em; padding:1px 6px; color:#fff; background:#DC2626; }
     .bk-empty { padding:28px 0; font-size:13px; color:var(--bk-sub); }
     @media (max-width:720px) {
       .bk-sum { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -6348,7 +6353,7 @@
     .wbc-legend span { display:inline-flex; align-items:center; gap:6px; }
     .wbc-legend span::before { content:''; width:14px; height:10px; display:inline-block; }
     .wbc-legend .k-key::before { background:#1F4BD8; }
-    .wbc-legend .k-work::before { background:#fff; box-shadow:inset 0 0 0 1px #DCDCE3; }
+    .wbc-legend .k-work::before { background:#fff; box-shadow:inset 0 0 0 1px #8A8A95; } /* (11/06 4차) #DCDCE3 은 범례 칸에선 거의 안 보여서 진하게 */
     .wbc-legend .k-me::before { background:#fff; box-shadow:inset 0 0 0 1px #15171c; }
     .wbc-legend .k-off::before { background:#F0A647; }
     /* ★ (2026-10-07) 토요일 칸이 오른쪽에서 잘리던 문제: 달력 안쪽 폭(298)이 날짜판 기본 폭(308)보다 좁았음
@@ -6357,8 +6362,8 @@
     .flatpickr-days .dayContainer { width: 100% !important; min-width: 0 !important; max-width: none !important; }
     .flatpickr-weekdays { padding-left: 6px !important; padding-right: 6px !important; box-sizing: border-box !important; }
     /* ★ (2026-10-07) 주말·공휴일 빨간색 + 공휴일 이름 (app-3-flatpickr.js _fpDayCreate) */
-    span.flatpickr-weekday:first-child, span.flatpickr-weekday:last-child { color: #e11d48 !important; }
-    .flatpickr-day.fp-red:not(.selected):not(.startRange):not(.endRange):not(.prevMonthDay):not(.nextMonthDay) { color: #e11d48 !important; }
+    span.flatpickr-weekday:first-child, span.flatpickr-weekday:last-child { color: #DC2626 !important; }
+    .flatpickr-day.fp-red:not(.selected):not(.startRange):not(.endRange):not(.prevMonthDay):not(.nextMonthDay) { color: #DC2626 !important; }
     .flatpickr-day.fp-red.prevMonthDay, .flatpickr-day.fp-red.nextMonthDay { color: #fda4af !important; }
     .flatpickr-day.fp-holiday { display: inline-flex !important; flex-direction: column; align-items: center; justify-content: center; line-height: 1 !important; gap: 1px; }
     .flatpickr-day.fp-hmulti .fp-hname { white-space: pre-line; font-size: 7px; }
@@ -6530,7 +6535,16 @@
     .trv-ov-v { font-family:'Manrope','Pretendard',sans-serif; font-size:16px; font-weight:800;
       color:#0f172a; line-height:1.15; font-variant-numeric:tabular-nums; }
     .trv-ov-sub { font-size:11px; color:#475569; margin-top:3px; }
-    .trv-ov-chip.is-warn { border-color:#fcd34d; background:#fffdf5; }
+    .trv-ov-chip.is-warn { border-color:#DC2626; background:#fff; }
+    .trv-ov-chip.is-warn .trv-ov-v { color:#DC2626; }
+    /* (2026-11-06 4차) 요약 칩 라벨 Title Case · 뜨는 hover 없음 */
+    .trv-ov-l { text-transform:none !important; letter-spacing:0 !important; font-family:'Pretendard',sans-serif !important; font-size:12px !important; font-weight:600 !important; }
+    .trv-ov-v { font-family:'Pretendard',sans-serif !important; }
+    .trv-ov-chip:hover { transform:none !important; box-shadow:none !important; border-color:#1F4BD8 !important; }
+    /* (2026-11-06 4차) Bookings 제목 = 다른 페이지와 같은 제목 하나(24/700 Pretendard), 대문자 눈썹 없음 */
+    #travel-records-section .trav-hero { padding:20px 0 18px; }
+    #travel-records-section .trav-title { font-family:'Pretendard',sans-serif !important; font-size:24px !important; font-weight:700 !important; letter-spacing:-0.01em !important; line-height:1.25 !important; margin:0 0 6px !important; color:#16161A !important; }
+    #travel-records-section .trav-sub { color:#5B5B66; }
     .trv-ledger-tabs { display:flex; gap:24px; border-bottom:1px solid var(--gray-200,#e2e8f0); margin-bottom:22px; flex-wrap:wrap; }
     .trv-ltab { border:none; background:none; cursor:pointer; padding:8px 2px 11px; margin-bottom:-1px;
       font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase;
@@ -6554,7 +6568,7 @@
     .rec-pill.is-accent { background:#f3eeff; color:#1F4BD8; }
     .rec-pill.is-ok { background:#ecfdf5; color:#15803D; }
     .rec-pill.is-warn { background:#fffbeb; color:#b45309; }
-    .rec-pill.is-danger { background:#FEF2F2; color:#DC2626; }
+    .rec-pill.is-danger { background:#FEF2F2; color:#B91C1C; }
     .rec-actions { display:flex; gap:2px; flex-shrink:0; }
     .rec-abtn { border:none; background:transparent; cursor:pointer; padding:4px; border-radius:8px;
       color:inherit; opacity:0; transition:opacity .15s, background .15s, color .15s; display:inline-flex; }
@@ -6702,7 +6716,7 @@
       font-size:11.5px; font-weight:700; color:#334155; line-height:1.4; }
     .rec-lg-pay-v .material-symbols-outlined { font-size:13px; line-height:1.25; flex:none; }
     .rec-lg-pay-v.is-fee { color:#b45309; }
-    .rec-lg-pay-v.is-cash { color:#be123c; }
+    .rec-lg-pay-v.is-cash { color:#B91C1C; }
     .rec-lg-policy { border-top:1px solid #f1f5f9; padding-top:9px; margin-top:9px; }
     .rec-lg-policy .rec-lg-cancel { margin:0; }
     .rec-lg-policy-d { font-size:11px; line-height:1.5; color:#64748b; margin:3px 0 0; }
@@ -6747,7 +6761,7 @@
     .rec-note-list { list-style:none; margin:6px 0 0; padding:0; display:flex; flex-direction:column; gap:4px; }
     .rec-note-row { font-size:11.5px; line-height:1.5; color:#475569; padding:3px 0 3px 9px;
       border-left:2px solid #e2e8f0; overflow-wrap:anywhere; }
-    .rec-note-row.is-warn { border-left-color:#f59e0b; background:#fffbeb; color:#92400e; border-radius:0 6px 6px 0; padding-right:8px; }
+    .rec-note-row.is-warn { border-left-color:#f59e0b; background:#fffbeb; color:#92400e; border-radius:0; padding-right:8px; }
     .rec-note-row.is-key { border-left-color:#1F4BD8; color:#5b21b6; font-weight:600; }
     .rec-note-row.is-act { border-left-color:#0ea5e9; color:#0369a1; }
     .rec-tr-sub { font-size:11.5px; color:#64748b; margin:3px 0 0; overflow-wrap:anywhere; }
@@ -6930,7 +6944,7 @@
     .sv-actions button { border:none; background:transparent; cursor:pointer; padding:3px;
       border-radius:6px; color:#475569; display:inline-flex; }
     .sv-actions button:hover { background:#f1f5f9; color:#475569; }
-    .sv-actions button.danger:hover { background:#fff1f2; color:#e11d48; }
+    .sv-actions button.danger:hover { background:#FEF2F2; color:#B91C1C; }
     .sv-actions .material-symbols-outlined { font-size:15px; }
     .sv-add { width:100%; margin-top:18px; padding:11px; border:1.5px dashed #cbd5e1;
       border-radius:4px; background:transparent; cursor:pointer; font-size:12px; font-weight:700;
@@ -7023,14 +7037,14 @@
     .spot-del { border:none; background:transparent; cursor:pointer; padding:3px; border-radius:7px;
       color:#475569; display:inline-flex; flex-shrink:0; opacity:0; transition:all .15s; }
     .spot-card:hover .spot-del { opacity:1; }
-    .spot-del:hover { background:#fff1f2; color:#e11d48; }
+    .spot-del:hover { background:#FEF2F2; color:#B91C1C; }
     .spot-del .material-symbols-outlined { font-size:16px; }
     .spot-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }
     .spot-chip { display:inline-flex; align-items:center; gap:3px; font-family:var(--font-num); font-variant-numeric:tabular-nums;
       font-size:8px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
       padding:2px 6px; border-radius:6px; border:1px solid #e2e8f0; background:#fff; color:#64748b; }
     .spot-chip .material-symbols-outlined { font-size:11px; }
-    .spot-chip.is-reserve { color:#e11d48; border-color:#fecdd3; background:#fff1f2; }
+    .spot-chip.is-reserve { color:#B91C1C; border-color:#FECACA; background:#FEF2F2; }
     .spot-chip.is-indoor { color:#1A3FB5; border-color:#c7d2fe; background:#eef2ff; }
     .spot-chip.is-closed { color:#b45309; border-color:#FEF3C7; background:#fffbeb; }
     .spot-desc { font-size:11px; color:#64748b; margin:7px 0 0; line-height:1.5;
@@ -7232,7 +7246,7 @@
     .mil-buckets { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
     .mil-bk { position:relative; border:1px solid #e9eef5; border-radius:11px; padding:10px 12px 9px; background:#fff; }
     .mil-bk.is-warn { border-color:#fcd34d; background:#fffbeb; }
-    .mil-bk.is-crit { border-color:#fda4af; background:#fff1f2; }
+    .mil-bk.is-crit { border-color:#fda4af; background:#FEF2F2; }
     .mil-bk-top { display:flex; align-items:baseline; justify-content:space-between; gap:6px; }
     .mil-bk-v { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:15px; font-weight:800; color:#0f172a; }
     .mil-bk-v em { font-style:normal; font-size:11px; font-weight:700; color:#475569; margin-left:3px; }
@@ -7240,7 +7254,7 @@
     .mil-bk-bar { height:4px; border-radius:999px; background:#f1f5f9; margin:8px 0 6px; overflow:hidden; }
     .mil-bk-bar span { display:block; height:100%; border-radius:999px; background:#5B7FE6; }
     .mil-bk.is-warn .mil-bk-bar span { background:#f59e0b; }
-    .mil-bk.is-crit .mil-bk-bar span { background:#f43f5e; }
+    .mil-bk.is-crit .mil-bk-bar span { background:#DC2626; }
     .mil-bk-foot { display:flex; justify-content:space-between; font-family:var(--font-num);
       font-variant-numeric:tabular-nums; font-size:11px; font-weight:700; color:#475569; }
     .flt-mile-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
@@ -7248,7 +7262,7 @@
       padding:14px 15px 12px; transition:box-shadow .2s; }
     .flt-mile-card:hover { box-shadow:0 6px 18px rgba(15,23,42,.07); }
     .flt-mile-card.is-warn { border-color:#fcd34d; background:#fffbeb; }
-    .flt-mile-card.is-crit { border-color:#fda4af; background:#fff1f2; }
+    .flt-mile-card.is-crit { border-color:#fda4af; background:#FEF2F2; }
     .flt-mile-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
     .flt-mile-v { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:23px; font-weight:800;
       color:#0f172a; margin:3px 0 0; letter-spacing:-0.02em; }
@@ -7256,14 +7270,14 @@
     .flt-mile-dd { flex:none; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11px; font-weight:800;
       letter-spacing:0.06em; padding:4px 9px; border-radius:999px; background:#f1f5f9; color:#475569; }
     .flt-mile-card.is-warn .flt-mile-dd { background:#FEF3C7; color:#92400e; }
-    .flt-mile-card.is-crit .flt-mile-dd { background:#fecdd3; color:#9f1239; }
+    .flt-mile-card.is-crit .flt-mile-dd { background:#FECACA; color:#991B1B; }
     .flt-mile-meta { display:flex; flex-wrap:wrap; gap:3px 10px; margin-top:9px;
       font-size:11px; font-weight:600; color:#475569; }
     .flt-mile-memo { margin:7px 0 0; font-size:11px; line-height:1.55; color:#64748b; }
     .flt-mile-del { position:absolute; right:8px; bottom:8px; border:none; background:none; cursor:pointer;
       color:#475569; padding:3px; opacity:0; transition:opacity .15s; }
     .flt-mile-card:hover .flt-mile-del { opacity:1; }
-    .flt-mile-del:hover { color:#e11d48; }
+    .flt-mile-del:hover { color:#DC2626; }
     .flt-mile-del .material-symbols-outlined { font-size:16px; }
     .flt-sub-h { display:flex; justify-content:space-between; align-items:baseline; gap:10px;
       margin:20px 0 9px; padding-top:14px; border-top:1px solid #eef2f7; }
@@ -7305,13 +7319,13 @@
     .flt-mo-p { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:12px; font-weight:800; color:#334155; }
     .flt-mo-day.is-cheap { background:#f0fdf4; border-color:#bbf7d0; }
     .flt-mo-day.is-cheap .flt-mo-p { color:#047857; }
-    .flt-mo-day.is-pricey { background:#fff1f2; border-color:#fecdd3; }
-    .flt-mo-day.is-pricey .flt-mo-p { color:#be123c; }
+    .flt-mo-day.is-pricey { background:#FEF2F2; border-color:#FECACA; }
+    .flt-mo-day.is-pricey .flt-mo-p { color:#B91C1C; }
     .flt-mo-day.is-best { background:#15803D; border-color:#15803D; box-shadow:0 3px 10px rgba(5,150,105,.28); }
     .flt-mo-day.is-best .flt-mo-d, .flt-mo-day.is-best .flt-mo-p { color:#fff; }
     .flt-mo-day i { position:absolute; top:3px; right:5px; font-style:normal; font-size:13px; line-height:1; color:#1F4BD8; }
     .flt-mo-day.is-best i { color:#a7f3d0; }
-    .flt-acc-note.flt-err { color:#be123c; font-weight:600; }
+    .flt-acc-note.flt-err { color:#B91C1C; font-weight:600; }
 
     /* ══ ★ (2026-07-24) 가격 로그 — Stitch 시안(.pw-*) ══
        0px 라운드 · 헤어라인 #e5e5e5 · 언더라인 입력 · 그림자 없음 · 보라는 액션에만 */
@@ -7410,7 +7424,7 @@
       box-shadow:0 0 0 1.5px #15803d; }
     .pw-mo-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11px; font-weight:700; color:#4a4455; }
     .pw-mo-w { font-size:8.5px; font-weight:700; color:#5B5B66; }
-    .pw-mo-w.is-sun { color:#e11d48; }
+    .pw-mo-w.is-sun { color:#DC2626; }
     .pw-mo-w.is-sat { color:#2563eb; }
     .pw-mo-legend { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:14px;
       font-size:11px; font-weight:700; color:#5B5B66; }
@@ -7471,7 +7485,7 @@
       color:#1A3FB5; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11px; font-weight:800;
       padding:3px 5px 3px 9px; }
     .pw-tm i { font-style:normal; cursor:pointer; color:#BCCBF7; font-weight:700; padding:0 2px; }
-    .pw-tm i:hover { color:#e11d48; }
+    .pw-tm i:hover { color:#DC2626; }
     .pw-tm-empty { font-size:11.5px; color:#475569; }
     .pw-tm-add { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px;
       border:1px dashed #BCCBF7; background:#fff; color:#1F4BD8; cursor:pointer; padding:0; }
@@ -7493,12 +7507,12 @@
     .pw-vd-l p b { color:#1F4BD8; font-weight:800; margin-right:4px; }
     .pw-verdict.is-buy { background:#f0fdf4; }
     .pw-verdict.is-buy .material-symbols-outlined, .pw-verdict.is-buy p b { color:#15803d; }
-    .pw-verdict.is-wait { background:#fff1f2; }
-    .pw-verdict.is-wait .material-symbols-outlined, .pw-verdict.is-wait p b { color:#be123c; }
+    .pw-verdict.is-wait { background:#FEF2F2; }
+    .pw-verdict.is-wait .material-symbols-outlined, .pw-verdict.is-wait p b { color:#B91C1C; }
     .pw-bar { flex:1; max-width:280px; height:4px; background:#DCDCE3; }
     .pw-bar span { display:block; height:100%; background:#1F4BD8; }
     .pw-verdict.is-buy .pw-bar span { background:#15803d; }
-    .pw-verdict.is-wait .pw-bar span { background:#be123c; }
+    .pw-verdict.is-wait .pw-bar span { background:#B91C1C; }
 
     .pw-rec { display:flex; align-items:stretch; border-bottom:1px solid #eeeef0; flex-wrap:wrap; }
     .pw-rec-f { padding:13px 16px; border-right:1px solid #eeeef0; display:flex; flex-direction:column;
@@ -7524,7 +7538,7 @@
     .pw-stats b.is-lo { color:#15803d; }
     .pw-stats b i { font-style:normal; font-size:11px; font-weight:700; margin-left:6px; }
     .pw-stats b i.is-down { color:#15803d; }
-    .pw-stats b i.is-up { color:#be123c; }
+    .pw-stats b i.is-up { color:#B91C1C; }
     .pw-chart { padding:16px 20px; border-bottom:1px solid #eeeef0; }
     /* ★ (2026-07-24) 최저가 상세(항공사·편명·경유·출발일) + 기간 선택 팝업 */
     .pw-lastdet { display:flex; flex-wrap:wrap; gap:7px; padding:11px 24px; background:#faf9ff;
@@ -7597,7 +7611,7 @@
       font-weight:800; color:#1a1c1d; }
     .pw-mstats b.is-lo { color:#15803d; }
     .pw-mstats b.is-down { color:#15803d; }
-    .pw-mstats b.is-up { color:#be123c; }
+    .pw-mstats b.is-up { color:#B91C1C; }
     .pw-money-r { flex:1; min-width:200px; max-width:420px; }
     .pw-vline { display:flex; align-items:center; gap:10px; flex-wrap:wrap;
       padding:9px 24px; background:#f7f7f9; border-top:1px solid #f1f1f4; }
@@ -7609,9 +7623,9 @@
     .pw-vline.is-buy { background:#f0fdf4; border-top-color:#dcfce7; }
     .pw-vline.is-buy .material-symbols-outlined, .pw-vline.is-buy p b { color:#15803d; }
     .pw-vline.is-buy .pw-bar span { background:#15803d; }
-    .pw-vline.is-wait { background:#fff1f2; border-top-color:#ffe4e6; }
-    .pw-vline.is-wait .material-symbols-outlined, .pw-vline.is-wait p b { color:#be123c; }
-    .pw-vline.is-wait .pw-bar span { background:#be123c; }
+    .pw-vline.is-wait { background:#FEF2F2; border-top-color:#FEE2E2; }
+    .pw-vline.is-wait .material-symbols-outlined, .pw-vline.is-wait p b { color:#B91C1C; }
+    .pw-vline.is-wait .pw-bar span { background:#B91C1C; }
     /* 기록 표 — 칩+리스트 중복을 표 하나로 */
     .pw-logs { overflow-x:auto; border-bottom:1px solid #eeeef0; }
     .pw-lt { width:100%; border-collapse:collapse; font-size:11.5px; }
@@ -7800,7 +7814,7 @@
     .fuel-diff { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:12px;
       font-weight:800; margin-top:5px !important; }
     .fuel-diff.is-down { color:#15803d; }
-    .fuel-diff.is-up { color:#be123c; }
+    .fuel-diff.is-up { color:#B91C1C; }
     .fuel-diff.is-same { color:#5B5B66; }
     .fuel-diff u { text-decoration:none; color:#5B5B66; font-weight:600; }
     .fuel-pend { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap;
@@ -7929,9 +7943,9 @@
     .flt-vd.is-buy .flt-vd-w  { color:#15803D; }
     .flt-vd.is-ok   { background:#f0fdf4; border-color:#bbf7d0; }
     .flt-vd.is-ok .flt-vd-l   { color:#15803d; }
-    .flt-vd.is-wait { background:#fff1f2; border-color:#fecdd3; }
-    .flt-vd.is-wait .flt-vd-l { color:#be123c; }
-    .flt-vd.is-wait .flt-vd-w { color:#e11d48; }
+    .flt-vd.is-wait { background:#FEF2F2; border-color:#FECACA; }
+    .flt-vd.is-wait .flt-vd-l { color:#B91C1C; }
+    .flt-vd.is-wait .flt-vd-w { color:#DC2626; }
     .flt-vd.is-need { background:#f8fafc; border-style:dashed; }
     .flt-links { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
     .flt-link { font-size:11px; font-weight:800; color:#1A3FB5; background:#F5F7FE; border:1px solid #EEF2FD;
@@ -7992,7 +8006,7 @@
     .flt-pp-input:focus { border-color:#BCCBF7; background:#fff; }
     .flt-pp-msg { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:#475569; }
     .flt-pp-msg .material-symbols-outlined { font-size:15px; }
-    .flt-pp-msg.is-warn { color:#be123c; font-weight:800; background:#fff1f2; border-radius:999px; padding:4px 11px; }
+    .flt-pp-msg.is-warn { color:#B91C1C; font-weight:800; background:#FEF2F2; border-radius:999px; padding:4px 11px; }
     .flt-pp-msg.is-ok { color:#047857; font-weight:700; }
 
     /* ── 섹션 1 준비 카드 ── */
@@ -8003,8 +8017,8 @@
       background:#F5F7FE; border:1px solid #EEF2FD; }
     .flt-dday-n { display:block; font-family:var(--font-num); font-variant-numeric:tabular-nums;
       font-size:19px; font-weight:800; letter-spacing:-0.03em; color:#1F4BD8; line-height:1.1; }
-    .flt-dday.is-today { background:#fff1f2; border-color:#fecdd3; }
-    .flt-dday.is-today .flt-dday-n { color:#e11d48; }
+    .flt-dday.is-today { background:#FEF2F2; border-color:#FECACA; }
+    .flt-dday.is-today .flt-dday-n { color:#DC2626; }
     .flt-dday.is-done { background:#f1f5f9; border-color:#e2e8f0; }
     .flt-dday.is-done .flt-dday-n { color:#475569; font-size:15px; }
     .flt-prep-id { flex:1; min-width:0; }
@@ -8128,17 +8142,17 @@
     .flt-watch-sub { margin:4px 0 0; font-size:11.5px; font-weight:600; color:#64748b; }
     .flt-x { flex-shrink:0; border:none; background:none; padding:4px; border-radius:8px; color:#475569;
       cursor:pointer; transition:all .15s; }
-    .flt-x:hover { background:#ffe4e6; color:#e11d48; }
+    .flt-x:hover { background:#FEE2E2; color:#DC2626; }
     .flt-x .material-symbols-outlined { font-size:17px; display:block; }
     .flt-price-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:12px; }
     @media (min-width:640px){ .flt-price-stats { grid-template-columns:repeat(4,1fr); } }
     .flt-price-v { margin:0; font-family:'Manrope','Pretendard',sans-serif; font-variant-numeric:tabular-nums;
       font-size:16px; font-weight:800; letter-spacing:-0.02em; color:#0f172a; line-height:1.15; }
     .flt-price-v.is-lo { color:#15803D; }
-    .flt-price-v.is-hi { color:#e11d48; }
+    .flt-price-v.is-hi { color:#DC2626; }
     .flt-price-v i { font-style:normal; font-size:11px; font-weight:800; margin-left:5px; }
     .flt-price-v i.is-down { color:#15803D; }
-    .flt-price-v i.is-up { color:#e11d48; }
+    .flt-price-v i.is-up { color:#DC2626; }
     .flt-snap-form { display:flex; gap:7px; flex-wrap:wrap; align-items:center; margin-top:12px;
       padding-top:12px; border-top:1px solid #eef2f7; }
     .flt-in.is-amt { width:110px; font-family:var(--font-num); font-variant-numeric:tabular-nums; text-align:right; }
@@ -8156,7 +8170,7 @@
     .flt-snap-del { flex-shrink:0; border:none; background:none; padding:2px; border-radius:6px;
       color:#e2e8f0; cursor:pointer; transition:all .15s; }
     .flt-snap:hover .flt-snap-del { color:#475569; }
-    .flt-snap-del:hover { background:#ffe4e6; color:#e11d48; }
+    .flt-snap-del:hover { background:#FEE2E2; color:#DC2626; }
     .flt-snap-del .material-symbols-outlined { font-size:14px; display:block; }
 
     #travel-atlas-section .atlas-hero {
@@ -10294,7 +10308,7 @@
     .j-attach-chip { position: relative; display: inline-flex; align-items: center; gap: 4px; max-width: 220px; padding: 3px 10px; border-radius: 9999px; background: #eef2ff; color: #17348F; font-size: 11px; font-weight: 600; cursor: pointer; transition: background .15s ease; }
     .j-attach-chip:hover { background: #EEF2FD; }
     .j-attach-chip .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .j-attach-del { display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: #f43f5e; color: #fff; font-size: 11px; line-height: 15px; text-align: center; font-weight: 700; cursor: pointer; }
+    .j-attach-del { display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: #DC2626; color: #fff; font-size: 11px; line-height: 15px; text-align: center; font-weight: 700; cursor: pointer; }
     .j-attach-chip:hover .j-attach-del { display: block; }
     .j-attach-add { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 9999px; border: 1px dashed #cbd5e1; background: transparent; color:#475569; font-size: 11px; font-weight: 600; cursor: pointer; transition: all .15s ease; }
     .j-attach-add:hover { border-color: #a5b4fc; color: #1F4BD8; background: #eef2ff; }
@@ -10323,7 +10337,7 @@
     .j-day-route-btn { border: 1px solid #e2e8f0; background: #fff; color: #64748b; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; cursor: pointer; margin-left: auto; align-self: center; flex-shrink: 0; transition: border-color .15s, color .15s; }
     .j-day-route-btn:hover { border-color: #BCCBF7; color: #1F4BD8; }
     /* 시간 겹침 경고 배지 */
-    .j-conflict-chip { color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; font-size: 11px; font-weight: 800; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
+    .j-conflict-chip { color: #B91C1C; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; font-size: 11px; font-weight: 800; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
     /* ★ (2026-07-23) dlv: Daily Log Single/4-Day 뷰 전환 (Stitch 이식) */
     .dlv-toggle { display: inline-flex; align-items: center; align-self: center; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px; padding: 2px; flex-shrink: 0; }
     .dlv-toggle button { border: 0; background: transparent; cursor: pointer; padding: 4px 14px; border-radius: 8px; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; transition: all 0.15s; }
@@ -10394,8 +10408,8 @@
       transition: color 0.15s;
     }
     .wk4-eyebrow:hover .wk4-day-date { color: #1F4BD8; }
-    .wk4-eyebrow.is-weekend .wk4-day-badge { background: #e11d48; }
-    .wk4-eyebrow.is-weekend .wk4-day-date { color: #be123c; }
+    .wk4-eyebrow.is-weekend .wk4-day-badge { background: #DC2626; }
+    .wk4-eyebrow.is-weekend .wk4-day-date { color: #B91C1C; }
     .wk4-eyebrow.is-today .wk4-day-badge { background: #1F4BD8; }
     .wk4-title {
       font-family: 'Manrope', 'Pretendard', sans-serif; font-size: 20px; font-weight: 700;
@@ -10418,7 +10432,7 @@
     .wk4-wx b { font-weight: 800; font-size: 12px; color: #0f172a; }
     .wk4-wx u { text-decoration: none; font-weight: 600; opacity: .72; }
     .wk4-wx s { text-decoration: none; font-weight: 700; opacity: .78; }
-    .wk4-wx s.is-rain { color: #e11d48; opacity: 1; }
+    .wk4-wx s.is-rain { color: #DC2626; opacity: 1; }
     .wk4-wx em {
       font-style: normal; font-weight: 700; font-size: 11px; letter-spacing: .02em;
       padding: 2px 5px; border-radius: 999px;
@@ -10461,7 +10475,7 @@
       width: 3px; height: auto; border-radius: 2px;
       border: 0; background: #e2e8f0;
     }
-    #journey-week-grid.wk4 .j-slot.is-reservation::before { background: #f43f5e; }
+    #journey-week-grid.wk4 .j-slot.is-reservation::before { background: #DC2626; }
     #journey-week-grid.wk4 .j-slot.is-pinned::before { background: #15803D; }
     #journey-week-grid.wk4 .j-slot.is-shopping::before { background: #fb923c; }
     #journey-week-grid.wk4 .j-slot:hover { background: transparent; }
@@ -10493,7 +10507,7 @@
     #journey-week-grid.wk4 .j-slot.is-reservation:hover .wk4-slot-title { color: #1F4BD8; }
     #journey-week-grid.wk4 .j-slot.is-shopping .wk4-hl { background-image: linear-gradient(transparent 55%, #ffedd5 55%); }
     #journey-week-grid.wk4 .j-slot.is-pinned .wk4-hl { background-image: linear-gradient(transparent 55%, #d1fae5 55%); }
-    #journey-week-grid.wk4 .j-slot.is-reservation .wk4-hl { background-image: linear-gradient(transparent 55%, #ffe4e6 55%); }
+    #journey-week-grid.wk4 .j-slot.is-reservation .wk4-hl { background-image: linear-gradient(transparent 55%, #FEE2E2 55%); }
     /* 서브라인 — 시간 줄 / 설명 줄 분리 + 행간 확보 (빽빽함 해소) */
     .wk4-sub { font-size: 12px; line-height: 1.7; color:#475569; margin: 7px 0 0; }
     .wk4-sub-time { margin-top: 7px; }
@@ -10507,7 +10521,7 @@
     }
     #journey-week-grid.wk4 .j-slot.is-shopping .wk4-sub .wk4-time { background: #fff7ed; color: #c2410c; }
     #journey-week-grid.wk4 .j-slot.is-pinned .wk4-sub .wk4-time { background: #ecfdf5; color: #047857; }
-    #journey-week-grid.wk4 .j-slot.is-reservation .wk4-sub .wk4-time { background: #fff1f2; color: #be123c; }
+    #journey-week-grid.wk4 .j-slot.is-reservation .wk4-sub .wk4-time { background: #FEF2F2; color: #B91C1C; }
     #journey-week-grid.wk4 .j-slot.is-shopping .wk4-sub-desc,
     #journey-week-grid.wk4 .j-slot.is-pinned .wk4-sub-desc,
     #journey-week-grid.wk4 .j-slot.is-reservation .wk4-sub-desc { color: #0f172a; font-weight: 500; }
@@ -10516,7 +10530,7 @@
       display: inline-flex; align-items: center; font-size: 11px; font-weight: 800;
       letter-spacing: 0.02em; padding: 2px 6px; border-radius: 5px; white-space: nowrap;
     }
-    .wk4-chip.is-resv { background: #fff1f2; color: #be123c; }
+    .wk4-chip.is-resv { background: #FEF2F2; color: #B91C1C; }
     /* ★ (2026-07-25) 예약 배지가 링크일 때 — 눌린다는 걸 보이게 */
     .is-booklink { cursor: pointer; text-decoration: none; transition: filter .12s, box-shadow .12s; }
     .is-booklink:hover { filter: brightness(0.94); box-shadow: 0 0 0 2px rgba(190,18,60,.18); }
@@ -10526,13 +10540,13 @@
     .wk4-chip.is-city:hover { background: #fef3c7; }
     .wk4-chip.is-indoor { background: #eef2ff; color: #1A3FB5; }
     .wk4-chip.is-closed { background: #fffbeb; color: #b45309; }
-    .wk4-chip.is-clash { background: #e11d48; color: #fff; }
-    .wk4-chip.is-conflict { background: #fef2f2; color: #dc2626; }
+    .wk4-chip.is-clash { background: #DC2626; color: #fff; }
+    .wk4-chip.is-conflict { background: #fef2f2; color: #B91C1C; }
     /* 사전예약 권장 시점 — 흐린 한 줄 → 로즈 강조 칩 (좌측 3px 바) */
     .wk4-prebook {
-      display: block; font-size: 12px; font-weight: 700; line-height: 1.55; color: #be123c;
-      margin: 9px 0 0; padding: 5px 10px; background: #fff1f2;
-      border-left: 3px solid #e11d48; border-radius: 0 8px 8px 0;
+      display: block; font-size: 12px; font-weight: 700; line-height: 1.55; color: #B91C1C;
+      margin: 9px 0 0; padding: 5px 10px; background: #FEF2F2;
+      border-left: 3px solid #DC2626; border-radius: 0 8px 8px 0;
     }
     /* 이동시간 커넥터 — 인라인 텍스트 → 배경 있는 알약 칩 (위아래 여백은 기존 유지) */
     #journey-week-grid.wk4 .j-slot-travel {
@@ -10867,8 +10881,8 @@
       z-index: 2;
     }
     #page-journey .j-slot.is-reservation::before {
-      background: #f43f5e;
-      border-color: #f43f5e;
+      background: #DC2626;
+      border-color: #DC2626;
     }
     #page-journey .j-slot.is-pinned::before {
       background: #15803D;
@@ -10881,8 +10895,8 @@
       border-radius: 6px;
     }
     #page-journey .j-slot.is-reservation {
-      background: #fff1f2;
-      box-shadow: inset 3px 0 0 #f43f5e;
+      background: #FEF2F2;
+      box-shadow: inset 3px 0 0 #DC2626;
       padding-left: 12px;
       border-radius: 6px;
     }
@@ -10916,7 +10930,7 @@
       color: var(--j-on-surface);
       margin: 0;
     }
-    #page-journey .j-slot.is-reservation .j-slot-title { color: #be123c; }
+    #page-journey .j-slot.is-reservation .j-slot-title { color: #B91C1C; }
     #page-journey .j-slot.is-shopping .j-slot-title-row::after {
       content: '🛍 쇼핑';
       font-size: var(--font-size-nano);
@@ -11549,6 +11563,16 @@
       body #main-wrapper .trav-tabs::-webkit-scrollbar { display:none; }
       body #main-wrapper .trav-tabs .trav-tab { flex:none !important; white-space:nowrap !important; min-height:44px; }
       body #main-wrapper .trav-tabs .trav-tab .material-symbols-outlined { display:none !important; }
+      /* (2026-11-06 4차) 탭이 잘리면 오른쪽 끝에 작은 › 버튼 — 누르면 탭 줄이 옆으로 밀림 (그라데이션 없음) */
+      .trav-tabs-wrap { position:relative; }
+      .trav-tabs-wrap.has-more .trav-tabs { padding-right:44px; }
+      .trav-tabs-next { display:none; position:absolute; right:0; top:0; height:44px; width:40px; align-items:center; justify-content:center;
+        background:#fff; border:0; border-left:1px solid #ECECF0; color:#16161A; font-size:20px; font-weight:600; line-height:1; cursor:pointer; padding:0; }
+      .trav-tabs-wrap.has-more .trav-tabs-next { display:flex; }
+      /* (2026-11-06 4차) Travel 툴바: 여행 고르기는 한 줄 전체, 「여행 추가」와 More 는 다음 줄에 나란히 */
+      #page-journey .trav-toolbar > #journey-dd-wrap { flex:1 1 100%; }
+      #page-journey .trav-toolbar > #journey-dd-wrap .trip-dd-btn { width:100%; justify-content:space-between; }
+      #page-journey .trav-toolbar > .trav-toolbar-spacer { display:block; flex:1 1 0; min-width:0; }
       body #main-wrapper .atl-tabs { flex-wrap:nowrap !important; overflow-x:auto; scrollbar-width:none; gap:18px !important; }
       body #main-wrapper .atl-tabs::-webkit-scrollbar { display:none; }
       body #main-wrapper .atl-tabs > button, body #main-wrapper .atl-tabs .travel-tab-btn { flex:none !important; white-space:nowrap !important; min-height:44px; }
@@ -11581,9 +11605,10 @@
     cursor:pointer; box-shadow:0 8px 28px rgba(20,20,40,.14); }
   #sw-update-toast:hover { border-color:#16161A; }
   #sw-update-toast .swu-dot { width:7px; height:7px; background:#1F4BD8; display:inline-block; flex:none; }
-  body.atl-on-home #sw-update-toast { left:0; right:0; bottom:0; justify-content:center; border:0; padding:4px 12px;
-    background:rgba(22,22,26,.55); color:#fff; box-shadow:none; font-weight:500; }
-  body.atl-on-home #sw-update-toast .swu-dot { background:#fff; }
+  /* (2026-11-06 4차) Home 에서도 같은 흰 줄 — 갈색 반투명 띠 없앰 (흰 바탕 · 잉크 글자 · 코발트 점 · 가는 선) */
+  body.atl-on-home #sw-update-toast { left:50%; right:auto; bottom:16px; transform:translateX(-50%); justify-content:center;
+    background:#fff; color:#16161A; border:1px solid #DCDCE3; padding:6px 12px; box-shadow:none; font-weight:600; }
+  body.atl-on-home #sw-update-toast .swu-dot { background:#1F4BD8; }
 
   /* 대문자·자간 넓힌 라벨 → 보통 글씨 12px/600 (메뉴·제목은 Title Case, 소리치지 않게) */
   .jv-lbl, .jv-btn, .jv-sun, .jv-pill,
@@ -11787,7 +11812,7 @@
         <div id="profile-dd-panel" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50" style="display:none">
           <div class="px-4 py-3 bg-slate-50 border-b border-slate-100">
             <p id="profile-dd-name" class="text-sm font-bold text-slate-800">Nuri</p>
-            <p id="profile-dd-email" class="text-[11px] text-slate-400 mt-0.5"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ddb3a8afa4ebe4e9ef9dbab0bcb4b1f3beb2b0">[email&#160;protected]</a></p>
+            <p id="profile-dd-email" class="text-[12px] text-slate-600 mt-0.5"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ddb3a8afa4ebe4e9ef9dbab0bcb4b1f3beb2b0">[email&#160;protected]</a></p>
           </div>
           <button onclick="auth.signOut()" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">logout</span> 로그아웃
@@ -12144,7 +12169,7 @@
         <div class="flex items-center justify-between px-5 py-3 bg-slate-50 border-b border-slate-100">
           <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">도시 관리</span>
           <div class="flex items-center gap-2">
-            <button onclick="openAddCityModal()" class="text-xs font-bold text-indigo-600 hover:text-slate-900 flex items-center gap-1 hover:bg-indigo-50 px-2 py-1 rounded-lg transition-colors">
+            <button onclick="openAddCityModal()" class="text-xs font-bold text-[#1F4BD8] hover:text-slate-900 flex items-center gap-1 hover:bg-indigo-50 px-2 py-1 rounded-lg transition-colors">
               <span class="material-symbols-outlined text-sm">add</span> 도시 추가
             </button>
             <button onclick="toggleCityPanel()" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400">
@@ -12247,7 +12272,7 @@
           <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between cursor-pointer" onclick="toggleTripNotes()">
               <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-indigo-500" style="font-size: var(--font-size-h2)">sticky_note_2</span>
+                <span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-h2)">sticky_note_2</span>
                 <h3 class="font-manrope font-bold text-slate-800">트립 노트</h3>
                 <span id="trip-notes-status" class="text-[10px] text-slate-400">—</span>
               </div>
@@ -12362,7 +12387,7 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-baseline gap-2">
                     <span id="weather-temp" class="text-xl font-black text-slate-800"></span>
-                    <span id="weather-desc" class="text-[10px] font-bold uppercase tracking-widest text-indigo-600"></span>
+                    <span id="weather-desc" class="text-[10px] font-bold uppercase tracking-widest text-[#1F4BD8]"></span>
                   </div>
                   <div class="flex gap-3 mt-0.5">
                     <span id="weather-high-low" class="text-[10px] text-slate-500 font-medium"></span>
@@ -12384,7 +12409,7 @@
             <div id="journey-schedule-list" class="relative border-l-2 border-slate-200 ml-3 space-y-6 py-1 min-h-32">
               <div class="pl-6 text-xs text-slate-400">이 날의 일정이 없어요</div>
             </div>
-            <button onclick="addScheduleInline()" class="mt-4 w-full py-2.5 border-2 border-dashed border-indigo-200 rounded-xl text-xs font-bold text-indigo-500 hover:text-indigo-700 hover:border-indigo-400 hover:bg-indigo-50 flex items-center justify-center gap-1 transition-all">
+            <button onclick="addScheduleInline()" class="mt-4 w-full py-2.5 border-2 border-dashed border-indigo-200 rounded-xl text-xs font-bold text-[#1F4BD8] hover:text-indigo-700 hover:border-indigo-400 hover:bg-indigo-50 flex items-center justify-center gap-1 transition-all">
               <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span> 일정 추가
             </button>
             </div><!-- /#daylog-day-body -->
@@ -12562,7 +12587,7 @@
           <div id="scan-drop-zone" onclick="document.getElementById('scan-file-input').click()" ondragover="event.preventDefault();this.classList.add('border-indigo-400','bg-indigo-50')" ondragleave="this.classList.remove('border-indigo-400','bg-indigo-50')" ondrop="handleScanDrop(event)" class="border-2 border-dashed border-slate-200 rounded-2xl p-5 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/50 transition-all group">
             <div id="scan-drop-placeholder">
               <div class="w-12 h-12 rounded-2xl bg-[#EEF2FD] flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-indigo-500" style="font-size: var(--font-size-h1-lg)">photo_camera</span>
+                <span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-h1-lg)">photo_camera</span>
               </div>
               <p class="text-sm font-bold text-slate-700 mb-1">스크린샷 / PDF 업로드</p>
               <p class="text-xs text-slate-400">카톡 예약 알림, 항공사/호텔 확인 이메일 · PDF 예약서</p>
@@ -12593,7 +12618,7 @@
 
           <!-- 로딩 -->
           <div id="scan-loading" class="hidden text-center py-3">
-            <div class="inline-flex items-center gap-2 text-indigo-600 font-bold text-sm">
+            <div class="inline-flex items-center gap-2 text-[#1F4BD8] font-bold text-sm">
               <div class="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
               AI 분석 중...
             </div>
@@ -12666,7 +12691,7 @@
             <div>
               <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
               <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="selectLgEditType('Hotel')" id="lg-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm">
+                <button type="button" onclick="selectLgEditType('Hotel')" id="lg-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm">
                   <span class="material-symbols-outlined text-sm">hotel</span> Hotel
                 </button>
                 <button type="button" onclick="selectLgEditType('Airbnb')" id="lg-edit-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
@@ -12735,8 +12760,7 @@
       <div data-travel-tabs="records"></div>
       <header class="trav-hero">
         <div>
-          <p class="trav-eyebrow">Travel &middot; Records</p>
-          <h1 class="trav-title">The Bookings</h1>
+          <h1 class="trav-title">Bookings</h1>
           <p class="trav-sub">항공·숙소·이동·렌트·기념품 예약을 한곳에.</p>
         </div>
       </header>
@@ -12779,7 +12803,7 @@
             <button onclick="closeTravelModal('flight-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
           <div id="flight-add-form" class="bg-slate-50 rounded-[2rem] p-6">
             <div class="flex items-center gap-2 mb-5">
-              <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">add_circle</span>
+              <span class="material-symbols-outlined text-[#1F4BD8] p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">add_circle</span>
               <h3 class="text-lg font-bold tracking-tight font-headline">Add New Flight</h3>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -12877,7 +12901,7 @@
     <button onclick="closeFlightEditModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
     <div class="bg-slate-50 p-6 md:p-8">
       <div class="flex items-center gap-2 mb-5">
-        <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">edit_square</span>
+        <span class="material-symbols-outlined text-[#1F4BD8] p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">edit_square</span>
         <h4 class="text-lg font-bold tracking-tight font-headline">항공편 수정</h4>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -13010,7 +13034,7 @@
               <div>
                 <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
                 <div class="grid grid-cols-2 gap-2">
-                  <button type="button" onclick="selectStayType('Hotel')" id="stay-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm">
+                  <button type="button" onclick="selectStayType('Hotel')" id="stay-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm">
                     <span class="material-symbols-outlined text-sm">hotel</span> Hotel
                   </button>
                   <button type="button" onclick="selectStayType('Airbnb')" id="stay-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
@@ -13069,7 +13093,7 @@
               <div>
                 <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
                 <div class="grid grid-cols-3 gap-2">
-                  <button type="button" onclick="selectStayAddCancel('가능')" id="stay-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                  <button type="button" onclick="selectStayAddCancel('가능')" id="stay-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-xs font-bold shadow-sm transition-all">✓ 가능</button>
                   <button type="button" onclick="selectStayAddCancel('불가')" id="stay-add-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
                   <button type="button" onclick="selectStayAddCancel('조건부')" id="stay-add-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
                 </div>
@@ -13155,7 +13179,7 @@
                 <div>
                   <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
                   <div class="grid grid-cols-2 gap-2">
-                    <button type="button" onclick="selectStayEditType('Hotel')" id="stay-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all">
+                    <button type="button" onclick="selectStayEditType('Hotel')" id="stay-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm transition-all">
                       <span class="material-symbols-outlined text-sm">hotel</span> Hotel
                     </button>
                     <button type="button" onclick="selectStayEditType('Airbnb')" id="stay-edit-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
@@ -13202,7 +13226,7 @@
                 <div>
                   <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
                   <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="selectStayCancel('가능')" id="stay-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                    <button type="button" onclick="selectStayCancel('가능')" id="stay-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-xs font-bold shadow-sm transition-all">✓ 가능</button>
                     <button type="button" onclick="selectStayCancel('불가')" id="stay-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
                     <button type="button" onclick="selectStayCancel('조건부')" id="stay-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
                   </div>
@@ -13401,7 +13425,7 @@
                 <div class="md:col-span-2">
                   <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">예약 상태</label>
                   <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="selectTransportStatus('확정')" id="tr-edit-status-confirmed" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 확정</button>
+                    <button type="button" onclick="selectTransportStatus('확정')" id="tr-edit-status-confirmed" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-xs font-bold shadow-sm transition-all">✓ 확정</button>
                     <button type="button" onclick="selectTransportStatus('대기 중')" id="tr-edit-status-pending" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">⏳ 대기 중</button>
                     <button type="button" onclick="selectTransportStatus('취소')" id="tr-edit-status-cancelled" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 취소</button>
                   </div>
@@ -13506,7 +13530,7 @@
               <div>
                 <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
                 <div class="grid grid-cols-3 gap-2">
-                  <button type="button" onclick="selectRentalAddCancel('가능')" id="rc-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                  <button type="button" onclick="selectRentalAddCancel('가능')" id="rc-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-xs font-bold shadow-sm transition-all">✓ 가능</button>
                   <button type="button" onclick="selectRentalAddCancel('불가')" id="rc-add-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
                   <button type="button" onclick="selectRentalAddCancel('조건부')" id="rc-add-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
                 </div>
@@ -13619,7 +13643,7 @@
                 <div>
                   <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
                   <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="selectRentalEditCancel('가능')" id="rc-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                    <button type="button" onclick="selectRentalEditCancel('가능')" id="rc-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-xs font-bold shadow-sm transition-all">✓ 가능</button>
                     <button type="button" onclick="selectRentalEditCancel('불가')" id="rc-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
                     <button type="button" onclick="selectRentalEditCancel('조건부')" id="rc-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
                   </div>
@@ -13669,7 +13693,7 @@
             <button onclick="closeTravelModal('souvenir-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
           <div class="rounded-2xl p-6" style="background:#f3f4f5;">
             <h3 class="text-base font-bold font-headline mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-indigo-600">add_circle</span> New Souvenir
+              <span class="material-symbols-outlined text-[#1F4BD8]">add_circle</span> New Souvenir
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
@@ -13740,10 +13764,10 @@
             <input id="place-add-name" type="text" placeholder="장소 이름 *" class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-indigo-200"/>
             <input id="place-add-city" type="text" placeholder="도시" class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-indigo-200"/>
           </div>
-          <div class="flex items-center gap-3 mb-2 flex-wrap text-[11px]">
+          <div class="flex items-center gap-3 mb-2 flex-wrap text-[12px]">
             <select id="place-add-cat" class="px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs outline-none"></select>
             <label class="inline-flex items-center gap-1 cursor-pointer text-rose-600 font-bold"><input id="place-add-reserve" type="checkbox" class="w-3.5 h-3.5 rounded"/>🎫 예약 필수</label>
-            <label class="inline-flex items-center gap-1 cursor-pointer text-indigo-600 font-bold"><input id="place-add-indoor" type="checkbox" class="w-3.5 h-3.5 rounded"/>🏠 실내</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer text-[#1F4BD8] font-bold"><input id="place-add-indoor" type="checkbox" class="w-3.5 h-3.5 rounded"/>🏠 실내</label>
             <span class="inline-flex items-center gap-1 text-amber-700 font-bold">⛔ 휴무<input id="place-add-closed" type="text" placeholder="예: 월" class="w-16 px-1 py-1 rounded bg-slate-50 border border-slate-200 text-[11px] outline-none"/></span>
           </div>
           <textarea id="place-add-memo" placeholder="메모 (선택)" rows="2" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs outline-none resize-none mb-2"></textarea>
@@ -13983,7 +14007,7 @@
                 <h3 class="font-manrope font-bold text-slate-800">예산 vs 지출</h3>
                 <p id="finance-budget-status" class="text-[10px] text-slate-400 font-medium mt-0.5">—</p>
               </div>
-              <button onclick="openBudgetModal()" id="finance-budget-edit-btn" class="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-xs hover:bg-indigo-100 transition-colors flex items-center gap-1.5">
+              <button onclick="openBudgetModal()" id="finance-budget-edit-btn" class="px-4 py-2 rounded-xl bg-indigo-50 text-[#1A3FB5] font-bold text-xs hover:bg-indigo-100 transition-colors flex items-center gap-1.5">
                 <span class="material-symbols-outlined" style="font-size: var(--font-size-body)">edit</span>
                 <span id="finance-budget-edit-label">예산 설정</span>
               </button>
@@ -14172,11 +14196,11 @@
           </div>
           <div id="fin-krw-box" class="bg-indigo-50 rounded-xl p-3 flex items-center justify-between" style="display:none">
             <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-indigo-600" style="font-size: var(--font-size-h2)">sync_alt</span>
+              <span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-h2)">sync_alt</span>
               <span class="text-xs text-slate-500">원화 환산</span>
             </div>
             <div class="text-right">
-              <span id="fin-krw-amount" class="text-sm font-black text-indigo-700">₩0</span>
+              <span id="fin-krw-amount" class="text-sm font-black text-[#1A3FB5]">₩0</span>
               <span id="fin-krw-rate" class="text-[9px] text-slate-400 block">환율: —</span>
             </div>
           </div>
@@ -14252,7 +14276,7 @@
 
           <div class="bg-indigo-50 rounded-xl p-4 flex items-center justify-between mt-2">
             <span class="text-sm font-bold text-slate-700">총 예산</span>
-            <span id="budget-total-display" class="text-xl font-extrabold text-indigo-700">₩0</span>
+            <span id="budget-total-display" class="text-xl font-extrabold text-[#1A3FB5]">₩0</span>
           </div>
           <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>거래 카테고리 매핑: 항공권(항공·이동), 숙소(숙소), 투어(여가·티켓·쇼핑·렌트), 생활비(식비·교통·통신·보험·환전·기타)</span></div>
         </div>
@@ -14388,7 +14412,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow: var(--shadow-card);">
             <div class="relative z-10">
-              <span class="material-symbols-outlined text-indigo-600 mb-4 block">account_balance_wallet</span>
+              <span class="material-symbols-outlined text-[#1F4BD8] mb-4 block">account_balance_wallet</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 수입</h3>
               <p id="hub-income" class="text-2xl font-black font-headline text-slate-900">₩0</p>
               <div id="hub-goal-income" class="mt-4 cursor-pointer rounded-lg px-2 py-1.5 -mx-2 hover:bg-indigo-50/60 transition-colors" onclick="openGoalModal('income')"></div>
@@ -14399,7 +14423,7 @@
           </div>
           <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow: var(--shadow-card);">
             <div class="relative z-10">
-              <span class="material-symbols-outlined text-indigo-600 mb-4 block">savings</span>
+              <span class="material-symbols-outlined text-[#1F4BD8] mb-4 block">savings</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 저축</h3>
               <p id="hub-savings" class="text-2xl font-black font-headline text-slate-900">₩0</p>
               <div id="hub-goal-savings" class="mt-4 cursor-pointer rounded-lg px-2 py-1.5 -mx-2 hover:bg-indigo-50/60 transition-colors" onclick="openGoalModal('savings')"></div>
@@ -14407,7 +14431,7 @@
           </div>
           <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow: var(--shadow-card);">
             <div class="relative z-10">
-              <span class="material-symbols-outlined text-indigo-600 mb-4 block">flag</span>
+              <span class="material-symbols-outlined text-[#1F4BD8] mb-4 block">flag</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 지출</h3>
               <p id="hub-expense" class="text-2xl font-black font-headline text-slate-900">₩0</p>
               <div id="hub-goal-expense" class="mt-4 cursor-pointer rounded-lg px-2 py-1.5 -mx-2 hover:bg-indigo-50/60 transition-colors" onclick="openGoalModal('expense')"></div>
@@ -14429,7 +14453,7 @@
               <input id="goal-modal-input" type="text" inputmode="numeric" oninput="hubFormatAmt(this);previewGoalRate()" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-right font-bold focus:ring-2 focus:ring-indigo-300"/>
             </div>
             <div id="goal-modal-current" class="text-xs text-slate-400 px-1"></div>
-            <div id="goal-modal-preview" class="px-3 py-2.5 rounded-xl bg-indigo-50/60 text-sm font-bold text-indigo-700 text-center" style="display:none"></div>
+            <div id="goal-modal-preview" class="px-3 py-2.5 rounded-xl bg-indigo-50/60 text-sm font-bold text-[#1A3FB5] text-center" style="display:none"></div>
             <button onclick="deleteGoalValue()" id="goal-modal-delete-btn" class="text-xs text-slate-400 hover:text-rose-500 transition-colors px-1" style="display:none">목표 삭제</button>
           </div>
           <div class="px-6 pb-6 flex gap-2">
@@ -14444,7 +14468,7 @@
         <div class="absolute -left-12 -bottom-12 w-96 h-96 bg-indigo-100/30 rounded-full blur-3xl -z-10"></div>
         <div class="grid lg:grid-cols-2 gap-12 items-start">
           <div>
-            <span class="text-[10px] font-bold text-indigo-600 tracking-[0.3em] uppercase mb-4 block">Vault Analysis</span>
+            <span class="text-[10px] font-bold text-[#1F4BD8] tracking-[0.3em] uppercase mb-4 block">Vault Analysis</span>
             <h2 class="text-3xl font-extrabold font-headline tracking-tighter mb-4">저축 & 자산 구성</h2>
             <p class="text-slate-500 mb-8 leading-relaxed text-sm">월별 누적 저축 현황과 자산 배분 전략을 한눈에 확인하세요.</p>
             <div id="hub-chart" class="h-40 flex items-end justify-between gap-1.5 px-1 mb-3" style="border-bottom: 1px solid var(--slate-100);"></div>
@@ -14459,7 +14483,7 @@
               <p class="text-sm text-slate-400 text-center py-8">지출 기록이 없어요</p>
             </div>
             <div id="hub-top5-summary" class="mt-8 p-4 rounded-2xl flex items-center gap-3" style="background:#f3f4f5;">
-              <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-indigo-600" style="box-shadow:0px 4px 12px rgba(25,28,29,0.06);">
+              <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[#1F4BD8]" style="box-shadow:0px 4px 12px rgba(25,28,29,0.06);">
                 <span class="material-symbols-outlined text-sm">analytics</span>
               </div>
               <div><p class="text-xs font-bold text-slate-800">총 지출</p><p id="hub-top5-total" class="text-[10px] text-slate-500">₩0</p></div>
@@ -14471,7 +14495,7 @@
       <!-- Growth Journey -->
       <section class="mb-12">
         <div class="mb-6">
-          <span class="text-[10px] font-bold text-indigo-600 tracking-[0.3em] uppercase mb-2 block">Growth Journey</span>
+          <span class="text-[10px] font-bold text-[#1F4BD8] tracking-[0.3em] uppercase mb-2 block">Growth Journey</span>
           <h2 class="text-3xl font-extrabold font-headline tracking-tighter mb-2">연도별 총 자산 추이</h2>
           <p class="text-slate-500 text-sm">연도별 자산 성장 기록을 한눈에 확인하세요.</p>
         </div>
@@ -14557,7 +14581,7 @@
             <button onclick="hubPagePrev()" class="hub-page-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="이전">
               <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">chevron_left</span>
             </button>
-            <span id="hub-page-current" class="px-3 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 rounded-lg min-w-[60px] text-center">1 / 1</span>
+            <span id="hub-page-current" class="px-3 py-1 text-xs font-bold text-[#1A3FB5] bg-indigo-50 rounded-lg min-w-[60px] text-center">1 / 1</span>
             <button onclick="hubPageNext()" class="hub-page-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="다음">
               <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">chevron_right</span>
             </button>
@@ -14740,7 +14764,7 @@
                 <div id="ldg-checklist" class="space-y-2"></div>
                 <div class="mt-3 flex gap-2">
                   <input id="ldg-checklist-input" type="text" placeholder="+ 새 항목" class="flex-1 text-xs px-3 py-1.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 outline-none" onkeydown="if(event.key==='Enter')ldgAddCheckItem()"/>
-                  <button onclick="ldgAddCheckItem()" class="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg font-semibold hover:bg-indigo-100 transition-colors">추가</button>
+                  <button onclick="ldgAddCheckItem()" class="text-xs px-3 py-1.5 bg-indigo-50 text-[#1F4BD8] rounded-lg font-semibold hover:bg-indigo-100 transition-colors">추가</button>
                 </div>
               </div>
             </div>
@@ -14764,7 +14788,7 @@
                 <input id="ldg-tx-search" type="text" placeholder="검색..." class="text-xs px-3 py-1.5 pl-8 border border-slate-200 rounded-lg w-40 focus:ring-2 focus:ring-indigo-300 outline-none" oninput="ldgRenderTxTable()"/>
                 <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-300 text-sm">search</span>
               </div>
-              <button id="ldg-col-filter-reset" onclick="ldgColFilterReset()" class="text-xs text-indigo-600 font-semibold hover:text-slate-900 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-colors" style="display:none">필터 초기화</button>
+              <button id="ldg-col-filter-reset" onclick="ldgColFilterReset()" class="text-xs text-[#1F4BD8] font-semibold hover:text-slate-900 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-colors" style="display:none">필터 초기화</button>
               <button onclick="ldgToggleSort()" class="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors" title="정렬 전환">
                 <span class="material-symbols-outlined text-sm">swap_vert</span>
               </button>
@@ -14883,7 +14907,7 @@
 
         <!-- [1] Info banner -->
         <div class="flex items-center gap-6 bg-indigo-50/50 rounded-xl px-5 py-3 mb-6 text-xs">
-          <span class="flex items-center gap-2"><span class="w-4 h-3 rounded" style="background:#f7f1ff;border:1px solid #e5deff"></span> <span class="text-indigo-600 font-semibold">거래에서 자동 계산</span></span>
+          <span class="flex items-center gap-2"><span class="w-4 h-3 rounded" style="background:#f7f1ff;border:1px solid #e5deff"></span> <span class="text-[#1F4BD8] font-semibold">거래에서 자동 계산</span></span>
           <span class="flex items-center gap-2"><span class="w-4 h-3 rounded bg-white border border-slate-200"></span> <span class="text-slate-600 font-semibold">직접 입력</span></span>
         </div>
 
@@ -14933,7 +14957,7 @@
       <div id="ledger-panel-settings" class="ledger-panel" style="display:none">
 
         <!-- Back link -->
-        <button onclick="switchLedgerTab('monthly')" class="flex items-center gap-1 text-sm text-indigo-600 hover:text-slate-900 mb-4 font-semibold">
+        <button onclick="switchLedgerTab('monthly')" class="flex items-center gap-1 text-sm text-[#1F4BD8] hover:text-slate-900 mb-4 font-semibold">
           <span class="material-symbols-outlined text-sm">arrow_back</span> 가계부로 돌아가기
         </button>
 
@@ -14957,14 +14981,14 @@
                 <span id="ldg-cat-major-count" class="text-xs text-slate-400"></span>
               </div>
               <div id="ldg-cat-major-list" class="space-y-0.5 mb-3 max-h-[420px] overflow-y-auto hide-scrollbar"></div>
-              <button onclick="ldgAddMajorCat()" class="text-xs text-indigo-600 font-semibold hover:text-slate-900">+ 대분류 추가</button>
+              <button onclick="ldgAddMajorCat()" class="text-xs text-[#1F4BD8] font-semibold hover:text-slate-900">+ 대분류 추가</button>
             </div>
             <div class="col-span-7 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-4">
               <div class="flex justify-between items-center mb-3">
                 <h4 class="text-sm font-bold text-slate-800" id="ldg-cat-minor-title">소분류</h4>
               </div>
               <div id="ldg-cat-minor-list" class="space-y-0.5 mb-3 max-h-[420px] overflow-y-auto hide-scrollbar"></div>
-              <button onclick="ldgAddMinorCat()" id="ldg-add-minor-btn" class="text-xs text-indigo-600 font-semibold hover:text-slate-900" style="display:none">+ 소분류 추가</button>
+              <button onclick="ldgAddMinorCat()" id="ldg-add-minor-btn" class="text-xs text-[#1F4BD8] font-semibold hover:text-slate-900" style="display:none">+ 소분류 추가</button>
             </div>
           </div>
         </div>
@@ -14972,7 +14996,7 @@
         <!-- ── Sub-tab: Payment Methods ── -->
         <div id="ldg-stab-payments" class="ldg-stab-panel" style="display:none">
           <div id="ldg-pm-list" class="space-y-2 max-w-xl"></div>
-          <button onclick="ldgAddPayment()" class="mt-4 text-xs text-indigo-600 font-semibold hover:text-slate-900">+ 결제수단 추가</button>
+          <button onclick="ldgAddPayment()" class="mt-4 text-xs text-[#1F4BD8] font-semibold hover:text-slate-900">+ 결제수단 추가</button>
         </div>
 
         <!-- ── Sub-tab: Budgets ── -->
@@ -14985,7 +15009,7 @@
             <button onclick="ldgAddBudget()" class="text-xs px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700">+ 예산 추가</button>
           </div>
           <div class="bg-indigo-50/50 rounded-xl p-4 mb-4 flex items-center justify-between">
-            <div><p class="text-xs font-semibold text-indigo-700">✨ AI가 2024~2025 패턴을 분석해서 카테고리별 예산을 자동 제안합니다.</p></div>
+            <div><p class="text-xs font-semibold text-[#1A3FB5]">✨ AI가 2024~2025 패턴을 분석해서 카테고리별 예산을 자동 제안합니다.</p></div>
             <button id="ldg-ai-budget-btn" onclick="ldgAIBudgetSuggest()" class="text-xs px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 whitespace-nowrap">AI 자동 제안 받기</button>
           </div>
           <div id="ldg-budget-default" class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden"></div>
@@ -15009,7 +15033,7 @@
           <!-- Auto-apply option -->
           <div class="bg-indigo-50/50 rounded-2xl border border-indigo-100 p-6 max-w-xl">
             <label class="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" id="ldg-rec-auto" onchange="ldgSaveRecAuto()" class="mt-0.5 w-4 h-4 rounded text-indigo-600 focus:ring-indigo-300 border-slate-300"/>
+              <input type="checkbox" id="ldg-rec-auto" onchange="ldgSaveRecAuto()" class="mt-0.5 w-4 h-4 rounded text-[#1F4BD8] focus:ring-indigo-300 border-slate-300"/>
               <div>
                 <p class="text-sm font-semibold text-slate-800 mb-1">등록된 날짜에 자동으로 거래 추가</p>
                 <p class="text-xs text-slate-500 leading-relaxed">고정 내역에 등록된 일자가 되면 별도의 입력 없이 가계부에 지출 내역이 자동으로 생성됩니다. 변동 금액으로 설정된 항목은 알림으로 입력을 유도합니다.</p>
@@ -15130,7 +15154,7 @@
           </div>
 
           <div id="ldg-dedup-section" class="bg-slate-50 rounded-2xl border border-slate-200 p-5 mt-5">
-            <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-indigo-600" style="font-size: var(--font-size-h2)">content_copy</span> 중복 거래 정리</h4>
+            <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-h2)">content_copy</span> 중복 거래 정리</h4>
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-xs font-semibold text-slate-600">중복으로 입력된 거래를 탐지하고 정리합니다</p>
@@ -15180,7 +15204,7 @@
             <h2 class="text-2xl font-black text-slate-900 font-headline tracking-tight">연간 매트릭스</h2>
             <div class="flex items-center gap-1">
               <button onclick="switchMatrixYear(-1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400 text-lg">chevron_left</span></button>
-              <span id="matrix-year-label" class="text-2xl font-black text-indigo-500 font-headline min-w-[60px] text-center">2026</span>
+              <span id="matrix-year-label" class="text-2xl font-black text-[#1F4BD8] font-headline min-w-[60px] text-center">2026</span>
               <button onclick="switchMatrixYear(1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400 text-lg">chevron_right</span></button>
             </div>
           </div>
@@ -15192,9 +15216,9 @@
             <button onclick="openLeaveEditModal('matrix')" class="p-1 hover:bg-indigo-100 rounded-lg transition-colors text-indigo-400 hover:text-indigo-700" title="총계 수정"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">edit</span></button>
           </div>
           <div class="grid grid-cols-3 gap-4">
-            <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">총계</p><p class="text-2xl font-black text-slate-900" id="matrix-leave-total">17.0</p></div>
-            <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">사용</p><p class="text-2xl font-black text-indigo-700" id="matrix-leave-used">0</p></div>
-            <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">잔여</p><p class="text-2xl font-black text-indigo-500" id="matrix-leave-left">17.0</p></div>
+            <div><p class="text-[10px] text-[#1F4BD8] uppercase tracking-widest font-bold mb-1">총계</p><p class="text-2xl font-black text-slate-900" id="matrix-leave-total">17.0</p></div>
+            <div><p class="text-[10px] text-[#1F4BD8] uppercase tracking-widest font-bold mb-1">사용</p><p class="text-2xl font-black text-[#1A3FB5]" id="matrix-leave-used">0</p></div>
+            <div><p class="text-[10px] text-[#1F4BD8] uppercase tracking-widest font-bold mb-1">잔여</p><p class="text-2xl font-black text-[#1F4BD8]" id="matrix-leave-left">17.0</p></div>
           </div>
         </div>
       </div>
@@ -15416,7 +15440,7 @@
       <div id="ai-search-results" class="overflow-y-auto" style="max-height:calc(80vh - 80px);font-family:'Pretendard',sans-serif">
         <div class="p-6 text-center text-slate-400">
           <p class="text-sm">자연어 질문을 입력하고 <kbd class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-600 font-mono text-xs">Enter</kbd>를 눌러주세요</p>
-          <div class="mt-4 grid grid-cols-2 gap-2 max-w-md mx-auto text-[11px] text-left">
+          <div class="mt-4 grid grid-cols-2 gap-2 max-w-md mx-auto text-[12px] text-left">
             <button onclick="_aiSearchExample('9월 독일에서 갈만한 미술관')" class="p-2 rounded-lg bg-slate-50 hover:bg-violet-50 text-slate-600 hover:text-violet-700 transition-colors">📍 9월 독일에서 갈만한 미술관</button>
             <button onclick="_aiSearchExample('다음 사전예약 일정')" class="p-2 rounded-lg bg-slate-50 hover:bg-violet-50 text-slate-600 hover:text-violet-700 transition-colors">📋 다음 사전예약 일정</button>
             <button onclick="_aiSearchExample('이번 달 가장 비싼 지출')" class="p-2 rounded-lg bg-slate-50 hover:bg-violet-50 text-slate-600 hover:text-violet-700 transition-colors">💸 이번 달 가장 비싼 지출</button>
@@ -15703,7 +15727,7 @@
             <div class="w-px bg-slate-100"></div>
             <div class="flex justify-between items-center py-3 flex-1">
               <div><p class="text-sm font-bold text-slate-800">연간 누적</p><p class="text-[10px] text-slate-400 font-medium">총 수강료</p></div>
-              <div class="text-right"><p id="english-fee-annual" class="text-lg font-black text-indigo-600">£0</p></div>
+              <div class="text-right"><p id="english-fee-annual" class="text-lg font-black text-[#1F4BD8]">£0</p></div>
             </div>
           </div>
           <p id="english-fx-info" class="text-[10px] text-slate-400 mt-3 pt-3 border-t border-slate-50" style="display:none"></p>
@@ -15713,7 +15737,7 @@
       <!-- Session Detail View (트래커에서 리뷰 보기 시 표시) -->
       <div id="eng-detail-view" style="display:none">
         <div id="eng-back-btn" class="mb-4" style="display:none;">
-          <button onclick="closeSessionDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
+          <button onclick="closeSessionDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-[#1F4BD8] border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
             <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">arrow_back</span> 트래커로
           </button>
         </div>
@@ -15763,7 +15787,7 @@
         <!-- STUDY 상세 보기 -->
         <div id="eng-study-detail-view" style="display:none">
           <div class="mb-4">
-            <button onclick="closeStudyDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
+            <button onclick="closeStudyDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-[#1F4BD8] border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
               <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">arrow_back</span> 목록으로
             </button>
           </div>
@@ -15801,7 +15825,7 @@
                 <span class="material-symbols-outlined text-amber-600 mt-0.5" style="font-size:20px">key</span>
                 <div class="flex-1">
                   <p class="text-sm font-bold text-amber-900 mb-1">Anthropic API 키가 필요해요</p>
-                  <p class="text-[11px] text-amber-700 leading-relaxed">한 번만 입력하면 모든 기기에서 자동으로 동기화됩니다.
+                  <p class="text-[12px] text-amber-700 leading-relaxed">한 번만 입력하면 모든 기기에서 자동으로 동기화됩니다.
                     <a href="https://console.anthropic.com/settings/keys" target="_blank" class="underline font-bold">키 발급</a></p>
                 </div>
               </div>
@@ -16044,7 +16068,7 @@
               <button onclick="matrixNextYear()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
             </div>
             <button onclick="_fullResyncWorks()" title="작품 일정으로 캘린더·매트릭스를 다시 맞춰요 (옛 값 정리)" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">sync</span>재동기화</button>
-            <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-indigo-600 rounded-full text-[0.65rem] font-bold uppercase tracking-wider">Sync Active</span>
+            <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-[#1F4BD8] rounded-full text-[0.65rem] font-bold uppercase tracking-wider">Sync Active</span>
           </div>
         </header>
         <div id="matrix-desync-banner" style="display:none" class="mb-4 flex items-center gap-3 px-4 py-3 rounded-xl border border-amber-200 bg-amber-50">
@@ -16090,7 +16114,7 @@
         <div class="bg-slate-50 p-6 rounded-2xl flex flex-col justify-between">
           <div>
             <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 font-headline">연간 총 수입</p>
-            <h3 id="income-total" class="text-4xl font-black font-headline text-indigo-600 tracking-tighter">₩0</h3>
+            <h3 id="income-total" class="text-4xl font-black font-headline text-[#15803D] tracking-tighter">₩0</h3>
           </div>
           <div class="mt-4 flex items-center gap-2">
             <p id="income-growth" class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -16131,7 +16155,7 @@
           <div>
             <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Postype 매출 분석</h2>
             <div class="flex items-center gap-2 mt-1 flex-wrap">
-              <select id="postype-channel-select" class="text-sm bg-transparent border-0 font-bold text-indigo-700 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-200 rounded px-1 -mx-1">
+              <select id="postype-channel-select" class="text-sm bg-transparent border-0 font-bold text-[#1A3FB5] cursor-pointer outline-none focus:ring-2 focus:ring-indigo-200 rounded px-1 -mx-1">
                 <option value="__all__">전체 합산 (입금 기준)</option>
                 <option value="bichu-attic">고요한 다락방</option>
                 <option value="hotnncold">요란한 옥탑방</option>
@@ -16172,23 +16196,23 @@
           <!-- 이번 달 예상 -->
           <div class="rounded-2xl border border-indigo-100 bg-white p-5 shadow-sm">
             <div class="flex items-center justify-between mb-2">
-              <div class="text-xs font-bold uppercase tracking-widest text-indigo-700">이번 달 예상</div>
+              <div class="text-xs font-bold uppercase tracking-widest text-[#1A3FB5]">이번 달 예상</div>
               <span class="material-symbols-outlined text-indigo-400" style="font-size: var(--font-size-h2)">trending_up</span>
             </div>
             <div class="text-3xl font-extrabold tracking-tight text-slate-900 tabular-nums" id="postype-forecast-this-total">—</div>
             <div class="text-sm font-bold text-amber-700 tabular-nums mt-0.5" id="postype-forecast-this-net">실수령 ≈ —</div>
-            <div class="text-[11px] text-slate-500 mt-2" id="postype-forecast-this-sub">—</div>
+            <div class="text-[12px] text-slate-500 mt-2" id="postype-forecast-this-sub">—</div>
           </div>
 
           <!-- 다음 달 예상 -->
           <div class="rounded-2xl border border-indigo-100 bg-white p-5 shadow-sm">
             <div class="flex items-center justify-between mb-2">
-              <div class="text-xs font-bold uppercase tracking-widest text-indigo-700">다음 달 예상</div>
+              <div class="text-xs font-bold uppercase tracking-widest text-[#1A3FB5]">다음 달 예상</div>
               <span class="material-symbols-outlined text-indigo-400" style="font-size: var(--font-size-h2)">event_upcoming</span>
             </div>
             <div class="text-3xl font-extrabold tracking-tight text-slate-900 tabular-nums" id="postype-forecast-next-total">—</div>
             <div class="text-sm font-bold text-amber-700 tabular-nums mt-0.5" id="postype-forecast-next-net">실수령 ≈ —</div>
-            <div class="text-[11px] text-slate-500 mt-2" id="postype-forecast-next-sub">—</div>
+            <div class="text-[12px] text-slate-500 mt-2" id="postype-forecast-next-sub">—</div>
           </div>
 
           <!-- 연재 진행 상태 -->
@@ -16198,8 +16222,8 @@
               <span class="material-symbols-outlined text-slate-400" style="font-size: var(--font-size-h2)">menu_book</span>
             </div>
             <div class="text-lg font-bold text-slate-900 tabular-nums" id="postype-ongoing-name">—</div>
-            <div class="text-2xl font-extrabold tracking-tight text-indigo-600 tabular-nums mt-1" id="postype-ongoing-progress">—</div>
-            <div class="text-[11px] text-slate-500 mt-2" id="postype-ongoing-sub">—</div>
+            <div class="text-2xl font-extrabold tracking-tight text-[#1F4BD8] tabular-nums mt-1" id="postype-ongoing-progress">—</div>
+            <div class="text-[12px] text-slate-500 mt-2" id="postype-ongoing-sub">—</div>
           </div>
         </div>
 
@@ -16222,7 +16246,7 @@
               <span class="material-symbols-outlined text-purple-400" style="font-size: var(--font-size-body)">compare_arrows</span>
             </div>
             <div class="text-2xl font-extrabold tracking-tight tabular-nums" id="postype-yoy-month-pct">—</div>
-            <div class="text-[11px] text-slate-500 mt-0.5" id="postype-yoy-month-sub">—</div>
+            <div class="text-[12px] text-slate-500 mt-0.5" id="postype-yoy-month-sub">—</div>
           </div>
           <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <div class="flex items-center justify-between mb-1">
@@ -16230,7 +16254,7 @@
               <span class="material-symbols-outlined text-purple-400" style="font-size: var(--font-size-body)">stacked_line_chart</span>
             </div>
             <div class="text-2xl font-extrabold tracking-tight tabular-nums" id="postype-yoy-ytd-pct">—</div>
-            <div class="text-[11px] text-slate-500 mt-0.5" id="postype-yoy-ytd-sub">—</div>
+            <div class="text-[12px] text-slate-500 mt-0.5" id="postype-yoy-ytd-sub">—</div>
           </div>
         </div>
 
@@ -16284,7 +16308,7 @@
             <div id="postype-monthly-tooltip" class="absolute bg-slate-900 text-white text-xs px-2.5 py-1.5 rounded-md pointer-events-none" style="display:none;white-space:nowrap;z-index:10"></div>
             <div id="postype-monthly-vline" class="absolute top-0 bottom-0 w-px bg-indigo-400 pointer-events-none" style="display:none"></div>
           </div>
-          <div class="mt-3 text-[11px] text-slate-400">달마다 총 매출 · 전체 기간 흐름 · 끝점(◦)은 진행 중인 이번 달</div>
+          <div class="mt-3 text-[12px] text-slate-600">달마다 총 매출 · 전체 기간 흐름 · 끝점(◦)은 진행 중인 이번 달</div>
         </div>
 
         <!-- ─── 차별화 위젯 ─────────────────────────────── -->
@@ -16294,7 +16318,7 @@
             <h3 class="text-lg font-bold text-slate-900 font-headline">시리즈 회차별 매출</h3>
             <span class="text-xs text-slate-400">TOP 8 · 회차별 추이</span>
           </div>
-          <p class="text-[11px] text-slate-400 mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p class="text-[12px] text-slate-600 mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
             <span class="inline-flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full" style="background:#f59e0b"></span>피크 회차</span>
             <span>매출 = 전체 기간 누적 (이번달 아님)</span>
             <span class="text-slate-300">·</span>
@@ -16460,7 +16484,7 @@
       <section id="cal-work-timeline-section" class="bg-white rounded-3xl p-6 shadow-[0px_12px_32px_rgba(25,28,29,0.04)]" style="display:none">
         <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-indigo-500" style="font-size: var(--font-size-h2)">timeline</span>
+            <span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-h2)">timeline</span>
             <h3 class="text-base font-bold text-slate-900 font-headline">Series Timeline</h3>
             <span class="text-[10px] text-slate-400">변경 시 자동 동기화</span>
             <div class="flex gap-2.5 ml-1 text-[9px] font-bold text-slate-400">
@@ -16472,7 +16496,7 @@
             </div>
           </div>
           <div class="flex items-center gap-1.5">
-            <button onclick="_scrollCalUtToday()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">today</span>오늘</button>
+            <button onclick="_scrollCalUtToday()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-indigo-200 text-[#1F4BD8] bg-white hover:bg-indigo-50 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">today</span>오늘</button>
             <button onclick="manualCleanupDuplicates()" class="atl-btn atl-btn-ghost" title="중복 일정 정리"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">cleaning_services</span>중복 정리</button>
             <button onclick="openNewWorkModal()" class="atl-btn atl-btn-primary"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">add</span>새 작품</button>
           </div>
@@ -16546,7 +16570,7 @@
                     <div id="p-iv-wrap" class="atl-field" style="display:none">
                       <label>인터벌 색</label>
                       <div id="p-iv-colors" class="flex flex-wrap gap-2 mt-1"></div>
-                      <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">칸을 차지하지 않고 기간만 얇은 화살표로 표시해요. 야근 기간·지연 출근처럼 배경 정보에 써요.</p>
+                      <p class="text-[12px] text-slate-600 mt-2 leading-relaxed">칸을 차지하지 않고 기간만 얇은 화살표로 표시해요. 야근 기간·지연 출근처럼 배경 정보에 써요.</p>
                     </div>
                     <div id="p-birthday-wrap" class="atl-field" style="display:none"><label class="flex items-center gap-2 cursor-pointer"><input id="p-yearly-repeat" type="checkbox" checked class="accent-yellow-400 w-4 h-4"/><span class="text-sm font-bold text-slate-700">매년 반복</span><span class="text-xs text-slate-400">(매년 같은 날짜에 자동 표시)</span></label></div>
                     <div id="p-leave-day-wrap" class="atl-field" style="display:none"><label>연차 일수</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><select id="p-leave-day" class="atl-input w-full bg-white"><option value="1.0">1.0일 (연차)</option><option value="0.5">0.5일 (반차)</option><option value="2.0">2.0일</option><option value="3.0">3.0일</option><option value="5.0">5.0일</option></select></div></div>
@@ -16590,7 +16614,7 @@
           </div>
         </div>
         <div class="atl-modal-footer">
-          <button onclick="deletePlannerFromModal()" id="planner-delete-btn" class="atl-btn-cancel" style="display:none;color:#e11d48;border-color:#fecdd3"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">delete</span> 삭제</button>
+          <button onclick="deletePlannerFromModal()" id="planner-delete-btn" class="atl-btn-cancel" style="display:none;color:#DC2626;border-color:#FECACA"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">delete</span> 삭제</button>
           <button onclick="closePlannerModal()" class="atl-btn-cancel">취소</button>
           <button onclick="savePlannerEntry()" id="planner-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
@@ -16695,7 +16719,7 @@
           <div class="mt-4">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">미리보기</span>
-              <span id="series-preview-count" class="text-xs font-bold text-indigo-500"></span>
+              <span id="series-preview-count" class="text-xs font-bold text-[#1F4BD8]"></span>
             </div>
             <div id="series-preview-list" class="border border-slate-100 rounded-xl bg-slate-50 overflow-y-auto" style="max-height:300px;min-height:80px">
               <div class="text-xs text-slate-400 text-center py-6">입력값을 채워주세요</div>
@@ -16730,7 +16754,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=418" defer></script>
+<script src="js/app-1-pages.js?v=419" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17280,16 +17304,16 @@
         </label>
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시작 희망일</label><input id="nw-start-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
-          <div class="space-y-1"><label class="text-xs font-bold text-indigo-600">🎯 연재 시작일 *</label><input id="nw-publish-start" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-indigo-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+          <div class="space-y-1"><label class="text-xs font-bold text-[#1F4BD8]">🎯 연재 시작일 *</label><input id="nw-publish-start" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-indigo-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
         </div>
         <div id="nw-preview" class="rounded-xl overflow-hidden" style="display:none">
-          <div class="px-4 py-2.5 bg-indigo-50 border-b border-indigo-100"><span class="text-xs font-bold text-indigo-700">📅 예상 스케줄</span></div>
+          <div class="px-4 py-2.5 bg-indigo-50 border-b border-indigo-100"><span class="text-xs font-bold text-[#1A3FB5]">📅 예상 스케줄</span></div>
           <div id="nw-preview-content" class="px-4 py-3 bg-indigo-50/50 text-xs space-y-1.5"></div>
         </div>
       </div>
       <div class="px-6 pb-6 flex gap-2 justify-end" style="background:#fafafa;border-top:1px solid #f3f4f6;border-radius:0 0 16px 16px;padding-top: var(--space-4)">
         <button onclick="closeNewWorkModal()" class="px-5 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">취소</button>
-        <button onclick="previewWorkSchedule()" class="px-5 py-2.5 rounded-xl font-bold text-sm border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center gap-1.5">📅 스케줄 계산</button>
+        <button onclick="previewWorkSchedule()" class="px-5 py-2.5 rounded-xl font-bold text-sm border-[1.5px] border-indigo-200 text-[#1F4BD8] bg-white hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center gap-1.5">📅 스케줄 계산</button>
         <button onclick="saveNewWork()" id="nw-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg hover:-translate-y-px active:translate-y-0 transition-all flex items-center gap-1.5" style="background:#1F4BD8;box-shadow:none">💾 초안 저장</button>
       </div>
     </div>
@@ -17303,14 +17327,14 @@
         <p class="text-white/70 text-xs mt-0.5">시놉/초고/퇴고 건너뜀 — 연재 일정만 등록</p>
       </div>
       <div class="p-6 space-y-4">
-        <div class="px-3 py-2.5 rounded-lg bg-indigo-50 border-l-3 border-indigo-400 text-xs text-indigo-700 leading-relaxed" style="border-left:3px solid #1F4BD8">💡 이미 연재 중이거나 시작 예정인 작품용. 시놉/초고/퇴고는 "완료" 처리됩니다.</div>
+        <div class="px-3 py-2.5 rounded-lg bg-indigo-50 border-l-3 border-indigo-400 text-xs text-[#1A3FB5] leading-relaxed" style="border-left:3px solid #1F4BD8">💡 이미 연재 중이거나 시작 예정인 작품용. 시놉/초고/퇴고는 "완료" 처리됩니다.</div>
         <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시리즈 *</label><select id="ew2-series" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"></select></div>
         <div class="space-y-1"><label class="text-xs font-bold text-slate-500">작품명 *</label><input id="ew2-title" type="text" placeholder="예: 센티넬 버스" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">총 화수</label><select id="ew2-episodes" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option>20</option><option>24</option><option>28</option></select></div>
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="ew2-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
         </div>
-        <div class="space-y-1"><label class="text-xs font-bold text-indigo-600">🎯 연재 시작일 *</label><input id="ew2-publish-start" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-indigo-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+        <div class="space-y-1"><label class="text-xs font-bold text-[#1F4BD8]">🎯 연재 시작일 *</label><input id="ew2-publish-start" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-indigo-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
       </div>
       <div class="px-6 pb-6 flex gap-2 justify-end" style="background:#fafafa;border-top:1px solid #f3f4f6;padding-top: var(--space-4)">
         <button onclick="closeExistingWorkModal()" class="px-5 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">취소</button>
@@ -17375,7 +17399,7 @@
             <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">☕ 휴식 종료</label><input id="ew-rest-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
           </div>
           <div class="mt-3 space-y-1"><label class="text-[10px] font-bold text-slate-400">🎯 연재 시작일</label><input id="ew-pub-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
-          <button onclick="recalcEditWork()" class="mt-3 w-full py-2 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition-colors">🔄 시작일 기준 자동 재계산</button>
+          <button onclick="recalcEditWork()" class="mt-3 w-full py-2 rounded-lg bg-indigo-50 text-[#1A3FB5] text-xs font-bold hover:bg-indigo-100 transition-colors">🔄 시작일 기준 자동 재계산</button>
         </div>
       </div>
       <div class="px-6 pb-6 flex gap-2">
@@ -17449,7 +17473,7 @@
            캐시플로우 → 설정 → AI 코치 설정에만 있어서 찾기 어려웠다. 여기로 끌어올림 -->
       <div class="p-4 border-b border-slate-100">
         <div class="flex items-center gap-2 mb-2">
-          <span class="material-symbols-outlined text-indigo-600" style="font-size: var(--font-size-h2)">vpn_key</span>
+          <span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-h2)">vpn_key</span>
           <div>
             <h4 class="font-bold text-sm text-slate-800">Cloud Functions 출입증</h4>
             <p id="settings-fn-status" class="text-[10px] text-slate-400 mt-0.5">미설정</p>
@@ -17464,9 +17488,9 @@
 
       <!-- 데이터 백업/복원 -->
       <div class="p-4 border-b border-slate-100">
-        <h4 class="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-indigo-600" style="font-size: var(--font-size-h2)">backup</span> 데이터 관리</h4>
+        <h4 class="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-h2)">backup</span> 데이터 관리</h4>
         <div class="flex gap-2">
-          <button onclick="exportAllData()" class="flex-1 py-2 px-3 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1">
+          <button onclick="exportAllData()" class="flex-1 py-2 px-3 bg-indigo-50 text-[#1A3FB5] rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1">
             <span class="material-symbols-outlined" style="font-size: var(--font-size-body)">download</span> 전체 백업
           </button>
           <label class="flex-1 py-2 px-3 bg-slate-50 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-100 transition-colors flex items-center justify-center gap-1 cursor-pointer">
@@ -17664,7 +17688,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=41" defer></script>
+<script src="js/cal-wb.js?v=42" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
@@ -17696,7 +17720,7 @@
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=172" defer></script>
 <script src="js/nomad-cities.js?v=163" defer></script>
-<script src="js/nomad-pages.js?v=195" defer></script>
+<script src="js/nomad-pages.js?v=196" defer></script>
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
 <script src="js/atlas-data.js?v=7" defer></script>
@@ -17712,12 +17736,12 @@
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
 <script src="js/travel-toc.js?v=7" defer></script>
-<script src="js/journey-v2.js?v=18" defer></script>
+<script src="js/journey-v2.js?v=19" defer></script>
 <script src="js/plans-v2.js?v=2" defer></script>
 <script src="js/plans-v3-nordic.js?v=1" defer></script>
 <script src="js/plans-v2-coords.js?v=1" defer></script>
 <script src="js/plan-apply.js?v=7" defer></script>
-<script src="js/bookings-v2.js?v=6" defer></script>
+<script src="js/bookings-v2.js?v=7" defer></script>
 
 </body>
 </html>

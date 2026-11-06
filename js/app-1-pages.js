@@ -96,7 +96,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
   const GOAL_STATUS_COLORS = {
     '완료':   'bg-teal-100 text-teal-700 border-teal-200',
-    '진행 중':'bg-indigo-100 text-indigo-700 border-indigo-200',
+    '진행 중':'bg-indigo-100 text-[#1A3FB5] border-indigo-200',
     '예정':   'bg-slate-100 text-slate-600 border-slate-200',
   };
 
@@ -129,7 +129,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<div class="flex items-center gap-3 mb-4 px-2">' +
       '<div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">' +
       '<div class="h-full gradient-primary rounded-full transition-all" style="width:' + pct + '%"></div></div>' +
-      '<span class="text-xs font-black text-indigo-600 shrink-0">' + done + '/' + plannerGoals.length + ' (' + pct + '%)</span>' +
+      '<span class="text-xs font-black text-[#1F4BD8] shrink-0">' + done + '/' + plannerGoals.length + ' (' + pct + '%)</span>' +
       '</div>' +
       plannerGoals.map(function(g) {
         var statusCls = GOAL_STATUS_COLORS[g.status] || GOAL_STATUS_COLORS['예정'];
@@ -251,7 +251,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   //   일반 기간 일정(꽉 찬 바)과 달리 "이 구간 내내 이랬다"는 배경 정보를 칸을 안 먹고 보여준다.
   //   예: 야근 기간, 지연 출근 기간, 생리 주기, 프로젝트 스프린트
   const IV_HEX = {
-    rose:'#e11d48', orange:'#ea580c', amber:'#B45309', lime:'#65a30d',
+    rose:'#DC2626', orange:'#ea580c', amber:'#B45309', lime:'#65a30d',
     cyan:'#0891b2', blue:'#2563eb', violet:'#7c3aed', fuchsia:'#c026d3', slate:'#64748b'
   };
   function _ivIsInterval(row) { return (row && (row[2]||'').trim()) === '인터벌'; }
@@ -730,7 +730,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
         var colorParts = color.split(' ');
         var bgColor = colorParts.find(function(c){ return c.startsWith('bg-'); }) || 'bg-indigo-100';
-        var textColor = colorParts.find(function(c){ return c.startsWith('text-'); }) || 'text-indigo-700';
+        var textColor = colorParts.find(function(c){ return c.startsWith('text-'); }) || 'text-[#1A3FB5]';
 
         var ml = blockStart ? 'margin-left:0;padding-left: var(--space-2);' : 'margin-left:-13px;padding-left:0;';
         var mr = blockEnd ? 'margin-right:0;padding-right: var(--space-2);' : 'margin-right:-13px;padding-right:0;';
@@ -1257,7 +1257,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       { value: '데드라인', dot: '#FF3B00', label: '데드라인', emoji: '🚨' },
       { value: '영어',  dot: '#558A12', label: '영어' },
       { value: '특별휴가', dot: '#FFE01A', label: '특별휴가', emoji: '🎁' },
-      { value: '인터벌', dot: '#e11d48', label: '인터벌', emoji: '↔️' },
+      { value: '인터벌', dot: '#DC2626', label: '인터벌', emoji: '↔️' },
     ],
     onSelect: function(val) { toggleLeaveDay(); }
   });
@@ -1715,7 +1715,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         var idxRefD = (ev[7]) ? "_pi('" + ev[7] + "')" : String(realIdx);  // ★ (2026-07-15) ID 해석
         var color = COLOR_MAP[ev[3]] || COLOR_MAP['blue'];
         var bg = (color.split(' ').find(function(c){return c.startsWith('bg-');}) || 'bg-indigo-100');
-        var textCls = (color.split(' ').find(function(c){return c.startsWith('text-');}) || 'text-indigo-700');
+        var textCls = (color.split(' ').find(function(c){return c.startsWith('text-');}) || 'text-[#1A3FB5]');
         var start = (ev[0]||'').toString();
         var end = (ev[5]||'').toString();
         var rangeText = (end && end > start) ? ' (' + start.slice(5).replace('-','/') + ' ~ ' + end.slice(5).replace('-','/') + ')' : '';
@@ -3899,7 +3899,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       // (0) ★ (2026-07-23) 숙소 미등록 밤 경고
       var nightGapsDV = getUncoveredNights();
       if (dateStr && nightGapsDV[dateStr]) {
-        panelHtml += '<div class="j-night-warn">' + _msi('bed') + ' 이 밤 숙소 미등록 — Records에서 확인</div>';
+        panelHtml += '<div class="j-night-warn">' + _msi('bed') + ' 이 밤 숙소 미등록 · Bookings에서 확인</div>';
       }
       // (1) 도시별 교통편 가이드 — 이 도시 첫날일 때만 표시
       var currentCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
@@ -3907,10 +3907,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         var tg = _spotPriceHtml(String(currentCity.transit_guide)).replace(/\n/g,'<br>');
         panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#F5F7FE);border-left-color:#1F4BD8">' +
           '<div class="flex items-start gap-3">' +
-            '<span class="material-symbols-outlined text-indigo-500 mt-0.5" style="font-size: var(--font-size-h2)">directions_transit</span>' +
+            '<span class="material-symbols-outlined text-[#1F4BD8] mt-0.5" style="font-size: var(--font-size-h2)">directions_transit</span>' +
             '<div class="flex-1 min-w-0">' +
               '<div class="flex items-center gap-2 mb-1">' +
-                '<span class="text-[10px] font-black uppercase tracking-widest text-indigo-600">' + cityName + ' 교통편</span>' +
+                '<span class="text-[10px] font-black uppercase tracking-widest text-[#1F4BD8]">' + cityName + ' 교통편</span>' +
                 '<span class="text-[9px] text-slate-400">이 도시 첫날만 표시</span>' +
               '</div>' +
               '<div class="text-[13px] text-slate-700 leading-relaxed">' + tg + '</div>' +
@@ -3986,11 +3986,11 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         badgeHtml = ' <span class="text-[9px] font-bold px-1.5 bg-emerald-200 text-emerald-800 rounded ml-1">📌 고정</span>';
       } else {
         dotColor = 'bg-sky-400';
-        timeColor = 'text-indigo-600';
+        timeColor = 'text-[#1F4BD8]';
         cardBg = 'bg-white border-slate-200 hover:border-sky-400';
         badgeHtml = '';
       }
-      if (indoorB) badgeHtml += ' <span class="text-[9px] font-bold px-1.5 bg-indigo-100 text-indigo-700 rounded ml-1">🏠 실내</span>';
+      if (indoorB) badgeHtml += ' <span class="text-[9px] font-bold px-1.5 bg-indigo-100 text-[#1A3FB5] rounded ml-1">🏠 실내</span>';
       if (closedTxt) badgeHtml += closedClash
         ? ' <span class="text-[9px] font-black px-1.5 bg-rose-600 text-white rounded ml-1" title="이 일정 날짜가 정기휴무 요일과 겹칩니다!">⚠️ ' + closedTxt + ' 휴무 겹침!</span>'
         : ' <span class="text-[9px] font-bold px-1.5 bg-amber-100 text-amber-700 rounded ml-1">⛔ ' + closedTxt + ' 휴무</span>';
@@ -4074,7 +4074,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     div.className = 'sched-flags-edit mt-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-3 flex-wrap text-[11px]';
     div.innerHTML =
       '<label class="inline-flex items-center gap-1 cursor-pointer text-rose-600 font-bold"><input id="sf-res-' + idx + '" type="checkbox" class="w-3.5 h-3.5 rounded"' + (isReservationItem(item) ? ' checked' : '') + '/>🎫 예약</label>' +
-      '<label class="inline-flex items-center gap-1 cursor-pointer text-indigo-600 font-bold"><input id="sf-in-' + idx + '" type="checkbox" class="w-3.5 h-3.5 rounded"' + (item.indoor === true ? ' checked' : '') + '/>🏠 실내</label>' +
+      '<label class="inline-flex items-center gap-1 cursor-pointer text-[#1F4BD8] font-bold"><input id="sf-in-' + idx + '" type="checkbox" class="w-3.5 h-3.5 rounded"' + (item.indoor === true ? ' checked' : '') + '/>🏠 실내</label>' +
       '<span class="inline-flex items-center gap-1 text-amber-700 font-bold">⛔<input id="sf-cl-' + idx + '" type="text" value="' + String(item.closed || '').replace(/"/g, '&quot;') + '" placeholder="휴무 요일" class="w-16 border-0 border-b border-amber-300 bg-transparent px-1 text-[11px] outline-none"/></span>' +
       '<button onclick="saveScheduleFlags(' + idx + ')" class="ml-auto px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold text-[10px]">저장</button>';
     card.appendChild(div);
@@ -4282,9 +4282,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-indigo-300 ring-4 ring-white shadow-sm"></div>' +
       '<div class="p-3 rounded-xl border-2 border-dashed border-indigo-200" style="background:linear-gradient(135deg,rgba(31,75,216,0.06),rgba(53,99,223,0.08))">' +
         '<div class="flex items-center gap-1 mb-1.5">' +
-          '<input id="sched-add-time" type="text" placeholder="09:00" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider w-14 text-center"/>' +
+          '<input id="sched-add-time" type="text" placeholder="09:00" class="'+ic+' text-[10px] font-black text-[#1F4BD8] uppercase tracking-wider w-14 text-center"/>' +
           '<span class="text-[10px] text-slate-400">-</span>' +
-          '<input id="sched-add-end-time" type="text" placeholder="끝 (선택)" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider w-16 text-center"/>' +
+          '<input id="sched-add-end-time" type="text" placeholder="끝 (선택)" class="'+ic+' text-[10px] font-black text-[#1F4BD8] uppercase tracking-wider w-16 text-center"/>' +
         '</div>' +
         '<input id="sched-add-title" type="text" placeholder="제목 입력..." class="'+ic+' w-full font-bold text-sm mb-2" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();document.getElementById(\'sched-add-city\').focus();}"/>' +
         '<div class="flex items-center gap-1 mb-2">' +
@@ -4294,7 +4294,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         '<textarea id="sched-add-desc" placeholder="내용 입력 (선택)..." rows="2" class="'+ic+' w-full text-xs resize-none" style="line-height:1.5" onkeydown="if(event.key===\'Enter\'&&(event.metaKey||event.ctrlKey)){event.preventDefault();saveScheduleInline();}"></textarea>' +
         '<div class="flex items-center gap-3 mt-1.5 mb-0.5 flex-wrap text-[11px]">' +
           '<label class="inline-flex items-center gap-1 cursor-pointer text-rose-600 font-bold"><input id="sched-add-reserve" type="checkbox" class="w-3.5 h-3.5 rounded"/>🎫 예약 필수</label>' +
-          '<label class="inline-flex items-center gap-1 cursor-pointer text-indigo-600 font-bold"><input id="sched-add-indoor" type="checkbox" class="w-3.5 h-3.5 rounded"/>🏠 실내</label>' +
+          '<label class="inline-flex items-center gap-1 cursor-pointer text-[#1F4BD8] font-bold"><input id="sched-add-indoor" type="checkbox" class="w-3.5 h-3.5 rounded"/>🏠 실내</label>' +
           '<span class="inline-flex items-center gap-1 text-amber-700 font-bold">⛔ 휴무<input id="sched-add-closed" type="text" placeholder="예: 월" class="'+ic+' w-16 text-[11px] text-amber-700" title="정기휴무 요일 (예: 월 / 월,화)"/></span>' +
         '</div>' +
         '<div class="flex gap-2 justify-end mt-2">' +
@@ -4629,7 +4629,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     if (_RAIN_SET[w.code] || (w.rain !== null && w.rain >= 60)) {
       var _inN = 0;
       try { _inN = journeyData.filter(function(d) { return d.type === '일정' && d.date === w.date && d.indoor === true; }).length; } catch(e) {}
-      extraParts.push('<span style="color:#e11d48;font-weight:800">☔ 비 예보 — ' + (_inN > 0 ? '실내 일정 ' + _inN + '개 준비됨' : '실내(🏠) 일정 추천') + '</span>');
+      extraParts.push('<span style="color:#DC2626;font-weight:800">☔ 비 예보 · ' + (_inN > 0 ? '실내 일정 ' + _inN + '개 준비됨' : '실내 일정 추천') + '</span>');
     }
     document.getElementById('weather-extra').innerHTML = extraParts.join(' · ');
   }
@@ -4686,7 +4686,11 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       dm.slice(currentWeekChunkStart, currentWeekChunkStart + WEEK_CHUNK_SIZE).forEach(function(e) { names[e.cityName || ''] = 1; });
     }
     var any = false, first = null;
-    strip.querySelectorAll('.j-stop-card[data-city]').forEach(function(c) {
+    var _cards = strip.querySelectorAll('.j-stop-card[data-city]');
+    // (2026-11-06 4차) 보이는 주에 모든 도시가 다 들어오면 강조할 게 없다 — 전부 켜진 코발트 테두리 방지
+    var _onN = 0; _cards.forEach(function(c) { if (names[c.getAttribute('data-city')]) _onN++; });
+    if (_cards.length > 1 && _onN >= _cards.length) names = {};
+    _cards.forEach(function(c) {
       var on = !!names[c.getAttribute('data-city')];
       c.classList.toggle('is-active', on);
       if (on) { any = true; if (!first) first = c; }
@@ -4867,9 +4871,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
               var safeDesc = (item.description||'').replace(/"/g,'&quot;');
               return '<div class="py-3 px-1.5 border-b border-slate-100 last:border-b-0 bg-indigo-50/50 -mx-1 px-2 border-l-[3px] border-indigo-400" onclick="event.stopPropagation()">' +
                 '<div class="flex items-center gap-1 mb-1.5">' +
-                  '<input id="we-time-' + iid + '" type="text" value="' + safeTime + '" placeholder="09:00" class="w-14 text-[11px] font-bold text-indigo-700 bg-white border border-indigo-200 rounded px-1.5 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
+                  '<input id="we-time-' + iid + '" type="text" value="' + safeTime + '" placeholder="09:00" class="w-14 text-[11px] font-bold text-[#1A3FB5] bg-white border border-indigo-200 rounded px-1.5 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
                   '<span class="text-[9px] text-slate-400">-</span>' +
-                  '<input id="we-end-' + iid + '" type="text" value="' + safeEnd + '" placeholder="끝" class="w-14 text-[11px] font-bold text-indigo-700 bg-white border border-indigo-200 rounded px-1.5 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
+                  '<input id="we-end-' + iid + '" type="text" value="' + safeEnd + '" placeholder="끝" class="w-14 text-[11px] font-bold text-[#1A3FB5] bg-white border border-indigo-200 rounded px-1.5 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
                 '</div>' +
                 '<input id="we-title-' + iid + '" type="text" value="' + safeTitle + '" placeholder="제목" class="w-full text-[13px] font-semibold bg-white border border-indigo-200 rounded px-2 py-1 outline-none focus:border-indigo-500 mb-1.5"/>' +
                 '<div class="flex items-center gap-1 mb-1.5">' +
@@ -4907,7 +4911,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
             }
             // ─── 일반 표시 모드 ───
             var time = item.time || '';
-            var endTime = item.end_time ? ' — ' + item.end_time : '';
+            var endTime = item.end_time ? '–' + item.end_time : '';
             var title = (item.title || '').replace(/</g,'&lt;');
             var desc = (item.description || '').replace(/</g,'&lt;');
             var isSouvenir = (item.type === '기념품');
@@ -5062,9 +5066,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         addFormHtml =
           '<div class="wk4-addform" onclick="event.stopPropagation()">' +
             '<div class="flex items-center gap-1 mb-1">' +
-              '<input id="wk-add-time-' + idx + '" type="text" placeholder="09:00" class="w-12 text-[10px] font-bold text-indigo-700 bg-white border border-indigo-200 rounded px-1 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
+              '<input id="wk-add-time-' + idx + '" type="text" placeholder="09:00" class="w-12 text-[10px] font-bold text-[#1A3FB5] bg-white border border-indigo-200 rounded px-1 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
               '<span class="text-[9px] text-slate-400">-</span>' +
-              '<input id="wk-add-end-' + idx + '" type="text" placeholder="끝" class="w-12 text-[10px] font-bold text-indigo-700 bg-white border border-indigo-200 rounded px-1 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
+              '<input id="wk-add-end-' + idx + '" type="text" placeholder="끝" class="w-12 text-[10px] font-bold text-[#1A3FB5] bg-white border border-indigo-200 rounded px-1 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
             '</div>' +
             '<input id="wk-add-title-' + idx + '" type="text" placeholder="제목 입력..." class="w-full text-[11px] font-semibold bg-white border border-indigo-200 rounded px-1.5 py-1 outline-none focus:border-indigo-500 mb-1"/>' +
             '<div class="flex items-center gap-0.5 mb-1">' +
@@ -5092,7 +5096,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       if (isToday) dayCardClasses.push('is-today');
       if (isPastCol) dayCardClasses.push('wk4-past'); // 지난 날 컬럼 전체 흐리게
       var miniPanelsWrap = miniPanelHtml ? '<div class="j-day-panels">' + miniPanelHtml + '</div>' : '';
-      var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn wk4-night">' + _msi('bed') + ' 이 밤 숙소 미등록 — Records에서 확인</div>' : '';
+      var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn wk4-night">' + _msi('bed') + ' 이 밤 숙소 미등록 · Bookings에서 확인</div>' : '';
       return '<div class="' + dayCardClasses.join(' ') + '" data-date="' + dateStr + '">' +
           dayHeadHtml +
           nightWarnHtml +
@@ -5645,7 +5649,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   function selectTransportStatus(val) {
     _trEditStatus = val;
     var ids = { '확정':'tr-edit-status-confirmed', '대기 중':'tr-edit-status-pending', '취소':'tr-edit-status-cancelled' };
-    var colors = { '확정':'ring-indigo-500 text-indigo-600', '대기 중':'ring-amber-500 text-amber-600', '취소':'ring-rose-500 text-rose-600' };
+    var colors = { '확정':'ring-indigo-500 text-[#1F4BD8]', '대기 중':'ring-amber-500 text-amber-600', '취소':'ring-rose-500 text-rose-600' };
     Object.keys(ids).forEach(function(k) {
       var btn = document.getElementById(ids[k]);
       if (!btn) return;
@@ -5717,7 +5721,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   function selectRentalAddCancel(val) {
     _rentalAddCancel = val;
     var ids = { '가능':'rc-add-cancel-ok', '불가':'rc-add-cancel-no', '조건부':'rc-add-cancel-cond' };
-    var colors = { '가능':'ring-indigo-500 text-indigo-600', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
+    var colors = { '가능':'ring-indigo-500 text-[#1F4BD8]', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
     Object.keys(ids).forEach(function(k) {
       var btn = document.getElementById(ids[k]);
       if (!btn) return;
@@ -5789,7 +5793,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   function selectRentalEditCancel(val) {
     _rentalEditCancel = val;
     var ids = { '가능':'rc-edit-cancel-ok', '불가':'rc-edit-cancel-no', '조건부':'rc-edit-cancel-cond' };
-    var colors = { '가능':'ring-indigo-500 text-indigo-600', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
+    var colors = { '가능':'ring-indigo-500 text-[#1F4BD8]', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
     Object.keys(ids).forEach(function(k) {
       var btn = document.getElementById(ids[k]);
       if (!btn) return;
@@ -6130,9 +6134,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var dropCity = shortCity(item.drop_city);
     var cityBadgeHtml = '';
     if (pickupCity && dropCity && pickupCity !== dropCity) {
-      cityBadgeHtml = '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider bg-indigo-100 text-indigo-700">' + pickupCity + ' → ' + dropCity + '</span>';
+      cityBadgeHtml = '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider bg-indigo-100 text-[#1A3FB5]">' + pickupCity + ' → ' + dropCity + '</span>';
     } else if (pickupCity) {
-      cityBadgeHtml = '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider bg-indigo-100 text-indigo-700">' + pickupCity + '</span>';
+      cityBadgeHtml = '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider bg-indigo-100 text-[#1A3FB5]">' + pickupCity + '</span>';
     }
     // 결제 상태 뱃지 — payment_date 기준 파생 (예산 장부와 동일 규칙)
     var payStatus = _trvPayStatus(item);
@@ -6202,7 +6206,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<div class="rec-tr-top">' +
         _recIcoHtml('directions_car', (item.title || '') + ' ' + (item.description || '') + ' ' + (item.vendor || '')) +
         '<div class="rec-tr-info">' +
-          '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain + '</h4>' + vendorBadge + '</div>' +
+          '<div class="rec-tr-titlerow"><h3 class="rec-tr-title">' + titleMain + '</h3>' + vendorBadge + '</div>' +
           (item.description ? '<p class="rec-tr-sub rec-tr-desc" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + _spotPriceHtml(item.description) + '</p>' : '') +
           (item.booking_ref ? '<p class="rec-tr-conf">Conf: ' + item.booking_ref + '</p>' : '') +
         '</div>' +
@@ -6370,7 +6374,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<div class="rec-tr-top">' +
         _recIcoHtml(icon, (item.title || '') + ' ' + (item.description || '')) +
         '<div class="rec-tr-info">' +
-          '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain2 + '</h4>' + vendorBadge2 + '</div>' +
+          '<div class="rec-tr-titlerow"><h3 class="rec-tr-title">' + titleMain2 + '</h3>' + vendorBadge2 + '</div>' +
           // ★ (2026-07-23) 설명이 짧으면 경로 한 줄, 길면 구조화 노트 목록(경고·핵심·일반 색 구분)
           (function(){
             var raw = String(item.description || '').trim();
@@ -6550,10 +6554,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var h = document.getElementById('lg-edit-type-hotel');
     var a = document.getElementById('lg-edit-type-airbnb');
     if (type === 'Hotel') {
-      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm';
+      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm';
       a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
     } else {
-      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm';
+      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm';
       h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
     }
   }
@@ -6600,7 +6604,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<td class="px-2 py-2"><input data-lf="cancel_date" type="date" value="'+(d.cancel_date||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-2 py-2"><input data-lf="price" value="'+(d.price||'')+'" class="'+ic+' text-right"/></td>' +
       '<td class="px-2 py-2 bg-white sticky right-0"><div class="flex gap-0.5">' +
-        '<button onclick="saveInlineLodging('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded text-indigo-600"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">check</span></button>' +
+        '<button onclick="saveInlineLodging('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded text-[#1F4BD8]"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">check</span></button>' +
         '<button onclick="renderJourneyLodging()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">close</span></button>' +
       '</div></td>';
     initInlineDatePickers(tr);
@@ -6693,7 +6697,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   function selectStayAddCancel(val) {
     _stayAddCancel = val;
     var ids = { '가능':'stay-add-cancel-ok', '불가':'stay-add-cancel-no', '조건부':'stay-add-cancel-cond' };
-    var colors = { '가능':'ring-indigo-500 text-indigo-600', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
+    var colors = { '가능':'ring-indigo-500 text-[#1F4BD8]', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
     Object.keys(ids).forEach(function(k) {
       var btn = document.getElementById(ids[k]);
       if (!btn) return;
@@ -6741,10 +6745,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var a = document.getElementById('stay-edit-type-airbnb');
     if (!h || !a) return;
     if (type === 'Hotel') {
-      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all';
+      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm transition-all';
       a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
     } else {
-      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all';
+      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm transition-all';
       h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
     }
   }
@@ -6752,7 +6756,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   function selectStayCancel(val) {
     _stayEditCancel = val;
     var ids = { '가능':'stay-edit-cancel-ok', '불가':'stay-edit-cancel-no', '조건부':'stay-edit-cancel-cond' };
-    var colors = { '가능':'ring-indigo-500 text-indigo-600', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
+    var colors = { '가능':'ring-indigo-500 text-[#1F4BD8]', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
     Object.keys(ids).forEach(function(k) {
       var btn = document.getElementById(ids[k]);
       if (!btn) return;
@@ -6847,10 +6851,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var hotelBtn = document.getElementById('stay-type-hotel');
     var airbnbBtn = document.getElementById('stay-type-airbnb');
     if (type === 'Hotel') {
-      hotelBtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm';
+      hotelBtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm';
       airbnbBtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
     } else {
-      airbnbBtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm';
+      airbnbBtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-[#1F4BD8] text-sm font-bold shadow-sm';
       hotelBtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
     }
   }
@@ -7320,7 +7324,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var html = '<div style="background:linear-gradient(135deg,#eef2ff,#EEF2FD);border:1px solid #c7d2fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="color:#1A3FB5;font-size: var(--font-size-h1)">route</span>' +
-        '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#3730a3;letter-spacing:-0.01em;margin:0">도시 간 이동 큐레이션</h4>' +
+        '<h3 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#3730a3;letter-spacing:-0.01em;margin:0">도시 간 이동 큐레이션</h3>' +
         '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#1F4BD8;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">기차·버스·렌터카</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#1A3FB5;margin:0 0 16px;font-style:italic">추천 루트 + 소요시간·대략 가격. "Rome2Rio" 버튼으로 실시간 시각표·전체 옵션 비교</p>';
@@ -7361,7 +7365,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var html = '<div style="background:linear-gradient(135deg,#F5F7FE,#EEF2FD);border:1px solid #ddd6fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size: var(--font-size-h1)">recommend</span>' +
-        '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
+        '<h3 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h3>' +
         '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#1F4BD8;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">예산·취향·동선 종합</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#1F4BD8;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
@@ -7386,7 +7390,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius: var(--radius-lg);padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(31,75,216,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap: var(--space-1-5);margin-bottom: var(--space-1);padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
-            '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
+            '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h4>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
             '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#1F4BD8">' + opt.type + '</span>' +
@@ -8544,7 +8548,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var html = '<div style="background:linear-gradient(135deg,#f0f9ff,#dbeafe);border:1px solid #bfdbfe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5);flex-wrap:wrap">' +
         '<span class="material-symbols-outlined" style="color:#0369a1;font-size: var(--font-size-h1)">flight</span>' +
-        '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#075985;letter-spacing:-0.01em;margin:0">항공편 추천 큐레이션</h4>' +
+        '<h3 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#075985;letter-spacing:-0.01em;margin:0">항공편 추천 큐레이션</h3>' +
         '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">Google Flights · Skyscanner · Trip.com</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#0369a1;margin:0 0 16px;font-style:italic">가격은 평균 시세 기준 (시즌·예약 시점에 따라 변동). 출국 60-90일 전 예약 추천.</p>';
@@ -8566,7 +8570,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         html += '<div style="position:relative;background:#fff;border:1px solid #bfdbfe;border-radius: var(--radius-lg);padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(2,132,199,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap: var(--space-1-5);margin-bottom: var(--space-1);padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
-            '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#0c4a6e;margin:0;flex:1">' + opt.airline + (opt.flightNo ? ' · ' + opt.flightNo : '') + '</h5>' +
+            '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#0c4a6e;margin:0;flex:1">' + opt.airline + (opt.flightNo ? ' · ' + opt.flightNo : '') + '</h4>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
             '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7">' + opt.type + '</span>' +
@@ -8802,7 +8806,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           '<span class="text-xs text-slate-400 font-medium truncate"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>' + (city||'—') + '</span>' +
         '</div>' +
         '<div class="col-span-2 text-right">' +
-          '<span class="text-xs font-headline font-bold text-indigo-600"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€'+amount : '—') + '</span>' +
+          '<span class="text-xs font-headline font-bold text-[#1F4BD8]"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€'+amount : '—') + '</span>' +
         '</div>' +
         '<div class="col-span-2 flex justify-end items-center gap-1">' +
           statusHtml +
@@ -9053,7 +9057,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<div class="sv-check' + (checked ? ' is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
       _svThumbHtml(item, realIdx, scope) +
       '<div class="sv-main">' +
-        '<h5 class="sv-name"' + (nameDbl ? ' ondblclick="' + nameDbl + '"' : '') + '>' + nameLinked + '</h5>' +
+        '<h4 class="sv-name"' + (nameDbl ? ' ondblclick="' + nameDbl + '"' : '') + '>' + nameLinked + '</h4>' +
         (noteTxt ? '<p class="sv-desc"' + (noteDbl ? ' ondblclick="' + noteDbl + '"' : '') + '>' + noteTxt + '</p>' : '') +
         (loc ? '<p class="sv-extra">' + _msi('location_on') + ' ' + _trvMapsLink(loc, city) + '</p>' : '') +
         // 대상·도시는 헤더와 중복이라 평소엔 숨김 — 행에 마우스를 올렸을 때만 편집용으로 노출
@@ -11653,7 +11657,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   };
   const WEEK_DAYS = ['월','화','수','목','금','토','일'];
   const MILESTONE_STATUS = {
-    '완료':'bg-indigo-100 text-indigo-700 border-indigo-200',
+    '완료':'bg-indigo-100 text-[#1A3FB5] border-indigo-200',
     '진행 중':'bg-blue-100 text-blue-700 border-blue-200',
     '예정':'bg-slate-100 text-slate-600 border-slate-200',
   };
@@ -12785,7 +12789,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     if (listEl) {
       listEl.innerHTML = events.slice(0, 100).map(function(e, i){
         var catColor = e.category === '업무' ? 'bg-sky-100 text-sky-700' :
-                       e.category === '미팅' ? 'bg-indigo-100 text-indigo-700' :
+                       e.category === '미팅' ? 'bg-indigo-100 text-[#1A3FB5]' :
                        e.category === '출장' ? 'bg-amber-100 text-amber-700' :
                        e.category === '마일스톤' ? 'bg-emerald-100 text-emerald-700' :
                        'bg-slate-100 text-slate-600';
@@ -13810,7 +13814,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       container.innerHTML =
         '<div class="flex items-center gap-2 mb-3">' +
         '<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full gradient-primary rounded-full" style="width:'+pct+'%"></div></div>' +
-        '<span class="text-[10px] font-black text-indigo-600">'+done+'/'+dashMilestones.length+'</span></div>' +
+        '<span class="text-[10px] font-black text-[#1F4BD8]">'+done+'/'+dashMilestones.length+'</span></div>' +
         dashMilestones.map(function(r) {
           var statusCls = MILESTONE_STATUS[r[2]] || MILESTONE_STATUS['예정'];
           var id = r[3]||''; // _id is at index 3
@@ -13929,8 +13933,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   let currentFinanceTrip = 'all';
 
   const FIN_CAT_ICONS = {'입금':'savings','항공':'flight','이동':'train','숙소':'bed','식비':'restaurant','여가':'attractions','쇼핑':'shopping_bag','티켓':'confirmation_number','보험':'shield','통신':'sim_card','환전':'currency_exchange','렌트':'directions_car','교통':'directions_subway','기타':'more_horiz'};
-  const FIN_CAT_COLORS = {'입금':'text-emerald-600','항공':'text-sky-600','이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','티켓':'text-amber-600','보험':'text-cyan-600','통신':'text-violet-600','환전':'text-orange-600','렌트':'text-pink-600','교통':'text-lime-600','기타':'text-slate-500'};
-  const FIN_CAT_BG = {'입금':'bg-emerald-50 text-emerald-700 border-emerald-200','항공':'bg-sky-50 text-sky-700 border-sky-200','이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','티켓':'bg-amber-50 text-amber-700 border-amber-200','보험':'bg-cyan-50 text-cyan-700 border-cyan-200','통신':'bg-violet-50 text-violet-700 border-violet-200','환전':'bg-orange-50 text-orange-700 border-orange-200','렌트':'bg-pink-50 text-pink-700 border-pink-200','교통':'bg-lime-50 text-lime-700 border-lime-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
+  const FIN_CAT_COLORS = {'입금':'text-emerald-600','항공':'text-sky-600','이동':'text-[#1F4BD8]','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','티켓':'text-amber-600','보험':'text-cyan-600','통신':'text-violet-600','환전':'text-orange-600','렌트':'text-pink-600','교통':'text-lime-600','기타':'text-slate-500'};
+  const FIN_CAT_BG = {'입금':'bg-emerald-50 text-emerald-700 border-emerald-200','항공':'bg-sky-50 text-sky-700 border-sky-200','이동':'bg-indigo-50 text-[#1A3FB5] border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','티켓':'bg-amber-50 text-amber-700 border-amber-200','보험':'bg-cyan-50 text-cyan-700 border-cyan-200','통신':'bg-violet-50 text-violet-700 border-violet-200','환전':'bg-orange-50 text-orange-700 border-orange-200','렌트':'bg-pink-50 text-pink-700 border-pink-200','교통':'bg-lime-50 text-lime-700 border-lime-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
   var FIN_CATS = Object.keys(FIN_CAT_ICONS); // 카테고리 단일 소스 — 드롭다운 전부 여기서
 
   var FINANCE_SEED_TRIP = '2026 체코&크로아티아';
@@ -14506,16 +14510,16 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var ic = 'border border-slate-200 rounded px-1.5 py-1 text-xs outline-none focus:ring-1 focus:ring-indigo-200 w-full';
     var catOpts = FIN_CATS.map(function(c){ return '<option value="'+c+'"'+(c===cat?' selected':'')+'>'+c+'</option>'; }).join('');
     tr.className = 'bg-indigo-50/40';
-    var amtCls = isDeposit ? 'text-indigo-600' : 'text-rose-600';
+    var amtCls = isDeposit ? 'text-[#1F4BD8]' : 'text-rose-600';
     var amtPlaceholder = isDeposit ? '입금' : '출금';
     tr.innerHTML =
       '<td class="px-4 py-2"><input data-fec="0" type="date" value="'+(row[0]||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-4 py-2"><input data-fec="1" type="text" value="'+(row[1]||'')+'" class="'+ic+'"/></td>' +
-      '<td class="px-4 py-2"><select data-fec="2" class="'+ic+' bg-white" onchange="(function(s){var amt=s.closest(\'tr\').querySelector(\'[data-fec=\\\'3\\\']\');if(s.value===\'입금\'){amt.classList.add(\'text-indigo-600\');amt.classList.remove(\'text-rose-600\');amt.placeholder=\'입금\';}else{amt.classList.add(\'text-rose-600\');amt.classList.remove(\'text-indigo-600\');amt.placeholder=\'출금\';}})(this)">'+catOpts+'</select></td>' +
+      '<td class="px-4 py-2"><select data-fec="2" class="'+ic+' bg-white" onchange="(function(s){var amt=s.closest(\'tr\').querySelector(\'[data-fec=\\\'3\\\']\');if(s.value===\'입금\'){amt.classList.add(\'text-[#1F4BD8]\');amt.classList.remove(\'text-rose-600\');amt.placeholder=\'입금\';}else{amt.classList.add(\'text-rose-600\');amt.classList.remove(\'text-[#1F4BD8]\');amt.placeholder=\'출금\';}})(this)">'+catOpts+'</select></td>' +
       '<td class="px-4 py-2 text-right"><input data-fec="3" type="text" value="'+amt.toLocaleString('ko-KR')+'" placeholder="'+amtPlaceholder+'" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right '+amtCls+'"/></td>' +
       '<td class="px-4 py-2"></td>' +
       '<td class="px-4 py-2 text-center"><div class="flex gap-1 justify-center">' +
-        '<button onclick="saveClickEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600"><span class="material-symbols-outlined text-sm">check</span></button>' +
+        '<button onclick="saveClickEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-[#1F4BD8]"><span class="material-symbols-outlined text-sm">check</span></button>' +
         '<button onclick="filterFinanceByTrip(currentFinanceTrip)" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500"><span class="material-symbols-outlined text-sm">close</span></button>' +
       '</div></td>';
     initInlineDatePickers(tr);
@@ -14943,7 +14947,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
     var html = '<div class="flex items-center justify-between flex-wrap gap-2 mb-3">' +
       '<div class="text-xs text-slate-600">오늘 환율 <b>€1 = ₩' + Math.round(rate).toLocaleString('ko-KR') + '</b>' +
-        ' · 심을 대상 <b class="text-indigo-600">' + pend.length + '</b>건' +
+        ' · 심을 대상 <b class="text-[#1F4BD8]">' + pend.length + '</b>건' +
         (skipN ? ' · <span class="text-slate-400">결제 완료 ' + skipN + '건 제외</span>' : '') +
         ' · 지출 합계 <b class="' + diffCls + '">' + _finFxSigned(diff) + '</b></div></div>';
 
@@ -14956,7 +14960,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var d = neu - r.krwNow;
       var dCls = d > 0 ? 'text-rose-600' : (d < 0 ? 'text-emerald-600' : 'text-slate-400');
       var badge = r.pending
-        ? '<span class="text-indigo-600 font-semibold">심음</span>'
+        ? '<span class="text-[#1F4BD8] font-semibold">심음</span>'
         : '<span class="text-slate-400">결제완료 · 건너뜀</span>';
       html += '<tr class="border-t border-slate-100"' + (r.pending ? '' : ' style="opacity:0.45"') + '>' +
         '<td class="px-2 py-1 text-slate-800" title="' + String(r.desc).replace(/"/g, '&quot;') + '">' +
@@ -15129,7 +15133,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   }
 
   // ===== 항목별 지출 도넛 =====
-  var FIN_CAT_HEX = {'항공':'#0ea5e9','이동':'#334155','숙소':'#3b82f6','환전':'#f97316','렌트':'#B45309','티켓':'#f59e0b','통신':'#5B5B66','보험':'#06b6d4','교통':'#84cc16','식비':'#a855f7','여가':'#14b8a6','쇼핑':'#f43f5e','기타':'#94a3b8'};
+  var FIN_CAT_HEX = {'항공':'#0ea5e9','이동':'#334155','숙소':'#3b82f6','환전':'#f97316','렌트':'#B45309','티켓':'#f59e0b','통신':'#5B5B66','보험':'#06b6d4','교통':'#84cc16','식비':'#a855f7','여가':'#14b8a6','쇼핑':'#DC2626','기타':'#94a3b8'};
 
   function renderFinanceDonut() {
     var el = document.getElementById('finance-category-breakdown');
@@ -15300,7 +15304,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var badge = function(rem, b, mini) {
       var style, label;
       if (b <= 0) { style = 'background:#f1f5f9;color:#64748b'; label = '예산 없음'; }
-      else if (rem < 0) { style = 'background:#FEF2F2;color:#DC2626'; label = fmtW(rem) + ' 초과'; }
+      else if (rem < 0) { style = 'background:#FEF2F2;color:#B91C1C'; label = fmtW(rem) + ' 초과'; }
       else { style = 'background:#ecfdf5;color:#15803D'; label = fmtW(rem) + ' 남음'; }
       return '<span class="font-bold rounded-full flex-shrink-0" style="' + style +
         ';font-size:' + (mini ? '10px' : '11px') + ';padding:' + (mini ? '2px 8px' : '3px 10px') +
@@ -16150,7 +16154,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<td class="px-4 py-2 text-right text-xs text-slate-400">—</td>' +
       '<td class="px-4 py-2 text-center"><div class="flex items-center justify-center gap-1">' +
         '<input id="fin-i-trip" type="hidden" value="'+(currentFinanceTrip!=='all'?currentFinanceTrip:(financeTrips.length?financeTrips[0].name:''))+'"/>' +
-        '<button onclick="saveFinanceInline()" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">check</span></button>' +
+        '<button onclick="saveFinanceInline()" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-[#1F4BD8] transition-colors"><span class="material-symbols-outlined text-sm">check</span></button>' +
         '<button onclick="cancelFinanceInline()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500 transition-colors"><span class="material-symbols-outlined text-sm">close</span></button>' +
       '</div></td>';
     tbody.appendChild(tr);
@@ -16205,11 +16209,11 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<td class="px-4 py-2"><input id="fie-date" type="date" value="'+(row[0]||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-4 py-2"><input id="fie-desc" type="text" value="'+(row[1]||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-4 py-2"><select id="fie-cat" class="'+ic+' bg-white">'+catOpts+'</select></td>' +
-      '<td class="px-4 py-2 text-right"><input id="fie-deposit" type="text" value="'+(isDeposit?amt.toLocaleString('ko-KR'):'')+'" placeholder="입금" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right text-indigo-600"/></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fie-deposit" type="text" value="'+(isDeposit?amt.toLocaleString('ko-KR'):'')+'" placeholder="입금" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right text-[#1F4BD8]"/></td>' +
       '<td class="px-4 py-2 text-right"><input id="fie-expense" type="text" value="'+(!isDeposit?amt.toLocaleString('ko-KR'):'')+'" placeholder="출금" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right text-rose-600"/></td>' +
       '<td class="px-4 py-2 text-right text-xs text-slate-400">—</td>' +
       '<td class="px-4 py-2 text-center"><div class="flex items-center justify-center gap-1">' +
-        '<button onclick="saveInlineEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600"><span class="material-symbols-outlined text-sm">check</span></button>' +
+        '<button onclick="saveInlineEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-[#1F4BD8]"><span class="material-symbols-outlined text-sm">check</span></button>' +
         '<button onclick="filterFinanceByTrip(currentFinanceTrip)" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500"><span class="material-symbols-outlined text-sm">close</span></button>' +
       '</div></td>';
     initInlineDatePickers(tr);
@@ -16712,14 +16716,14 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
       var pct = amt > 0 ? Math.min(Math.round((achieved/amt)*100), 100) : 0;
       var pctColor = pct >= 100 ? 'bg-teal-500' : pct >= 70 ? 'bg-indigo-500' : pct >= 30 ? 'bg-blue-400' : 'bg-slate-300';
-      var pctTextColor = pct >= 100 ? 'text-teal-600' : pct >= 70 ? 'text-indigo-600' : 'text-slate-500';
+      var pctTextColor = pct >= 100 ? 'text-teal-600' : pct >= 70 ? 'text-[#1F4BD8]' : 'text-slate-500';
       var subtitle = [series, quarter].filter(Boolean).join(' · ') || '전체';
 
       return '<div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm group">' +
         '<div class="flex items-start justify-between mb-2">' +
         '<div class="flex-1">' +
         '<div class="flex items-center gap-2 mb-0.5">' +
-        (series ? '<span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + series + '</span>' : '') +
+        (series ? '<span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-[#1F4BD8] border border-indigo-100 rounded-full">' + series + '</span>' : '') +
         (quarter ? '<span class="text-[9px] font-black uppercase px-2 py-0.5 bg-slate-100 text-slate-500 border border-slate-200 rounded-full">' + quarter + '</span>' : '') +
         '</div>' +
         '<p class="text-sm font-bold text-slate-800">' + (g.title||'') + '</p>' +
@@ -16833,7 +16837,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       return '<div class="bg-slate-50 rounded-2xl p-5 group hover:bg-slate-100/60 transition-colors">' +
         '<div class="flex items-center justify-between mb-3">' +
         '<span class="text-xs font-bold text-slate-600 uppercase tracking-widest font-headline">' + name + '</span>' +
-        '<span class="text-[10px] bg-indigo-100/80 text-indigo-600 px-2 py-0.5 rounded-full font-bold">' + data.count + '건</span>' +
+        '<span class="text-[10px] bg-indigo-100/80 text-[#1F4BD8] px-2 py-0.5 rounded-full font-bold">' + data.count + '건</span>' +
         '</div>' +
         '<p class="text-2xl font-black text-slate-900 font-headline tracking-tight">₩' + data.total.toLocaleString('ko-KR') + '</p>' +
         '<p class="text-[10px] text-slate-400 font-medium mt-1">월 평균 ₩' + avg.toLocaleString('ko-KR') + '</p>' +
@@ -16878,15 +16882,38 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       ['checklist', 'checklist', 'Checklist'],
       ['atlas', 'public', 'Atlas']
     ];
-    return '<nav class="trav-tabs">' + tabs.map(function(t){
+    return '<div class="trav-tabs-wrap"><nav class="trav-tabs">' + tabs.map(function(t){
       return '<button onclick="switchTravelTab(\'' + t[0] + '\')" class="trav-tab' + (t[0] === active ? ' trav-tab-active' : '') + '" data-tab="' + t[0] + '">' +
         '<span class="material-symbols-outlined">' + t[1] + '</span>' + t[2] + '</button>';
-    }).join('') + '</nav>';
+    }).join('') + '</nav><button type="button" class="trav-tabs-next" aria-label="탭 더 보기" onclick="_travTabsNext(this)">›</button></div>';
   };
+  // (2026-11-06 4차) 폰: 탭 줄이 잘리면 › 표시, 끝까지 밀면 숨김
+  window._travTabsNext = function(btn) {
+    var nav = btn && btn.parentNode && btn.parentNode.querySelector('.trav-tabs');
+    if (nav) nav.scrollBy({ left: Math.max(120, nav.clientWidth * 0.6), behavior: 'smooth' });
+  };
+  window._travTabsSync = function() {
+    document.querySelectorAll('.trav-tabs-wrap').forEach(function(w) {
+      var nav = w.querySelector('.trav-tabs');
+      if (!nav) return;
+      var more = window.innerWidth < 768 && nav.scrollWidth - nav.scrollLeft - nav.clientWidth > 4;
+      w.classList.toggle('has-more', more);
+      if (!nav.__travSync) {
+        nav.__travSync = 1;
+        nav.addEventListener('scroll', function() { window._travTabsSync(); }, { passive: true });
+        // 숨겨져 있던 탭 줄이 보이게 될 때(폭 0 → 실제 폭) 다시 잰다
+        if (window.ResizeObserver) { try { new ResizeObserver(function() { window._travTabsSync(); }).observe(nav); } catch (e) {} }
+      }
+    });
+  };
+  window.addEventListener('resize', function() { try { window._travTabsSync(); } catch (e) {} });
+  // Atlas 처럼 나중에 그려지는 탭 줄도 잡도록, 누를 때마다 한 번 가볍게 훑는다
+  document.addEventListener('click', function() { setTimeout(function() { try { window._travTabsSync(); } catch (e) {} }, 400); }, true);
   function renderTravelChrome(){
     document.querySelectorAll('[data-travel-tabs]').forEach(function(slot){
       slot.innerHTML = window._travelTabsHtml(slot.getAttribute('data-travel-tabs'));
     });
+    setTimeout(function() { try { window._travTabsSync(); } catch (e) {} }, 0);
   }
   try { renderTravelChrome(); } catch(e) { console.warn('travel chrome', e); }
 
@@ -18684,7 +18711,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var foot = document.getElementById('daylog-map-foot');
     if (foot && !_geoBusy) {
       foot.innerHTML = '<span>핀 ' + latlngs.length + '개 · 색 = 일차 · 회색 = 저장소 미배치</span>' +
-        (missing ? '<button onclick="geocodeTripSpots()" class="px-2 py-0.5 rounded-md border border-indigo-200 text-indigo-600 font-bold hover:bg-indigo-50" style="font-size:10px">📍 좌표 없는 ' + missing + '곳 자동 찾기</button>' : '');
+        (missing ? '<button onclick="geocodeTripSpots()" class="px-2 py-0.5 rounded-md border border-indigo-200 text-[#1F4BD8] font-bold hover:bg-indigo-50" style="font-size:10px">📍 좌표 없는 ' + missing + '곳 자동 찾기</button>' : '');
     }
 
     if (latlngs.length) {
@@ -19067,10 +19094,27 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var transit = Math.max(cnt('이동수단'), domCnt('journey-transport-list'));
       var rental = domCnt('journey-rental-list');
       var rain = window._journeyRainDays || [];
+      // (2026-11-06 4차) 예약 탭 요약 한 줄로 합침: 예약된 밤 / 빈 밤 (bookings-v2 의 두 번째 숫자 줄 대신)
+      var _bkN = 0, _bkAll = 0, _bkGap = 0;
+      try {
+        var _t = (typeof getCurrentTrip === 'function') ? (getCurrentTrip() || {}) : {};
+        var _isD = function(x) { return /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')); };
+        var _add = function(x, n) { var d = new Date(x + 'T00:00:00'); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+        var _cov = {};
+        jd.filter(function(x) { return x.type === '숙소' && _isD(x.date); }).forEach(function(x) {
+          var n = _isD(x.checkout_date) ? Math.max(1, Math.round((new Date(x.checkout_date) - new Date(x.date)) / 864e5)) : 1;
+          for (var i = 0; i < n; i++) _cov[_add(x.date, i)] = 1;
+        });
+        _bkN = Object.keys(_cov).length;
+        if (_isD(_t.start_date) && _isD(_t.end_date)) {
+          for (var _d = _t.start_date; _d < _t.end_date; _d = _add(_d, 1)) { _bkAll++; if (!_cov[_d]) _bkGap++; }
+        }
+      } catch (e) {}
       var chips = [
         ['Stops', cities.length + '개 도시', nights ? nights + '박' : '', 'trv-stops', ''],
         ['Flights', flights + '편', '', 'trv-flights', ''],
-        ['Lodging', lodging + '곳', '', 'trv-lodging', ''],
+        ['Lodging', lodging + '곳', _bkAll ? _bkN + '/' + _bkAll + '박 예약' : '', 'trv-lodging', ''],
+        _bkGap ? ['Empty nights', _bkGap + '박', '묵을 곳 없음', 'trv-lodging', 'warn'] : null,
         ['Transit', transit + '건', '', 'trv-transport', ''],
         ['Rental', rental + '건', '', 'trv-rental', ''],
         ['Souvenir', souvDone + '/' + souvenirs.length, '구매 완료', 'trv-souvenir', ''],
@@ -19078,7 +19122,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           ? ['Weather', '☔ 비 예보 ' + rain.length + '일', rain.slice(0, 2).join(' · '), 'trv-stops', 'warn']
           : ['Weather', '☀️ 예보 무난', '체류 기간 기준', 'trv-stops', '']
       ];
-      el.innerHTML = chips.map(function(c) {
+      el.innerHTML = chips.filter(Boolean).map(function(c) {
         return '<div class="trv-ov-chip' + (c[4] === 'warn' ? ' is-warn' : '') + '" onclick="trvJumpSec(\'' + c[3] + '\')" title="클릭하면 해당 섹션으로 이동">' +
           '<p class="trv-ov-l">' + c[0] + '</p><div class="trv-ov-v">' + c[1] + '</div>' +
           (c[2] ? '<div class="trv-ov-sub">' + c[2] + '</div>' : '') + '</div>';
@@ -19096,7 +19140,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     try { renderTripTabs(); } catch(e) {}   // 여행 선택 드롭다운 라벨/옵션 채우기
     try { if (typeof window.renderPlaces === 'function') window.renderPlaces(); } catch(e) {}
     var titleEl = document.getElementById('page-title');
-    if (titleEl) titleEl.textContent = 'Travel · Places';
+    if (titleEl) titleEl.textContent = 'Travel · Spots';
   };
   window.hideTravelPlaces = function() {
     var sec = document.getElementById('travel-places-section');
@@ -21634,7 +21678,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     try { renderTripTabs(); } catch(e) {}
     try { if (typeof window.renderLedgerTabs === 'function') window.renderLedgerTabs(); } catch(e) {}
     var titleEl = document.getElementById('page-title');
-    if (titleEl) titleEl.textContent = 'Travel · Records';
+    if (titleEl) titleEl.textContent = 'Travel · Bookings';
   };
   window.hideTravelRecords = function() {
     var sec = document.getElementById('travel-records-section');
@@ -22481,7 +22525,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     document.getElementById('matrix-leave-used').textContent = used.toFixed(1);
     var leftEl = document.getElementById('matrix-leave-left');
     leftEl.textContent = left.toFixed(1);
-    leftEl.className = left < 0 ? 'text-2xl font-black text-rose-500' : 'text-2xl font-black text-indigo-500';
+    leftEl.className = left < 0 ? 'text-2xl font-black text-rose-500' : 'text-2xl font-black text-[#1F4BD8]';
   }
 
   // ===== MATRIX YEAR SWITCH + LEAVE SETTINGS =====
@@ -23261,7 +23305,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     incomeData.forEach(function(row, i) {
       const status = row[3] || '';
       const statusClass = status === 'Finished'
-        ? 'bg-indigo-100/80 text-indigo-700'
+        ? 'bg-indigo-100/80 text-[#1A3FB5]'
         : status === 'In-Progress'
         ? 'bg-amber-100/80 text-amber-700'
         : 'bg-slate-100/80 text-slate-500';
@@ -23502,6 +23546,12 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   // ★ (2026-10-11) 시리즈 이름으로 색 고정 — 달력(js/cal-wb.js SERIES_FIXED)과 맞춤. R 시리즈 = 청록
   function _seriesFixedHex(name) { return /^R/i.test(String(name || '').trim()) ? '#0D9488' : null; }
 
+  // (2026-11-06 4차) 시리즈 타임라인 막대 = 달력과 같은 4색 문법: 시놉·초고·퇴고 = 흰 바탕+잉크 선, 휴식 = 회색 파선, 연재 = 코발트
+  function _phaseBarStyle(k) {
+    if (k === 'publishing') return { box: 'background:#1F4BD8;', txt: '#fff' };
+    if (k === 'rest') return { box: 'background:#fff;border:1px dashed #A1A1AA;box-sizing:border-box;', txt: '#5B5B66' };
+    return { box: 'background:#fff;box-shadow:inset 0 0 0 1px #16161A;', txt: '#16161A' };
+  }
   function getSeriesColor(name) {
     var data = getSeriesData();
     var s = data.find(function(x){return x.name===name;});
@@ -23516,7 +23566,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   var CHART_COLORS = {
     indigo: { line:'rgba(31,75,216,1)', fill:'rgba(31,75,216,0.08)', border:'rgba(31,75,216,0.6)' },
     amber:  { line:'rgba(161,140,0,1)',  fill:'rgba(161,140,0,0.05)',  border:'rgba(161,140,0,0.6)' },
-    rose:   { line:'rgba(225,29,72,1)',   fill:'rgba(225,29,72,0.06)',  border:'rgba(225,29,72,0.6)' },
+    rose:   { line:'rgba(220,38,38,1)',   fill:'rgba(220,38,38,0.06)',  border:'rgba(220,38,38,0.6)' },
     teal:   { line:'rgba(20,184,166,1)',  fill:'rgba(20,184,166,0.06)', border:'rgba(20,184,166,0.6)' },
     purple: { line:'rgba(147,51,234,1)',  fill:'rgba(147,51,234,0.06)', border:'rgba(147,51,234,0.6)' },
     blue:   { line:'rgba(59,130,246,1)',  fill:'rgba(59,130,246,0.06)', border:'rgba(59,130,246,0.6)' },
@@ -23717,14 +23767,14 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       // 월별 수익 합계
       html += '<tr class="hover:bg-indigo-50/30 transition-colors" style="background:rgba(31,75,216,0.03)">' +
         '<td class="p-2 border-l-4 border-indigo-500 whitespace-nowrap"><div class="flex items-center gap-1.5">' +
-          '<span class="material-symbols-outlined text-indigo-600" style="font-size: var(--font-size-body)">summarize</span>' +
-          '<div><div class="font-bold text-xs text-indigo-700">전체 합산</div>' +
+          '<span class="material-symbols-outlined text-[#1F4BD8]" style="font-size: var(--font-size-body)">summarize</span>' +
+          '<div><div class="font-bold text-xs text-[#1A3FB5]">전체 합산</div>' +
           '<div class="text-[10px] uppercase tracking-tighter text-indigo-400">월별 수익</div></div>' +
         '</div></td>';
       for (var tm1 = 0; tm1 < 12; tm1++) {
         var v1 = monthlyTotals[tm1];
         var isCurT = tm1 === curMonth;
-        var cls1 = isCurT ? ' font-bold text-indigo-700 bg-indigo-50 ring-1 ring-indigo-200' : (v1 ? ' text-slate-800' : ' text-slate-300');
+        var cls1 = isCurT ? ' font-bold text-[#1A3FB5] bg-indigo-50 ring-1 ring-indigo-200' : (v1 ? ' text-slate-800' : ' text-slate-300');
         html += '<td class="p-2 text-center text-xs font-headline font-bold' + cls1 + '">' + shortRev(v1) + '</td>';
       }
       html += '</tr>';
@@ -23738,7 +23788,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       html += '</tr>';
     }
     html += '<tr><td colspan="13" class="p-3 text-center">' +
-      '<button onclick="addNewSeries()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mx-auto"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 시리즈 추가</button>' +
+      '<button onclick="addNewSeries()" class="text-xs font-bold text-[#1F4BD8] hover:text-indigo-800 flex items-center gap-1 mx-auto"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 시리즈 추가</button>' +
       '</td></tr>';
     tbody.innerHTML = html;
     initMatrixEditing();
@@ -24634,7 +24684,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     completed:  { icon: '✅', label: '완결',         color: '#6b7280', bg: 'rgba(107,114,128,0.08)' }
   };
 
-  var _seriesHexMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316', fuchsia:'#d946ef' };
+  var _seriesHexMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#DC2626', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316', fuchsia:'#d946ef' };
   function _getSeriesHex(seriesName) {
     var c = getSeriesColor(seriesName);
     return _seriesHexMap[c] || '#1F4BD8';
@@ -24747,12 +24797,12 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         var clampEnd = Math.min(pEnd, yrEnd);
         var leftPct = ((clampStart - yrStart) / (yrEnd - yrStart) * 100).toFixed(2);
         var widthPct = Math.max(0.3, ((clampEnd - clampStart) / (yrEnd - yrStart) * 100)).toFixed(2);
-        var color = phaseColors[realKey] || '#94a3b8';
+        var _pb = _phaseBarStyle(realKey);
         var label = phaseLabels[realKey] || '';
         var showLabel = parseFloat(widthPct) > 3;
 
-        rowsHtml += '<div class="absolute top-1.5 rounded-sm" style="left:' + leftPct + '%;width:' + widthPct + '%;height:20px;background:' + color + ';opacity:0.85" title="' + label + ': ' + ph.start + ' ~ ' + ph.end + '">';
-        if (showLabel) rowsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">' + label + '</span>';
+        rowsHtml += '<div class="absolute top-1.5" style="left:' + leftPct + '%;width:' + widthPct + '%;height:20px;' + _pb.box + '" title="' + label + ': ' + ph.start + ' ~ ' + ph.end + '">';
+        if (showLabel) rowsHtml += '<span class="text-[11px] font-bold px-1 truncate block leading-5" style="color:' + _pb.txt + '">' + label + '</span>';
         rowsHtml += '</div>';
       });
 
@@ -24806,8 +24856,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var mm = months[mi], nextP = mi<months.length-1 ? months[mi+1].p : 100;
       var mw = nextP - mm.p; var isYr = mm.m===0;
       hHtml += '<div style="position:absolute;left:'+mm.p.toFixed(1)+'%;width:'+mw.toFixed(1)+'%;top:0;bottom:0;border-left: 1px solid var(--slate-100);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px' + (isYr?';background:rgba(53,99,223,0.04)':'') + '">' +
-        (isYr?'<span class="text-[9px] font-black text-indigo-600">'+mm.y+'</span>':'') +
-        '<span class="text-[10px] font-bold' + (isYr?' text-indigo-600':' text-slate-400') + '">'+MO[mm.m]+'월</span></div>';
+        (isYr?'<span class="text-[9px] font-black text-[#1F4BD8]">'+mm.y+'</span>':'') +
+        '<span class="text-[10px] font-bold' + (isYr?' text-[#1F4BD8]':' text-slate-400') + '">'+MO[mm.m]+'월</span></div>';
     }
     // Rows — flat sorted by publish_start
     var seriesData = getSeriesData((typeof _matrixYear!=='undefined'&&_matrixYear)?_matrixYear:new Date().getFullYear());
@@ -24821,7 +24871,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         rowsHtml += '<div class="flex items-stretch" style="height:36px;border-bottom: 1px solid var(--slate-50)">';
         var isDraft = w.status !== 'confirmed';
         var actBtns = '<div class="shrink-0 flex gap-0.5 opacity-40 group-hover:opacity-100 transition-opacity">' +
-          (isDraft ? '<button onclick="event.stopPropagation();confirmWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-indigo-100 text-indigo-500" title="확정"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span></button>' :
+          (isDraft ? '<button onclick="event.stopPropagation();confirmWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-indigo-100 text-[#1F4BD8]" title="확정"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span></button>' :
                      '<button onclick="event.stopPropagation();resyncWorkCal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="재동기화"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">sync</span></button>') +
           '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
           '<button onclick="event.stopPropagation();askDeleteWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button></div>';
@@ -24839,10 +24889,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           if (pe<rStart.getTime()||ps>rEnd.getTime()) return;
           var cl=Math.max(0,(ps-rStart.getTime())/totalMs*100), cr=Math.min(100,(pe-rStart.getTime())/totalMs*100);
           var cw=Math.max(0.3,cr-cl);
-          var col = rk==='publishing'?sColor:(phaseColors[rk]||'#94a3b8');
+          var _pb2 = _phaseBarStyle(rk);
           var lbl = {synopsis:'시놉',draft:'초고',revision:'퇴고',rest:'휴식',publishing:'연재'}[rk]||rk;
-          rowsHtml += '<div class="absolute top-1.5 rounded-sm cursor-pointer" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;height:20px;background:'+col+';opacity:0.85" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
-          if (cw > 3) rowsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">'+lbl+'</span>';
+          rowsHtml += '<div class="absolute top-1.5 cursor-pointer" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;height:20px;'+_pb2.box+'" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
+          if (cw > 3) rowsHtml += '<span class="text-[11px] font-bold px-1 truncate block leading-5" style="color:'+_pb2.txt+'">'+lbl+'</span>';
           rowsHtml += '</div>';
         });
         if (w.phases&&w.phases._pub) delete w.phases._pub;
@@ -24927,7 +24977,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var totalMs = rangeEnd.getTime() - rangeStart.getTime();
     var pct = function(d) { return Math.max(0, Math.min(100, ((d.getTime() - rangeStart.getTime()) / totalMs * 100))); };
     var todayPct = pct(today);
-    var scMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316' };
+    var scMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#DC2626', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316' };
     var _md = function(d) { return (d.getMonth()+1)+'/'+d.getDate(); };
 
     // Month markers
@@ -24936,7 +24986,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     while (mc <= rangeEnd) {
       var mp = pct(mc);
       var isCur = mc.getMonth() === today.getMonth() && mc.getFullYear() === today.getFullYear();
-      mHtml += '<div class="absolute text-[9px] font-bold' + (isCur ? ' text-indigo-600' : ' text-slate-300') + '" style="left:' + mp.toFixed(1) + '%;bottom:0;transform:translateX(-50%)">' + (mc.getMonth()+1) + '월</div>';
+      mHtml += '<div class="absolute text-[9px] font-bold' + (isCur ? ' text-[#1F4BD8]' : ' text-slate-300') + '" style="left:' + mp.toFixed(1) + '%;bottom:0;transform:translateX(-50%)">' + (mc.getMonth()+1) + '월</div>';
       mc.setMonth(mc.getMonth() + 1);
     }
 
@@ -25040,7 +25090,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '<p>✍️ 초고: <b>' + r.phases.draft.start + '</b> ~ <b>' + r.phases.draft.end + '</b></p>' +
       '<p>🔍 퇴고: <b>' + r.phases.revision.start + '</b> ~ <b>' + r.phases.revision.end + '</b></p>' +
       '<p>☕ 휴식: <b>' + r.phases.rest.start + '</b> ~ <b>' + r.phases.rest.end + '</b> (' + r.rest_days + '일)</p>' +
-      '<p>🎯 연재: <b class="text-indigo-700">' + r.publish_start + '</b> ~ <b>' + r.publish_end + '</b> (주 1회)</p>';
+      '<p>🎯 연재: <b class="text-[#1A3FB5]">' + r.publish_start + '</b> ~ <b>' + r.publish_end + '</b> (주 1회)</p>';
     document.getElementById('nw-preview-content').innerHTML = html;
     document.getElementById('nw-preview').style.display = '';
   }
@@ -26932,7 +26982,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       }
 
       return '<div class="shrink-0 w-48 p-6 rounded-2xl bg-white hover:-translate-y-1 transition-all cursor-default" style="box-shadow:0px 8px 24px rgba(25,28,29,0.04);' + border + bg + '">' +
-        '<p class="text-xs font-bold text-slate-400 mb-3">' + yr + '년' + (isCurrent ? ' <span class="text-indigo-600">현재</span>' : '') + '</p>' +
+        '<p class="text-xs font-bold text-slate-400 mb-3">' + yr + '년' + (isCurrent ? ' <span class="text-[#1F4BD8]">현재</span>' : '') + '</p>' +
         (hasData
           ? '<p class="text-xl font-black font-headline text-slate-900">₩' + Math.round(assetsWon).toLocaleString('ko-KR') + '</p>'
           : '<p class="text-xl font-black font-headline text-slate-300">—</p>') +
@@ -27077,17 +27127,18 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           // 저축은 체크에서 파킹으로 이동 → - 차감
           if (isInc || isWith) itemRunning += amt;
           else itemRunning -= amt;
-          var colorCls = isInc ? 'text-emerald-600' : (isWith ? 'text-blue-600' : (isSav ? 'text-yellow-600' : 'text-red-600'));
+          // 돈 색 문법: 수입 초록 · 지출 빨강 · 저축/출금(내 돈 옮기기)은 잉크
+          var colorCls = isInc ? 'text-[#15803D]' : ((isWith || isSav) ? 'text-[#16161A]' : 'text-[#DC2626]');
           var sign = (isInc || isWith) ? '+' : '-';
           var dateDay = (mi.row[0]||'').substring(8,10);
-          var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#475569;';
+          var balColor = itemRunning < 0 ? 'color:#DC2626;' : 'color:#475569;';
           var firestoreId = mi.row[5] || '';
           return '<tr style="border-top: 1px solid var(--slate-100);" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
             '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size: var(--font-size-tiny)" title="드래그로 순서 변경">⋮⋮</td>' +
             '<td class="hub-cell py-2 text-slate-400 text-xs w-7" data-col="0">' + dateDay + '</td>' +
             '<td class="hub-cell py-2 text-slate-700 text-xs font-medium" data-col="1">' + (mi.row[2]||type) + '</td>' +
             '<td class="hub-cell py-2 text-right text-xs font-bold ' + colorCls + '" data-col="2">' + sign + amt.toLocaleString('ko-KR') + '</td>' +
-            '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + Math.round(itemRunning).toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-2 text-right text-[11px] font-medium" style="' + balColor + 'white-space:nowrap;">' + Math.round(itemRunning).toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right w-8"><div class="opacity-0 group-hover:opacity-100 transition-all">' +
               '<button onclick="event.stopPropagation();atlTapConfirm(this,function(){deleteHubRow(' + mi.idx + ')})" class="atl-tapdel" title="삭제 (한 번 더 누르면 지워져요)" aria-label="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
             '</div></td></tr>';
@@ -27307,8 +27358,13 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       '.hub-editing .hub-cell-in{caret-color:auto;cursor:text}' +
       '.hub-sel:not(.hub-editing) .hub-cell-in::selection{background:transparent}' +
       '.hub-type-sel{font-size:10px;border:none;background:transparent;padding:0;color:#64748b;cursor:pointer}' +
+      '.hub-new-row{border-top:1px dashed #BCCBF7 !important}' +
       '.hub-new-row .hub-cell{color:#475569;font-weight:500}' +
-      '.hub-new-row .hub-cell.hub-has{color:#64748b}';
+      '.hub-new-row .hub-cell.hub-has{color:#16161A}' +
+      '.hub-new-row .hub-cell[data-col="1"]:not(.hub-has):not(.hub-editing){color:#1F4BD8;font-weight:600}' +
+      '.hub-new-row .hub-cell[data-col="1"]:not(.hub-has):not(.hub-editing)::before{content:"+ ";font-weight:700}' +
+      '.hub-new-row .hub-cell[data-col="2"]:not(.hub-has):not(.hub-editing)::after{content:"금액";color:#64748B;font-weight:400}' +
+      '.hub-new-row:hover .hub-cell{background:#EEF2FD}';
     document.head.appendChild(st);
   })();
 
@@ -27318,7 +27374,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     return '<tr class="hub-new-row" data-hub-new="' + monthKey + '" data-hub-month="' + monthKey + '" style="border-top: 1px solid var(--slate-100);">' +
       '<td class="py-2 w-4"></td>' +
       '<td class="hub-cell py-2 text-xs w-7' + (has(d.d) ? ' hub-has' : '') + '" data-col="0">' + (has(d.d) ? d.d : '') + '</td>' +
-      '<td class="hub-cell py-2 text-xs' + (has(d.t) ? ' hub-has' : '') + '" data-col="1">' + (has(d.t) ? escHtml(d.t) : '새 항목') + '</td>' +
+      '<td class="hub-cell py-2 text-xs' + (has(d.t) ? ' hub-has' : '') + '" data-col="1">' + (has(d.t) ? escHtml(d.t) : '새 항목 추가') + '</td>' +
       '<td class="hub-cell py-2 text-right text-xs' + (has(d.a) ? ' hub-has' : '') + '" data-col="2">' + (has(d.a) ? Number(d.a).toLocaleString('ko-KR') : '') + '</td>' +
       '<td></td><td></td></tr>';
   }
@@ -28446,7 +28502,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     }
     var hasReview = engSessionsData.some(function(s){ return s._id === normalized; });
     if (hasReview) {
-      return '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + normalized + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">bar_chart</span>리뷰 보기</button>';
+      return '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + normalized + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-[#1F4BD8] bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">bar_chart</span>리뷰 보기</button>';
     }
     return '<span class="text-xs text-slate-300">미작성</span>';
   }
@@ -28503,7 +28559,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
       // 구간 시작 바
       var headerTr = document.createElement('tr');
-      headerTr.innerHTML = '<td colspan="' + colCount + '" class="px-6 py-2 bg-indigo-50/60 border-t border-indigo-100"><span class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider">' + group.key + '</span></td>';
+      headerTr.innerHTML = '<td colspan="' + colCount + '" class="px-6 py-2 bg-indigo-50/60 border-t border-indigo-100"><span class="text-[11px] font-bold text-[#1F4BD8] uppercase tracking-wider">' + group.key + '</span></td>';
       tbody.appendChild(headerTr);
 
       // 구간 수업료 합산
@@ -28527,7 +28583,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
           var isActive = current === label;
           var cls = '';
           if (label === '예정')  cls = isActive ? 'bg-slate-200 text-slate-700 border-slate-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-100';
-          if (label === '완료')  cls = isActive ? 'bg-indigo-100 text-indigo-700 border-indigo-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-indigo-50';
+          if (label === '완료')  cls = isActive ? 'bg-indigo-100 text-[#1A3FB5] border-indigo-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-indigo-50';
           if (label === '취소')  cls = isActive ? 'bg-rose-100 text-rose-700 border-rose-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-rose-50';
           return '<button onclick="setEnglishStatus(\'' + date + '\',\'' + label + '\')" class="px-2 py-0.5 rounded-full text-[9px] uppercase border transition-all ' + cls + '">' + label + '</button>';
         }
@@ -28560,7 +28616,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         '<td style="background:rgba(53,99,223,0.04);"></td>' +
         '<td style="background:rgba(53,99,223,0.04);"></td>' +
         '<td class="px-6 py-2 text-[10px] text-slate-400" style="background:rgba(53,99,223,0.04);">' + sessionCount + ' sessions</td>' +
-        '<td class="px-6 py-2 text-right font-black text-indigo-600 text-sm" style="background:rgba(53,99,223,0.04);">£' + Math.round(trimesterFee) + krwSub(trimesterFee) + '</td>' +
+        '<td class="px-6 py-2 text-right font-black text-[#1F4BD8] text-sm" style="background:rgba(53,99,223,0.04);">£' + Math.round(trimesterFee) + krwSub(trimesterFee) + '</td>' +
         '<td style="background:rgba(53,99,223,0.04);"></td><td style="background:rgba(53,99,223,0.04);"></td>';
       tbody.appendChild(subtotalTr);
     });
@@ -29772,11 +29828,11 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   // Category modal
   function pkRenderIconPicker() {
     document.getElementById('pk-icon-picker').innerHTML = PK_ICONS.map(function(ic,i){
-      var cls=i===0?'p-2 rounded-xl bg-indigo-50 text-indigo-600 border-2 border-indigo-300':'p-2 rounded-xl bg-slate-50 text-slate-500 border-2 border-transparent hover:border-indigo-300';
+      var cls=i===0?'p-2 rounded-xl bg-indigo-50 text-[#1F4BD8] border-2 border-indigo-300':'p-2 rounded-xl bg-slate-50 text-slate-500 border-2 border-transparent hover:border-indigo-300';
       return '<button type="button" onclick="pkPickIcon(this,\''+ic+'\')" class="'+cls+'"><span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">'+ic+'</span></button>';
     }).join('');
   }
-  function pkPickIcon(btn,icon) { _pkCatIcon=icon; document.querySelectorAll('#pk-icon-picker button').forEach(function(b){b.className='p-2 rounded-xl bg-slate-50 text-slate-500 border-2 border-transparent hover:border-indigo-300';}); btn.className='p-2 rounded-xl bg-indigo-50 text-indigo-600 border-2 border-indigo-300'; }
+  function pkPickIcon(btn,icon) { _pkCatIcon=icon; document.querySelectorAll('#pk-icon-picker button').forEach(function(b){b.className='p-2 rounded-xl bg-slate-50 text-slate-500 border-2 border-transparent hover:border-indigo-300';}); btn.className='p-2 rounded-xl bg-indigo-50 text-[#1F4BD8] border-2 border-indigo-300'; }
   function pkOpenCategoryModal() { document.getElementById('pk-cat-name').value=''; _pkCatIcon='star'; pkRenderIconPicker(); document.getElementById('pk-cat-modal').style.cssText='display:flex!important'; }
   function pkCloseCategoryModal() { document.getElementById('pk-cat-modal').style.cssText='display:none!important'; }
   async function pkSaveCategory() {
@@ -30191,7 +30247,7 @@ function renderEnglishSessions() {
       return '<div class="flex items-center gap-2">' +
         '<span class="text-[9px] font-bold text-slate-400 w-16 uppercase">' + label + '</span>' +
         '<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + pct + '%;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));"></div></div>' +
-        '<span class="text-[9px] font-bold text-indigo-600 w-8">' + cambLabel + '</span>' +
+        '<span class="text-[9px] font-bold text-[#1F4BD8] w-8">' + cambLabel + '</span>' +
       '</div>';
     }
 
@@ -30199,7 +30255,7 @@ function renderEnglishSessions() {
       '<div class="flex gap-5">' +
         '<div class="shrink-0 text-center pt-1">' +
           '<p class="text-2xl font-extrabold text-slate-900 font-headline leading-none">' + String(dateObj.getDate()).padStart(2,'0') + '</p>' +
-          '<p class="text-[10px] font-bold text-indigo-600 uppercase">' + monthName + '</p>' +
+          '<p class="text-[10px] font-bold text-[#1F4BD8] uppercase">' + monthName + '</p>' +
           '<p class="text-[9px] text-slate-400 font-medium">' + dayName + '</p>' +
         '</div>' +
         '<div class="flex-1 min-w-0">' +
@@ -30207,7 +30263,7 @@ function renderEnglishSessions() {
           '<p class="text-xs text-slate-400 mb-3 truncate">' + (s.subtitle||'') + '</p>' +
           '<div class="space-y-1 mb-3">' + lvBar(lv.fluency,'Fluency') + lvBar(lv.vocab,'Vocab') + lvBar(lv.grammar,'Grammar') + lvBar(lv.interaction,'Interact') + '</div>' +
           '<div class="flex flex-wrap gap-2">' +
-            (exprCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">표현 ' + exprCount + '</span>' : '') +
+            (exprCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-[#1F4BD8] px-2 py-0.5 rounded-full">표현 ' + exprCount + '</span>' : '') +
             (upgCount ? '<span class="text-[9px] font-bold bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full">업그레이드 ' + upgCount + '</span>' : '') +
             (vocabCount ? '<span class="text-[9px] font-bold bg-teal-50 text-teal-600 px-2 py-0.5 rounded-full">어휘 ' + vocabCount + '세트</span>' : '') +
             (drillCount ? '<span class="text-[9px] font-bold bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full">드릴 ' + drillCount + '</span>' : '') +
@@ -30329,12 +30385,12 @@ function openSessionDetail(dateId) {
   // Title with last word accented
   var words = (s.title||'Untitled').split(' ');
   var lastWord = words.pop();
-  var titleHtml = words.join(' ') + ' <span class="text-indigo-600">' + lastWord + '</span>';
+  var titleHtml = words.join(' ') + ' <span class="text-[#1F4BD8]">' + lastWord + '</span>';
 
   function lvBarFull(val, label, skill) {
     var pct = val || 0;
     var camb = cambridgeLabel(pct, skill);
-    return '<div class="flex-1"><div class="flex justify-between mb-1"><span class="text-xs font-bold text-slate-600">' + label + '</span><span class="text-xs font-bold text-indigo-600">' + camb + ' (' + pct + ')</span></div>' +
+    return '<div class="flex-1"><div class="flex justify-between mb-1"><span class="text-xs font-bold text-slate-600">' + label + '</span><span class="text-xs font-bold text-[#1F4BD8]">' + camb + ' (' + pct + ')</span></div>' +
       '<div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + pct + '%;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));"></div></div></div>';
   }
 
@@ -30404,7 +30460,7 @@ function openSessionDetail(dateId) {
       '</div>';
     }).join('');
     return '<div style="margin-left:26px;margin-top:10px">' +
-      '<button id="' + id + '-btn" onclick="toggleGemBreakdown(\'' + id + '\')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">unfold_more</span>표현 뜯어보기</button>' +
+      '<button id="' + id + '-btn" onclick="toggleGemBreakdown(\'' + id + '\')" class="text-xs font-bold text-[#1F4BD8] hover:text-indigo-800 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">unfold_more</span>표현 뜯어보기</button>' +
       '<div id="' + id + '" style="display:none;margin-top:8px" class="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100">' +
         (u.gemMeaningKr ? '<p class="review-note-kr" style="margin:0 0 10px;font-weight:600;color:#17348F">' + u.gemMeaningKr + '</p>' : '') +
         rows +
@@ -30417,12 +30473,12 @@ function openSessionDetail(dateId) {
       '<div class="flex items-start gap-2.5 mb-2.5"><span class="text-rose-500 text-base mt-0.5">❌</span><span class="review-upgrade-bad line-through">' + (u.bad||'') + '</span></div>' +
       '<div class="flex items-start gap-2.5 mb-1"><span class="text-emerald-500 text-base mt-0.5">✔</span><span class="review-upgrade-ok">' + (u.ok||'') + '</span> ' + spk(u.ok) + '</div>' +
       (u.okKr ? '<p class="review-note-kr" style="margin-left:26px;margin-bottom:10px">' + u.okKr + '</p>' : '') +
-      '<div class="flex items-start gap-2.5 mb-1"><span class="text-indigo-500 text-base mt-0.5">💎</span><span class="review-upgrade-gem">' + (u.gem||'') + '</span> ' + spk(u.gem) + (u.freq ? ' ' + freqBadge(u.freq) : '') + '</div>' +
+      '<div class="flex items-start gap-2.5 mb-1"><span class="text-[#1F4BD8] text-base mt-0.5">💎</span><span class="review-upgrade-gem">' + (u.gem||'') + '</span> ' + spk(u.gem) + (u.freq ? ' ' + freqBadge(u.freq) : '') + '</div>' +
       (u.gemKr ? '<p class="review-note-kr" style="margin-left:26px;margin-bottom:6px">' + u.gemKr + '</p>' : '') +
       (u.note ? '<p class="review-note-en mt-3">' + u.note + '</p>' : '') +
       (u.noteKr ? '<p class="review-note-kr">' + u.noteKr + '</p>' : '') +
       gemBreakdownHtml(u, ui) +
-      (typeof addPhraseFromGem === 'function' ? '<div style="margin-left:26px;margin-top:8px"><button id="gemadd-' + ui + '" onclick="addPhraseFromGem(\'' + dateId + '\',' + ui + ')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">bookmark_add</span>+ My Phrases' + (u.gemFrame ? ' · ' + u.gemFrame.replace(/</g,'&lt;') : '') + '</button></div>' : '') +
+      (typeof addPhraseFromGem === 'function' ? '<div style="margin-left:26px;margin-top:8px"><button id="gemadd-' + ui + '" onclick="addPhraseFromGem(\'' + dateId + '\',' + ui + ')" class="text-xs font-bold text-[#1F4BD8] hover:text-indigo-800 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">bookmark_add</span>+ My Phrases' + (u.gemFrame ? ' · ' + u.gemFrame.replace(/</g,'&lt;') : '') + '</button></div>' : '') +
     '</div>';
   }).join('') + '</div>' + krBox(s.upgradesKr);
 
@@ -30431,7 +30487,7 @@ function openSessionDetail(dateId) {
   var sec4 = '<div class="space-y-5">' + grams.map(function(g){
     return '<div class="p-5 rounded-xl bg-slate-50">' +
       '<h4 class="review-h4 mb-2">' + (g.title||'') + '</h4>' +
-      '<p class="review-rule mb-1"><span class="font-bold text-indigo-700">Rule:</span> <span class="text-slate-800">' + (g.rule||'') + '</span></p>' +
+      '<p class="review-rule mb-1"><span class="font-bold text-[#1A3FB5]">Rule:</span> <span class="text-slate-800">' + (g.rule||'') + '</span></p>' +
       (g.ruleKr ? '<p class="review-note-kr mb-3">' + g.ruleKr + '</p>' : '<div class="mb-3"></div>') +
       '<ul class="list-disc pl-5 space-y-1.5">' + (g.examples||[]).map(function(ex){ return '<li class="review-list-item">' + ex + '</li>'; }).join('') + '</ul>' +
     '</div>';
@@ -30444,7 +30500,7 @@ function openSessionDetail(dateId) {
   function krOf(x){ return (x && typeof x === 'object') ? (x.kr||'') : ''; }
   var sec5 = '';
   if (cs.followups && cs.followups.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Follow-up Questions</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.followups.map(function(f){ return '<li class="review-list-item">' + enOf(f) + ' ' + spk(enOf(f)) + (krOf(f) ? '<br><span class="review-note-kr">' + krOf(f) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
-  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Richer Reactions</h4><table class="w-full"><thead><tr class="border-b border-slate-200"><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Feeling</th><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-100"><td class="py-3 review-table-kr">' + (r.feel||'') + (r.feelKr ? ' <span style="color:#475569;font-size:11px">' + r.feelKr + '</span>' : '') + '</td><td class="py-3 review-table-en">' + (r.say||'') + ' ' + spk(r.say) + (r.kr ? '<br><span class="review-note-kr">' + r.kr + '</span>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Richer Reactions</h4><table class="w-full"><thead><tr class="border-b border-slate-200"><th class="text-left py-2 text-[11px] font-bold uppercase text-[#1F4BD8] tracking-wider">Feeling</th><th class="text-left py-2 text-[11px] font-bold uppercase text-[#1F4BD8] tracking-wider">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-100"><td class="py-3 review-table-kr">' + (r.feel||'') + (r.feelKr ? ' <span style="color:#475569;font-size:11px">' + r.feelKr + '</span>' : '') + '</td><td class="py-3 review-table-en">' + (r.say||'') + ' ' + spk(r.say) + (r.kr ? '<br><span class="review-note-kr">' + r.kr + '</span>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>';
   if (cs.starters && cs.starters.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">C1 Sentence Starters</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.starters.map(function(st){ return '<li class="review-list-item">' + enOf(st) + ' ' + spk(enOf(st)) + (krOf(st) ? '<br><span class="review-note-kr">' + krOf(st) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
   sec5 += krBox(cs.kr);
 
@@ -30487,7 +30543,7 @@ function openSessionDetail(dateId) {
       '<p style="font-size:12px;color:#475569;margin:0 0 12px">답을 입력하고 <b>채점</b>을 누르세요. 모르면 <b>정답 보기</b>.</p>' +
       '<ol class="list-decimal pl-5">' + itemsHtml + '</ol></div>';
   }).join('') +
-  (drills.length ? '<button onclick="gradeAllDrills()" class="mb-4 text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft))">전체 채점하기</button><div id="drill-score-summary" class="mb-2 text-sm font-bold text-indigo-700" style="display:none"></div>' : '') +
+  (drills.length ? '<button onclick="gradeAllDrills()" class="mb-4 text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft))">전체 채점하기</button><div id="drill-score-summary" class="mb-2 text-sm font-bold text-[#1A3FB5]" style="display:none"></div>' : '') +
   krBox(s.drillsKr);
 
   // 08 Goals
@@ -30507,7 +30563,7 @@ function openSessionDetail(dateId) {
 
   // Assemble
   var html = '<div class="flex justify-between items-start mb-6">' +
-    '<div><p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Session Report · ' + dateLabel + '</p>' +
+    '<div><p class="text-xs font-bold text-[#1F4BD8] uppercase tracking-wider mb-2">Session Report · ' + dateLabel + '</p>' +
     '<h2 class="text-3xl font-extrabold font-headline text-slate-900 tracking-tight mb-2">' + titleHtml + '</h2>' +
     '<p class="text-sm text-slate-500">' + (s.subtitle||'') + '</p></div>' +
     '<div class="flex items-center gap-3">' +
@@ -30669,8 +30725,8 @@ function setActiveEngTab(n) {
     var label = tab.querySelector('.eng-tab-label');
     if (i === n) {
       tab.className = 'shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-50 transition-colors';
-      if (num) num.className = 'text-indigo-600 text-lg font-extrabold block eng-tab-num';
-      if (label) label.className = 'eng-tab-label text-indigo-700 font-bold';
+      if (num) num.className = 'text-[#1F4BD8] text-lg font-extrabold block eng-tab-num';
+      if (label) label.className = 'eng-tab-label text-[#1A3FB5] font-bold';
     } else {
       tab.className = 'shrink-0 px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-50 transition-colors';
       if (num) num.className = 'text-indigo-300 text-lg font-extrabold block eng-tab-num';

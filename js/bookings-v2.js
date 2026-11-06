@@ -126,7 +126,9 @@
 
     var nFlight = ev.filter(function(e){ return e.k === 0; }).length;
     var nNights = Object.keys(covered).length, nAll = (isDate(t.start_date) && isDate(t.end_date)) ? nightsBetween(t.start_date, t.end_date) : 0;
-    var sum = '<div class="bk-sum">' +
+    // (2026-11-06 4차) 숫자 줄은 위 요약(journey-overview) 하나로 합쳤다 — 여기선 안 그림
+    var sum = '';
+    if (false) sum = '<div class="bk-sum">' +
       '<div><span>Flights</span><b>' + nFlight + '</b></div>' +
       '<div><span>Nights booked</span><b>' + nNights + (nAll ? '<small>/' + nAll + '</small>' : '') + '</b></div>' +
       '<div><span>Rental · Transit</span><b>' + ev.filter(function(e){ return e.k === 1; }).length + '</b></div>' +

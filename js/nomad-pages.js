@@ -5084,7 +5084,7 @@ window.NOMAD_PAGES = (function(){
     var colors = [
       { bg:'#eef2ff', border:'#EEF2FD', iconBg:'#1A3FB5', iconShadow:'rgba(26,63,181,0.25)', titleColor:'#1e1b4b', subColor:'#3730a3', noteColor:'#17348F' },
       { bg:'#fffbeb', border:'#fef3c7', iconBg:'#B45309', iconShadow:'rgba(217,119,6,0.25)',  titleColor:'#451a03', subColor:'#92400e', noteColor:'#b45309' },
-      { bg:'#fff1f2', border:'#ffe4e6', iconBg:'#e11d48', iconShadow:'rgba(225,29,72,0.25)',  titleColor:'#4c0519', subColor:'#9f1239', noteColor:'#be123c' },
+      { bg:'#FEF2F2', border:'#FEE2E2', iconBg:'#DC2626', iconShadow:'rgba(220,38,38,0.25)',  titleColor:'#450A0A', subColor:'#991B1B', noteColor:'#B91C1C' },
       { bg:'#ecfdf5', border:'#d1fae5', iconBg:'#15803D', iconShadow:'rgba(5,150,105,0.25)',  titleColor:'#022c22', subColor:'#065f46', noteColor:'#047857' },
     ];
     var html = '<section class="nm-city-v2-section">';
