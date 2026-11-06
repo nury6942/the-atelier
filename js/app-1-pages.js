@@ -3293,7 +3293,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var daysBadge = document.getElementById('journey-days-badge');
       if (daysBadge) {
         var days = Math.round((new Date(trip.end_date) - new Date(trip.start_date)) / (1000*60*60*24)) + 1;
-        daysBadge.textContent = days + ' DAYS';
+        daysBadge.textContent = days + ' Days';
         daysBadge.style.display = 'inline-block';
       }
     }
@@ -5019,7 +5019,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var eyebrowTxt = '';
       if (dateStr) {
         try {
-          var _MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+          var _MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           var _ed = new Date(dateStr + 'T00:00:00');
           eyebrowTxt = _badge(isToday ? 'TODAY' : 'DAY ' + String(dayNum).padStart(2,'0')) +
             '<span class="wk4-day-date">' + _MONS[_ed.getMonth()] + ' ' + String(_ed.getDate()).padStart(2,'0') +
@@ -23528,7 +23528,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var canvas = document.getElementById('growth-chart');
     if (!canvas || typeof Chart === 'undefined') return;
     var series = getSeriesData(_growthYear);
-    var labels = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    var labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
     // Legend
     var legendEl = document.getElementById('growth-chart-legend');
@@ -30174,7 +30174,7 @@ function renderEnglishSessions() {
     // AI Tutor(Oliver) 리뷰는 id 가 '2026-10-18-oliver-1828' 모양이라 날짜는 date 필드(없으면 앞 10글자)
     var dateObj = new Date((s.date || String(s._id).slice(0, 10)) + 'T00:00:00');
     var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var dayName = days[dateObj.getDay()];
     var monthName = months[dateObj.getMonth()];
     var dateLabel = monthName + ' ' + String(dateObj.getDate()).padStart(2,'0') + ', ' + dateObj.getFullYear();
