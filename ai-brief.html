@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
-  /* 흑백 에디토리얼 — 색은 쓰지 않고 굵기·크기·여백으로 위계를 만든다 (좋음/나쁨 ▲▼ 만 예외) */
+  /* 아뜰리에 정본(DESIGN.md): 흰 바탕·직각·Pretendard·기울임 없음·연회색 글자 없음(보조 #5B5B66)·한글 자간 0 (좋음/나쁨 ▲▼ 만 예외색) */
   :root{
     --ink:#111; --paper:#ffffff; --card:#fff; --wash:#F5F5F7; --line:rgba(17,17,17,.12); --line2:rgba(17,17,17,.22);
-    --mut:rgba(17,17,17,.62); --dim:rgba(17,17,17,.42);
+    --mut:#5B5B66; --dim:#5B5B66; --accent:#1F4BD8;
     --up:#1f7a4d; --down:#b42318;
   }
   *{box-sizing:border-box}
@@ -26,50 +26,49 @@
 
   /* 머리 */
   .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px}
-  .mast h1{margin:0;font-size:2.6rem;font-weight:800;font-style:italic;letter-spacing:-.035em;line-height:.9;text-transform:uppercase}
+  .mast h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
   .seg{display:flex;border:1px solid var(--ink)}
-  .seg button{border:0;background:transparent;padding:8px 16px;font-size:12px;font-weight:700;letter-spacing:.04em}
+  .seg button{border:0;background:transparent;padding:8px 16px;font-size:13px;font-weight:600}
   .seg button+button{border-left:1px solid var(--ink)}
   .seg button.on{background:var(--ink);color:var(--paper)}
-  .seg .n{font-weight:500;opacity:.6;margin-left:4px;font-variant-numeric:tabular-nums}
+  .seg .n{font-weight:500;opacity:.75;margin-left:4px;font-variant-numeric:tabular-nums}
   .days{display:flex;gap:6px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
   .days::-webkit-scrollbar{display:none}
-  .days button{flex:none;border:1px solid var(--line);background:var(--card);padding:6px 10px;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--mut)}
+  .days button{flex:none;border:1px solid var(--line);background:var(--card);padding:6px 10px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--mut)}
   .days button.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}
   .days button .ck{margin-left:4px}
   .stale{font-size:12px;font-weight:600;padding:9px 12px;margin:14px 0 0;border:1px solid var(--line2);background:var(--wash)}
   .view{margin-top:28px}
 
   .sech{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--ink);padding-bottom:10px;margin:56px 0 20px}
-  .sech h2{margin:0;font-size:1.35rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:-.015em}
-  .sech .cap{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+  .sech h2{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .sech .cap{font-size:12px;font-weight:500;color:var(--mut)}
 
   /* 사진·영상 칸 */
   .img{position:relative;background:var(--wash);overflow:hidden}
   .img img,.img video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
   .img img.fit{object-fit:contain;background:#fff}  /* 깃허브 저장소 공유 그림(글자 카드)만, 칸보다 훨씬 넓으면 잘라내지 않고 통째로 — 실물 사진은 꽉 채움 */
-  .img .ph{position:absolute;inset:0;display:grid;place-items:center;padding:10px;text-align:center;font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--mut);word-break:break-all}
-  .img .ph small{display:block;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
-  .img .play{position:absolute;left:10px;bottom:10px;background:rgba(17,17,17,.82);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em;padding:4px 8px}
-  .tag{display:inline-block;align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--ink);padding:2px 6px}
+  .img .ph{position:absolute;inset:0;display:grid;place-items:center;padding:10px;text-align:center;font-size:13px;font-weight:700;color:var(--mut);word-break:break-all}
+  .img .ph small{display:block;font-size:11px;font-weight:600;color:var(--dim);margin-bottom:4px}
+  .img .play{position:absolute;left:10px;bottom:10px;background:rgba(17,17,17,.82);color:#fff;font-size:11px;font-weight:700;padding:4px 8px}
+  .tag{display:inline-block;align-self:flex-start;font-size:11px;font-weight:600;border:1px solid var(--ink);padding:2px 6px}
   .tag.solid{background:var(--ink);color:var(--paper)}
 
   /* 오늘 꼭 해볼 것 */
   .tries{display:grid;grid-template-columns:1.7fr 1fr;gap:16px}
   .try{border:1px solid var(--ink);background:var(--card);padding:20px;display:flex;flex-direction:column}
   .try.must{background:var(--ink);color:var(--paper);padding:26px 28px}
-  .try .kick{font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;opacity:.7}
   .try .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-  .try h3{margin:0;font-size:1.15rem;font-weight:800;letter-spacing:-.015em;line-height:1.3}
-  .try.must h3{font-size:1.75rem;line-height:1.18;letter-spacing:-.025em}
-  .try .min{font-size:11px;font-weight:700;letter-spacing:.14em;opacity:.6;white-space:nowrap}
+  .try h3{margin:0;font-size:1.15rem;font-weight:700;letter-spacing:-.015em;line-height:1.3}
+  .try.must h3{font-size:24px;line-height:1.25;letter-spacing:-.015em}
+  .try .min{font-size:12px;font-weight:600;opacity:.8;white-space:nowrap;font-variant-numeric:tabular-nums}
   .try .why2{margin-top:10px;font-size:14px;line-height:1.6;opacity:.85}
-  .try .from{align-self:flex-start;margin-top:8px;font-size:11px;font-weight:700;opacity:.6;border-bottom:1px solid currentColor}
+  .try .from{align-self:flex-start;margin-top:8px;font-size:12px;font-weight:600;opacity:.8;border-bottom:1px solid currentColor}
   .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin-top:18px;background:var(--line2);border:1px solid var(--line2)}
   .try.must .steps{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.18)}
   .step{background:var(--card);padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
   .try.must .step{background:var(--ink)}
-  .step .n{font-size:1.5rem;font-weight:800;line-height:1;opacity:.35}
+  .step .n{font-size:1.25rem;font-weight:700;line-height:1;opacity:.75;font-variant-numeric:tabular-nums}
   .step .t{font-size:13px;font-weight:600;line-height:1.45;flex:1}
   .step .act{align-self:flex-start;border:1px solid currentColor;background:transparent;font-size:11px;font-weight:700;padding:5px 10px}
   .done-btn{margin-top:14px;border:1px solid currentColor;background:transparent;font-size:12px;font-weight:700;padding:9px 14px;width:100%;opacity:.8}
@@ -82,10 +81,10 @@
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
   .card{display:flex;flex-direction:column;border:1px solid var(--ink);background:var(--card);min-width:0}
   .card .body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
-  .card h3{margin:8px 0 0;font-size:1.05rem;font-weight:800;letter-spacing:-.015em;line-height:1.35}
+  .card h3{margin:8px 0 0;font-size:1.05rem;font-weight:700;letter-spacing:-.015em;line-height:1.35}
   .card .how{font-size:13px;color:var(--mut);margin-top:4px;line-height:1.55}
   .hero .img{aspect-ratio:16/9}
-  .hero h3{font-size:1.6rem;line-height:1.2;letter-spacing:-.025em}
+  .hero h3{font-size:24px;line-height:1.25;letter-spacing:-.015em}
   .side .card{flex-direction:row}
   .card > a:first-child{display:block;position:relative}
   .side .card > a:first-child{flex:0 0 34%;min-height:100%}
@@ -93,11 +92,11 @@
   .card .body{min-width:0}
   .row2 .card .img{aspect-ratio:16/9}
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-  .chip{font-size:11px;font-weight:700;padding:3px 8px;background:var(--ink);color:var(--paper);font-variant-numeric:tabular-nums}
-  .src{font-size:11px;color:var(--dim);margin-top:8px}
-  .ofrom{align-self:flex-start;font-size:11px;font-weight:700;color:var(--ink);margin-top:6px;border-bottom:1px solid currentColor;text-decoration:none}
+  .chip{font-size:11.5px;font-weight:600;padding:3px 8px;background:var(--ink);color:var(--paper);font-variant-numeric:tabular-nums}
+  .src{font-size:12px;color:var(--mut);margin-top:8px}
+  .ofrom{align-self:flex-start;font-size:12px;font-weight:600;color:var(--ink);margin-top:6px;border-bottom:1px solid currentColor;text-decoration:none}
   .forme,.tr{margin-top:10px;font-size:13px;font-weight:600;line-height:1.5;border-top:1px solid var(--line);padding-top:9px}
-  .forme::before,.tr::before{content:"바로 해보기 → ";font-size:10px;font-weight:800;letter-spacing:.1em}
+  .forme::before,.tr::before{content:"바로 해보기 → ";font-size:12px;font-weight:700}
   .rel{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--mut);margin-top:6px}
   .rel span{flex:none;white-space:nowrap}
   .rel b{color:var(--ink)}
@@ -105,7 +104,7 @@
   .ex a{display:block;min-width:0}
   .ex .img{aspect-ratio:1.91/1}
   .ex span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden}
-  .ex .ph,.vrow .ph{padding:4px;font-size:10px;line-height:1.2}
+  .ex .ph,.vrow .ph{padding:4px;font-size:11px;line-height:1.2}
   .ex .ph small,.vrow .ph small{display:none}  /* 작은 칸은 출처 주소만 */
   .side .ex{grid-template-columns:1fr;gap:6px}  /* 좁은 옆 카드는 예시를 '작은 사진 + 제목' 목록으로 */
   .side .ex a{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:center}
@@ -114,13 +113,13 @@
   .why b{color:var(--ink)}
   .new{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   .new span{font-size:12px;font-weight:600;padding:3px 8px;border:1px solid var(--ink)}
-  .new span::before{content:"NEW ";font-size:9px;font-weight:800;letter-spacing:.1em}
+  .new span::before{content:"NEW ";font-size:11px;font-weight:700}
   .rv{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;display:grid;gap:6px}
-  .rv .h{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .rv .h{font-size:12px;font-weight:600;color:var(--mut)}
   .rv a{display:grid;grid-template-columns:14px minmax(0,1fr);gap:6px;font-size:13px;line-height:1.45}
   .rv i{font-style:normal;font-weight:800}
   .rv .good i{color:var(--up)} .rv .bad i{color:var(--down)}
-  .rv em{font-style:normal;color:var(--dim);font-size:11px;margin-left:4px}
+  .rv em{font-style:normal;color:var(--mut);font-size:12px;margin-left:4px}
 
   /* X · Threads */
   .soc{columns:3 330px;column-gap:16px}
@@ -128,15 +127,15 @@
   .post > .img{aspect-ratio:16/10;border-bottom:1px solid var(--ink)}
   .post .pb{padding:13px 15px 15px;display:flex;flex-direction:column;gap:9px}
   .post .who{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;min-width:0}
-  .post .who .pf{flex:none;width:18px;height:18px;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-size:10px;font-weight:800}
+  .post .who .pf{flex:none;width:18px;height:18px;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-size:11px;font-weight:700}
   .post .who .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .post .who .lk{margin-left:auto;color:var(--mut);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .post .sm{font-size:16px;font-weight:800;line-height:1.38;letter-spacing:-.02em}
+  .post .sm{font-size:16px;font-weight:700;line-height:1.38;letter-spacing:-.02em}
   .post .pts{margin:0;padding:0;list-style:none;display:grid;gap:7px}
   .post .pts li{position:relative;padding-left:14px;font-size:13px;line-height:1.58;color:#2a2a2a}
   .post .pts li::before{content:"";position:absolute;left:0;top:.66em;width:6px;height:1.5px;background:var(--ink)}
   .post .ft{display:flex;align-items:center;gap:8px;margin-top:2px}
-  .post .og{border:0;background:none;padding:0;font-size:11px;font-weight:700;margin-left:auto;letter-spacing:.04em}
+  .post .og{border:0;background:none;padding:0;font-size:12px;font-weight:600;margin-left:auto}
   .post .peek{position:relative;height:300px;overflow:hidden;border-bottom:1px solid var(--ink);background:var(--wash)}
   .post .peek iframe{width:100%;height:640px;border:0;display:block}
   .post .peek::after{content:"";position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(transparent,var(--card));pointer-events:none}
@@ -154,52 +153,51 @@
   .strip .img{aspect-ratio:1.91/1;border:1px solid var(--line)}
   .strip .tt{font-size:13px;font-weight:700;margin-top:8px;line-height:1.35}
   .strip .tag{margin-top:6px}
-  .watch{position:absolute;top:8px;left:8px;background:var(--card);font-size:10px;font-weight:800;letter-spacing:.08em;padding:3px 7px}
+  .watch{position:absolute;top:8px;left:8px;background:var(--card);font-size:11px;font-weight:700;padding:3px 7px}
 
   /* 이번 주 */
   .wk-top{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--ink);border:1px solid var(--ink)}
   .wk-top div{background:var(--card);padding:16px}
-  .wk-top b{display:block;font-size:2rem;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-  .wk-top span{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--dim)}
+  .wk-top b{display:block;font-size:2rem;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .wk-top span{font-size:12px;font-weight:600;color:var(--mut)}
   .flow{margin:0;padding:0;list-style:none;display:grid;gap:10px}
   .flow li{font-size:16px;font-weight:700;line-height:1.5;padding-left:28px;position:relative}
-  .flow li::before{content:counter(f);counter-increment:f;position:absolute;left:0;font-size:12px;font-weight:800;opacity:.4;top:3px}
+  .flow li::before{content:counter(f);counter-increment:f;position:absolute;left:0;font-size:13px;font-weight:700;color:var(--mut);top:2px;font-variant-numeric:tabular-nums}
   .flow{counter-reset:f}
   .tried{display:grid;gap:0;border-top:1px solid var(--ink)}
   .tried a{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;font-weight:600}
-  .tried .d{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
-  .tried .st{font-size:11px;font-weight:800;letter-spacing:.08em}
+  .tried .d{font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+  .tried .st{font-size:12px;font-weight:700}
 
   /* 금고 */
   .vbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .vbar input{flex:1 1 260px;border:1px solid var(--ink);background:var(--card);padding:10px 12px;font:inherit;font-size:14px;outline:none}
   .flt{display:flex;flex-wrap:wrap;gap:6px}
-  .flt button{border:1px solid var(--line2);background:var(--card);padding:7px 11px;font-size:12px;font-weight:700}
+  .flt button{border:1px solid var(--line2);background:var(--card);padding:7px 11px;font-size:13px;font-weight:600}
   .flt button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .vlist{margin-top:18px;border-top:1px solid var(--ink)}
   .vrow{display:grid;grid-template-columns:120px minmax(0,1fr) 34px;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
   .vrow .img{aspect-ratio:16/10}
-  .vrow .vt{font-size:15px;font-weight:800;letter-spacing:-.015em;line-height:1.38}
-  .vrow .vm{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:11px;color:var(--dim);font-weight:600;flex-wrap:wrap}
+  .vrow .vt{font-size:15px;font-weight:700;letter-spacing:-.015em;line-height:1.38}
+  .vrow .vm{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:12px;color:var(--mut);font-weight:600;flex-wrap:wrap}
   .vrow .vp{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:4px}
   .vrow .vp li{font-size:13px;line-height:1.5;color:#333;padding-left:12px;position:relative}
   .vrow .vp li::before{content:"";position:absolute;left:0;top:.66em;width:5px;height:1.5px;background:var(--ink)}
-  .star{border:0;background:none;font-size:18px;line-height:1;padding:2px;opacity:.35}
+  .star{border:0;background:none;font-size:18px;line-height:1;padding:2px;opacity:.6}
   .star.on{opacity:1}
 
-  .foot{margin-top:56px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .empty{padding:100px 0;text-align:center;color:var(--dim);font-size:14px;line-height:1.7}
+  .foot{margin-top:56px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--mut);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .empty{padding:100px 0;text-align:center;color:var(--mut);font-size:14px;line-height:1.7}
 
   @media (max-width:860px){
     .wrap{padding:22px 14px 72px}
-    .mast h1{font-size:2rem}
     .grid,.row2,.tries{grid-template-columns:1fr}
     .side{grid-template-rows:none}
     .side .card{flex-direction:column}
     .side .card > a:first-child{flex:none;min-height:0}
     .side .card > a:first-child .img{position:relative;inset:auto;aspect-ratio:16/9}
-    .hero h3{font-size:1.3rem}
-    .try.must h3{font-size:1.35rem}
+    .hero h3{font-size:20px}
+    .try.must h3{font-size:20px}
     .strip{grid-auto-columns:170px}
     .wk-top{grid-template-columns:repeat(2,minmax(0,1fr))}
     .vrow{grid-template-columns:84px minmax(0,1fr) 30px;gap:12px}
@@ -210,7 +208,7 @@
 <body>
 <div class="wrap">
   <header class="mast">
-    <h1>AI Brief*</h1>
+    <h1>AI Brief</h1>
     <div class="seg" id="seg">
       <button data-v="today">오늘</button><button data-v="week">이번 주</button><button data-v="vault">금고<span class="n" id="vn"></span></button>
     </div>
@@ -309,7 +307,6 @@
       return '<div class="step"><div class="n">'+(j+1)+'</div><div class="t">'+esc(s.text)+'</div>'+act+'</div>';
     }).join('');
     return '<div class="try'+(i===0?' must':'')+(done?' done':'')+'" data-key="'+esc(key)+'">'
-      + (i===0 ? '<div class="kick">오늘 꼭 해볼 것</div>' : '<div class="kick">하나 더</div>')
       + '<div class="top"><h3>'+esc(t.title)+'</h3><span class="min">'+esc(t.minutes||15)+' MIN</span></div>'
       + (t.why ? '<div class="why2">'+esc(t.why)+'</div>' : '')
       + (t.from ? '<a class="from" href="'+esc(t.from.url)+'" target="_blank" rel="noopener">출처 · '+esc(t.from.label)+' ↗</a>' : '')
