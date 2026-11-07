@@ -287,6 +287,50 @@
     .bar{grid-template-columns:22px 1fr auto 52px}
     .icard{padding:18px}
   }
+
+  /* ═══ 2차 다듬기 (누리: 회색 작은 글씨 금지, 검은 덩어리 금지, 표 제대로) ═══
+     보조 글씨도 먹색. 위계는 크기·굵기로, 라벨은 코발트. 표시용 칸·막대·칩은 코발트 계열 */
+  :root{ --ink:#141418; --ink2:#141418; --mut:#2A2A30; --lab:#1A3FB5; --tint:#F2F5FE; --tint2:#DCE4FB; }
+  body{letter-spacing:-.01em;line-height:1.65}
+  p,li,.sum,.callout,.pser p,.note{line-height:1.75;word-break:keep-all}
+  .mast .feed,.ins-head .when,.tools .hint,.note,.sech p,.kpi .s,.icard .stat span,.scard .s,.todo li span{color:var(--mut)}
+  td .sub,.sub{color:var(--mut) !important}
+  /* 라벨은 코발트 */
+  .kpi .l,.pstats span,.acard dt,.scard .l,.icard .sec-l,.dgrid h3{color:var(--lab) !important;font-weight:700}
+  .kpi .l{font-size:14px}
+  .pstats span,.acard dt{font-size:13px}
+  /* 칩: 검은 점·테두리 대신 옅은 바탕 */
+  .chip{background:#F4F4F7;border:0;color:var(--ink);font-weight:600;font-size:13px;padding:4px 10px}
+  .chip::before{display:none}
+  .chip.acc{background:var(--tint);color:var(--accent-ink)}
+  .refs button,.icard .refs button{background:var(--tint);border:0 !important;color:var(--accent-ink);font-weight:700}
+  .refs button:hover{background:var(--tint2)}
+  /* 19금 회차 칸·막대도 코발트 */
+  .ptn i{background:var(--tint2);width:9px;height:12px}
+  .ptn i.on{background:var(--accent)}
+  /* 표 */
+  .tblwrap{border:1px solid var(--line2)}
+  table{font-size:14.5px}
+  th{background:#FAFAFC;color:var(--ink);font-size:13.5px;font-weight:800;padding:13px 14px;border-bottom:2px solid var(--ink);white-space:nowrap}
+  td{padding:14px;vertical-align:top;border-bottom:1px solid #EDEDF1}
+  tbody tr:nth-child(even):not(.detail){background:#FCFCFD}
+  tbody tr:hover{background:var(--tint) !important}
+  td .ch{display:block;font-size:13px;color:var(--mut);margin-top:3px;font-weight:500}
+  td .tt{font-size:15px;font-weight:800;color:var(--ink)}
+  td.c-title{min-width:260px;max-width:340px;white-space:normal}
+  td.c-tags{min-width:180px;white-space:normal}
+  td .money{font-size:15px;font-weight:800}
+  td .live{color:var(--green);font-weight:800}
+  .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+  .tg{font-style:normal;font-size:12.5px;font-weight:700;padding:2px 8px;background:#F4F4F7;color:var(--ink)}
+  .tg.p{background:var(--tint);color:var(--accent-ink)}
+  /* 판정 칩도 꽉 채워 또렷하게 */
+  .vd{border:0;color:#fff !important}
+  .vd.up{background:var(--green)} .vd.down{background:var(--red)} .vd.flat{background:#3F3F46} .vd.watch{background:#B45309} .vd.do{background:var(--accent)}
+  .up{color:var(--green)} .dn{color:var(--red)} .flat{color:#3F3F46}
+  /* Peers 카드 문단 */
+  .pser p{font-size:14px;color:var(--mut);margin-top:4px}
+  .pser span{color:var(--mut)}
 </style>
 </head>
 <body>
@@ -479,7 +523,7 @@ function peers(){
       </div>
       <div>${pill('유료 중 19금 ' + (p.adultPaidRatio ?? '—') + '%', (p.adultPaidRatio ?? 100) < 50 ? 'acc' : '')}${(p.people || []).slice(0, 4).map(x => pill(esc(x))).join('')}${(p.links || []).length ? pill('바깥 링크 ' + p.links.length + '개', 'acc') : ''}</div>
       <div class="pser">${(p.series || []).slice(0, 4).map(s => `<div><b>${esc(s.title)}</b> <span>${s.eps}편 · ${s.price ? fmtN(s.price) + 'P' : '무료'}${s.adult ? ' · 19' : ''} · ${won(s.estRev)}</span>${s.summary ? `<p>${esc(s.summary.slice(0, 90))}</p>` : ''}</div>`).join('')}</div>
-      <div class="ptl" aria-label="글 올린 흐름">${spark((p.timeline || []).map(t => t[3]), { w: 300, h: 34, color: 'var(--ink)' })}<span class="sub">글마다 조회 · 왼쪽이 첫 글</span></div>
+      <div class="ptl" aria-label="글 올린 흐름">${spark((p.timeline || []).map(t => t[3]), { w: 300, h: 34, color: 'var(--accent)' })}<span class="sub">글마다 조회 · 왼쪽이 첫 글</span></div>
       ${(p.links || []).length ? `<div class="sub">${p.links.map(l => esc(String(l).replace(/^https?:\/\//, '').replace(/\?.*/, ''))).join(' · ')}</div>` : ''}
     </article>`).join('')}</div>`);
 }
@@ -588,7 +632,7 @@ function idols(){
   const rows = qf('idols', src.map(x => { const r = score(x); return { ...x, r3: r.v, sh: r.share, gr: r.growth }; }), r => r.key + ' ' + (r.group || ''));
   const months = D.meta.months || [];
   const cols = [
-    { k: 'key', t: mode === 'themes' ? '결' : mode === 'keywords' ? '키워드(태그)' : '이름', v: r => r.key, h: r => `<b>${esc(r.key)}</b>${r.group ? `<span class="sub">${esc(r.group)}</span>` : ''}` },
+    { k: 'key', t: mode === 'themes' ? '결' : mode === 'keywords' ? '키워드(태그)' : '이름', v: r => r.key, cls: 'l c-title', h: r => `<span class="tt">${esc(r.key)}</span>${r.group ? `<span class="ch">${esc(r.group)}</span>` : ''}` },
     { k: 'r3', t: W.label + ' ' + mName(), def: true, tip: W.range + ' 발행 글 기준', v: r => r.r3, h: r => fmtM(r.r3) },
     { k: 'sh', t: '점유', v: r => r.sh, h: r => pct(r.sh) },
     { k: 'g', t: '점유 변화', tip: '바로 앞 같은 길이 기간 대비', v: r => r.gr, h: r => gw(r.gr) },
@@ -702,7 +746,7 @@ function playbook(){
 function authors(){
   const rows = qf('authors', D.authors, r => r.title + ' ' + r.author + ' ' + r.channelName + ' ' + r.people.join(' '));
   const cols = [
-    { k: 'title', t: '채널', v: r => r.title, h: r => `<a class="lnk" href="${chUrl(r.channelName)}" target="_blank" rel="noopener"><b>${esc(r.title)}</b></a><span class="sub">${esc(r.author || '')}</span>` },
+    { k: 'title', t: '채널', cls: 'l c-title', v: r => r.title, h: r => `<a class="lnk tt" href="${chUrl(r.channelName)}" target="_blank" rel="noopener">${esc(r.title)}</a><span class="ch">${esc(r.author || '')}</span>` },
     { k: 'estRev', t: '1년 매출', def: true, v: r => r.estRev, h: r => won(r.estRev) },
     { k: 'subs', t: '구독자', v: r => r.subscribers, h: r => fmtN(r.subscribers) },
     { k: 'posts', t: '글', v: r => r.posts, h: r => fmtN(r.posts) },
@@ -712,8 +756,8 @@ function authors(){
     { k: 'gap', t: '발행 간격', tip: '글 사이 간격 가운데값(일)', v: r => r.medGapDays, h: r => r.medGapDays == null ? '—' : r.medGapDays + '일' },
     { k: 'maxgap', t: '최장 공백', v: r => r.maxGapDays, h: r => r.maxGapDays == null ? '—' : Math.round(r.maxGapDays) + '일' },
     { k: 'last', t: '마지막 글', v: r => r.lastPost, h: r => esc(r.lastPost.slice(2)) },
-    { k: 'ppl', t: '주력', v: r => r.people.join(','), h: r => r.people.map(p => `<span class="chip">${esc(p)}</span>`).join(''), cls: 'wrapc' },
-    { k: 'mr', t: '월별 매출', v: r => r.estRev, h: r => spark(r.monthlyRev), cls: 'l' },
+    { k: 'ppl', t: '주력', v: r => r.people.join(','), h: r => `<span class="tags">${r.people.map(p => `<i class="tg p">${esc(p)}</i>`).join('')}</span>`, cls: 'l c-tags' },
+    { k: 'mr', t: '월별 매출', v: r => r.estRev, h: r => spark(r.monthlyRev, { w: 110, h: 28 }), cls: 'l' },
   ];
   view(`<div class="sec">${search('authors', '채널·작가·인물 찾기', `매출 추정 상위 ${D.authors.length}개 채널 · 굵은 바탕은 내 채널`)}
     ${table('authors', rows, cols, { rowClass: r => r.mine ? 'mine' : '' })}</div>`);
@@ -723,20 +767,16 @@ function authors(){
 function series(){
   const rows = qf('series', D.series, r => r.title + ' ' + r.channelTitle + ' ' + r.people.join(' ') + ' ' + r.themes.join(' '));
   const cols = [
-    { k: 'title', t: '시리즈', v: r => r.title, h: r => `<a class="lnk" href="${seriesUrl(r)}" target="_blank" rel="noopener"><b>${esc(r.title)}</b></a><span class="sub">${esc(r.channelTitle)}</span>` },
-    { k: 'estRev', t: '추정 매출', def: true, v: r => r.estRev, h: r => won(r.estRev) },
-    { k: 'eps', t: '화수', v: r => r.eps, h: r => fmtN(r.eps) },
-    { k: 'start', t: '시작', v: r => r.start, h: r => esc(r.start.slice(2)) },
-    { k: 'since', t: '최근', tip: '마지막 회차 뒤 지난 날', v: r => -r.daysSinceLast, h: r => r.daysSinceLast <= 14 ? `<span class="up">연재 중</span>` : r.daysSinceLast + '일 전' },
-    { k: 'when', t: '요일·시', v: r => r.weekday, h: r => r.weekday == null ? '—' : WD[r.weekday] + ' ' + r.hour + '시' },
-    { k: 'gap', t: '간격', v: r => r.medGapDays, h: r => r.medGapDays == null ? '—' : r.medGapDays + '일' },
-    { k: 'free', t: '무료 화', v: r => r.firstPaidEp, h: r => r.firstPaidEp ? (r.firstPaidEp - 1) + '화' : '전부 무료' },
-    { k: 'price', t: '가격', v: r => r.medPrice, h: r => r.medPrice ? fmtN(r.medPrice) + 'P' : '—' },
+    { k: 'title', t: '시리즈', cls: 'l c-title', v: r => r.title, h: r => `<a class="lnk tt" href="${seriesUrl(r)}" target="_blank" rel="noopener">${esc(r.title)}</a><span class="ch">${esc(r.channelTitle)}</span>${r.people.length || r.themes.length ? `<span class="tags">${r.people.slice(0, 3).map(p => `<i class="tg p">${esc(p)}</i>`).join('')}${r.themes.slice(0, 2).map(p => `<i class="tg">${esc(p)}</i>`).join('')}</span>` : ''}` },
+    { k: 'estRev1y', t: '최근 1년', def: true, tip: '보관 기간(최근 13개월) 안에 올린 회차의 추정 매출', v: r => r.estRev1y, h: r => `<b class="money">${won(r.estRev1y)}</b><span class="ch">${fmtN(r.eps1y)}화</span>` },
+    { k: 'estRev', t: '누적', tip: '연재 시작부터 모든 회차의 추정 매출', v: r => r.estRev, h: r => `${won(r.estRev)}<span class="ch">${fmtN(r.eps)}화</span>` },
+    { k: 'start', t: '연재', v: r => r.start, h: r => `${esc(r.start.slice(2).replace(/-/g, '.'))}~<span class="ch">${r.daysSinceLast <= 14 ? '<b class="live">연재 중</b>' : r.daysSinceLast + '일 전 마지막'}</span>` },
+    { k: 'gap', t: '주기', v: r => r.medGapDays, h: r => `${r.medGapDays == null ? '—' : r.medGapDays + '일마다'}<span class="ch">${r.weekday == null ? '' : WD[r.weekday] + ' ' + r.hour + '시'}</span>` },
+    { k: 'price', t: '가격', v: r => r.medPrice, h: r => `${r.medPrice ? fmtN(r.medPrice) + 'P' : '무료'}<span class="ch">무료 ${r.firstPaidEp ? (r.firstPaidEp - 1) + '화' : '전부'}</span>` },
     { k: 'ret', t: '유지율', tip: '마지막 화 조회 ÷ 1화 조회', v: r => r.retention, h: r => pct(r.retention) },
-    { k: 'ppl', t: '인물·결', v: r => r.people.join(','), h: r => r.people.slice(0, 3).map(p => `<span class="chip acc">${esc(p)}</span>`).join('') + r.themes.slice(0, 2).map(p => `<span class="chip">${esc(p)}</span>`).join(''), cls: 'wrapc' },
-    { k: 'curve', t: '회차별 조회', v: r => r.views, h: r => spark(r.curve.map(c => c[0]), { w: 140, color: 'var(--ink)' }), cls: 'l' },
+    { k: 'curve', t: '회차별 조회', cls: 'l', v: r => r.views, h: r => spark(r.curve.map(c => c[0]), { w: 120, h: 30 }) },
   ];
-  view(`<div class="sec">${search('series', '시리즈·인물·결 찾기', `회차 전체를 받은 시리즈 ${D.series.length}개`)}
+  view(`<div class="sec">${search('series', '시리즈·인물·결 찾기', `회차 전체를 받은 시리즈 ${D.series.length}개 · '최근 1년'은 이 기간에 올린 회차만, '누적'은 연재 시작부터 전부`)}
     ${table('series', rows, cols, { rowClass: r => r.mine ? 'mine' : '' })}</div>`);
 }
 
@@ -773,7 +813,7 @@ function me(){
         { k: 'estRev', t: '추정 매출', def: true, v: r => r.estRev, h: r => won(r.estRev) },
         { k: 'eps', t: '화수', v: r => r.eps, h: r => r.eps },
         { k: 'ret', t: '유지율', v: r => r.retention, h: r => pct(r.retention) },
-        { k: 'curve', t: '회차별 조회', v: r => r.views, h: r => spark(r.curve.map(c => c[0]), { w: 160, color: 'var(--ink)' }), cls: 'l' },
+        { k: 'curve', t: '회차별 조회', v: r => r.views, h: r => spark(r.curve.map(c => c[0]), { w: 160, color: 'var(--accent)' }), cls: 'l' },
       ]) : '<p class="empty">이 기간 내 시리즈가 나페스 검색에 안 걸렸어요</p>'}
     </section>
     <section class="sec">

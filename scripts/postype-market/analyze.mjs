@@ -146,6 +146,7 @@ const months = MONTHS.map(m => {
     adultRatio: r1(100 * L.filter(p => p.adult).length / L.length), likes: sum(L, p => p.likes), estRev: Math.round(sum(L, p => p.rev)), medLikes: median(L.map(p => p.likes)) };
 });
 
+const WIN_START = Date.parse((meta.from || '2000-01-01') + 'T00:00:00+09:00') / 1000;
 // ── 4) 시리즈 (회차 전체를 받은 것)
 const seriesList = [];
 for (const [id, s] of Object.entries(series)) {
@@ -163,6 +164,7 @@ for (const [id, s] of Object.entries(series)) {
     medGapDays: r1(median(gaps)), weekday: modeOf(eps.map(e => new Date((e.publishedAt + KST) * 1000).getUTCDay())), hour: modeOf(eps.map(e => new Date((e.publishedAt + KST) * 1000).getUTCHours())),
     freeEps: eps.length - paidEps.length, firstPaidEp: firstPaid >= 0 ? firstPaid + 1 : null, medPrice: median(paidEps.map(e => e.price)), adult: eps.some(e => e.adult), adultEpRatio: Math.round(100 * eps.filter(e => e.adult).length / eps.length), adultPattern: eps.slice(0, 30).map(e => e.adult ? 1 : 0).join(''),
     views: sum(eps, e => e.views), likes: sum(eps, e => e.likes), comments: sum(eps, e => e.comments),
+    estRev1y: Math.round(sum(eps.filter(e => e.publishedAt >= WIN_START), estRev)), eps1y: eps.filter(e => e.publishedAt >= WIN_START).length,
     estRev: Math.round(sum(eps, estRev)), retention: eps[0].views ? r1(100 * l.views / eps[0].views) : null,
     curve: eps.map(e => [e.views, e.likes, e.comments, e.price]),
     people: [...pm].slice(0, 6), groups: [...gm], themes: Object.keys(tc).sort((a, b) => tc[b] - tc[a]).slice(0, 4), mine: MY.includes(f.channelName),
@@ -175,7 +177,7 @@ for (const [id, s] of Object.entries(series)) {
     })(),
   });
 }
-seriesList.sort((a, b) => b.estRev - a.estRev || b.likes - a.likes);
+seriesList.sort((a, b) => b.estRev1y - a.estRev1y || b.estRev - a.estRev);
 
 // ── 5) 작가(채널)
 const authorsAcc = {};
