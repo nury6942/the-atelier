@@ -28286,7 +28286,8 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var fbDeleted = (doc.exists && doc.data().deletedDefaults) || {};
       var fbStatus = (doc.exists && doc.data().statusOverrides) || {};
       var fbReview = (doc.exists && doc.data().reviewDone) || {};
-      var mergedReview = Object.assign({}, getEnglishReviewDone(), fbReview);
+      // 서버에 reviewDone 이 있으면 서버가 정본 (합집합이면 다른 기기에서 해제한 게 되살아남)
+      var mergedReview = (doc.exists && doc.data().reviewDone) ? fbReview : getEnglishReviewDone();
       localStorage.setItem(LS_ENGLISH_REVIEWDONE_KEY, JSON.stringify(mergedReview));
       // Union (deletedDefaults는 모든 디바이스의 삭제 합집합)
       var mergedDeleted = Object.assign({}, fbDeleted, lsDeleted);

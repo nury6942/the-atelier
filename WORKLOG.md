@@ -1,3 +1,7 @@
+## 2026-11-07 (맥북) — 리뷰 완료: 서버가 정본
+- 합집합 병합이면 한 기기에서 해제한 체크가 다른 기기 localStorage 때문에 되살아남 → 서버 reviewDone 이 있으면 서버 값 그대로
+- Aside 실측: 클릭 → 코발트+체크, Firestore reviewDone 저장·해제 모두 확인
+
 ## 2026-11-07 (맥북) — English 수업 트래커에 「리뷰 완료」 체크
 - 리뷰 보기 옆에 「리뷰 완료」 버튼(누리 수동 체크, 다시 누르면 해제). 리뷰를 만들어 두고 복습을 안 해서 추적용
 - 저장: localStorage `atelier_english_review_done` + Firestore `englishMeta/state.reviewDone` (기기 간 동기화)
