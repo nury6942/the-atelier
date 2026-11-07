@@ -53,9 +53,8 @@ ${wikiNeed.map((x) => `- ${x.id}: [${x.kind}] ${x.title} (${x.subtitle || ''})`)
 
   const got = await L.photoFill(todo.map((x) => ({
     key: x.id, name: x.title + (x.subtitle ? ' (' + x.subtitle + ')' : ''), kind: x.kind,
-    search: x.kind !== 'book',
-    ig: x.kind !== 'film',
-    q: x.kind === 'film' ? '영화 ' + x.title : x.kind === 'city' ? String(x.title).split('·')[0].trim() + ' 여행'
+    ig: !['film', 'book'].includes(x.kind),
+    q: x.kind === 'book' ? x.title + ' ' + String(x.subtitle || '').split('·')[0].trim() + ' 책' : x.kind === 'film' ? '영화 ' + x.title : x.kind === 'city' ? String(x.title).split('·')[0].trim() + ' 여행'
       : x.title + (x.meta && x.meta.venue && x.meta.venue !== x.title ? ' ' + x.meta.venue : ''),
     extra: extra[x.id] || [],
     posts: x.src && ['x', 'threads', 'instagram'].includes(x.src.type) ? [x.src.url] : [],

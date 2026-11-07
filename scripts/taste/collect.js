@@ -115,19 +115,21 @@ async function main() {
   let igSkipped = null;
   const curNow = L.pick(CURATORS, 8, seed * 8);
   for (let i = 0; i < curNow.length && left() > 9.5 * 60e3; i += 4) {
-    const got = await L.aside({ mode: 'ig-profile', handles: curNow.slice(i, i + 4), n: 12, skip: Object.keys(igSeen) });
+    const handles = curNow.slice(i, i + 4);
+    let got = await L.aside({ mode: 'ig-profile', handles, n: 12, skip: Object.keys(igSeen) });
+    if (!got.length) { await L.sleep(3000); got = await L.aside({ mode: 'ig-profile', handles, n: 12, skip: Object.keys(igSeen) }); }   // 가끔 빈 화면 → 한 번 더
+    log('  큐레이터', handles.join(','), got.length + '개');
     for (const c of got) igSeen[c.url] = new Date().toISOString();
     add(got, 'curator');
   }
+  if (left() > 7 * 60e3) add(await L.aside({ mode: 'stayfolio', max: 40 }), 'stayfolio');
+  log('[taste] Stayfolio 후보', sources.stayfolio || 0);
   for (const q of L.pick(IG_QUERIES, 2, seed)) {
-    if (left() < 8.5 * 60e3) break;
+    if (left() < 7.5 * 60e3) break;
     add(await L.aside({ mode: 'ig-search', q, max: 6, skip: [...seenUrl, ...Object.keys(igSeen)].filter((u) => /instagram/.test(u)) }), 'instagram');
   }
   if (!sources.curator && !sources.instagram) igSkipped = 'instagram 결과 없음(로그인 확인 필요할 수 있음)';
   log('[taste] 큐레이터 후보', sources.curator || 0, '· Instagram 검색 후보', sources.instagram || 0, igSkipped || '');
-
-  if (left() > 8 * 60e3) add(await L.aside({ mode: 'stayfolio', max: 40 }), 'stayfolio');
-  log('[taste] Stayfolio 후보', sources.stayfolio || 0);
 
   // 2) 추리기 — 소스마다 몫을 따로 (인스타 좋아요 수가 커서 한 줄로 세우면 X·Threads 가 밀린다)
   const PLACE_RX = /카페|공간|도서관|책방|서점|북스테이|스테이|숙소|독채|한옥|문구|갤러리|라운지|리추얼|사색|기록|층|cafe|library|book|stay|hotel/i;

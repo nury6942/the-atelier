@@ -53,7 +53,11 @@ function aside(job, timeoutMs = 125000) {
       clearTimeout(timer);
       const line = buf.split('\n').reverse().find((l) => l.startsWith('TASTE_JSON '));
       if (!line) { log('  aside 결과 없음:', job.mode, job.q || '', buf.replace(/\s+/g, ' ').slice(-200)); return resolve([]); }
-      try { resolve(JSON.parse(line.slice(11))); } catch (e) { resolve([]); }
+      try {
+        const arr = JSON.parse(line.slice(11));
+        for (const d of arr.filter((x) => x && x.debug)) log('  aside 진단:', JSON.stringify(d));
+        resolve(arr.filter((x) => !(x && x.debug)));
+      } catch (e) { resolve([]); }
     });
     child.on('error', () => { clearTimeout(timer); resolve([]); });
   });

@@ -161,13 +161,18 @@ if (JOB.mode === 'ig-profile') {
   for (const h of JOB.handles) {
     try {
       const page = await openTab('https://www.instagram.com/' + h + '/');
-      await sleep(6000);
+      await sleep(6500);
+      for (let k = 0; k < 3; k++) {                                    // 늦게 뜨면 조금 더 기다린다
+        if (await page.evaluate(() => document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]').length)) break;
+        await sleep(4000);
+      }
       await page.evaluate(() => window.scrollBy(0, 1600));
       await sleep(2000);
       const posts = await page.evaluate(() => [...document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]')].map((a) => {
         const img = a.querySelector('img');
         return { url: 'https://www.instagram.com' + a.getAttribute('href').replace(/^\/[\w.]+(?=\/(p|reel)\/)/, '').split('?')[0], alt: img ? img.alt : '', img: img ? (img.currentSrc || img.src) : '' };
       }));
+      if (!posts.length) out.push({ debug: true, handle: h, title: await page.title(), url: page.url() });
       await page.close();
       const seenU = new Set();
       for (const p of posts) {
@@ -191,7 +196,7 @@ if (JOB.mode === 'photo-search') {
       await sleep(3500);
       r.images.push(...await n.evaluate(() => [...document.querySelectorAll('img')].map((i) => i.currentSrc || i.src)
         .map((s) => { const m = s.match(/[?&]src=([^&]+)/); return m ? decodeURIComponent(m[1]) : s; })
-        .filter((s) => /ldb-phinf|myplace-phinf|naverbooking-phinf|movie-phinf|s\.pstatic\.net\/movie|culture-phinf|kopis/.test(s)).slice(0, 3)));
+        .filter((s) => /ldb-phinf|myplace-phinf|naverbooking-phinf|movie-phinf|s\.pstatic\.net\/movie|culture-phinf|kopis|bookthumb-phinf|shopping-phinf\.pstatic\.net\/main_\d+\/\d+/.test(s)).slice(0, 3)));
       await n.close();
     } catch (e) {}
     if (it.ig) {
@@ -309,7 +314,7 @@ if (JOB.mode === 'pages') {
     if (Date.now() - t0 > 100000) break;
     try {
       const page = await openTab(u);
-      await sleep(6000);
+      await sleep(JOB.wait || 6000);
       if (JOB.scroll) { await page.evaluate(() => window.scrollBy(0, 2500)); await sleep(1500); }
       const r = await page.evaluate(([chars, focus, wantLinks]) => {
         const og = (document.querySelector('meta[property="og:image"]') || {}).content || '';

@@ -94,8 +94,8 @@ async function verify(picks, byId, dl, today) {
   const pages = {};
   const focus = {};
   for (const p of picks) { const u = urlOf(p); if (/search\.naver/.test(u)) focus[u] = p.title.replace(/[［\[].*?[］\]]\s*/g, '').slice(0, 12); }
-  for (let i = 0; i < urls.length && left(dl) > 150e3; i += 9) {
-    for (const r of await L.aside({ mode: 'pages', urls: urls.slice(i, i + 9), chars: 4500, scroll: true, focus })) pages[r.url] = r;
+  for (let i = 0; i < urls.length && left(dl) > 120e3; i += 12) {
+    for (const r of await L.aside({ mode: 'pages', urls: urls.slice(i, i + 12), chars: 4500, scroll: true, focus, wait: 4000 })) pages[r.url] = r;
   }
   log('[culture] 상세 페이지', Object.keys(pages).length, '/', urls.length);
   const rows = picks.map((p, i) => {
@@ -117,7 +117,7 @@ ${rows}`;
 }
 
 async function korea(db, existing, ctx) {
-  const dl = Date.now() + 12 * 60e3;
+  const dl = Date.now() + 17 * 60e3;
   const { today, profile, seenTitle, igSeen, ex } = ctx;
   const horizon = L.kstDate(new Date(Date.now() + 42 * 864e5));
   const sources = {};
