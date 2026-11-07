@@ -72,11 +72,26 @@ const PAGE_FN = `async (job) => {
     if (!x.d) return x;
     return { total: x.d.totalElements, pages: x.d.totalPages, items: (x.d.content||[]).filter(it => it?.feedItem?.postId).map(it => slim(it.feedItem)) };
   }
+  if (job.kind === 'channel' && job.id) {
+    const x = await call('https://api.postype.com/api/v1/channel/' + job.id);
+    if (!x.d) return x;
+    const c = x.d, dt = c.details || {};
+    return { ch: { title: c.title, subscribers: c.subscriberCount, tags: c.tags, type: c.type, nickname: c.profile?.nickname, profileId: c.profile?.id,
+      createdAt: dt.createdAt, postCount: dt.postCount, likeCount: dt.likeCount, viewCount: dt.viewCount, activeMembership: dt.activeMembership } };
+  }
   if (job.kind === 'channel') {
     const x = await call('https://api.postype.com/api/v2/channel:search', {keyword: job.title, page: 0, size: 10});
     if (!x.d) return x;
     const hit = (x.d.content||[]).find(c => c.name === job.name);
     return { ch: hit ? {title: hit.title, subscribers: hit.subscriberCount, tags: hit.tags, type: hit.type, nickname: hit.profile?.nickname} : null };
+  }
+  if (job.kind === 'chars') {
+    const r = await fetch('https://www.postype.com/@' + job.ch + '/post/' + job.postId, {credentials:'include'});
+    if (r.status === 429 || r.status === 403) return { blocked: r.status };
+    if (!r.ok) return { err: r.status };
+    const h = await r.text();
+    const t = h.match(/텍스트\\s*<b>([\\d,]+)<\\/b>\\s*자/), im = h.match(/이미지\\s*<b>([\\d,]+)<\\/b>\\s*장/);
+    return { chars: t ? Number(t[1].replace(/,/g, '')) : null, images: im ? Number(im[1].replace(/,/g, '')) : 0 };
   }
   return { err: 'unknown job' };
 }`;
@@ -111,7 +126,7 @@ function enqueueFollowups(post) {
 }
 
 // 검색 작업을 먼저, 그다음 시리즈, 채널 순서
-const order = { search: 0, series: 1, channel: 2 };
+const order = { search: 0, series: 1, channel: 2, chars: 3 };
 let errors = 0;
 for (;;) {
 while (S.queue.length) {
@@ -134,6 +149,8 @@ while (S.queue.length) {
       if (job.page === 0) for (let pg = 1; pg < r.pages; pg++) S.queue.push({ kind: 'series', id: job.id, page: pg });
     } else if (job.kind === 'channel') {
       S.channels[job.name] = r.ch || { title: job.title, subscribers: null };
+    } else if (job.kind === 'chars') {
+      (S.chars ||= {})[job.postId] = { chars: r.chars, images: r.images, seriesId: job.seriesId };
     }
     S.done++;
   }
@@ -154,6 +171,21 @@ if (S.phase === 'search') {
   S.phase = 'detail'; saveState(); log(`검색 끝 → 상위 시리즈 ${Math.min(TOP_SERIES, Object.keys(sLikes).length)}개 · 채널 ${Math.min(TOP_CHANNELS, Object.keys(cLikes).length)}개 자세히`);
   continue;
 }
+if (S.phase === 'detail' && !opt.noChars) {
+  // 글자 수 샘플: 추정 매출 상위 시리즈 TOP_CHARS 개 × (1화 · 첫 유료 화 · 가운데 · 마지막) + 내 시리즈
+  const TOP_CHARS = Number(opt.topChars || 200);
+  const val = (s) => s.eps.reduce((a, e) => a + (e.price > 0 && e.price <= 5000 ? e.views * e.price : 0), 0);
+  const list = Object.entries(S.series).filter(([, s]) => s.eps?.length).map(([id, s]) => ({ id, s, v: val(s) + (MY.includes(s.eps[0].channelName) ? 1e15 : 0) }));
+  list.sort((a, b) => b.v - a.v);
+  for (const { id, s } of list.slice(0, TOP_CHARS)) {
+    const eps = [...s.eps].sort((a, b) => a.publishedAt - b.publishedAt);
+    const fp = eps.findIndex(e => e.price > 0 && e.price <= 5000);
+    const idx = [...new Set([0, fp, Math.floor(eps.length / 2), eps.length - 1].filter(i => i >= 0))];
+    for (const i of idx) S.queue.push({ kind: 'chars', postId: eps[i].postId, ch: eps[i].channelName, seriesId: Number(id) });
+  }
+  S.phase = 'chars'; saveState(); log(`글자 수 샘플 ${S.queue.length}편`);
+  continue;
+}
 break;
 }
 
@@ -162,6 +194,7 @@ if (!S.queue.length) {
   w('search-posts.json', Object.values(S.posts));
   w('series.json', S.series);
   w('channels.json', S.channels);
+  w('chars.json', S.chars || {});
   w('meta.json', { collectedAt: new Date().toISOString(), ...S.opt, posts: Object.keys(S.posts).length, series: Object.keys(S.series).length, channels: Object.keys(S.channels).length });
   log('끝', OUT);
 }

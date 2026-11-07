@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { buildMatcher, PEOPLE } from './idols.mjs';
+import { buildMatcher, PEOPLE, GROUP_TAGS, NOT_PEOPLE } from './idols.mjs';
 
 const DIR = process.argv[2].replace(/^~/, os.homedir());
 const rd = (n, d) => { const f = path.join(DIR, n); return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : d; };
@@ -12,6 +12,7 @@ const posts = rd('search-posts.json', []);
 const series = rd('series.json', {});
 const channels = rd('channels.json', {});
 const meta = rd('meta.json', {});
+const chars = rd('chars.json', {});
 const MY = ['bichu-attic', 'hotnncold'];
 
 const KST = 9 * 3600;
@@ -61,11 +62,20 @@ const themesOf = (p) => Object.entries(THEMES).filter(([, re]) => re.test(textOf
 
 // ── 1) 글 단위
 const match = buildMatcher();
+// 키워드 = 사람·그룹·흔한 표시 말고 남는 태그 (장르·소재·형식)
+const GENERIC = new Set(['나페스', '팬창작', '노딱', '드림', '단편', 'talk', 'TALK', 'Talk', '19금', '19', '수위', '고수위', '중수위', '약수위', '꾸금', '성인', '추천', '무료', '소설', '웹소설', '엔시티나페스', '엔시티나페스추천', '나페스추천', '수위주의', '19+', 'hl', 'hot', '팬픽', '글', '드림주', '여주', '꾸금주의', '연재', '완결', '유료', '공지', '이벤트', '리퀘스트', '포타', '포스타입', 'bl', 'BL', 'gl', 'nps']);
+const groupTagSet = new Set(Object.values(GROUP_TAGS).flat().map(t => t.toLowerCase()));
+const personAlias = new Set(Object.entries(PEOPLE).flatMap(([n, [, ...a]]) => [n.replace(/\s/g, ''), ...a.map(x => x.replace(/\s/g, ''))]));
+const isKeyword = (t) => t.length >= 2 && t.length <= 12 && !GENERIC.has(t) && !groupTagSet.has(t.toLowerCase()) && !personAlias.has(t)
+  && !personAlias.has(t.replace(/(나페스|유사|빙의글|드림|사연애|수위|드림주|빙의|썰)$/, '')) && !/사연애$|나페스$|유사$|드림$|빙의글$/.test(t) && !/^\d+$/.test(t);
+const UNITS = { 'NCT 127': ['정재현', '김도영', '이태용', '나카모토 유타', '이마크', '이동혁', '김정우', '서영호', '문태일'], 'NCT DREAM': ['이마크', '이동혁', '나재민', '이제노', '황인준', '종천러', '박지성'], 'WayV': ['쿤', '텐', '양양', '샤오쥔', '헨드리'], 'NCT WISH': ['리쿠', '유우시', '사쿠야', '오시온', '김재희', '히로세 료', '김대영'] };
 const unknown = {};
 const P = posts.map(p => {
   const m = match(p);
   for (const u of m.unknown) (unknown[u] ||= { posts: 0, likes: 0 }), unknown[u].posts++, unknown[u].likes += p.likes;
-  return { ...p, month: ym(p.publishedAt), paid: p.price > 0 && p.price <= LOCK_PRICE, locked: p.price > LOCK_PRICE, rev: estRev(p), themes: themesOf(p), people: m.people, groups: m.groups };
+  const kw = [...new Set((p.tags || []).map(t => t.replace(/\s/g, '')).filter(t => isKeyword(t)))];
+  const units = Object.entries(UNITS).filter(([, ns]) => m.people.some(x => ns.includes(x))).map(([u]) => u);
+  return { ...p, kw, units, month: ym(p.publishedAt), paid: p.price > 0 && p.price <= LOCK_PRICE, locked: p.price > LOCK_PRICE, rev: estRev(p), themes: themesOf(p), people: m.people, groups: m.groups };
 });
 const MONTHS = [...new Set(P.map(p => p.month))].sort();
 const last3 = MONTHS.slice(-4, -1).length === 3 ? MONTHS.slice(-4, -1) : MONTHS.slice(-3); // 이번 달(진행 중)은 빼고 직전 3달
@@ -81,7 +91,7 @@ function rollup(keyFn, minPosts) {
   }
   return Object.values(acc).filter(a => a.list.length >= minPosts).map(a => {
     const L = a.list, paid = L.filter(p => p.paid);
-    const byAuthor = {}; for (const p of L) byAuthor[p.channelName] = (byAuthor[p.channelName] || 0) + p.rev + p.likes;
+    const byAuthor = {}; for (const p of L) byAuthor[p.channelName] = (byAuthor[p.channelName] || 0) + p.rev;
     const authorsSorted = Object.entries(byAuthor).sort((x, y) => y[1] - x[1]);
     const totalA = sum(authorsSorted, x => x[1]) || 1;
     const monthly = {}; for (const m of MONTHS) monthly[m] = [0, 0, 0]; // 글, 좋아요, 추정매출
@@ -103,6 +113,21 @@ function rollup(keyFn, minPosts) {
       likeShare3m: r1(100 * shareL3), likeShareGrowth: shareP3 ? r1(100 * (shareL3 - shareP3) / shareP3) : null,
       revShare3m: r1(100 * revL3), revShareGrowth: revP3 ? r1(100 * (revL3 - revP3) / revP3) : null,
       monthly, topAuthors: authorsSorted.slice(0, 5).map(x => x[0]),
+      topAuthorsDetail: authorsSorted.slice(0, 5).map(([ch, rv]) => {
+        const mine = L.filter(p => p.channelName === ch), paidM = mine.filter(p => p.paid);
+        const sc = {}; for (const p of mine) if (p.seriesTitle) sc[p.seriesTitle] = (sc[p.seriesTitle] || 0) + p.rev + 1;
+        const tc = {}; for (const p of mine) for (const t of p.themes) tc[t] = (tc[t] || 0) + 1;
+        const kc = {}; for (const p of mine) for (const t of p.kw) kc[t] = (kc[t] || 0) + 1;
+        const ds = mine.map(p => p.publishedAt).sort((a, b) => a - b); const gaps = ds.slice(1).map((d, i) => (d - ds[i]) / 86400);
+        const chInfo = channels[ch] || {};
+        return { channelName: ch, title: mine[0].channelTitle, author: mine[0].author, share: r1(100 * rv / totalA), estRev: Math.round(rv), posts: mine.length,
+          paidPosts: paidM.length, medPrice: median(paidM.map(p => p.price)), medGapDays: r1(median(gaps)), firstPost: day(ds[0]), lastPost: day(ds[ds.length - 1]),
+          weekday: modeOf(mine.map(p => new Date((p.publishedAt + KST) * 1000).getUTCDay())), medLikes: median(mine.map(p => p.likes)),
+          series: Object.entries(sc).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]),
+          themes: Object.entries(tc).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]), keywords: Object.entries(kc).sort((a, b) => b[1] - a[1]).slice(0, 6).map(x => x[0]),
+          subscribers: chInfo.subscribers ?? null, createdAt: chInfo.createdAt ? day(chInfo.createdAt) : null, membership: chInfo.activeMembership ?? null, mine: MY.includes(ch) };
+      }),
+      keywords: (() => { const c = {}; for (const p of L) for (const t of p.kw) (c[t] ||= [0, 0]), c[t][0]++, c[t][1] += p.rev; return Object.entries(c).filter(([, v]) => v[0] >= 3).sort((a, b) => b[1][1] - a[1][1]).slice(0, 10).map(([k, v]) => [k, v[0], Math.round(v[1])]); })(),
       topSeries: Object.entries(seriesIds).sort((x, y) => y[1] - x[1]).slice(0, 8).map(x => Number(x[0])),
       themes: (() => { const c = {}; for (const p of L) for (const t of p.themes) c[t] = (c[t] || 0) + 1; return Object.entries(c).sort((x, y) => y[1] - x[1]).slice(0, 5).map(([k, n]) => [k, n]); })(),
     };
@@ -111,6 +136,8 @@ function rollup(keyFn, minPosts) {
 const people = rollup(p => p.people, 15).map(x => ({ ...x, group: PEOPLE[x.key]?.[0] || '기타' }));
 const groups = rollup(p => p.groups, 15);
 const themes = rollup(p => p.themes, 15);
+const keywords = rollup(p => p.kw, 40);
+const units = rollup(p => p.units, 15);
 
 // ── 3) 월별 시장
 const months = MONTHS.map(m => {
@@ -139,6 +166,13 @@ for (const [id, s] of Object.entries(series)) {
     estRev: Math.round(sum(eps, estRev)), retention: eps[0].views ? r1(100 * l.views / eps[0].views) : null,
     curve: eps.map(e => [e.views, e.likes, e.comments, e.price]),
     people: [...pm].slice(0, 6), groups: [...gm], themes: Object.keys(tc).sort((a, b) => tc[b] - tc[a]).slice(0, 4), mine: MY.includes(f.channelName),
+    ...(() => {
+      const sampled = eps.filter(e => chars[e.postId]?.chars), paidS = sampled.filter(e => e.price > 0 && e.price <= LOCK_PRICE);
+      const cm = median(sampled.map(e => chars[e.postId].chars)), pcm = median(paidS.map(e => chars[e.postId].chars));
+      const pr = median(paidS.map(e => e.price));
+      return { charsMed: cm, paidCharsMed: pcm, totalCharsEst: cm ? Math.round(cm * eps.length) : null,
+        pricePer10k: pcm && pr ? Math.round(pr / pcm * 10000) : null, imagesMed: sampled.length ? median(sampled.map(e => chars[e.postId].images || 0)) : null };
+    })(),
   });
 }
 seriesList.sort((a, b) => b.estRev - a.estRev || b.likes - a.likes);
@@ -158,6 +192,13 @@ const authors = Object.entries(authorsAcc).map(([name, L]) => {
     lastPost: day(ds[ds.length - 1]), people: Object.entries(pc).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]),
     themes: Object.entries(tc).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]),
     monthlyRev: MONTHS.map(m => Math.round(sum(L.filter(p => p.month === m), p => p.rev))), mine: MY.includes(name),
+    ...(() => {
+      const gc = {}; for (const p of L) for (const g of new Set(p.groups)) gc[g] = (gc[g] || 0) + 1;
+      const gs = Object.entries(gc).sort((a, b) => b[1] - a[1]);
+      return { topGroup: gs[0]?.[0] || null, focus: gs.length ? r1(100 * gs[0][1] / L.length) : null, groupCount: gs.filter(([, n]) => n >= Math.max(2, L.length * 0.1)).length,
+        profileId: ch.profileId ?? null, createdAt: ch.createdAt ? day(ch.createdAt) : null, totalPosts: ch.postCount ?? null, membership: ch.activeMembership ?? null,
+        revPerPost: Math.round(sum(L, p => p.rev) / L.length) };
+    })(),
   };
 }).sort((a, b) => b.estRev - a.estRev || b.likes - a.likes);
 
@@ -172,10 +213,50 @@ const check = (() => {
   return Object.entries(est).map(([k, v]) => ({ channelName: k.split('|')[0], series: k.split('|')[1], est: Math.round(v), actual: actual[k] ?? null })).filter(x => x.est > 0);
 })();
 
+// ── 7) 전략: 잘 버는 작가들은 어떻게 하나
+const strategy = (() => {
+  const top = authors.filter(a => !a.mine).slice(0, 100);
+  const topSet = new Set(top.map(a => a.channelName));
+  const ts = seriesList.filter(s => topSet.has(s.channelName) && s.eps >= 5);
+  const paidTs = ts.filter(s => s.medPrice);
+  const wd = Array(7).fill(0); for (const s of paidTs) if (s.weekday != null) wd[s.weekday]++;
+  const hr = Array(24).fill(0); for (const s of paidTs) if (s.hour != null) hr[s.hour]++;
+  const q = (arr, p) => { const a = arr.filter(x => x != null).sort((x, y) => x - y); return a.length ? a[Math.min(a.length - 1, Math.floor(p * a.length))] : null; };
+  const dist = (arr) => ({ p25: q(arr, 0.25), med: q(arr, 0.5), p75: q(arr, 0.75), n: arr.filter(x => x != null).length });
+  // 집중 vs 섞기 (유료 글 10편 이상 채널)
+  const solid = authors.filter(a => a.paidPosts >= 10 && a.focus != null);
+  const fb = (lo, hi) => { const L = solid.filter(a => a.focus >= lo && a.focus < hi); return { n: L.length, revPerPost: median(L.map(a => a.revPerPost)), revPerChannel: median(L.map(a => a.estRev)), subs: median(L.map(a => a.subscribers).filter(x => x != null)) }; };
+  // 한 사람 여러 채널
+  const byProfile = {}; for (const a of authors) if (a.profileId) (byProfile[a.profileId] ||= []).push(a);
+  const multi = Object.values(byProfile).filter(L => L.length >= 2).map(L => ({ author: L[0].author, channels: L.map(a => ({ title: a.title, channelName: a.channelName, topGroup: a.topGroup, estRev: a.estRev, subscribers: a.subscribers, createdAt: a.createdAt })), estRev: sum(L, a => a.estRev), sameGroup: new Set(L.map(a => a.topGroup)).size === 1 }))
+    .sort((a, b) => b.estRev - a.estRev);
+  // 새 채널 (만든 지 18달 안)
+  const cutoff = new Date(Date.now() - 548 * 86400000).toISOString().slice(0, 10);
+  const withDate = authors.filter(a => a.createdAt);
+  const fresh = withDate.filter(a => a.createdAt >= cutoff);
+  const yr = {}; for (const a of top) if (a.createdAt) yr[a.createdAt.slice(0, 4)] = (yr[a.createdAt.slice(0, 4)] || 0) + 1;
+  return {
+    topN: top.length, seriesN: ts.length, paidSeriesN: paidTs.length,
+    freeEps: dist(paidTs.map(s => s.firstPaidEp ? s.firstPaidEp - 1 : null)),
+    price: dist(paidTs.map(s => s.medPrice)),
+    eps: dist(ts.map(s => s.eps)),
+    gapDays: dist(ts.map(s => s.medGapDays)),
+    charsPerEp: dist(ts.map(s => s.charsMed)), paidCharsPerEp: dist(paidTs.map(s => s.paidCharsMed)),
+    totalChars: dist(ts.map(s => s.totalCharsEst)), pricePer10k: dist(paidTs.map(s => s.pricePer10k)),
+    paidRatio: dist(top.map(a => 100 * a.paidPosts / a.posts)),
+    membership: { yes: top.filter(a => a.membership === true).length, known: top.filter(a => a.membership != null).length },
+    weekday: wd, hour: hr,
+    focus: dist(top.map(a => a.focus)), focusBuckets: [['한 그룹 90%+', fb(90, 101)], ['70~90%', fb(70, 90)], ['50~70%', fb(50, 70)], ['섞어 씀 50% 미만', fb(0, 50)]],
+    multi: multi.slice(0, 30), multiCount: multi.length, profilesKnown: Object.keys(byProfile).length,
+    created: yr, freshInTop: top.filter(a => a.createdAt && a.createdAt >= cutoff).map(a => ({ title: a.title, channelName: a.channelName, createdAt: a.createdAt, estRev: a.estRev, subscribers: a.subscribers, topGroup: a.topGroup })),
+    fresh: { n: fresh.length, cutoff, revMed: median(fresh.map(a => a.estRev)), revP90: q(fresh.map(a => a.estRev), 0.9), subsMed: median(fresh.map(a => a.subscribers).filter(x => x != null)), subsP90: q(fresh.map(a => a.subscribers), 0.9) },
+  };
+})();
+
 const out = {
   meta: { ...meta, channelsTotal: Object.keys(authorsAcc).length, analyzedAt: new Date().toISOString(), months: MONTHS, last3, prev3, buyRate: calib,
     note: '조회·좋아요는 수집 시점 누적값. 월은 발행월. 추정 매출 = 유료 글 조회 × 가격 × 구매율(누리 채널 실측: 단건 ' + Math.round(calib.single * 100) + '%, 1,000P대 묶음 ' + Math.round(calib.bundle * 100) + '%). 5,000P 넘는 잠금용 글은 뺌. 실제 정산액이 아님.' },
-  months, people, groups, themes,
+  months, people, groups, themes, keywords: keywords.slice(0, 300), units, strategy,
   authors: authors.slice(0, 400), series: seriesList.slice(0, 600), check,
   unknownTags: Object.entries(unknown).filter(([, v]) => v.posts >= 10).sort((a, b) => b[1].likes - a[1].likes).slice(0, 80).map(([k, v]) => ({ tag: k, ...v })),
   topPosts: [...P].sort((a, b) => b.rev - a.rev || b.likes - a.likes).slice(0, 100).map(({ summary, rev, themes, ...p }) => ({ ...p, rev: Math.round(rev), themes })),

@@ -36,7 +36,7 @@ export const PEOPLE = {
   '텐': ['NCT'], '쿤': ['NCT'], '양양': ['NCT'], '샤오쥔': ['NCT'], '헨드리': ['NCT'], '문태일': ['NCT', '태일'], '김동영': ['NCT', '도영이'],
   // NCT WISH
   '리쿠': ['NCT WISH', '마에다리쿠', '마에다 리쿠', '마에다'], '유우시': ['NCT WISH', '토쿠노유우시', '토쿠노 유우시', '토쿠노'], '사쿠야': ['NCT WISH', '후지나가사쿠야'],
-  '오시온': ['NCT WISH', '시온'], '김재희': ['NCT WISH', '재희'], '히로세 료': ['NCT WISH', '료', '히로세료', '히로세'],
+  '오시온': ['NCT WISH', '시온'], '김재희': ['NCT WISH', '재희'], '히로세 료': ['NCT WISH', '료', '히로세료', '히로세'], '김대영': ['NCT WISH', '대영'],
   // BOYNEXTDOOR
   '명재현': ['BOYNEXTDOOR'], '한태산': ['BOYNEXTDOOR', '태산'], '이한': ['BOYNEXTDOOR', '김동현', '김이한'], '김운학': ['BOYNEXTDOOR', '운학'], '박성호': ['BOYNEXTDOOR', '성호'], '리우': ['BOYNEXTDOOR', '이상혁', '이리우'],
   // RIIZE
@@ -87,6 +87,9 @@ export const CONTEXT = {
 // 인물로 세지 않을 흔한 태그
 export const NOT_PEOPLE = new Set(['나페스', '팬창작', '노딱', '고수위', '유사', '드림', '단편', '센티넬', 'talk', '홍일점', '유사연애', '수위', '로맨스', '사주', '사주풀이', '19금', '빙의글', '판타지', '호러', '집착', '웹소설', 'gl', '꾸금', '후회물', '가이드', '연애', '약한영웅', '야설', '소설', 'nps', '연애사주풀이', '조직물', '혐관', '추천', '혼성그룹', '아이돌', '디스토피아', '남공남수', '순애남', '동거', '성인', '수인물', '축페스', '축패스', '월드컵', '느와르', '남장', 'bl', 'BL', '19', '잠따', '빻취', '환승연애', '케이크버스', '사극', '수인', '궁합', '체벌', '연예계', '자공자수', '도리벤', '기억상실증', '알페스', '감금', '키스', '쌍방구원', '의사', '고르기', '훈육', '메디컬로코', '범죄도시', '온리유', '리얼물', '남매물', '연하', '무료', '호그와트물', '로얄로더', '남사친', '초능력', '피폐', '역하렘', '센가물', '엔시티나페스', '엔시티나페스추천', '역하렘물', '빙의물', '회귀', '오메가버스', '조직', '학원물', '캠퍼스물', '계약연애', '짝사랑', '후회', '광공', '피폐물', '헌터물', '가출시리즈', '톡썰', '상황문답', '유사투표', '톡글', '육아', '알오물', '센티넬버스', '카카오톡', '카톡', '로판', '약수위', '육아물', '집착광공', '의학물', '뱀파이어', '권태기', '남매', '좀아포', '쩜오디', '일상물', '네임버스', '빙의', '단편모음', '임신', '중수위', '노란장판', '오피스물', '삼각관계', '집착물', '유어아너', '멋진신세계', '오지콤', '아저씨', 'hl', '강월', '약한영웅2', '보플', '클리셰', '용감한시민', '재회물', '팬창작', '범죄도시3']);
 
+// 제목에서는 이름으로 안 보는 흔한 낱말
+const TITLE_STOP = new Set(['동화', '유진', '수빈', '영재', '경민', '성호', '동현', '한진', '민기', '진', '산', '준', '텐', '쿤', '료', '제이', '수호', '카이', '디오', '현재', '주연', '정한', '도겸', '우지', '성진', '도운', '건우', '상원', '소희', '이한', '양양', '태일', '신유', '도훈', '지훈', '선우', '정원', '희승', '윤호', '여상', '종호', '성화', '정우', '지성', '영호', '태현', '연준', '형원', '기현', '규빈', '한빈', '유타', '마크']);
+
 export function buildMatcher() {
   const alias = new Map(); // 별칭 → 정식 이름
   for (const [name, [group, ...als]] of Object.entries(PEOPLE)) {
@@ -99,11 +102,22 @@ export function buildMatcher() {
     const tags = (post.tags || []).map(t => t.replace(/\s/g, ''));
     const groupsTagged = new Set(tags.map(t => groupOfTag.get(t.toLowerCase())).filter(Boolean));
     const people = new Set(); const unknown = [];
-    const tokens = [...tags, ...String(post.subTitle || '').split(/[\s,·/&×x]+/).map(s => s.replace(/[\[\]()#]/g, ''))];
+    const split = (t) => String(t || '').split(/[\s,·/&×|\-_:;!?~.'"“”‘’<>「」『』【】]+/).map(s => s.replace(/[\[\]()#]/g, '')).filter(Boolean);
+    const tokens = [...tags, ...split(post.subTitle)];
+    // 제목: [이름] 꼴은 그대로, 나머지 낱말은 3글자 이상 이름만 (짧은 활동명은 흔한 낱말과 겹쳐서)
+    const titleStr = String(post.title || '') + ' ' + String(post.seriesTitle || '');
+    for (const m of titleStr.matchAll(/[\[(【「]([^\])】」]{1,12})[\])】」]/g)) tokens.push(...split(m[1]));
+    for (const t of split(titleStr)) {
+      for (const st of new Set([t, t.replace(/(나페스|유사|빙의글|드림|사연애|수위)$/, ''), t.replace(/(이랑|한테|에게|이가|이는|이를|이의|의|이|가|은|는|을|를|와|과|랑|야|아)$/, '')])) {
+        if (st.length < 2 || TITLE_STOP.has(st)) continue;
+        if (alias.has(st)) { people.add(alias.get(st)); break; }
+        if (CONTEXT[st]) { const c = CONTEXT[st]; const g = [...groupsTagged].find(g => c[g]); people.add(g ? c[g] : c.default); break; }
+      }
+    }
     for (const t of tokens) {
       if (!t) continue;
       if (alias.has(t)) { people.add(alias.get(t)); continue; }
-      const stripped = t.replace(/(나페스|유사|빙의글|드림)$/, '');
+      const stripped = t.replace(/(나페스|유사|빙의글|드림|사연애|수위|드림주|빙의|썰)$/, '');
       if (stripped !== t && alias.has(stripped)) { people.add(alias.get(stripped)); continue; }
       if (CONTEXT[t]) { const c = CONTEXT[t]; const g = [...groupsTagged].find(g => c[g]); people.add(g ? c[g] : c.default); continue; }
       if (tags.includes(t) && !groupOfTag.has(t.toLowerCase()) && !NOT_PEOPLE.has(t) && !/사연애$/.test(t) && t.length >= 2 && t.length <= 5) unknown.push(t);
