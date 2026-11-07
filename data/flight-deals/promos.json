@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-07T07:37",
+ "generatedAt": "2026-11-07T19:38",
  "sites": [
   "KE",
   "OZ",
@@ -66,13 +66,13 @@
      }
     ],
     "on": "운임",
-    "how": "결제 화면에서 카카오페이 항공권 8% 할인 쿠폰 적용 후 카카오페이 결제",
+    "how": "결제 화면에서 보유 쿠폰(카카오페이 항공권 8% 할인) 적용 후 카카오페이 결제",
     "code": null,
     "conditions": [
      "카카오페이 결제",
      "홈페이지/앱 로그인",
      "세이버·스탠다드만",
-     "대한항공 운항편만 (공동운항·다구간·보너스 제외)"
+     "공동운항·다구간·보너스 제외"
     ],
     "fares": [],
     "url": "https://www.koreanair.com/contents/promotion/list/2026/2611kapay?pageNum=1"
@@ -129,16 +129,16 @@
      "region": "유럽",
      "out": "2026-12-01",
      "back": "2026-12-10",
-     "price": 3946031,
+     "price": 3945874,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/bud/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
-     "fare": 3112831,
+     "fare": 3112674,
      "discount": 249000,
-     "final": 3697031
+     "final": 3696874
     },
     {
      "slug": "milan",
@@ -204,13 +204,6 @@
      {
       "region": "전 노선",
       "cities": [],
-      "pct": 72,
-      "amount": null,
-      "cabin": "이코노미·와이드 프리미엄"
-     },
-     {
-      "region": "전 노선",
-      "cities": [],
       "pct": 20,
       "amount": null,
       "cabin": "이코노미·와이드 프리미엄"
@@ -221,9 +214,9 @@
     "code": "BLKFRIGO",
     "conditions": [
      "에어프레미아 회원 로그인",
-     "에어프레미아 발행 쿠폰과 중복 불가",
-     "일부 일자·운임은 코드 적용 제한",
-     "탑승 기간에 따라 할인율 상이"
+     "일부 일자·운임 적용 제한",
+     "에어프레미아 쿠폰과 중복 불가",
+     "탑승 기간 따라 할인율 상이"
     ],
     "fares": [
      {
@@ -257,7 +250,7 @@
    "plan": [
     {
      "slug": "honolulu",
-     "pct": 72,
+     "pct": 20,
      "region": "전 노선",
      "google": 923600,
      "out": "2026-11-24",
@@ -265,7 +258,7 @@
     },
     {
      "slug": "san-francisco",
-     "pct": 72,
+     "pct": 20,
      "region": "전 노선",
      "google": 1182000,
      "out": "2026-11-24",
@@ -283,13 +276,13 @@
      "price": 923600,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/hnl/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
-     "pct": 72,
+     "pct": 20,
      "onFare": true,
      "fuel": 509800,
      "tax": 93000,
      "fare": 320800,
-     "discount": 231000,
-     "final": 692600
+     "discount": 64200,
+     "final": 859400
     },
     {
      "slug": "san-francisco",
@@ -301,13 +294,13 @@
      "price": 1182000,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/sfo/261124/261203/?adultsv2=1&cabinclass=economy&rtn=1",
-     "pct": 72,
+     "pct": 20,
      "onFare": true,
      "fuel": 740200,
      "tax": 93000,
      "fare": 348800,
-     "discount": 251100,
-     "final": 930900
+     "discount": 69800,
+     "final": 1112200
     }
    ]
   },
@@ -341,13 +334,13 @@
      }
     ],
     "on": "운임",
-    "how": "신규 회원 가입 후 항공권 검색 화면 하단에서 프로모션 코드 입력",
+    "how": "항공권 검색 후 화면 하단 프로모션 코드 버튼에서 코드 입력",
     "code": "WELCOMEV",
     "conditions": [
-     "신규 회원 전용",
-     "가입일로부터 14일 이내 사용",
+     "신규 회원 가입",
+     "가입 후 14일 이내만 사용",
      "에어프레미아 쿠폰과 중복 불가",
-     "일부 일자·운임 적용 제외"
+     "일부 일자·운임 적용 불가"
     ],
     "fares": [],
     "url": "https://www.airpremia.com/event/promotionDetail?detailId=370"
