@@ -1,3 +1,11 @@
+## 2026-11-07 (아이맥) — Postype Market (나페스 시장 리서치)
+- 누리 질문: "나페스에서 누구로 써야 돈이 되나"(NCT로 좁히지 않음). Money › Postype Market 새 페이지(postype-market.html, iframe page-market). 탭: Overview(Who Makes Money · Rising · Groups · 월별 · Themes) / Idols(People·Groups·Themes 표, 줄 누르면 작가·시리즈) / Authors / Series / Me vs Market(추정 vs 실제)
+- 수집 scripts/postype-market/collect.mjs: 아이맥 Aside REPL 로 포스타입 내부 검색 API(`api/v3/post:search`, size 100, 반달 단위) → '나페스' 1년치 11.4만 글, 상위 시리즈 800 회차·채널 800 구독자. 요청 사이 1.2초, 막히면 멈추고 state.json 에서 이어감
+- analyze.mjs: 인물 사전 idols.mjs(본명·별칭·그룹, 사전에 없는 잦은 태그는 페이지 하단에) · 결 정규식 · 추정 매출 = 유료 글 조회 × 가격 × 구매율(누리 스튜디오 실측: 단건 30% · 1,000P대 묶음 10%, 5,000P 넘는 잠금용 글 제외). 물고 뜯기 추정 448만 vs 실제 540만
+- publish.mjs → Firestore postypeMarket/latest + latest_0..n(JSON 조각). 원본 데이터는 저장소 밖 ~/postype-market-data (공개 저장소라)
+- 로컬 미리보기: postype-market.html?local=1 이 .local/market.json 을 읽음(.gitignore)
+- 다음: 주간 자동 갱신(launchd) · 사전 보강(김대영 등 확인 필요)
+
 ## 2026-11-07 (맥북) — Taste Culture 다시 설계 (지역·여행지)
 - Culture 위에 두 토글: 「서울·국내 | 여행지」 + 「전체 · 전시 · 공연 · 영화」 (숫자, 마지막 선택 기억 atelier_taste_culture_scope / _kind)
 - 국내: meta.region 별 묶음(많은 순), 머리는 화면 위에 붙음 + 곧 마감 개수. 안에서 마감 임박순 → 곧 시작순. 4칸 포스터 벽

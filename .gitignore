@@ -76,3 +76,4 @@ node_modules/
 .claude/settings.local.json
 .shots/
 .impeccable/
+.local/

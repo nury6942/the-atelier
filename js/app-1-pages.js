@@ -16891,6 +16891,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     "packing": { "title": "Travel" },
     "reference": { "title": "Memo" },
     "taste": { "title": "Taste" },
+    "market": { "title": "Postype Market" },
     "jobhunt": { "title": "Job Hunt" },
     "aibrief": { "title": "AI Brief" },
     "deals": { "title": "Flight Deals" },
