@@ -91,7 +91,7 @@ const peers = out.map(c => {
     medChars: med(cv.map(([, v]) => v.chars)), medPaidChars: med(paidChars), pricePer10k: med(paidChars) && med(paid.map(p => p.price)) ? Math.round(med(paid.map(p => p.price)) / med(paidChars) * 10000) : null,
     medImages: med(cv.map(([, v]) => v.images || 0)), estRevAll: Math.round(L.reduce((s, p) => s + rate(p), 0)), estRev: c.estRev, medViews: med(L.map(p => p.views)), medLikes: med(L.map(p => p.likes)),
     people: Object.entries(ppl).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]),
-    series: Object.entries(ser).map(([t, v]) => { const pv = v.filter(p => p.price > 0 && p.price <= 5000); return { title: t, eps: v.length, paid: pv.length, price: med(pv.map(p => p.price)), adult: v.some(p => p.adult), start: day(v[0].publishedAt), last: day(v[v.length - 1].publishedAt), estRev: Math.round(v.reduce((s, p) => s + rate(p), 0)), medViews: med(v.map(p => p.views)), tags: [...new Set(v.flatMap(p => p.tags))].slice(0, 10), summary: v.find(p => p.summary)?.summary || '' }; })
+    series: Object.entries(ser).map(([t, v]) => { const pv = v.filter(p => p.price > 0 && p.price <= 5000); return { title: t, id: v.find(p => p.seriesId)?.seriesId ?? null, eps: v.length, paid: pv.length, price: med(pv.map(p => p.price)), adult: v.some(p => p.adult), start: day(v[0].publishedAt), last: day(v[v.length - 1].publishedAt), estRev: Math.round(v.reduce((s, p) => s + rate(p), 0)), medViews: med(v.map(p => p.views)), tags: [...new Set(v.flatMap(p => p.tags))].slice(0, 10), summary: v.find(p => p.summary)?.summary || '' }; })
       .sort((a, b) => b.estRev - a.estRev).slice(0, 8),
     timeline: L.map(p => [day(p.publishedAt), p.price, p.adult ? 1 : 0, p.views, (c.chars[String(p.postId)] || {}).chars || null]),
   };

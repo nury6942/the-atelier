@@ -331,6 +331,58 @@
   /* Peers 카드 문단 */
   .pser p{font-size:14px;color:var(--mut);margin-top:4px}
   .pser span{color:var(--mut)}
+
+  /* Peers 카드 3차 */
+  .pc{border:1px solid var(--line2);padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0;background:#fff}
+  .pc-h{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+  .pc-id{display:flex;gap:12px;align-items:flex-start;min-width:0}
+  .pc-rk{flex:none;width:28px;height:28px;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:800;font-size:14px}
+  .pc-name{font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.3}
+  .pc-name:hover{color:var(--accent)}
+  .pc-by{font-size:13.5px;color:var(--mut);margin-top:3px;line-height:1.5}
+  .pc-rev{text-align:right;flex:none}
+  .pc-rev b{display:block;font-size:24px;font-weight:800;color:var(--accent-ink);letter-spacing:-.02em}
+  .pc-rev span{font-size:12.5px;font-weight:700;color:var(--lab)}
+  .pc-flags{display:flex;flex-wrap:wrap;gap:6px}
+  .flag{font-size:13px;font-weight:700;padding:5px 10px;background:#F4F4F7;color:var(--ink)}
+  .flag.p{background:var(--tint);color:var(--accent-ink)}
+  .flag.ok{background:#E8F5EC;color:#166534}
+  .flag.warn{background:#FDECEC;color:#B91C1C}
+  .extl{font-size:13px;font-weight:800;padding:5px 10px;background:var(--ink);color:#fff}
+  .extl:hover{background:var(--accent)}
+  .pc-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line2)}
+  .pc-grid div{padding:12px 14px;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);display:flex;flex-direction:column;gap:2px;min-width:0}
+  .pc-grid div:nth-child(3n){border-right:0}
+  .pc-grid div:nth-last-child(-n+3){border-bottom:0}
+  .pc-grid span{font-size:12.5px;font-weight:700;color:var(--lab)}
+  .pc-grid b{font-size:17px;font-weight:800;color:var(--ink)}
+  .pc-grid em{font-style:normal;font-size:12.5px;color:var(--mut)}
+  .pc-sec{font-size:13.5px;font-weight:800;color:var(--ink);margin-top:4px}
+  .pc-sec small{font-weight:500;color:var(--mut);margin-left:6px;font-size:12.5px}
+  .pc-ser{list-style:none;margin:-6px 0 0;padding:0}
+  .pc-ser li{padding:12px 0;border-bottom:1px solid #EDEDF1}
+  .pc-ser li:last-child{border-bottom:0}
+  .pc-ser .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .pc-ser a{font-size:15px;font-weight:800;color:var(--ink)}
+  .pc-ser a:hover{color:var(--accent);text-decoration:underline}
+  .pc-ser .meta{display:flex;gap:4px;flex-wrap:wrap}
+  .pc-ser .meta i{font-style:normal;font-size:12.5px;font-weight:700;padding:2px 7px;background:#F4F4F7}
+  .pc-ser .meta i.a{background:#FDECEC;color:#B91C1C} .pc-ser .meta i.g{background:#E8F5EC;color:#166534}
+  .pc-ser .meta i.m{background:var(--tint);color:var(--accent-ink)}
+  .pc-ser p{margin:6px 0 0;font-size:14px;line-height:1.7;color:var(--mut)}
+  .pc-tl svg{width:100%;height:44px}
+  @media (max-width:860px){ .pc{padding:18px} .pc-h{flex-direction:column} .pc-rev{text-align:left} .pc-grid{grid-template-columns:repeat(2,1fr)}
+    .pc-grid div:nth-child(3n){border-right:1px solid var(--line2)} .pc-grid div:nth-child(2n){border-right:0} .pc-grid div:nth-last-child(-n+3){border-bottom:1px solid var(--line2)} .pc-grid div:nth-last-child(-n+2){border-bottom:0} }
+
+  /* 링크 모양 하나로: 코발트 + 옅은 밑줄, 누르면 바탕 */
+  a.xl{color:var(--accent-ink);font-weight:700;text-decoration:none;border-bottom:1.5px solid var(--tint2);padding:0 1px}
+  a.xl:hover{background:var(--tint);border-bottom-color:var(--accent)}
+  a.xl.se::after,a.xl.ch::after{content:'↗';font-size:.78em;margin-left:2px;opacity:.8}
+  a.lnk{color:var(--ink);border-bottom:1.5px solid var(--tint2)}
+  a.lnk:hover{color:var(--accent-ink);background:var(--tint);text-decoration:none}
+  a.chip.lk:hover{background:var(--tint2)}
+  .refs a.refx{display:inline-block;font-size:12.5px;font-weight:800;padding:4px 9px;margin:0 4px 4px 0;background:var(--ink);color:#fff}
+  .refs a.refx:hover{background:var(--accent)}
 </style>
 </head>
 <body>
@@ -418,6 +470,7 @@ async function load(){
       D = JSON.parse(docs.map(d => d.data().json).join(''));
     }
     D.seriesById = Object.fromEntries((D.series || []).map(s => [s.id, s]));
+    buildLinks();
     if (!LOCAL) { try { const hs = await db.collection('postypeMarketInsights').orderBy(firebase.firestore.FieldPath.documentId(), 'desc').limit(16).get(); HIST = hs.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { console.warn(e); } }
     const m = D.meta;
     document.getElementById('feed').innerHTML = `'나페스' 검색 · <b>${esc(m.from)} ~ ${esc(m.to)}</b> · 글 <b>${fmtN(m.posts)}</b>개 · 수집 <b>${esc((m.collectedAt||'').slice(0,10))}</b>`;
@@ -468,6 +521,30 @@ function spark(vals, { w = 120, h = 28, color = 'var(--accent)' } = {}){
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${vals.map((v, i) => { const bh = Math.max(1, (h - 2) * v / max); return `<rect x="${(i * bw).toFixed(1)}" y="${(h - bh).toFixed(1)}" width="${Math.max(1, bw - 1).toFixed(1)}" height="${bh.toFixed(1)}" fill="${color}"/>`; }).join('')}</svg>`;
 }
 
+/* ───────── 채널·시리즈 이름 → 포스타입 링크 (분석 글 안에서 자동으로) */
+let LINKRE = null, LINKMAP = null;
+const GENERIC_TITLES = new Set(['단편', '단편모음', '단편 모음', '조각글', '19', '11', '공지', '사담', 'WISH', 'wish', 'NCT', 'TALK', 'talk', '썰', '모음', '외전', '성인 단편', '(시리즈 없음)', '-', '2', '夏']);
+function buildLinks(){
+  LINKMAP = new Map();
+  const COMMON = new Set(['작가', '시장', '채널', '시리즈', '단편집', '연재', '리쿠', '백현', '사쿠야', '유우시', '시온', '센티넬', '후회', '집착', '육아', '수인', '홍일점', '역하렘', '편당', '구독', '무료', '유료', '가격', '주기', '매출', '1년', '3달', '6달']);
+  const add = (name, url, kind, minLen) => {
+    const variants = new Set([String(name || '').trim(), String(name || '').replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF\uFE0F\u200D]/gu, '').trim()]);
+    for (const n of variants) { if (n.length < minLen || GENERIC_TITLES.has(n) || COMMON.has(n) || D.people.some(x => x.key === n) || /^\d+$/.test(n) || LINKMAP.has(n)) continue; LINKMAP.set(n, { url, kind }); }
+  };
+  for (const p of D.peers || []) { add(p.title, chUrl(p.channelName), 'ch', 2); for (const x of p.series || []) if (x.id) add(x.title, chUrl(p.channelName) + '/series/' + x.id, 'se', 3); }
+  for (const a of D.authors || []) add(a.title, chUrl(a.channelName), 'ch', 3);
+  for (const x of D.series || []) add(x.title, seriesUrl(x), 'se', 4);
+  const names = [...LINKMAP.keys()].sort((a, b) => b.length - a.length).map(n => esc(n).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  LINKRE = names.length ? new RegExp('(' + names.join('|') + ')', 'g') : null;
+}
+function linkify(text){
+  const t = esc(text);
+  if (!LINKRE) return t;
+  const unesc = (x) => x.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  return t.replace(LINKRE, (m) => { const L = LINKMAP.get(unesc(m)); return L ? `<a class="xl ${L.kind}" href="${esc(L.url)}" target="_blank" rel="noopener">${m}</a>` : m; });
+}
+const xl = (url, label, kind = 'ch') => `<a class="xl ${kind}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`;
+
 /* ───────── Insights — 월·목 분석 카드 (insights.mjs 가 claude 로 씀) */
 const SECT = { peers: 'Peers', market: 'Market', idols: 'Idols', keywords: 'Keywords', authors: 'Authors', playbook: 'Playbook', me: 'Me' };
 const VD = { up: '▲ 뜸', down: '▼ 짐', flat: '● 유지', watch: '◎ 지켜볼 것', do: '✓ 할 일' };
@@ -479,17 +556,17 @@ function insights(){
   const cards = (I.cards || []).filter(c => UI.insSec === 'all' || c.section === UI.insSec);
   const when = (I.generatedAt || '').slice(0, 10);
   view(`
-    <div class="ins-head"><div><div class="when">${esc(when)} 분석 · ${esc(I.range || '')} 발행 글 · 추정 매출 기준</div><h2>${esc(I.headline || '')}</h2></div>
+    <div class="ins-head"><div><div class="when">${esc(when)} 분석 · ${esc(I.range || '')} 발행 글 · 추정 매출 기준</div><h2>${linkify(I.headline || '')}</h2></div>
       ${HIST.length > 1 ? `<label class="when">지난 분석 <select data-hist aria-label="지난 분석 고르기">${HIST.map(h => `<option value="${esc(h.id)}"${(histSel || HIST[0].id) === h.id ? ' selected' : ''}>${esc(h.id)}</option>`).join('')}</select></label>` : ''}</div>
-    ${(I.actions || []).length ? `<section class="todo"><h3>This Week — 누리가 할 일</h3><ol>${I.actions.map(a => `<li><b>${esc(a.text)}</b><span>${esc(a.why || '')}</span></li>`).join('')}</ol></section>` : ''}
+    ${(I.actions || []).length ? `<section class="todo"><h3>This Week — 누리가 할 일</h3><ol>${I.actions.map(a => `<li><b>${linkify(a.text)}</b><span>${linkify(a.why || '')}</span></li>`).join('')}</ol></section>` : ''}
     <div class="tools" style="margin-top:24px"><div class="seg" role="group" aria-label="분류">${secs.map(k => `<button class="${k === UI.insSec ? 'on' : ''}" data-insec="${k}">${k === 'all' ? 'All' : esc(SECT[k] || k)}</button>`).join('')}</div></div>
     <div class="icards">${cards.map(c => `<article class="icard v-${esc(c.verdict)}">
       <div class="top"><span class="sec-l">${esc(SECT[c.section] || c.section || '')}</span><span class="vd ${esc(c.verdict)}">${esc(VD[c.verdict] || c.verdict || '')}</span></div>
       <h3>${esc(c.title)}</h3>
-      ${c.stat && c.stat.value ? `<div class="stat"><b class="num">${esc(c.stat.value)}</b><span>${esc(c.stat.label || '')}</span></div>` : ''}
-      <p class="sum" style="margin:0">${esc(c.summary)}</p>
-      ${(c.points || []).length ? `<ul>${c.points.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : ''}
-      ${(c.refs || []).length ? `<div class="refs">${c.refs.map(r => `<button data-ref="${esc(r)}">${esc(r)} →</button>`).join('')}</div>` : ''}
+      ${c.stat && c.stat.value ? `<div class="stat"><b class="num">${esc(c.stat.value)}</b><span>${linkify(c.stat.label || '')}</span></div>` : ''}
+      <p class="sum" style="margin:0">${linkify(c.summary)}</p>
+      ${(c.points || []).length ? `<ul>${c.points.map(p => `<li>${linkify(p)}</li>`).join('')}</ul>` : ''}
+      ${(c.refs || []).length ? `<div class="refs">${c.refs.map(r => { const L = LINKMAP && LINKMAP.get(r); return L && !D.people.some(x => x.key === r) ? `<a class="refx" href="${esc(L.url)}" target="_blank" rel="noopener">${esc(r)} ↗</a>` : `<button data-ref="${esc(r)}">${esc(r)} →</button>`; }).join('')}</div>` : ''}
     </article>`).join('')}</div>
     <p class="note">분석 글은 월·목 아침 갱신 때 Claude 가 이 페이지의 숫자만 보고 써요. 숫자는 추정이라 실제보다 낮게 나오는 편이에요.</p>`);
 }
@@ -513,19 +590,41 @@ function peers(){
       <div class="kpi"><div class="l">1만 자당 가격</div><div class="v num">${fmtN(medAll(p => p.pricePer10k && p.pricePer10k < 5000 ? p.pricePer10k : null))}P</div><div class="s">유료 글 글자 수 표본 기준</div></div>
     </div>
     <div class="tools" style="margin-top:20px"><div class="seg" role="group" aria-label="정렬">${[['estRev', '매출'], ['subscribers', '구독자'], ['postsPerMonth', '글 많은 순'], ['adultPaidRatio', '19금 비율']].map(([kk, l]) => `<button class="${kk === k ? 'on' : ''}" data-psort="${kk}">${l}</button>`).join('')}</div><span class="hint">X·질문함 링크가 있으면 바깥에서 데려온 독자가 있을 가능성이 커요</span></div>
-    <div class="pcards">${rows.map(p => `<article class="pcard">
-      <div class="ph"><a class="lnk" href="${chUrl(p.channelName)}" target="_blank" rel="noopener"><b>${esc(p.title)}</b></a><span class="sub">${esc(p.author || '')}${p.bio ? ' · ' + esc(p.bio.slice(0, 40)) : ''}</span></div>
-      <div class="pstats">
-        <div><span>1년 추정</span><b>${won(p.estRev)}</b></div><div><span>구독자</span><b>${fmtN(p.subscribers)}</b></div>
-        <div><span>개설 · 첫 글</span><b>${fmtD(p.createdAt)} · ${fmtD(p.firstPost)}</b></div><div><span>전체 글</span><b>${fmtN(p.totalPosts)}편 · 월 ${p.postsPerMonth ?? '—'}편</b></div>
-        <div><span>유료 / 무료</span><b>${fmtN(p.paidPosts)} / ${fmtN(p.freePosts)}</b></div><div><span>첫 유료 전</span><b>${p.freeBeforeFirstPaid ? '무료 ' + p.freeBeforeFirstPaid + '편 (' + p.daysToFirstPaid + '일)' : '첫 글부터 유료'}</b></div>
-        <div><span>가격 · 간격</span><b>${p.medPrice ? fmtN(p.medPrice) + 'P' : '—'} · ${p.medGapDays ?? '—'}일</b></div><div><span>회당 글자</span><b>${p.medPaidChars ? fmtN(Math.round(p.medPaidChars)) + '자' : '—'}${p.pricePer10k && p.pricePer10k < 5000 ? ' · 1만 자 ' + fmtN(p.pricePer10k) + 'P' : ''}</b></div>
+    <div class="pcards">${rows.map((p, i) => {
+      const ext = (p.links || []).map(l => { const u = String(l); const host = u.replace(/^https?:\/\//, '').split(/[/?]/)[0];
+        const name = /x\.com|twitter/.test(host) ? 'X' : /spin|asked|peing|qna/.test(host) ? '질문함' : host;
+        return /^https?:\/\//.test(u) ? `<a class="extl" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(name)} ↗</a>` : ''; }).join('');
+      const adultLow = (p.adultPaidRatio ?? 100) < 50;
+      return `<article class="pc">
+      <header class="pc-h">
+        <div class="pc-id"><span class="pc-rk">${i + 1}</span>
+          <div><a class="pc-name" href="${chUrl(p.channelName)}" target="_blank" rel="noopener">${esc(p.title)} ↗</a>
+          <div class="pc-by">${esc(p.author || '')}${p.bio ? ' · ' + esc(p.bio.slice(0, 50)) : ''}</div></div></div>
+        <div class="pc-rev"><b class="num">${won(p.estRev)}</b><span>1년 추정 매출</span></div>
+      </header>
+      <div class="pc-flags">
+        <span class="flag ${adultLow ? 'ok' : 'warn'}">유료 중 19금 ${p.adultPaidRatio ?? '—'}%</span>
+        <span class="flag">${p.freeBeforeFirstPaid ? '무료 ' + p.freeBeforeFirstPaid + '편 뒤 유료' : '첫 글부터 유료'}</span>
+        ${(p.people || []).slice(0, 4).map(x => `<span class="flag p">${esc(x)}</span>`).join('')}
+        ${ext}
       </div>
-      <div>${pill('유료 중 19금 ' + (p.adultPaidRatio ?? '—') + '%', (p.adultPaidRatio ?? 100) < 50 ? 'acc' : '')}${(p.people || []).slice(0, 4).map(x => pill(esc(x))).join('')}${(p.links || []).length ? pill('바깥 링크 ' + p.links.length + '개', 'acc') : ''}</div>
-      <div class="pser">${(p.series || []).slice(0, 4).map(s => `<div><b>${esc(s.title)}</b> <span>${s.eps}편 · ${s.price ? fmtN(s.price) + 'P' : '무료'}${s.adult ? ' · 19' : ''} · ${won(s.estRev)}</span>${s.summary ? `<p>${esc(s.summary.slice(0, 90))}</p>` : ''}</div>`).join('')}</div>
-      <div class="ptl" aria-label="글 올린 흐름">${spark((p.timeline || []).map(t => t[3]), { w: 300, h: 34, color: 'var(--accent)' })}<span class="sub">글마다 조회 · 왼쪽이 첫 글</span></div>
-      ${(p.links || []).length ? `<div class="sub">${p.links.map(l => esc(String(l).replace(/^https?:\/\//, '').replace(/\?.*/, ''))).join(' · ')}</div>` : ''}
-    </article>`).join('')}</div>`);
+      <div class="pc-grid">
+        <div><span>구독자</span><b class="num">${fmtN(p.subscribers)}</b></div>
+        <div><span>전체 글</span><b class="num">${fmtN(p.totalPosts)}편</b><em>한 달 ${p.postsPerMonth ?? '—'}편</em></div>
+        <div><span>유료 · 무료</span><b class="num">${fmtN(p.paidPosts)} · ${fmtN(p.freePosts)}</b></div>
+        <div><span>가격</span><b class="num">${p.medPrice ? fmtN(p.medPrice) + 'P' : '—'}</b><em>${p.medGapDays ?? '—'}일마다</em></div>
+        <div><span>회당 글자</span><b class="num">${p.medPaidChars ? fmtN(Math.round(p.medPaidChars)) + '자' : '—'}</b><em>${p.pricePer10k && p.pricePer10k < 5000 ? '1만 자 ' + fmtN(p.pricePer10k) + 'P' : ''}</em></div>
+        <div><span>개설 → 첫 글</span><b class="num">${fmtD(p.createdAt)}</b><em>첫 글 ${fmtD(p.firstPost)}</em></div>
+      </div>
+      <div class="pc-sec">대표 시리즈</div>
+      <ol class="pc-ser">${(p.series || []).slice(0, 4).map(x => `<li>
+        <div class="row"><a href="${x.id ? chUrl(p.channelName) + '/series/' + x.id : chUrl(p.channelName) + '/series'}" target="_blank" rel="noopener">${esc(x.title)} ↗</a>
+          <span class="meta"><i>${x.eps}편</i><i>${x.price ? fmtN(x.price) + 'P' : '무료'}</i>${x.adult ? '<i class="a">19</i>' : '<i class="g">전연령</i>'}<i class="m">${won(x.estRev)}</i></span></div>
+        ${x.summary ? `<p>${esc(x.summary.replace(/\s+/g, ' ').slice(0, 110))}${x.summary.length > 110 ? '…' : ''}</p>` : ''}
+      </li>`).join('')}</ol>
+      <div class="pc-sec">글마다 조회 <small>왼쪽이 첫 글</small></div>
+      <div class="pc-tl">${spark((p.timeline || []).map(t => t[3]), { w: 520, h: 44 })}</div>
+    </article>`; }).join('')}</div>`);
 }
 
 /* ───────── Overview */
@@ -659,7 +758,7 @@ function idols(){
         <div><dt>기간 내</dt><dd>${esc((a.firstPost || '').slice(2))} ~ ${esc((a.lastPost || '').slice(2))}</dd></div>
         <div><dt>추정 매출</dt><dd>${won(a.estRev)}</dd></div>
       </dl>
-      <div class="at">${(a.series || []).map(t => `<span class="chip acc">${esc(t)}</span>`).join('')}${(a.themes || []).map(t => `<span class="chip">${esc(t)}</span>`).join('')}${(a.keywords || []).slice(0, 4).map(t => `<span class="chip">#${esc(t)}</span>`).join('')}</div>
+      <div class="at">${(a.series || []).map(t => { const sx = (D.series || []).find(x => x.title === t && x.channelName === a.channelName); return sx ? `<a class="chip acc lk" href="${seriesUrl(sx)}" target="_blank" rel="noopener">${esc(t)} ↗</a>` : `<span class="chip acc">${esc(t)}</span>`; }).join('')}${(a.themes || []).map(t => `<span class="chip">${esc(t)}</span>`).join('')}${(a.keywords || []).slice(0, 4).map(t => `<span class="chip">#${esc(t)}</span>`).join('')}</div>
     </div>`).join('')}</div>` : '';
   const detail = r => {
     const ser = (r.topSeries || []).map(id => D.seriesById[id]).filter(Boolean);
@@ -736,7 +835,7 @@ function playbook(){
         ${S.freshInTop.length ? `<h3 style="font-size:12.5px;color:var(--ink2);margin:12px 0 6px">상위권에 든 새 채널</h3><ol style="margin:0;padding-left:18px">${S.freshInTop.map(a => `<li><a class="lnk" href="${chUrl(a.channelName)}" target="_blank" rel="noopener">${esc(a.title)}</a> <span style="color:var(--ink2)">· ${esc(a.createdAt)} 개설 · ${esc(a.topGroup || '')} · 구독 ${fmtK(a.subscribers)} · ${won(a.estRev)}</span></li>`).join('')}</ol>` : ''}
       </div>
       <div class="card"><div class="sech"><h2>Multi-Channel Authors</h2><p>한 작가가 채널을 둘 이상 굴리는 경우 ${fmtN(S.multiCount)}명 (작가 정보 확인된 ${fmtN(S.profilesKnown)}명 중)</p></div>
-        ${S.multi.length ? `<ol style="margin:0;padding-left:18px">${S.multi.slice(0, 15).map(m => `<li style="margin:6px 0"><b>${esc(m.author)}</b> <span style="color:var(--ink2)">· ${won(m.estRev)} · ${m.sameGroup ? '같은 그룹' : '그룹 나눔'}</span><br>${m.channels.map(c => `<span class="chip">${esc(c.title)} · ${esc(c.topGroup || '—')} · ${fmtK(c.subscribers)}</span>`).join('')}</li>`).join('')}</ol>` : '<p class="empty">자료 모으는 중</p>'}
+        ${S.multi.length ? `<ol style="margin:0;padding-left:18px">${S.multi.slice(0, 15).map(m => `<li style="margin:6px 0"><b>${esc(m.author)}</b> <span style="color:var(--ink2)">· ${won(m.estRev)} · ${m.sameGroup ? '같은 그룹' : '그룹 나눔'}</span><br>${m.channels.map(c => `<a class="chip lk" href="${chUrl(c.channelName)}" target="_blank" rel="noopener">${esc(c.title)} ↗ · ${esc(c.topGroup || '—')} · ${fmtK(c.subscribers)}</a>`).join('')}</li>`).join('')}</ol>` : '<p class="empty">자료 모으는 중</p>'}
       </div>
     </section>
   `);
