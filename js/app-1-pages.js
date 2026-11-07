@@ -28259,6 +28259,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
 
   var LS_ENGLISH_STATUS_KEY = 'atelier_english_status';
   var LS_ENGLISH_DELETED_KEY = 'atelier_english_deleted_defaults'; // 사용자가 삭제한 default 회차 날짜 set
+  var LS_ENGLISH_REVIEWDONE_KEY = 'atelier_english_review_done';   // 리뷰를 실제로 복습했는지 (누리 수동 체크, 11/07)
+  function getEnglishReviewDone() {
+    try { return JSON.parse(localStorage.getItem(LS_ENGLISH_REVIEWDONE_KEY) || '{}') || {}; } catch(e) { return {}; }
+  }
 
   function getEnglishStatusOverrides() {
     var stored = localStorage.getItem(LS_ENGLISH_STATUS_KEY);
@@ -28281,6 +28285,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var lsStatus = getEnglishStatusOverrides();
       var fbDeleted = (doc.exists && doc.data().deletedDefaults) || {};
       var fbStatus = (doc.exists && doc.data().statusOverrides) || {};
+      var fbReview = (doc.exists && doc.data().reviewDone) || {};
+      var mergedReview = Object.assign({}, getEnglishReviewDone(), fbReview);
+      localStorage.setItem(LS_ENGLISH_REVIEWDONE_KEY, JSON.stringify(mergedReview));
       // Union (deletedDefaults는 모든 디바이스의 삭제 합집합)
       var mergedDeleted = Object.assign({}, fbDeleted, lsDeleted);
       // statusOverrides는 FB 우선 (가장 최근 중앙 저장 상태)
@@ -28289,12 +28296,13 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       localStorage.setItem(LS_ENGLISH_DELETED_KEY, JSON.stringify(mergedDeleted));
       localStorage.setItem(LS_ENGLISH_STATUS_KEY, JSON.stringify(mergedStatus));
       // FB와 다르면 FB에도 push
-      var fbStr = JSON.stringify({d: fbDeleted, s: fbStatus});
-      var mergedStr = JSON.stringify({d: mergedDeleted, s: mergedStatus});
+      var fbStr = JSON.stringify({d: fbDeleted, s: fbStatus, r: fbReview});
+      var mergedStr = JSON.stringify({d: mergedDeleted, s: mergedStatus, r: mergedReview});
       if (fbStr !== mergedStr) {
         await docRef.set({
           deletedDefaults: mergedDeleted,
           statusOverrides: mergedStatus,
+          reviewDone: mergedReview,
           _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       }
@@ -28305,6 +28313,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       await db.collection('englishMeta').doc('state').set({
         deletedDefaults: getEnglishDeletedDefaults(),
         statusOverrides: getEnglishStatusOverrides(),
+        reviewDone: getEnglishReviewDone(),
         _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     } catch(e) { console.warn('English meta save error:', e); }
@@ -28328,6 +28337,15 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   window._listDeletedEnglishDefaults = function() {
     return Object.keys(getEnglishDeletedDefaults());
   };
+
+  function toggleEnglishReviewDone(date) {
+    var m = getEnglishReviewDone();
+    if (m[date]) delete m[date]; else m[date] = true;
+    localStorage.setItem(LS_ENGLISH_REVIEWDONE_KEY, JSON.stringify(m));
+    saveEnglishMetaToFirebase();
+    renderEnglishTable();
+  }
+  window.toggleEnglishReviewDone = toggleEnglishReviewDone;
 
   function setEnglishStatus(date, status) {
     // localStorage에 저장 (기본값 행)
@@ -28519,7 +28537,13 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     }
     var hasReview = engSessionsData.some(function(s){ return s._id === normalized; });
     if (hasReview) {
-      return '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + normalized + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-[#1F4BD8] bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">bar_chart</span>리뷰 보기</button>';
+      var done = !!getEnglishReviewDone()[normalized];
+      var doneBtn = '<button onclick="event.stopPropagation();toggleEnglishReviewDone(\'' + normalized + '\')" title="' + (done ? '복습 완료 — 누르면 해제' : '복습했으면 눌러서 체크') + '" class="flex items-center gap-1 px-2.5 py-1 text-xs font-bold border transition-colors ' +
+        (done ? 'bg-[#1F4BD8] text-white border-[#1F4BD8] hover:bg-[#1A3FB5]' : 'bg-white text-slate-500 border-slate-300 hover:border-[#1F4BD8] hover:text-[#1F4BD8]') +
+        '"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">' + (done ? 'check_circle' : 'radio_button_unchecked') + '</span>리뷰 완료</button>';
+      return '<div class="flex items-center gap-1.5">' +
+        '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + normalized + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-[#1F4BD8] bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">bar_chart</span>리뷰 보기</button>' +
+        doneBtn + '</div>';
     }
     return '<span class="text-xs text-slate-300">미작성</span>';
   }

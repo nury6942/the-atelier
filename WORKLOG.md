@@ -1,3 +1,7 @@
+## 2026-11-07 (맥북) — English 수업 트래커에 「리뷰 완료」 체크
+- 리뷰 보기 옆에 「리뷰 완료」 버튼(누리 수동 체크, 다시 누르면 해제). 리뷰를 만들어 두고 복습을 안 해서 추적용
+- 저장: localStorage `atelier_english_review_done` + Firestore `englishMeta/state.reviewDone` (기기 간 동기화)
+
 ## 2026-11-06 밤 · 맥북 · Roadmap 삭제
 
 - 누리: 안 씀, 데이터까지 삭제 → 사이드바·홈 메뉴·Help 줄·page-roadmap·Phase/설정 모달 삭제, js/app-4-roadmap.js·roadmap-data.js·daily-actions.js·daily-guides.js 삭제
