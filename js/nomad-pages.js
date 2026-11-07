@@ -1435,7 +1435,7 @@ window.NOMAD_PAGES = (function(){
     // ① Active Track
     html += '<div class="nm-card" style="padding: var(--space-7)">' +
       '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom: var(--space-2)">Active Track</p>' +
-      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-primary);line-height:1.2;margin-bottom: var(--space-4)">Postype Webnovel</h3>' +
+      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-primary);line-height:1.2;margin-bottom: var(--space-4)">Webnovel</h3>' +
       '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
         '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,0.18);animation:nm-pulse 1.5s infinite"></span>' +
         '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);color:var(--nm-on-surface);font-weight:600">B시리즈 · 현재 ₩200-250만/월</span>' +
@@ -1471,7 +1471,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="nm-card nm-card-lg">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-7)">' +
       '<div>' +
-        '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1)">Postype Webnovel Revenue Goals</h4>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1)">Webnovel Revenue Goals</h4>' +
         '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2)">B시리즈 중심 · 게이트 카운트 핵심 트랙</p>' +
       '</div>' +
       '<span style="background:#F5F7FE;color:var(--nm-primary);padding: var(--space-1-5) var(--space-3-5);border-radius: var(--radius-full);font-size: var(--font-size-micro);font-weight:700">High Priority</span>' +
@@ -2543,7 +2543,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Business</span>' +
       '<span class="ne-sub-name">' + neTitleLink('Payoneer') + '</span>' +
-      '<p class="ne-sub-desc">해외 클라이언트 수령용 (포스타입은 X, 영문 콘텐츠 클라이언트 생기면). 노마드 후반부 필요할 수도.</p>' +
+      '<p class="ne-sub-desc">해외 클라이언트 수령용 (웹소설 수익은 X, 영문 콘텐츠 클라이언트 생기면). 노마드 후반부 필요할 수도.</p>' +
     '</div>';
     html += '<div class="ne-sub-card" style="background:rgba(31,75,216,0.05);border-color:rgba(31,75,216,0.2)">' +
       '<span class="ne-sub-label" style="color:var(--nm-primary)">조합 권장</span>' +
@@ -2726,7 +2726,7 @@ window.NOMAD_PAGES = (function(){
         '<div class="ne-card-title-row"><span class="material-symbols-outlined">vpn_key</span><h4 class="ne-card-title">' + neTitleLink('NordVPN') + ' <span style="font-family:Inter;font-size: var(--font-size-micro);font-weight:500;color:#5d5d67;margin-left: var(--space-2)">또는 ' + neTitleLink('ProtonVPN') + '</span></h4></div>' +
         '<span class="ne-chip">⭐ 무조건</span>' +
       '</div>' +
-      '<p class="ne-card-body">$3-5/월 · 카페 Wi-Fi 보안 (해킹·도난 방지) + 한국 사이트 접속 (포스타입·은행) — 일부 한국 사이트는 한국 IP만 허용. <strong>누리 = 포스타입 작가 활동 = 한국 IP 필요한 순간 있음.</strong></p>' +
+      '<p class="ne-card-body">$3-5/월 · 카페 Wi-Fi 보안 (해킹·도난 방지) + 한국 사이트 접속 (웹소설 플랫폼·은행) — 일부 한국 사이트는 한국 IP만 허용. <strong>누리 = 포스타입 작가 활동 = 한국 IP 필요한 순간 있음.</strong></p>' +
       '<div class="ne-card-tags">' +
         '<span class="ne-card-tag">VPN</span>' +
         '<span class="ne-card-tag">Korea IP</span>' +

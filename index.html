@@ -73,13 +73,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=437" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=438" as="script">
   <link rel="preload" href="js/app-2-init.js?v=198" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/app-5-ledger-export.js?v=164" as="script">
   <link rel="preload" href="js/nomad-data.js?v=172" as="script">
   <link rel="preload" href="js/nomad-cities.js?v=163" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=196" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=197" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Color+Emoji&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -15402,12 +15402,12 @@
         <button onclick="_setTrendPlatform('네이버 시리즈')" data-trend-platform="네이버 시리즈" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">📚 네이버 시리즈</button>
         <button onclick="_setTrendPlatform('카카오페이지')" data-trend-platform="카카오페이지" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">🟡 카카오페이지</button>
         <button onclick="_setTrendPlatform('리디북스')" data-trend-platform="리디북스" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">📖 리디북스</button>
-        <button onclick="_setTrendPlatform('포스타입')" data-trend-platform="포스타입" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">💖 포스타입 (2차창작)</button>
+        <button onclick="_setTrendPlatform('포스타입')" data-trend-platform="포스타입" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">💖 2차창작</button>
       </div>
 
       <!-- 모드 선택 (2개로 정리) -->
       <div class="px-5 pt-3 flex gap-2 flex-wrap border-b border-slate-100 pb-3" style="font-family:'Pretendard',sans-serif">
-        <button onclick="_setTrendMode('auto')" data-trend-mode="auto" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📈 자동 트렌드 (포타 주 1회)</button>
+        <button onclick="_setTrendMode('auto')" data-trend-mode="auto" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📈 자동 트렌드 (주 1회)</button>
         <button onclick="_setTrendMode('analyze-text')" data-trend-mode="analyze-text" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📝 직접 분석 (텍스트 + 스크린샷)</button>
       </div>
 
@@ -16179,7 +16179,7 @@
       <section id="postype-analytics-section">
         <header class="mb-6 flex justify-between items-center flex-wrap gap-3">
           <div>
-            <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Postype 매출 분석</h2>
+            <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Revenue</h2>
             <div class="flex items-center gap-2 mt-1 flex-wrap">
               <select id="postype-channel-select" class="text-sm bg-transparent border-0 font-bold text-[#1A3FB5] cursor-pointer outline-none focus:ring-2 focus:ring-indigo-200 rounded px-1 -mx-1">
                 <option value="__all__">전체 합산 (입금 기준)</option>
@@ -16780,7 +16780,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script src="js/public-data.js?v=2" defer></script>
-<script src="js/app-1-pages.js?v=437" defer></script>
+<script src="js/app-1-pages.js?v=438" defer></script>
 <script src="js/flight-deals.js?v=12" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17465,7 +17465,7 @@
           <div><dt><a href="#" onclick="navigate('taste');return false;">Taste</a></dt><dd>내 취향에 맞는 공간·스테이·책·도시. 월·목 아침 아이맥이 모아 온다.</dd></div>
           <div><dt><a href="#" onclick="navigate('finance-hub');return false;">Money › Assets</a></dt><dd>월별 수입·지출·저축과 총 자산.</dd></div>
           <div><dt><a href="#" onclick="navigate('ledger');return false;">Money › Ledger</a></dt><dd>하루하루 가계부와 이달 전략 보드. 폰에선 전용 화면으로 열린다.</dd></div>
-          <div><dt><a href="#" onclick="navigate('income');return false;">Money › Side Jobs</a></dt><dd>부업 수입(포스타입 등) 기록과 정산.</dd></div>
+          <div><dt><a href="#" onclick="navigate('income');return false;">Money › Side Jobs</a></dt><dd>부업 수입(웹소설 등) 기록과 정산.</dd></div>
           <div><dt><a href="#" onclick="navigate('market');return false;">Market</a></dt><dd>'나페스' 시장 1년치 — 어떤 아이돌·결이 돈이 되는지, 작가·시리즈 순위. 아이맥 Aside 가 모아 온다.</dd></div>
           <div><dt><a href="#" onclick="navigate('tax');return false;">Money › Tax</a></dt><dd>올해 소득분 세금 세 번(연말정산·5월 종소세·퇴직)과 연금저축 효과.</dd></div>
           <div><dt><a href="#" onclick="navigate('journey');return false;">Travel</a></dt><dd>여행 하나의 일정·스팟·예약·예산·체크리스트·Atlas.</dd></div>
@@ -17499,7 +17499,7 @@
           <div><dt>Job Hunt <span class="hp-when">매일</span></dt><dd>루틴이 새 공고를 찾아 넣음</dd></div>
           <div><dt>Trends <span class="hp-when">매일 06:30</span></dt><dd>분야별 카드뉴스 생성</dd></div>
           <div><dt>Flight Deals <span class="hp-when">매일</span></dt><dd>노선별 특가 점검</dd></div>
-          <div><dt>Side Jobs <span class="hp-when">매일 09:30</span></dt><dd>포스타입 매출 동기화</dd></div>
+          <div><dt>Side Jobs <span class="hp-when">매일 09:30</span></dt><dd>웹소설 매출 동기화</dd></div>
         </dl>
         <p class="hp-note">들어와야 할 게 비어 있으면 그 루틴이 멈춘 것. 일정·메모·여행은 직접 쓰는 대로 모든 기기에 바로 저장된다.</p>
       </section>
@@ -17569,7 +17569,7 @@
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
 <script src="js/cal-wb.js?v=43" defer></script>
 <script src="js/app-5-ledger-export.js?v=164" defer></script>
-<script src="js/app-6-postype-analytics.js?v=173" defer></script>
+<script src="js/app-6-postype-analytics.js?v=174" defer></script>
 <script src="js/app-7-mirror.js?v=94" defer></script>
 <script src="js/money-tax.js?v=5" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
@@ -17595,7 +17595,7 @@
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=172" defer></script>
 <script src="js/nomad-cities.js?v=163" defer></script>
-<script src="js/nomad-pages.js?v=196" defer></script>
+<script src="js/nomad-pages.js?v=197" defer></script>
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
 <script src="js/atlas-data.js?v=7" defer></script>

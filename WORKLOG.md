@@ -1,3 +1,9 @@
+## 2026-11-07 (아이맥) — 화면에서 '포스타입·Postype' 단어 빼기
+- Side Jobs 매출 머리 'Postype 매출 분석' → 'Revenue', Help '부업 수입(웹소설 등)' · '웹소설 매출 동기화', 동기화 확인창 '수익 페이지를…'
+- 트렌드 플랫폼 탭 '💖 포스타입 (2차창작)' → '💖 2차창작'(내부 값은 그대로), '자동 트렌드 (주 1회)'
+- Nomad: 'Postype Webnovel' → 'Webnovel', 설명 두 곳 '웹소설 플랫폼'
+- 함수·파일·Firestore 이름과 사용자 데이터(부업 이름 등)는 그대로. ?v= app-1 438·app-6 174·nomad 197
+
 ## 2026-11-07 (아이맥) — Postype Market → Market 이름 바꿈
 - 누리: 화면에서 'postype/포스타입' 단어 빼고 'Market' 으로. 사이드바·홈 메뉴·Help·페이지 제목·머리 문구 바꿈(파일명 postype-market.html·Firestore 이름은 그대로). 분석 글에도 '포스타입' 단어 안 쓰게
 

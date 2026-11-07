@@ -1308,7 +1308,7 @@
 
   window.syncPostypeAnalytics = function(){
     const url = 'https://www.postype.com/point/earnings/list';
-    if (confirm('포스타입 수익 페이지를 새 탭에 열까요?\n로그인 상태에서 북마크릿을 클릭하면\natelier로 데이터가 자동 전송됩니다.\n\n💡 첫 백필이면 prompt에 "ytd" 입력하세요!\n두 채널(다락방/옥탑방) 거래가 자동 분리됩니다.')){
+    if (confirm('수익 페이지를 새 탭에 열까요?\n로그인 상태에서 북마크릿을 클릭하면\natelier로 데이터가 자동 전송됩니다.\n\n💡 첫 백필이면 prompt에 "ytd" 입력하세요!\n두 채널(다락방/옥탑방) 거래가 자동 분리됩니다.')){
       window.open(url, '_blank');
     }
   };
