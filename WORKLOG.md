@@ -1,3 +1,9 @@
+## 2026-11-07 (아이맥) — Postype Market 3차: Insights 탭 + 월·목 자동 갱신
+- Insights 탭(첫 탭): 한 줄 결론 · This Week(누리가 할 일) · 분석 카드(분류·판정 칩 ▲뜸/▼짐/●유지/◎지켜볼 것/✓할 일, 큰 숫자, 근거 4줄, 누르면 해당 인물·키워드·채널로). 지난 분석은 날짜로 골라 봄(Firestore postypeMarketInsights/<날짜>)
+- insights.mjs: market.json 요약 숫자만 넘겨 claude -p(opus→sonnet)가 카드 10~14장 + 할 일 3~5개 JSON 으로 씀. 지난 분석을 넘겨 '달라진 점'도
+- weekly.mjs + run.sh + launchd com.nuri.atelier-postype-market (월·목 05:00, 아이맥): 그달 첫 실행은 13개월 전체, 나머지는 최근 60일만 받아 지난 결과(~/postype-market-data/current) 위에 덮음(collect.mjs --seed). 수집→분석→분석 글→게시. 막히면 맥 알림, 같은 날 다시 돌리면 이어감. 로그 ~/Library/Logs/atelier-postype-market.log, 손으로 launchctl kickstart gui/$(id -u)/com.nuri.atelier-postype-market
+- 글자 수 표본: 상위 유료 시리즈 회당 가운데 5,667자, 1만 자당 815P (누리 물고 뜯기 11,872자·421P → 글자당 시장의 절반 값)
+
 ## 2026-11-07 (아이맥) — Postype Market 2차: 기간·기준 전환, Playbook, 키워드, 상위 작가 카드
 - Overview·Idols: 기간 3달/6달/1년 × 기준 매출/좋아요/글 수 토글(localStorage), 변화는 바로 앞 같은 길이 기간 대비 점유
 - Idols: NCT Units(127·DREAM·WayV·WISH)·Keywords(사람·그룹 아닌 태그) 보기, 줄 펼치면 Top Authors 카드(개설일·구독·글/유료·가격·주기·요일·대표 시리즈·결·키워드)

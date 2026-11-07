@@ -27,5 +27,11 @@ const oldParts = old.exists ? old.data().parts || 0 : 0;
 for (let i = 0; i < parts.length; i++) await col.doc('latest_' + i).set({ json: parts[i], i });
 await col.doc('latest').set({ parts: parts.length, bytes: Buffer.byteLength(text), from: meta.from, to: meta.to, posts: meta.posts, collectedAt: meta.collectedAt, analyzedAt: meta.analyzedAt, publishedAt: admin.firestore.FieldValue.serverTimestamp() });
 for (let i = parts.length; i < oldParts; i++) await col.doc('latest_' + i).delete();
+const full = JSON.parse(text);
+if (full.insights) {
+  const id = (full.insights.generatedAt || new Date().toISOString()).slice(0, 10);
+  await db.collection('postypeMarketInsights').doc(id).set(full.insights);
+  console.log('분석 글 기록: postypeMarketInsights/' + id);
+}
 console.log(`올림: postypeMarket/latest + ${parts.length}조각 (${(Buffer.byteLength(text) / 1024).toFixed(0)}KB)`);
 process.exit(0);

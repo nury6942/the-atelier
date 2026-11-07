@@ -39,7 +39,9 @@
   .tab:hover{color:var(--ink)}
   .tab.on{color:var(--ink);border-bottom-color:var(--ink)}
 
-  .seg{display:inline-flex;background:var(--surface);padding:2px;gap:2px}
+  .seg{display:inline-flex;background:var(--surface);padding:2px;gap:2px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+  .seg::-webkit-scrollbar{display:none}
+  .seg button{flex:none}
   .seg button{padding:6px 12px;font-size:13px;font-weight:600;color:var(--ink2);border:1px solid transparent}
   .seg button.on{background:#fff;color:var(--ink);border-color:var(--ink)}
 
@@ -100,6 +102,34 @@
 
   .dwrap{position:sticky;left:14px;max-width:min(1130px, calc(100vw - 80px))}
   .chip{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .ins-head{margin-top:24px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+  .ins-head h2{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.35;max-width:760px}
+  .ins-head .when{font-size:12.5px;color:var(--mut)}
+  .ins-head select{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line2);background:#fff}
+  .todo{border:1px solid var(--ink);margin-top:20px}
+  .todo h3{font-size:13px;font-weight:700;padding:10px 16px;border-bottom:1px solid var(--line);margin:0}
+  .todo ol{margin:0;padding:0;list-style:none;counter-reset:t}
+  .todo li{counter-increment:t;display:grid;grid-template-columns:28px 1fr;gap:4px 10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .todo li:last-child{border-bottom:0}
+  .todo li::before{content:counter(t);font-weight:800;color:var(--accent)}
+  .todo li b{font-size:14.5px}
+  .todo li span{grid-column:2;font-size:12.5px;color:var(--mut)}
+  .icards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+  .icard{border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:10px}
+  .icard .top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .icard .sec-l{font-size:11.5px;font-weight:600;color:var(--ink2)}
+  .vd{font-size:11.5px;font-weight:700;padding:2px 8px;border:1px solid currentColor}
+  .vd.up{color:var(--green)} .vd.down{color:var(--red)} .vd.flat{color:var(--ink2)} .vd.watch{color:#B45309} .vd.do{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .icard h3{font-size:16px;font-weight:700;margin:0}
+  .icard .stat{display:flex;align-items:baseline;gap:8px}
+  .icard .stat b{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .icard .stat span{font-size:12.5px;color:var(--ink2)}
+  .icard .sum{font-size:14.5px;font-weight:600;line-height:1.5}
+  .icard ul{margin:0;padding-left:16px;font-size:13px;color:#334155}
+  .icard li{margin:3px 0}
+  .icard .refs button{font-size:11.5px;font-weight:600;padding:2px 7px;border:1px solid var(--line2);margin:0 4px 4px 0}
+  .icard .refs button:hover{border-color:var(--accent);color:var(--accent)}
+  @media (max-width:860px){.icards{grid-template-columns:1fr}.ins-head h2{font-size:19px}}
   .acards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
   .acard{border:1px solid var(--line);padding:14px}
   .acard.mine{border-color:var(--ink)}
@@ -169,11 +199,11 @@ if (!LOCAL) {
 }
 const ALLOWED_EMAIL = 'nury6942@gmail.com';
 const MY = ['bichu-attic', 'hotnncold'];
-const TABS = [['overview','Overview'],['idols','Idols'],['playbook','Playbook'],['authors','Authors'],['series','Series'],['me','Me vs Market']];
+const TABS = [['insights','Insights'],['overview','Overview'],['idols','Idols'],['playbook','Playbook'],['authors','Authors'],['series','Series'],['me','Me vs Market']];
 const WD = ['일','월','화','수','목','금','토'];
-let D = null, tab = 'overview';
+let D = null, tab = 'insights', HIST = [], histSel = null;
 const UI = { idolMode: 'people', sort: {}, open: {}, q: {} };
-try { const t = localStorage.getItem('atelier_pmkt_tab'); if (TABS.some(x => x[0] === t)) tab = t; } catch (e) {}
+try { const t = localStorage.getItem('atelier_pmkt_tab'); if (TABS.some(x => x[0] === t) && localStorage.getItem('atelier_pmkt_ins_seen')) tab = t; localStorage.setItem('atelier_pmkt_ins_seen', '1'); } catch (e) {}
 
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtN = n => n == null ? '—' : Number(n).toLocaleString('ko-KR');
@@ -221,6 +251,7 @@ async function load(){
       D = JSON.parse(docs.map(d => d.data().json).join(''));
     }
     D.seriesById = Object.fromEntries((D.series || []).map(s => [s.id, s]));
+    if (!LOCAL) { try { const hs = await db.collection('postypeMarketInsights').orderBy(firebase.firestore.FieldPath.documentId(), 'desc').limit(16).get(); HIST = hs.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { console.warn(e); } }
     const m = D.meta;
     document.getElementById('feed').innerHTML = `포스타입 '나페스' 검색 · <b>${esc(m.from)} ~ ${esc(m.to)}</b> · 글 <b>${fmtN(m.posts)}</b>개 · 수집 <b>${esc((m.collectedAt||'').slice(0,10))}</b>`;
     render();
@@ -234,7 +265,7 @@ function renderTabs(){
 function render(){
   renderTabs();
   if (!D) return;
-  ({ overview, idols, playbook, authors, series, me })[tab]();
+  ({ insights, overview, idols, playbook, authors, series, me })[tab]();
 }
 document.getElementById('tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
@@ -268,6 +299,32 @@ function spark(vals, { w = 120, h = 28, color = 'var(--accent)' } = {}){
   if (!vals.length) return '';
   const max = Math.max(1, ...vals), bw = w / vals.length;
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${vals.map((v, i) => { const bh = Math.max(1, (h - 2) * v / max); return `<rect x="${(i * bw).toFixed(1)}" y="${(h - bh).toFixed(1)}" width="${Math.max(1, bw - 1).toFixed(1)}" height="${bh.toFixed(1)}" fill="${color}"/>`; }).join('')}</svg>`;
+}
+
+/* ───────── Insights — 월·목 분석 카드 (insights.mjs 가 claude 로 씀) */
+const SECT = { market: 'Market', idols: 'Idols', keywords: 'Keywords', authors: 'Authors', playbook: 'Playbook', me: 'Me' };
+const VD = { up: '▲ 뜸', down: '▼ 짐', flat: '● 유지', watch: '◎ 지켜볼 것', do: '✓ 할 일' };
+UI.insSec = 'all';
+function insights(){
+  const I = (histSel && HIST.find(h => h.id === histSel)) || D.insights;
+  if (!I) { view('<p class="empty">아직 분석 글이 없어요 · 월·목 아침 갱신 때 써요</p>'); return; }
+  const secs = ['all', ...new Set((I.cards || []).map(c => c.section))];
+  const cards = (I.cards || []).filter(c => UI.insSec === 'all' || c.section === UI.insSec);
+  const when = (I.generatedAt || '').slice(0, 10);
+  view(`
+    <div class="ins-head"><div><div class="when">${esc(when)} 분석 · ${esc(I.range || '')} 발행 글 · 추정 매출 기준</div><h2>${esc(I.headline || '')}</h2></div>
+      ${HIST.length > 1 ? `<label class="when">지난 분석 <select data-hist aria-label="지난 분석 고르기">${HIST.map(h => `<option value="${esc(h.id)}"${(histSel || HIST[0].id) === h.id ? ' selected' : ''}>${esc(h.id)}</option>`).join('')}</select></label>` : ''}</div>
+    ${(I.actions || []).length ? `<section class="todo"><h3>This Week — 누리가 할 일</h3><ol>${I.actions.map(a => `<li><b>${esc(a.text)}</b><span>${esc(a.why || '')}</span></li>`).join('')}</ol></section>` : ''}
+    <div class="tools" style="margin-top:24px"><div class="seg" role="group" aria-label="분류">${secs.map(k => `<button class="${k === UI.insSec ? 'on' : ''}" data-insec="${k}">${k === 'all' ? 'All' : esc(SECT[k] || k)}</button>`).join('')}</div></div>
+    <div class="icards">${cards.map(c => `<article class="icard">
+      <div class="top"><span class="sec-l">${esc(SECT[c.section] || c.section || '')}</span><span class="vd ${esc(c.verdict)}">${esc(VD[c.verdict] || c.verdict || '')}</span></div>
+      <h3>${esc(c.title)}</h3>
+      ${c.stat && c.stat.value ? `<div class="stat"><b class="num">${esc(c.stat.value)}</b><span>${esc(c.stat.label || '')}</span></div>` : ''}
+      <p class="sum" style="margin:0">${esc(c.summary)}</p>
+      ${(c.points || []).length ? `<ul>${c.points.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : ''}
+      ${(c.refs || []).length ? `<div class="refs">${c.refs.map(r => `<button data-ref="${esc(r)}">${esc(r)} →</button>`).join('')}</div>` : ''}
+    </article>`).join('')}</div>
+    <p class="note">분석 글은 월·목 아침 갱신 때 Claude 가 이 페이지의 숫자만 보고 써요. 숫자는 추정이라 실제보다 낮게 나오는 편이에요.</p>`);
 }
 
 /* ───────── Overview */
@@ -341,6 +398,14 @@ function table(id, rows, cols, { rowClass, detail, keyOf } = {}){
 document.getElementById('view').addEventListener('click', e => {
   const th = e.target.closest('[data-sort]');
   if (th) { const [id, k] = th.dataset.sort.split('|'); const s = UI.sort[id]; if (s.k === k) s.asc = !s.asc; else { s.k = k; s.asc = false; } render(); return; }
+  const isb = e.target.closest('[data-insec]');
+  if (isb) { UI.insSec = isb.dataset.insec; render(); return; }
+  const rf = e.target.closest('[data-ref]');
+  if (rf) { const k = rf.dataset.ref; const has = (L) => (L || []).some(x => x.key === k);
+    const au = D.authors.find(a => a.channelName === k || a.title === k);
+    if (au && !has(D.people)) { UI.q.authors = au.title; tab = 'authors'; render(); window.scrollTo(0, 0); return; }
+    UI.idolMode = has(D.people) ? 'people' : has(D.units) ? 'units' : has(D.groups) ? 'groups' : has(D.themes) ? 'themes' : has(D.keywords) ? 'keywords' : 'people';
+    UI.q.idols = k; UI.open.idols = k; tab = 'idols'; render(); window.scrollTo(0, 0); return; }
   const pb = e.target.closest('[data-period],[data-metric]');
   if (pb) { if (pb.dataset.period) UI.period = pb.dataset.period; if (pb.dataset.metric) UI.metric = pb.dataset.metric; try { localStorage.setItem('atelier_pmkt_period', UI.period); localStorage.setItem('atelier_pmkt_metric', UI.metric); } catch (e) {} render(); return; }
   const seg = e.target.closest('[data-mode]');
@@ -349,6 +414,7 @@ document.getElementById('view').addEventListener('click', e => {
   const tr = e.target.closest('tr[data-t]');
   if (tr && tr.dataset.k !== '') { const id = tr.dataset.t; UI.open[id] = UI.open[id] === tr.dataset.k ? null : tr.dataset.k; render(); }
 });
+document.getElementById('view').addEventListener('change', e => { if (e.target.matches('[data-hist]')) { histSel = e.target.value; render(); } });
 document.getElementById('view').addEventListener('input', e => {
   if (e.target.matches('[data-q]')) { UI.q[e.target.dataset.q] = e.target.value; const pos = e.target.selectionStart; render(); const el = document.querySelector(`[data-q="${e.target.dataset.q}"]`); if (el) { el.focus(); el.setSelectionRange(pos, pos); } }
 });

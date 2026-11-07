@@ -41,6 +41,14 @@ const statePath = path.join(OUT, 'state.json');
 let S = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, 'utf8')) : null;
 if (!S) {
   S = { opt, phase: 'search', queue: [], done: 0, posts: {}, series: {}, channels: {}, seenSeries: {}, seenChannels: {} };
+  // --seed <지난 결과 폴더>: 지난 글·글자 수를 깔고 시작 (주 2회 증분용). 검색은 --from~--to 만 새로 받음
+  if (opt.seed) {
+    const sd = opt.seed.replace(/^~/, os.homedir());
+    const keepFrom = Date.parse((opt.keepFrom || '2000-01-01') + 'T00:00:00+09:00') / 1000;
+    for (const p of JSON.parse(fs.readFileSync(path.join(sd, 'search-posts.json'), 'utf8'))) if (p.publishedAt >= keepFrom) S.posts[p.postId] = p;
+    try { S.chars = JSON.parse(fs.readFileSync(path.join(sd, 'chars.json'), 'utf8')); } catch (e) { S.chars = {}; }
+    log(`씨앗: 지난 글 ${Object.keys(S.posts).length} · 글자 수 ${Object.keys(S.chars).length}`);
+  }
   for (const kw of opt.kw) for (const [f, t] of windows(opt.from, opt.to)) S.queue.push({ kind: 'search', kw, page: 0, from: f, to: t });
 }
 const saveState = () => fs.writeFileSync(statePath, JSON.stringify(S));
@@ -167,7 +175,8 @@ if (S.phase === 'search') {
     if (p.channelName) { cLikes[p.channelName] = (cLikes[p.channelName] || 0) + p.likes + (MY.includes(p.channelName) ? 1e9 : 0); cTitle[p.channelName] = p.channelTitle; }
   }
   for (const id of Object.keys(sLikes).sort((a, b) => sLikes[b] - sLikes[a]).slice(0, TOP_SERIES)) S.queue.push({ kind: 'series', id: Number(id), page: 0 });
-  for (const n of Object.keys(cLikes).sort((a, b) => cLikes[b] - cLikes[a]).slice(0, TOP_CHANNELS)) S.queue.push({ kind: 'channel', name: n, title: cTitle[n] });
+  const cId = {}; for (const p of Object.values(S.posts)) if (p.channelName && p.channelId) cId[p.channelName] = p.channelId;
+  for (const n of Object.keys(cLikes).sort((a, b) => cLikes[b] - cLikes[a]).slice(0, TOP_CHANNELS)) S.queue.push({ kind: 'channel', name: n, title: cTitle[n], id: cId[n] });
   S.phase = 'detail'; saveState(); log(`검색 끝 → 상위 시리즈 ${Math.min(TOP_SERIES, Object.keys(sLikes).length)}개 · 채널 ${Math.min(TOP_CHANNELS, Object.keys(cLikes).length)}개 자세히`);
   continue;
 }
@@ -181,7 +190,7 @@ if (S.phase === 'detail' && !opt.noChars) {
     const eps = [...s.eps].sort((a, b) => a.publishedAt - b.publishedAt);
     const fp = eps.findIndex(e => e.price > 0 && e.price <= 5000);
     const idx = [...new Set([0, fp, Math.floor(eps.length / 2), eps.length - 1].filter(i => i >= 0))];
-    for (const i of idx) S.queue.push({ kind: 'chars', postId: eps[i].postId, ch: eps[i].channelName, seriesId: Number(id) });
+    for (const i of idx) if (!(S.chars && S.chars[eps[i].postId])) S.queue.push({ kind: 'chars', postId: eps[i].postId, ch: eps[i].channelName, seriesId: Number(id) });
   }
   S.phase = 'chars'; saveState(); log(`글자 수 샘플 ${S.queue.length}편`);
   continue;
