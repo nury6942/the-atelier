@@ -1,3 +1,9 @@
+## 2026-11-07 (맥북) — Taste 에 Culture 탭 (전시·공연·영화)
+- 탭 순서 Places · Stays · Culture · Books · Cities · ★ Saved, Culture 안에 토글 전체 · 전시 · 공연 · 영화 (숫자)
+- 전시·공연: 포스터 카드 · 장소 · 기간 11/07–1/25 · 상태칩(D-3 마감 코발트 / 곧 시작 11/20 / 진행 중), 마감 임박순 → 곧 시작순. 끝난 건 맨 아래 「지난 것」에서만
+- 영화: 2:3 포스터 · 감독 · 연도 · 어디서(극장/넷플릭스) · 개봉 전이면 개봉일 칩. 버튼은 봤음, ticketUrl 있으면 예매 ↗
+- 데이터 kind: exhibition | performance | film (수집기가 tasteItems 에 씀), Saved 에도 Culture 묶음
+
 ## 2026-11-07 (맥북) — Taste 수집기(아이맥 월·목 07:30)
 - scripts/taste/collect.js: Aside 로 X 검색(7일·인기순)·Threads 검색·Instagram 키워드·스테이폴리오 목록 → 좋아요 많은 글은 원문까지 → `claude -p`(구독, 사진은 Read 로 확인)가 취향 프로필로 걸러 → Firestore tasteItems 에 새 카드 10개쯤(장소 ≤7 · 숙소 ≤4)
 - 사진은 원글 사진만 480px JPEG(80KB 아래), 없으면 생략. 새 문서만 쓰고 status·statusAt 은 안 건드림. 실행 기록은 tasteRuns/<날짜>

@@ -115,6 +115,19 @@
   .kind-h h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
   .kind-h .c{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
 
+  /* Culture: 보기 전환 토글 + 기간 칩 */
+  .seg{display:inline-flex;background:var(--surface);padding:3px;gap:2px;margin-top:24px}
+  .seg button{height:30px;padding:0 12px;font-size:13px;font-weight:600;color:var(--ink2);border:1px solid transparent}
+  .seg button .n{font-weight:500;margin-left:4px;font-variant-numeric:tabular-nums}
+  .seg button.on{background:#fff;border-color:var(--ink);color:var(--ink)}
+  .ph.poster{aspect-ratio:4/5}
+  .ph.film{aspect-ratio:2/3}
+  .chip.due{background:var(--accent);color:#fff}
+  .chip.on{background:var(--accent-soft);color:var(--accent-ink)}
+  .when{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:6px}
+  .past-btn{display:block;margin-top:40px;font-size:12.5px;font-weight:600;color:var(--ink2)}
+  .past-btn:hover{color:var(--ink)}
+  .past .card{opacity:.75}
   .empty{margin-top:56px;font-size:15px;font-weight:500;color:var(--ink2)}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:10px 14px;z-index:9}
 
@@ -129,6 +142,7 @@
     .grid.books{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .card.big{grid-column:auto;grid-row:auto}
     .card.big .body{flex:1}
+    .ph.poster{aspect-ratio:1/1}
     .hidden-btn{border-left:1px solid var(--line2);padding-left:12px;margin-bottom:13px;padding-bottom:0}
     .card.big .ph{flex:none;min-height:0;aspect-ratio:4/3}
     .card.big .cityph{aspect-ratio:4/3}
@@ -180,6 +194,7 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
 const TABS = [
   { id:'place', label:'Places' },
   { id:'stay',  label:'Stays' },
+  { id:'culture', label:'Culture' },
   { id:'book',  label:'Books' },
   { id:'city',  label:'Cities' },
   { id:'saved', label:'★ Saved' }
@@ -189,6 +204,16 @@ let items = [];
 let tab = 'place';
 let showHidden = false;
 let latestBatch = '';
+let cultureSub = 'all';
+let showPast = false;
+const CULTURE = ['exhibition','performance','film'];
+const EVENT = ['exhibition','performance'];
+const SUBS = [['all','전체'],['exhibition','전시'],['performance','공연'],['film','영화']];
+const pad2 = n => String(n).padStart(2,'0');
+const _d = new Date(); const TODAY = _d.getFullYear() + '-' + pad2(_d.getMonth()+1) + '-' + pad2(_d.getDate());
+const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+const isDate = x => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}/.test(x);
+const isPast = it => EVENT.includes(it.kind) && isDate((it.meta||{}).end) && it.meta.end.slice(0,10) < TODAY;
 try { const t = localStorage.getItem('atelier_taste_tab'); if (TABS.some(x => x.id === t)) tab = t; } catch (e) {}
 
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -204,12 +229,13 @@ function toast(msg){ const o = document.querySelector('.toast'); if (o) o.remove
 function visible(list){ return list.filter(it => showHidden ? st(it) === 'nope' : st(it) !== 'nope'); }
 function ofTab(id){
   if (id === 'saved') return items.filter(it => st(it) === 'saved');
+  if (id === 'culture') return items.filter(it => CULTURE.includes(it.kind));
   return items.filter(it => it.kind === id);
 }
 
 function renderHead(){
   document.getElementById('tabs').innerHTML = TABS.map(t => {
-    const n = t.id === 'saved' ? ofTab('saved').length : ofTab(t.id).filter(it => st(it) !== 'nope').length;
+    const n = t.id === 'saved' ? ofTab('saved').length : ofTab(t.id).filter(it => st(it) !== 'nope' && !isPast(it)).length;
     return `<button class="tab${t.id === tab ? ' on' : ''}" role="tab" aria-selected="${t.id === tab}" data-tab="${t.id}">${esc(t.label)}<span class="n">${n}</span></button>`;
   }).join('');
   const hb = document.getElementById('hiddenBtn');
@@ -233,13 +259,15 @@ function srcChip(it){
 }
 function actions(it){
   const s = st(it);
-  const doneLabel = it.kind === 'book' ? '읽음' : '가 봄';
+  const doneLabel = it.kind === 'book' ? '읽음' : CULTURE.includes(it.kind) ? '봤음' : '가 봄';
   const map = safeUrl(it.mapUrl);
+  const ticket = safeUrl((it.meta || {}).ticketUrl);
   return `<div class="acts">
     <button class="b${s === 'saved' ? ' on-saved' : ''}" data-set="saved" data-id="${esc(it._id)}" aria-pressed="${s === 'saved'}">★ 저장</button>
     <button class="b${s === 'done' ? ' on-done' : ''}" data-set="done" data-id="${esc(it._id)}" aria-pressed="${s === 'done'}">${doneLabel}</button>
     <button class="b${s === 'nope' ? ' on-nope' : ''}" data-set="nope" data-id="${esc(it._id)}" aria-pressed="${s === 'nope'}">별로</button>
-    ${map ? `<a class="map" href="${esc(map)}" target="_blank" rel="noopener noreferrer">지도 ↗</a>` : ''}
+    ${ticket ? `<a class="map" href="${esc(ticket)}" target="_blank" rel="noopener noreferrer">예매 ↗</a>` : ''}
+    ${map ? `<a class="map"${ticket ? ' style="margin-left:10px"' : ''} href="${esc(map)}" target="_blank" rel="noopener noreferrer">지도 ↗</a>` : ''}
   </div>`;
 }
 const isNew = it => latestBatch && it.batch === latestBatch && st(it) === 'new';
@@ -316,7 +344,85 @@ function cardCity(it, big){
   </article>`;
 }
 
+function eventState(it){
+  const m = it.meta || {};
+  const start = isDate(m.start) ? m.start.slice(0,10) : '', end = isDate(m.end) ? m.end.slice(0,10) : '';
+  if (end && end < TODAY) return { k:3, html:'<span class="chip">지난 것</span>' };
+  if (start && start > TODAY) return { k:1, sort:start, html:`<span class="chip">곧 시작 ${esc(md(start))}</span>` };
+  if (end){ const d = dayDiff(TODAY, end); if (d <= 7) return { k:0, sort:end, html:`<span class="chip due">${d === 0 ? '오늘 마감' : 'D-' + d + ' 마감'}</span>` }; }
+  return { k:0, sort:end || '9999', html:'<span class="chip on">진행 중</span>' };
+}
+function cardEvent(it){
+  const img = safeImg(it.image); const m = it.meta || {}; const nw = isNew(it);
+  const place = [m.venue, m.area].filter(Boolean).map(esc).join(' · ');
+  const period = [m.start, m.end].filter(isDate).map(md).join('–');
+  const extra = m.price ? `<div class="chips"><span class="chip">${esc(m.price)}</span></div>` : '';
+  return `<article class="card${img ? '' : ' typo'}">
+    ${img ? `<div class="ph poster"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.closest('.ph').remove()">${nw ? '<span class="new">NEW</span>' : ''}</div>` : ''}
+    <div class="body">
+      <div class="chips">${!img && nw ? '<span class="new inline">NEW</span>' : ''}${eventState(it).html}</div>
+      <div><h3 class="t">${esc(it.title)}</h3>${place ? `<div class="sub">${place}</div>` : (it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : '')}${period ? `<div class="when">${esc(period)}</div>` : ''}</div>
+      ${srcChip(it)}
+      ${whyHtml(it)}
+      ${extra}
+      ${detailHtml(it)}
+      ${actions(it)}
+    </div>
+  </article>`;
+}
+function cardFilm(it){
+  const img = safeImg(it.image); const m = it.meta || {}; const nw = isNew(it);
+  const by = [m.director, m.year].filter(Boolean).map(esc).join(' · ') || esc(it.subtitle || '');
+  const chips = [];
+  if (m.where) chips.push(`<span class="chip${m.where === '극장' ? ' on' : ''}">${esc(m.where)}</span>`);
+  if (isDate(m.release) && m.release.slice(0,10) > TODAY) chips.push(`<span class="chip">개봉 ${esc(md(m.release))}</span>`);
+  if (m.runtime) chips.push(`<span class="chip">${esc(/^\d+$/.test(String(m.runtime)) ? m.runtime + '분' : m.runtime)}</span>`);
+  const cover = img
+    ? `<div class="ph film"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.closest('.ph').remove()">${nw ? '<span class="new">NEW</span>' : ''}</div>`
+    : `<div class="cover c${hash(it._id) % 3}">${nw ? '<span class="new" style="top:0">NEW</span>' : ''}<div class="ct"${nw ? ' style="margin-top:16px"' : ''}>${esc(it.title)}</div>${by ? `<div class="ca">${by}</div>` : ''}</div>`;
+  return `<article class="card">
+    ${cover}
+    <div class="body">
+      ${img ? `<div><h3 class="t">${esc(it.title)}</h3>${by ? `<div class="sub">${by}</div>` : ''}</div>` : ''}
+      ${chips.length ? `<div class="chips">${chips.join('')}</div>` : ''}
+      ${whyHtml(it)}
+      ${srcChip(it)}
+      ${detailHtml(it)}
+      ${actions(it)}
+    </div>
+  </article>`;
+}
+function sortEvents(list){
+  return list.slice().sort((a, b) => { const x = eventState(a), y = eventState(b); return x.k - y.k || String(x.sort || '').localeCompare(String(y.sort || '')); });
+}
+function cultureHtml(list, heads){
+  const ev = sortEvents(list.filter(it => EVENT.includes(it.kind)));
+  const fl = list.filter(it => it.kind === 'film').sort((a, b) => String(b.batch || '').localeCompare(String(a.batch || '')));
+  const h = (t, n) => heads ? `<div class="batch-h"><h2>${t}</h2><span class="c">${n}</span></div>` : '';
+  let out = '';
+  if (ev.length) out += `<section class="batch">${h('전시·공연', ev.length)}<div class="grid">${ev.map(cardEvent).join('')}</div></section>`;
+  if (fl.length) out += `<section class="batch">${h('영화', fl.length)}<div class="grid books">${fl.map(cardFilm).join('')}</div></section>`;
+  return out;
+}
+function renderCulture(v){
+  const all = ofTab('culture');
+  if (!all.length){ v.innerHTML = '<p class="empty">첫 문화 수집은 다음 월요일 아침에 들어와요</p>'; return; }
+  const base = all.filter(it => showHidden ? st(it) === 'nope' : st(it) !== 'nope');
+  const live = base.filter(it => !isPast(it));
+  const cnt = k => live.filter(it => k === 'all' || it.kind === k).length;
+  const seg = `<div class="seg" role="group">${SUBS.map(([k, l]) => `<button class="${cultureSub === k ? 'on' : ''}" data-sub="${k}" aria-pressed="${cultureSub === k}">${l}<span class="n">${cnt(k)}</span></button>`).join('')}</div>`;
+  const pick = l => l.filter(it => cultureSub === 'all' || it.kind === cultureSub);
+  const main = pick(live), past = pick(base.filter(isPast));
+  let html = seg + (main.length ? cultureHtml(main, cultureSub === 'all') : `<p class="empty">${showHidden ? '숨긴 것이 없어요' : '지금 볼 만한 게 없어요 · 월·목 아침에 채워져요'}</p>`);
+  if (past.length){
+    html += `<button class="past-btn" data-past="1">${showPast ? '지난 것 접기' : '지난 것 ' + past.length}</button>`;
+    if (showPast) html += `<div class="past">${cultureHtml(past, false)}</div>`;
+  }
+  v.innerHTML = html;
+}
+
 function gridFor(kind, list, withHero){
+  if (kind === 'culture') return cultureHtml(list, false);
   if (kind === 'book') return `<div class="grid books">${list.map(cardBook).join('')}</div>`;
   // 사진 있는 것 하나를 크게 (2칸), 나머지는 작게
   let ordered = list;
@@ -343,13 +449,14 @@ function render(){
     const saved = ofTab('saved');
     if (!saved.length){ v.innerHTML = '<p class="empty">★ 저장을 누르면 여기 모여요</p>'; return; }
     v.innerHTML = TABS.filter(t => t.id !== 'saved').map(t => {
-      const l = saved.filter(it => it.kind === t.id)
+      const l = saved.filter(it => t.id === 'culture' ? CULTURE.includes(it.kind) : it.kind === t.id)
         .sort((a, b) => String(b.batch || '').localeCompare(String(a.batch || '')));
       if (!l.length) return '';
       return `<section><div class="kind-h"><h2>${esc(t.label)}</h2><span class="c">${l.length}</span></div>${gridFor(t.id, l, false)}</section>`;
     }).join('');
     return;
   }
+  if (tab === 'culture'){ renderCulture(v); return; }
   const list = visible(ofTab(tab));
   if (!list.length){ v.innerHTML = `<p class="empty">${showHidden ? '숨긴 것이 없어요' : '이 칸은 아직 비어 있어요 · 월·목 아침에 채워져요'}</p>`; return; }
   v.innerHTML = byBatch(list).map(([b, l]) =>
@@ -365,6 +472,8 @@ document.getElementById('tabs').addEventListener('click', e => {
 });
 document.getElementById('hiddenBtn').addEventListener('click', () => { showHidden = !showHidden; render(); });
 document.getElementById('view').addEventListener('click', async e => {
+  const sb = e.target.closest('[data-sub]'); if (sb){ cultureSub = sb.dataset.sub; render(); return; }
+  if (e.target.closest('[data-past]')){ showPast = !showPast; render(); return; }
   const b = e.target.closest('[data-set]'); if (!b) return;
   const it = items.find(x => x._id === b.dataset.id); if (!it) return;
   const prev = it.status;
@@ -382,7 +491,7 @@ async function load(){
   try {
     const snap = await db.collection('tasteItems').get();
     items = snap.docs.map(d => Object.assign({}, d.data(), { _id: d.id }))
-      .filter(it => ['place','stay','book','city'].includes(it.kind) && it.title);
+      .filter(it => ['place','stay','book','city'].concat(CULTURE).includes(it.kind) && it.title);
     latestBatch = items.reduce((m, it) => (it.batch || '') > m ? it.batch : m, '');
     render();
   } catch (err) {
