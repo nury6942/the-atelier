@@ -185,7 +185,8 @@ async function offiMonth(kind, ym) {
 }
 async function getHome() {
   const cur = ymd(kstNow()).slice(0, 6);
-  const months = []; for (let ym = '202401'; ym <= cur; ym = ymAdd(ym, 1)) months.push(ym);
+  // 5년치 (Assets 「우리 집」 카드 점 그래프, 누리 11/07) — 3달 넘은 달은 캐시라 첫 실행 뒤엔 몇 번만 부른다
+  const months = []; for (let ym = ymAdd(cur, -59); ym <= cur; ym = ymAdd(ym, 1)) months.push(ym);
   const dt = i => `${i.dealYear}-${String(i.dealMonth).padStart(2, '0')}-${String(i.dealDay).padStart(2, '0')}`;
   const man = s => +(String(s || '').replace(/,/g, '')) || 0;
   const trades = [], rents = [];
@@ -210,8 +211,9 @@ async function getHome() {
   const ta = avgBy(trades, x => x.price), ja = avgBy(jeonse, x => x.deposit);
   return {
     name: HOME_NAME, area: HOME_AREA, unit: '만원', lawdCd: LAWD_CD,
-    trades: trades.slice(0, 8), yearAvg: ta.avg, yearCount: ta.count,
-    jeonse: { yearAvg: ja.avg, yearCount: ja.count, recent: jeonse.slice(0, 5).map(r => ({ date: r.date, floor: r.floor, deposit: r.deposit, type: r.type })) },
+    trades: trades.slice(0, 120), yearAvg: ta.avg, yearCount: ta.count,
+    jeonse: { yearAvg: ja.avg, yearCount: ja.count, recent: jeonse.slice(0, 5).map(r => ({ date: r.date, floor: r.floor, deposit: r.deposit, type: r.type })),
+      all: jeonse.slice(0, 200).map(r => ({ d: r.date, p: r.deposit })) },
     monthlyRentCount: rents.filter(r => r.monthly > 0 && r.date >= yearAgo).length,
   };
 }

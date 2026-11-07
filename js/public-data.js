@@ -4,7 +4,8 @@
 //  사이트는 공공 API 를 직접 부르지 않는다 — 키는 아이맥 ~/.config/korea-apis/keys.env 에만.
 //
 //  1) 환율: window.atelierEcosFx(cur) → 1단위당 원화 (JPY 는 1엔). app-1-pages 의 환율 함수들이 무료 API 보다 먼저 씀
-//  2) Assets: 페이지 머리 아래 한 줄 띠(우리 집 · 기준금리 · 물가) + 「금리 추이 ▾」 접는 그래프
+//  2) Assets: 「우리 집」 카드(시세·5년 실거래 점·전세가율·금리·물가) + 「금리 추이 ▾」 접는 그래프
+//     window.atelierHomeValueAt('YYYY-MM') → 월 카드 총자산에 집 시세를 더한다 (11/07)
 //  캐시: localStorage atelier_public_data {at, data}
 // ═══════════════════════════════════════════════════════════
 (function () {
@@ -119,35 +120,64 @@
       (line ? '<path d="' + line + '" fill="none" stroke="#1A1A1F" stroke-width="1.5"/>' : '') + dots + '</svg>';
   }
 
-  // ── Assets 띠 ───────────────────────────────────
-  function stripHtml() {
-    var parts = [];
-    var h = PD.home;
-    if (h && h.trades && h.trades.length) {
-      var t0 = h.trades[0], ya = h.yearAvg || {}, yrs = Object.keys(ya).sort();
-      var s = '<span class="pd-seg">우리 집 · ' + esc(h.name) + ' ' + h.area + '㎡ — 최근 매매 <b>' + eok(t0.price) + '</b>(' + md(t0.date) + (t0.floor ? '·' + t0.floor + '층' : '') + ')';
-      if (yrs.length) {
-        var y1 = yrs[yrs.length - 1], y0 = yrs[yrs.length - 2];
-        s += ' · ' + y1 + ' 평균 ' + eok(ya[y1]);
-        if (y0) { var dp = (ya[y1] / ya[y0] - 1) * 100; s += ' ' + arrow(dp, Math.abs(dp).toFixed(1) + '%') + ' vs ' + y0; }
-      }
-      var ja = h.jeonse && h.jeonse.yearAvg, jy = ja ? Object.keys(ja).sort() : [];
-      if (jy.length) s += ' · 전세 평균 ' + eok(ja[jy[jy.length - 1]]);
-      parts.push(s + '</span>');
-    }
-    if (PD.rate && PD.rate.base != null) {
-      var d = PD.rate.prev != null ? PD.rate.base - PD.rate.prev : 0;
-      parts.push('<span class="pd-seg">기준금리 <b>' + PD.rate.base.toFixed(2) + '%</b> ' +
-        (d ? arrow(d, Math.abs(d).toFixed(2) + '%p') + ' vs 전달' : '<span>전달과 같음</span>') + '</span>');
-    }
-    if (PD.cpi && PD.cpi.yoy != null) {
-      parts.push('<span class="pd-seg">물가 <b>' + (PD.cpi.yoy > 0 ? '+' : '') + PD.cpi.yoy.toFixed(1) + '%</b> (' + (+PD.cpi.month.slice(5, 7)) + '월)</span>');
-    }
-    var open = false; try { open = localStorage.getItem(OPEN_LS) === '1'; } catch (e) {}
-    if (PD.rateHistory && PD.rateHistory.base && PD.rateHistory.base.length) {
-      parts.push('<button type="button" class="pd-tg" aria-expanded="' + open + '">금리 추이 ' + (open ? '▴' : '▾') + '</button>');
-    }
-    return { line: parts.join('<i class="pd-sep"></i>'), open: open };
+  // ── Assets 「우리 집」 카드 (누리 11/07 "한 줄은 안 보인다" → 카드) ──────
+  function lastAvg(o) { var k = o ? Object.keys(o).sort() : []; return k.length ? { y: k[k.length - 1], v: o[k[k.length - 1]], py: k[k.length - 2], pv: o[k[k.length - 2]] } : null; }
+  // 그 달 말까지의 가장 최근 매매가(만원) — 월 카드 총자산에 더한다
+  window.atelierHomeValueAt = function (monthKey) {
+    var h = PD && PD.home; if (!h || !h.trades || !h.trades.length) return null;
+    var end = monthKey + '-31';
+    for (var i = 0; i < h.trades.length; i++) if (h.trades[i].date <= end) return h.trades[i].price;
+    return null;
+  };
+  function homeChart(h) {
+    var tr = (h.trades || []).slice().reverse(); if (!tr.length) return '';
+    var ja = (h.jeonse && h.jeonse.yearAvg) || {}, ya = h.yearAvg || {};
+    var t0 = Date.parse(tr[0].date), t1 = Date.now();
+    var vals = tr.map(function (x) { return x.price; }).concat(Object.keys(ja).map(function (k) { return ja[k]; }));
+    var lo = Math.floor(Math.min.apply(null, vals) / 2500) * 2500, hi = Math.ceil(Math.max.apply(null, vals) / 2500) * 2500;
+    if (hi === lo) hi = lo + 2500;
+    var W = 640, H = 210, L = 46, R = 14, T = 12, B = 26;
+    var X = function (d) { return L + (Date.parse(d) - t0) / Math.max(t1 - t0, 1) * (W - L - R); };
+    var Y = function (v) { return T + (hi - v) / (hi - lo) * (H - T - B); };
+    var g = '', v;
+    for (v = lo; v <= hi; v += 2500) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="#ECECF0"/><text x="' + (L - 6) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end" font-size="11" fill="#5B5B66">' + (v / 10000).toFixed(2) + '억</text>';
+    var y0 = +tr[0].date.slice(0, 4), y1 = new Date().getFullYear(), yy;
+    for (yy = y0 + 1; yy <= y1; yy++) { var xx = X(yy + '-01-01'); if (xx > L) g += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + T + '" y2="' + (H - B) + '" stroke="#F3F3F6"/><text x="' + (xx + 4).toFixed(1) + '" y="' + (H - 8) + '" font-size="11" fill="#5B5B66">' + yy + '</text>'; }
+    // 전세 연평균 (호박색 계단)
+    var jk = Object.keys(ja).sort(), js = '';
+    jk.forEach(function (k) { var a = Math.max(X(k + '-01-01'), L), b = Math.min(X(k + '-12-31'), W - R); if (b > L) js += '<line x1="' + a.toFixed(1) + '" x2="' + b.toFixed(1) + '" y1="' + Y(ja[k]).toFixed(1) + '" y2="' + Y(ja[k]).toFixed(1) + '" stroke="#D97706" stroke-width="3" opacity=".55"/>'; });
+    // 올해 매매 평균 (코발트 점선)
+    var cy = String(y1), av = ya[cy] ? '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(ya[cy]).toFixed(1) + '" y2="' + Y(ya[cy]).toFixed(1) + '" stroke="#1F4BD8" stroke-dasharray="4 4" opacity=".6"/>' : '';
+    var dots = tr.map(function (x, i) {
+      var last = i === tr.length - 1, cur = x.date.slice(0, 4) === cy;
+      return '<circle cx="' + X(x.date).toFixed(1) + '" cy="' + Y(x.price).toFixed(1) + '" r="' + (last ? 7 : 4.5) + '" fill="' + (cur ? '#1F4BD8' : '#94A3B8') + '"' + (last ? ' stroke="#fff" stroke-width="2"' : '') + '><title>' + x.date + ' · ' + (x.floor ? x.floor + '층 · ' : '') + eok(x.price) + '</title></circle>';
+    }).join('');
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="display:block;height:auto" role="img" aria-label="우리 집 매매 실거래 ' + tr.length + '건과 전세 연평균">' + g + js + av + dots + '</svg>';
+  }
+  function homeCard() {
+    var h = PD.home; if (!h || !h.trades || !h.trades.length) return '';
+    var t0 = h.trades[0], sa = lastAvg(h.yearAvg), jav = lastAvg(h.jeonse && h.jeonse.yearAvg);
+    var cy = String(new Date().getFullYear()), cnt = (h.yearCount || {})[cy] || 0;
+    var dHtml = '';
+    if (sa && sa.pv) { var dp = (sa.v / sa.pv - 1) * 100; dHtml = arrow(dp, Math.abs(dp).toFixed(1) + '%') + ' <span class="pd-mut">vs ' + sa.py + '</span>'; }
+    var ratio = (sa && jav) ? Math.round(jav.v / sa.v * 100) : null;
+    var rc = ratio == null ? '' : ratio >= 80 ? DOWN : ratio >= 70 ? '#B45309' : '#1A1A1F';
+    var tiles = '';
+    if (ratio != null) tiles += '<div class="pd-tile"><div class="pd-tl">전세가율</div><div class="pd-tv" style="color:' + rc + '">' + ratio + '%</div><div class="pd-ts">전세 ' + eok(jav.v) + ' ÷ 매매 ' + eok(sa.v) + (ratio >= 80 ? ' · 80%↑ 주의' : '') + '</div></div>';
+    if (PD.rate && PD.rate.base != null) { var d = PD.rate.prev != null ? PD.rate.base - PD.rate.prev : 0; tiles += '<div class="pd-tile"><div class="pd-tl">기준금리</div><div class="pd-tv">' + PD.rate.base.toFixed(2) + '%</div><div class="pd-ts">' + (d ? arrow(d, Math.abs(d).toFixed(2) + '%p') + ' vs 전달' : '전달과 같음') + '</div></div>'; }
+    if (PD.cpi && PD.cpi.yoy != null) tiles += '<div class="pd-tile"><div class="pd-tl">물가 (' + (+PD.cpi.month.slice(5, 7)) + '월)</div><div class="pd-tv">' + (PD.cpi.yoy > 0 ? '+' : '') + PD.cpi.yoy.toFixed(1) + '%</div><div class="pd-ts">작년 같은 달 대비</div></div>';
+    var n = h.trades.length, first = h.trades[n - 1].date;
+    return '<div class="pd-head"><div><b class="pd-ttl">우리 집</b><span class="pd-mut">' + esc(h.name) + ' · 103동 · ' + h.area + '㎡ 오피스텔</span></div><span class="pd-mut">국토부 실거래 · 매일 08:10</span></div>' +
+      '<div class="pd-body"><div class="pd-left">' +
+        '<div class="pd-tl">지금 시세 (최근 매매)</div><div class="pd-hero">' + (t0.price / 10000).toFixed(2) + '<span>억</span></div>' +
+        '<div class="pd-mut">' + md(t0.date) + (t0.floor ? ' · ' + t0.floor + '층' : '') + ' · ' + t0.date.slice(0, 4) + '</div>' +
+        '<div class="pd-kv">' + (sa ? '<div><span>' + sa.y + ' 평균</span><span>' + eok(sa.v) + ' ' + dHtml + '</span></div>' : '') +
+          '<div><span>' + cy + ' 거래</span><span>' + cnt + '건</span></div>' +
+          '<div><span>모아 본 거래</span><span>' + n + '건 · ' + first.slice(2, 4) + '.' + first.slice(5, 7) + '~</span></div></div>' +
+      '</div><div class="pd-right">' + homeChart(h) +
+        '<div class="pd-lg"><span><i class="sq" style="background:#94A3B8"></i>지난 해 매매</span><span><i class="sq" style="background:#1F4BD8"></i>' + cy + ' 매매</span><span><i style="background:#D97706;height:3px;opacity:.55"></i>전세 연평균</span><span><i style="border-top:2px dashed #1F4BD8;height:0;background:none"></i>' + cy + ' 매매 평균</span></div>' +
+      '</div></div>' +
+      (tiles ? '<div class="pd-tiles">' + tiles + '</div>' : '');
   }
   function detailHtml() {
     var rh = PD.rateHistory || {}, b = rh.base || [], dp = rh.deposit || [];
@@ -164,16 +194,24 @@
     if (document.getElementById('pd-css')) return;
     var st = document.createElement('style'); st.id = 'pd-css';
     st.textContent =
-      '#pd-strip{background:#fff;border:1px solid #ECECF0;border-radius:0;font-family:Pretendard,-apple-system,system-ui,sans-serif;color:#5B5B66;font-size:12px;line-height:1.5;margin:0 0 4px}' +
-      '#pd-strip .pd-row{display:flex;align-items:center;flex-wrap:wrap;gap:4px 0;padding:7px 12px}' +
-      '#pd-strip .pd-seg{white-space:nowrap}#pd-strip b{color:#1A1A1F;font-weight:700}' +
-      '#pd-strip .pd-sep{display:inline-block;width:1px;height:12px;background:#ECECF0;margin:0 12px}' +
-      '#pd-strip .pd-tg{margin-left:auto;padding:0 0 0 12px;background:none;border:0;border-radius:0;font:inherit;font-size:12px;font-weight:700;color:#1F4BD8;cursor:pointer;white-space:nowrap}' +
-      '#pd-strip .pd-det{border-top:1px solid #ECECF0;padding:10px 12px 12px}' +
+      '#pd-strip{background:#fff;border:1px solid #ECECF0;border-radius:0;font-family:Pretendard,-apple-system,system-ui,sans-serif;color:#1A1A1F;font-size:13px;line-height:1.5;margin:0 0 20px;padding:22px 24px}' +
+      '#pd-strip .pd-mut{color:#5B5B66;font-size:12px}#pd-strip b{font-weight:700}' +
+      '#pd-strip .pd-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px}' +
+      '#pd-strip .pd-ttl{font-size:17px;margin-right:10px}' +
+      '#pd-strip .pd-body{display:grid;grid-template-columns:230px minmax(0,1fr);gap:32px;align-items:start}' +
+      '#pd-strip .pd-tl{font-size:12px;color:#5B5B66}' +
+      '#pd-strip .pd-hero{font-size:52px;font-weight:800;line-height:1.05;color:#1F4BD8;font-variant-numeric:tabular-nums;letter-spacing:-.02em}#pd-strip .pd-hero span{font-size:24px;margin-left:2px}' +
+      '#pd-strip .pd-kv{border-top:1px solid #ECECF0;margin-top:14px;padding-top:10px}#pd-strip .pd-kv div{display:flex;justify-content:space-between;gap:8px;line-height:2;font-variant-numeric:tabular-nums}#pd-strip .pd-kv span:first-child{color:#5B5B66}' +
+      '#pd-strip .pd-lg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px;font-size:12px;color:#5B5B66}' +
+      '#pd-strip .pd-lg i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:6px}#pd-strip .pd-lg i.sq{width:9px;height:9px}' +
+      '#pd-strip .pd-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #ECECF0;margin-top:18px}' +
+      '#pd-strip .pd-tile{padding:12px 0 2px 18px;border-left:1px solid #ECECF0}#pd-strip .pd-tile:first-child{padding-left:0;border-left:0}' +
+      '#pd-strip .pd-tv{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}#pd-strip .pd-ts{font-size:12px;color:#5B5B66}' +
+      '#pd-strip .pd-foot{display:flex;justify-content:flex-end;margin-top:8px}' +
+      '#pd-strip .pd-tg{padding:0;background:none;border:0;border-radius:0;font:inherit;font-size:12px;font-weight:700;color:#1F4BD8;cursor:pointer}' +
+      '#pd-strip .pd-det{border-top:1px solid #ECECF0;margin-top:10px;padding-top:12px}' +
       '#pd-strip .pd-cmp{font-size:13px;margin-bottom:6px}' +
-      '#pd-strip .pd-lg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:4px;font-size:12px}' +
-      '#pd-strip .pd-lg i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:6px}' +
-      '@media (max-width:768px){#pd-strip .pd-seg{white-space:normal}#pd-strip .pd-sep{display:none}#pd-strip .pd-row{flex-direction:column;align-items:flex-start;gap:2px}#pd-strip .pd-tg{margin-left:0;padding:2px 0 0}}';
+      '@media (max-width:768px){#pd-strip{padding:16px}#pd-strip .pd-body{grid-template-columns:1fr;gap:16px}#pd-strip .pd-hero{font-size:44px}#pd-strip .pd-tiles{grid-template-columns:1fr}#pd-strip .pd-tile{padding:10px 0;border-left:0;border-top:1px solid #ECECF0}#pd-strip .pd-tile:first-child{border-top:0}}';
     document.head.appendChild(st);
   }
 
@@ -193,8 +231,11 @@
         renderStrip();
       });
     }
-    var s = stripHtml();
-    el.innerHTML = '<div class="pd-row">' + s.line + '</div>' + (s.open ? '<div class="pd-det">' + detailHtml() + '</div>' : '');
+    var open = false; try { open = localStorage.getItem(OPEN_LS) === '1'; } catch (e) {}
+    var hasRate = PD.rateHistory && PD.rateHistory.base && PD.rateHistory.base.length;
+    el.innerHTML = homeCard() +
+      (hasRate ? '<div class="pd-foot"><button type="button" class="pd-tg" aria-expanded="' + open + '">금리 추이 ' + (open ? '▴' : '▾') + '</button></div>' : '') +
+      (hasRate && open ? '<div class="pd-det">' + detailHtml() + '</div>' : '');
   }
   window.renderPublicDataStrip = renderStrip;
 

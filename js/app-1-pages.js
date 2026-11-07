@@ -14863,6 +14863,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     _fxEurKrwRate = 0; _fxRates = {};
     try { updateFinanceFxChip(); } catch(e) {}
   });
+  // 집 시세가 새로 오면 Assets 월 카드 총자산도 다시 (11/07)
+  window.addEventListener('atelier-public-data', function() {
+    try { if (typeof updateHubStats === 'function' && document.getElementById('hub-monthly-grid')) updateHubStats(); } catch(e) {}
+  });
 
   // ═══════════════════════════════════════════════════════════
   //  예산 — '유로 환율 반영' (콘솔 스크립트 data/set_finance_fx_amount.js 를 화면 버튼으로)
@@ -27113,8 +27117,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         var liquidAssets = base.cash + (runningSavings - runningWithdraw);
         // 비유동자산 = 기초 비유동자산 (고정)
         var nonLiquidAssets = base.savings;
-        // 총자산 = 유동 + 비유동
-        var runningAssets = liquidAssets + nonLiquidAssets;
+        // 우리 집 = 그 달 말까지의 최근 실거래 매매가 (public-data.js, 누리 11/07 "자산 합계에 넣자")
+        var homeValue = (typeof window.atelierHomeValueAt === 'function') ? (window.atelierHomeValueAt(monthKey) || 0) : 0;
+        // 총자산 = 유동 + 비유동 + 우리 집
+        var runningAssets = liquidAssets + nonLiquidAssets + homeValue;
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && curYear === hubYear;
         var isPending = !hasData;
@@ -27203,6 +27209,10 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
               '<span class="text-[11px] font-bold" style="' + balLabel + '">비유동자산</span>' +
               '<span class="text-base font-black font-headline" style="' + balColor + '">' + Math.round(nonLiquidAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
+            (homeValue ? '<div class="flex justify-between items-center mb-1" title="그 달 말까지의 최근 실거래 매매가">' +
+              '<span class="text-[11px] font-bold" style="' + balLabel + '">우리 집 (시세)</span>' +
+              '<span class="text-base font-black font-headline" style="' + balColor + '">' + Math.round(homeValue).toLocaleString('ko-KR') + '</span>' +
+            '</div>' : '') +
             '<div class="flex justify-between items-center pt-1 mt-1" style="border-top:1px solid ' + (isActive ? 'rgba(255,255,255,0.2)' : 'rgba(31,75,216,0.12)') + ';">' +
               '<span class="text-[11px] font-bold" style="' + balLabel + '">총 자산</span>' +
               '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:var(--lavender-deep);') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
