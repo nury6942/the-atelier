@@ -2,18 +2,19 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- 남의 사진(X·Threads·Instagram)을 원래 주소로 걸 때 출처를 안 보내야 막히지 않는다 -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 남의 사진(X·Threads·Instagram·위키미디어)을 원래 주소로 걸 때 출처를 안 보내야 막히지 않는다 -->
 <meta name="referrer" content="no-referrer">
 <title>Taste</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
-  /* 아뜰리에 정본(DESIGN.md): 흰 바탕·직각·코발트 하나·Pretendard·그림자 없음·연회색 글자 없음 */
+  /* 아뜰리에 정본(DESIGN.md): 흰 바탕 · 직각 · 코발트 하나 · Pretendard · 그림자 없음(떠 있는 창만) · 연회색 글자 없음 */
   :root{
     --accent:#1F4BD8; --accent-ink:#1A3FB5; --accent-soft:#EEF2FD;
     --ink:#16161A; --ink2:#5B5B66; --mut:#475569;
     --line:#ECECF0; --line2:#DCDCE3; --surface:#F8F8FA;
     --sand:#F0A647; --red:#DC2626;
+    --gap:20px;
   }
   *{box-sizing:border-box;border-radius:0}
   html,body{margin:0;background:#fff;color:var(--ink)}
@@ -21,231 +22,234 @@
     -webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word;overflow-x:hidden}
   a{color:inherit;text-decoration:none}
   button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
-  h1,h2,h3{text-wrap:balance;margin:0}
-  .wrap{max-width:1180px;margin:0 auto;padding:32px 24px 96px}
+  button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  h1,h2,h3{margin:0;text-wrap:balance}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .wrap{max-width:1720px;margin:0 auto;padding:32px 32px 96px}
 
-  /* 머리 */
-  .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 24px;flex-wrap:wrap}
+  /* ── 머리: 제목 · 수집 안내 · 검색 */
+  .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px 32px;flex-wrap:wrap}
   .mast h1{font-size:24px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
-  .mast .feed{font-size:12.5px;font-weight:500;color:var(--ink2)}
-  .mast .feed b{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .feed{font-size:12.5px;font-weight:500;color:var(--ink2);margin-top:6px}
+  .feed b{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .search{position:relative;width:300px;max-width:100%}
+  .search input{width:100%;height:38px;border:1px solid var(--line2);background:#fff;padding:0 34px 0 12px;font:inherit;font-size:13.5px;color:var(--ink)}
+  .search input::placeholder{color:#64748B}
+  .search input:focus{border-color:var(--ink);outline:none}
+  .search .x{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:26px;height:26px;font-size:15px;color:var(--ink2);display:none}
+  .search.has .x{display:block}
 
-  /* 큰 탭 (atl-tabs + travel-tab-btn 과 같은 모양) */
-  .tabsrow{display:flex;align-items:flex-end;gap:16px;border-bottom:1px solid var(--line);margin-top:20px}
-  .tabs{display:flex;gap:24px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+  /* ── 큰 탭 (atl-tabs 모양) */
+  .tabs{display:flex;gap:26px;margin-top:22px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
   .tab{flex:none;padding:10px 0 12px;margin-bottom:-1px;border-bottom:2px solid transparent;font-size:14px;font-weight:600;color:var(--ink2);white-space:nowrap}
   .tab:hover{color:var(--ink)}
   .tab.on{color:var(--ink);border-bottom-color:var(--ink)}
-  .tab .n{font-weight:500;margin-left:5px;font-variant-numeric:tabular-nums;color:var(--ink2)}
+  .tab .n{font-weight:500;margin-left:5px;font-variant-numeric:tabular-nums}
   .tab.on .n{color:var(--accent)}
-  .hidden-btn{flex:none;font-size:12.5px;font-weight:600;color:var(--ink2);padding:0 0 13px;white-space:nowrap}
-  .hidden-btn:hover{color:var(--ink)}
-  .hidden-btn.on{color:var(--accent)}
 
-  /* 배치 묶음 */
-  .batch{margin-top:40px}
-  .batch-h{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
-  .batch-h h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
-  .batch-h .c{font-size:12.5px;font-weight:500;color:var(--ink2);font-variant-numeric:tabular-nums}
-  .batch-h::after{content:'';flex:1;height:1px;background:var(--line);align-self:center}
-
-  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-  .grid.books{grid-template-columns:repeat(4,minmax(0,1fr))}
-
-  /* 카드 */
-  .card{display:flex;flex-direction:column;border:1px solid var(--line);background:#fff;min-width:0}
-  .card.big{grid-column:span 2;grid-row:span 2}
-  .ph{position:relative;aspect-ratio:4/3;background:var(--surface);overflow:hidden;flex:none}
-  .card.big .ph{aspect-ratio:auto;flex:1 1 auto;min-height:340px}
-  .card.big .body{flex:none}
-  .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
-  .card:hover .ph img{transform:scale(1.025)}
-  .new{position:absolute;top:0;left:0;background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.02em;padding:4px 8px;line-height:1}
-  .new.inline{position:static;display:inline-block;vertical-align:middle;margin-right:8px}
-  .body{display:flex;flex-direction:column;gap:10px;padding:16px 16px 14px;flex:1}
-  .t{font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
-  .card.big .t{font-size:22px}
-  .card.typo .t{font-size:26px;font-weight:800;line-height:1.15;letter-spacing:-.02em}
-  .card.typo{border-top:4px solid var(--ink)}
-  .card.typo.big .t{font-size:34px}
-  .sub{font-size:13px;font-weight:500;color:var(--ink2);margin-top:3px}
-  .src{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;max-width:100%;font-size:11.5px;font-weight:600;color:var(--ink2);background:var(--surface);height:24px;padding:0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  a.src:hover{color:var(--ink);background:var(--line)}
-  .src i{font-style:normal;width:6px;height:6px;background:currentColor;flex:none}
-  .why{background:var(--accent-soft);color:var(--accent);font-size:14px;font-weight:600;line-height:1.45;padding:10px 12px}
-  .detail{font-size:13px;line-height:1.55;color:var(--mut);white-space:pre-line}
-  .chips{display:flex;flex-wrap:wrap;gap:6px}
-  .chip{display:inline-flex;align-items:center;height:24px;padding:0 9px;font-size:12px;font-weight:600;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
-  .chip.sand{background:var(--sand);color:var(--ink)}
-  .acts{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:4px}
-  .b{height:32px;padding:0 11px;border:1px solid var(--line2);background:#fff;font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
-  .b:hover{border-color:var(--ink)}
-  .b.on-saved{background:var(--accent);border-color:var(--accent);color:#fff}
-  .b.on-done{background:var(--ink);border-color:var(--ink);color:#fff}
-  .b.on-nope{border-color:var(--red);color:var(--red)}
-  .map{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
-  .map:hover{color:var(--accent-ink);text-decoration:underline}
-
-  /* 책: 표지처럼 */
-  .cover{position:relative;min-height:170px;padding:18px 18px 16px 30px;display:flex;flex-direction:column;overflow:hidden}
-  .cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:12px;background:rgba(0,0,0,.18)}
-  .cover.c0{background:var(--ink);color:#fff}
-  .cover.c1{background:var(--accent);color:#fff}
-  .cover.c2{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
-  .cover.c2::before{background:var(--ink)}
-  .cover.img{padding:0;background:var(--surface);aspect-ratio:3/4;min-height:0}
-  .cover.img::before{display:none}
-  .cover.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .cover .ct{font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-.02em}
-  .cover .ca{font-size:13px;font-weight:600;margin-top:10px;opacity:.85}
-  .cover .cm{margin-top:auto;font-size:12px;font-weight:600;opacity:.8;font-variant-numeric:tabular-nums}
-  .cover .new{left:12px}
-  .cover.img .new{left:0}
-
-  /* 도시: 사진 없으면 흰 바탕 + 코발트 1px + 모래 지평선 6px (DESIGN.md 빈 도시 카드) */
-  .cityph{position:relative;aspect-ratio:4/3;border:1px solid var(--accent);border-bottom:6px solid var(--sand);margin:-1px -1px 0;display:flex;flex-direction:column;justify-content:flex-end;padding:18px}
-  .card.big .cityph{aspect-ratio:auto;flex:1 1 auto;min-height:340px}
-  .cityph .cn{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
-  .card.big .cityph .cn{font-size:56px}
-  .cityph .cc{font-size:14px;font-weight:600;color:var(--ink2);margin-top:6px}
-
-  /* Saved 의 종류 머리 */
-  .kind-h{display:flex;align-items:baseline;gap:10px;margin:40px 0 16px}
-  .kind-h h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
-  .kind-h .c{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
-
-  /* ── Culture (전시·공연·영화) ── 프로그램 안내지처럼: 지역 머리 → 포스터 카드 */
-  .cul-ctl{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-top:24px}
-  .seg{display:inline-flex;background:var(--surface);padding:3px;gap:2px;max-width:100%;overflow-x:auto;scrollbar-width:none}
-  .seg::-webkit-scrollbar{display:none}
-  .seg button{flex:none;height:32px;padding:0 14px;font-size:13px;font-weight:600;color:var(--ink2);border:1px solid transparent;white-space:nowrap}
+  /* ── 거르기 줄 */
+  .filters{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+  .frow{display:flex;align-items:center;gap:12px;min-width:0}
+  .chiprow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1;padding:1px 0}
+  .chiprow::-webkit-scrollbar{display:none}
+  .fchip{flex:none;height:30px;padding:0 12px;font-size:13px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line2);white-space:nowrap}
+  .fchip:hover{border-color:var(--ink)}
+  .fchip .n{font-weight:500;color:var(--ink2);margin-left:4px;font-variant-numeric:tabular-nums}
+  .fchip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .fchip.on .n{color:#fff}
+  .fchip.tag{border-color:transparent;background:var(--surface);color:var(--ink)}
+  .fchip.tag.on{background:var(--accent);color:#fff}
+  .fsep{flex:none;align-self:center;font-size:12px;font-weight:700;color:var(--ink2);padding:0 4px 0 8px}
+  .seg{flex:none;display:inline-flex;background:var(--surface);padding:3px;gap:2px}
+  .seg button{height:28px;padding:0 12px;font-size:12.5px;font-weight:600;color:var(--ink2);border:1px solid transparent;white-space:nowrap}
   .seg button:hover{color:var(--ink)}
-  .seg button .n{font-weight:500;margin-left:5px;font-variant-numeric:tabular-nums}
   .seg button.on{background:#fff;border-color:var(--ink);color:var(--ink)}
-  .seg.scope button{height:36px;padding:0 18px;font-size:14px;font-weight:700}
+  .seg button .n{font-weight:500;margin-left:4px;font-variant-numeric:tabular-nums}
+  .seg.scope button{height:32px;padding:0 14px;font-size:13px;font-weight:700}
   .seg.scope button.on .n{color:var(--accent)}
+  .ghost{flex:none;font-size:12.5px;font-weight:600;color:var(--ink2);white-space:nowrap;padding:6px 2px}
+  .ghost:hover{color:var(--ink)}
+  .ghost.on{color:var(--accent)}
+  .resultline{font-size:12.5px;font-weight:600;color:var(--ink2);margin:22px 0 14px;font-variant-numeric:tabular-nums}
+  .resultline b{color:var(--ink)}
 
-  .rg{margin-top:44px}
-  .rg-h{position:sticky;top:0;z-index:3;background:#fff;display:flex;align-items:baseline;gap:10px;padding:14px 0 10px;border-bottom:2px solid var(--ink);margin-bottom:20px}
-  .rg-h h2{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
-  .rg-h .c{font-size:13px;font-weight:600;color:var(--ink2);font-variant-numeric:tabular-nums}
-  .rg-h .r{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* ── 몸통: 판 + 오른쪽 상세 */
+  .shell{display:grid;grid-template-columns:minmax(0,1fr);align-items:start}
+  .shell.open{grid-template-columns:minmax(0,1fr) clamp(400px,40%,680px)}
+  .gridwrap{container-type:inline-size;min-width:0}
+  .shell.open .gridwrap{padding-right:28px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));grid-auto-flow:dense;gap:28px var(--gap)}
+  .grid.tall{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 
-  /* 여행 머리: 여행 이름 크게 + 날짜 + D-day */
-  .trip{margin-top:48px}
-  .trip-h{position:sticky;top:0;z-index:3;background:#fff;padding:16px 0 14px;border-bottom:2px solid var(--ink);display:flex;align-items:flex-end;gap:8px 16px;flex-wrap:wrap}
+  /* ── 카드: 사진이 주인공, 글은 두 줄 */
+  .card{position:relative;display:flex;flex-direction:column;min-width:0;cursor:pointer;text-align:left}
+  .card.big{grid-column:span 2}
+  .cv{position:relative;aspect-ratio:4/5;background:var(--surface);overflow:hidden}
+  .card.tl2 .cv{aspect-ratio:2/3}
+  .card.big .cv{aspect-ratio:8/5}
+  .card.big.tl2 .cv{aspect-ratio:4/3}
+  /* 좁은 판(폰·상세 열린 좁은 화면): 큰 카드는 한 줄 전체, 4:3 */
+  @container (max-width:560px){ .gridwrap .card.big{grid-column:1/-1} .gridwrap .card.big .cv,.gridwrap .card.big.tl2 .cv{aspect-ratio:4/3} }
+  .cv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+  .card:hover .cv img{transform:scale(1.03)}
+  .card.sel .cv::after{content:'';position:absolute;inset:0;border:3px solid var(--ink);pointer-events:none}
+  .cv .cnt{position:absolute;left:10px;bottom:10px;background:rgba(22,22,26,.78);color:#fff;font-size:11px;font-weight:700;padding:3px 7px;font-variant-numeric:tabular-nums}
+  .cv .pick{position:absolute;left:0;top:0;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:5px 9px;letter-spacing:.01em}
+  .cv .donemark{position:absolute;left:10px;bottom:10px;background:#fff;color:var(--ink);font-size:11.5px;font-weight:700;padding:3px 8px}
+  .star{position:absolute;right:8px;top:8px;width:36px;height:36px;display:grid;place-items:center;background:#fff;color:var(--ink);font-size:17px;line-height:1;border:1px solid var(--line)}
+  .star:hover{border-color:var(--ink)}
+  .star.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  /* 사진 없는 카드 = 글자 표지 */
+  .tp{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:16px 16px 18px}
+  .tp.c0{background:var(--ink);color:#fff}
+  .tp.c1{background:var(--accent);color:#fff}
+  .tp.c2{background:#fff;color:var(--ink);border:1px solid var(--line);border-top:8px solid var(--ink)}
+  .tp .k{font-size:12px;font-weight:700}
+  .tp .tt{font-size:24px;font-weight:800;line-height:1.12;letter-spacing:-.025em}
+  .card.big .tp .tt{font-size:36px}
+  .tp .ts{font-size:12.5px;font-weight:600;margin-top:10px;opacity:.85}
+  .cb{padding:12px 2px 0;display:flex;flex-direction:column;gap:5px}
+  .cb .top{display:flex;align-items:center;gap:6px;min-height:22px;overflow:hidden}
+  .cb .t{font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card.big .cb .t{font-size:20px}
+  .cb .s{font-size:13px;font-weight:500;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip{flex:none;display:inline-flex;align-items:center;height:22px;padding:0 8px;font-size:11.5px;font-weight:700;background:var(--surface);color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .chip.due{background:var(--accent);color:#fff}
+  .chip.on{background:var(--accent-soft);color:var(--accent-ink)}
+  .chip.line{background:#fff;border:1px solid var(--line2)}
+  .chip.ink{background:#fff;border:1px solid var(--ink)}
+  .chip.sand{background:var(--sand);color:var(--ink)}
+  .kw{font-size:11.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+
+  /* 여행지 묶음 */
+  .trip{margin-top:28px}
+  .trip-h{display:flex;align-items:flex-end;gap:8px 16px;flex-wrap:wrap;padding:6px 0 14px;border-bottom:2px solid var(--ink)}
   .trip-h h2{font-size:26px;font-weight:800;letter-spacing:-.025em;line-height:1.15}
-  .trip-h .d{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .trip-h .d{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
   .trip-h .chip{margin-left:auto}
   .city-h{display:flex;align-items:baseline;gap:8px;margin:24px 0 14px}
   .city-h h3{font-size:15px;font-weight:700}
   .city-h .c{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
   .city-h::after{content:'';flex:1;height:1px;background:var(--line);align-self:center}
 
-  /* 전시·공연 카드 */
-  .ev{display:flex;flex-direction:column}
-  .ev .ph{aspect-ratio:4/5}
-  .grid.evg{grid-template-columns:repeat(4,minmax(0,1fr))}
-  /* 사진 없는 전시·공연 = 글자 포스터 (먹 · 코발트 · 흰 돌림) */
-  .ph.tp{display:flex;flex-direction:column;justify-content:space-between;padding:16px 16px 18px}
-  .ph.tp.c0{background:var(--ink);color:#fff}
-  .ph.tp.c1{background:var(--accent);color:#fff}
-  .ph.tp.c2{background:#fff;color:var(--ink);border-bottom:1px solid var(--line);border-top:8px solid var(--ink)}
-  .tp-k{font-size:12px;font-weight:700;letter-spacing:.02em}
-  .tp-t{font-size:26px;font-weight:800;line-height:1.12;letter-spacing:-.025em;word-break:keep-all}
-  .tp-v{font-size:12.5px;font-weight:600;margin-top:10px;opacity:.85}
-  .ph.tp .new{left:auto;right:0}
-  .ev-head{padding:16px 16px 0;display:flex;flex-direction:column;gap:6px;min-width:0}
-  .ev-foot{padding:12px 16px 14px;display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
-  .ev-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .ev-kind{font-size:12px;font-weight:600;color:var(--ink2)}
-  .venue{font-size:13px;font-weight:500;color:var(--ink2)}
-  .period{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.01em;white-space:nowrap}
-  .period .dash{color:var(--ink2);margin:0 6px;font-weight:400}
-  .tl{position:relative;height:3px;background:var(--line);margin:6px 0 2px}
+  .empty{margin:56px 0;font-size:15px;font-weight:500;color:var(--ink2)}
+  .empty button{color:var(--accent);font-weight:600;margin-left:6px}
+  .sk{aspect-ratio:4/5;background:var(--surface)}
+  .more{height:1px}
+
+  /* ── 상세 판 (데스크톱: 오른쪽 붙박이 / 폰: 전체 화면 시트) */
+  .panel{position:sticky;top:0;height:100vh;overflow-y:auto;border-left:1px solid var(--line);background:#fff;display:none;overscroll-behavior:contain}
+  .shell.open .panel{display:flex;flex-direction:column}
+  .panel:focus{outline:none}
+  .pn-head{position:sticky;top:0;z-index:2;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;border-bottom:1px solid var(--line)}
+  .pn-head .kw{font-size:12.5px;font-weight:700;color:var(--ink)}
+  .pn-close{height:32px;padding:0 10px;font-size:13px;font-weight:600;border:1px solid var(--line2)}
+  .pn-close:hover{border-color:var(--ink)}
+  .grab{display:none}
+  .pn-body{padding:0 24px 24px;flex:1}
+  .gal{margin:0 -24px}
+  .gal-main{position:relative;aspect-ratio:4/3;background:var(--surface);overflow:hidden;cursor:pointer}
+  .gal-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .gal-main.tl2{aspect-ratio:3/4}
+  .gal-main .idx{position:absolute;right:12px;bottom:12px;background:rgba(22,22,26,.78);color:#fff;font-size:12px;font-weight:700;padding:4px 8px;font-variant-numeric:tabular-nums}
+  .gal-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:#fff;color:var(--ink);font-size:18px;display:grid;place-items:center;border:1px solid var(--line)}
+  .gal-nav.p{left:12px} .gal-nav.n{right:12px}
+  .thumbs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;padding:4px 24px 0}
+  .thumbs button{position:relative;aspect-ratio:1;overflow:hidden;background:var(--surface)}
+  .thumbs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .thumbs button.on::after{content:'';position:absolute;inset:0;border:2px solid var(--ink)}
+  .thumbs .plus{position:absolute;inset:0;display:grid;place-items:center;background:rgba(22,22,26,.6);color:#fff;font-size:13px;font-weight:700}
+  .pn-title{margin-top:22px;font-size:28px;font-weight:800;letter-spacing:-.025em;line-height:1.18}
+  .pn-sub{margin-top:6px;font-size:14px;font-weight:500;color:var(--ink2)}
+  .pn-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .why{margin-top:16px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:600;line-height:1.5;padding:12px 14px}
+  .detail{margin-top:14px;font-size:14px;line-height:1.65;color:var(--mut);white-space:pre-line}
+  .tl{position:relative;height:3px;background:var(--line);margin:12px 0 4px}
   .tl i{position:absolute;left:0;top:0;bottom:0;background:var(--accent)}
   .tl b{position:absolute;top:-4px;width:2px;height:11px;background:var(--ink);transform:translateX(-1px)}
-  .chip.due{background:var(--accent);color:#fff}
-  .chip.on{background:var(--accent-soft);color:var(--accent-ink)}
-  .chip.line{background:#fff;border:1px solid var(--line2)}
-  .chip.ink{background:#fff;border:1px solid var(--ink)}
-  .chips.row{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-  .chips.row::-webkit-scrollbar{display:none}
-  .chips.row > *{flex:none}
-  .acts .links{margin-left:auto;display:flex;gap:12px}
-  .ev .acts{flex-wrap:wrap;row-gap:8px}
-  .ev .b{padding:0 9px}
-  .acts .links .map{margin-left:0}
+  .info{margin:22px 0 0;border-top:1px solid var(--ink)}
+  .info > div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.55}
+  .info dt{font-weight:700;color:var(--ink)}
+  .info dd{margin:0;color:var(--ink);overflow-wrap:anywhere}
+  .info dd a{color:var(--accent);font-weight:600}
+  .info dd a:hover{text-decoration:underline}
+  .info dd .period{font-weight:600;font-variant-numeric:tabular-nums}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+  .tags span{font-size:12.5px;font-weight:600;color:var(--ink2)}
+  .srcs{margin-top:26px}
+  .srcs h3{font-size:13px;font-weight:700;margin-bottom:6px}
+  .src{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;min-width:0}
+  .src .ty{flex:none;width:72px;font-size:11.5px;font-weight:700;color:var(--ink2)}
+  .src .nm{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .src .st{flex:none;font-size:12px;font-weight:600;color:var(--ink2);font-variant-numeric:tabular-nums}
+  .src .go{flex:none;color:var(--accent);font-weight:600}
+  a.src:hover .nm{text-decoration:underline}
+  .pn-acts{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 24px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .b{height:38px;padding:0 14px;border:1px solid var(--line2);background:#fff;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap}
+  .b:hover{border-color:var(--ink)}
+  .b.on-saved{background:var(--accent);border-color:var(--accent);color:#fff}
+  .b.on-done{background:var(--ink);border-color:var(--ink);color:#fff}
+  .b.on-nope{border-color:var(--red);color:var(--red)}
+  .links{margin-left:auto;display:flex;gap:14px}
+  .links a{font-size:13px;font-weight:700;color:var(--accent);white-space:nowrap}
+  .links a:hover{color:var(--accent-ink);text-decoration:underline}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:10px 14px;z-index:60;box-shadow:0 8px 28px rgba(20,20,40,.14)}
 
-  /* 영화: 2:3 포스터 */
-  .ph.film{aspect-ratio:2/3}
-  .film-by{font-size:12.5px;font-weight:500;color:var(--ink2);font-variant-numeric:tabular-nums}
-
-  .past-btn{display:block;margin-top:48px;padding-top:14px;border-top:1px solid var(--line);width:100%;text-align:left;font-size:13px;font-weight:600;color:var(--ink2)}
-  .past-btn:hover{color:var(--ink)}
-  .past .card{opacity:.7}
-  .empty{margin-top:56px;font-size:15px;font-weight:500;color:var(--ink2)}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:10px 14px;z-index:9}
-
-  @media (max-width:1024px){
-    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .grid.books{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .grid.evg{grid-template-columns:repeat(3,minmax(0,1fr))}
-  }
   @media (max-width:768px){
+    :root{--gap:12px}
     .wrap{padding:20px 16px 72px}
-    .mast .feed{width:100%}
-    .grid,.grid.evg{grid-template-columns:minmax(0,1fr);gap:16px}
-    .grid.books{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .card.big{grid-column:auto;grid-row:auto}
-    .card.big .body{flex:1}
-    .cul-ctl{flex-direction:column;align-items:stretch;gap:10px}
-    .seg{width:max-content}
-    .rg{margin-top:32px}
-    .rg-h h2{font-size:19px}
-    .trip-h h2{font-size:21px}
-    /* 폰: 전시 카드는 포스터 왼쪽 + 정보 오른쪽, 아래로 나머지 */
-    .ev{display:grid;grid-template-columns:116px minmax(0,1fr);grid-template-areas:"ph head" "foot foot"}
-    .ev .ph{grid-area:ph;aspect-ratio:4/5}
-    .ev-head{grid-area:head;padding:12px 12px 0 14px;gap:5px}
-    .ev-head .t{font-size:16px}
-    .ph.tp{padding:10px 10px 12px}
-    .tp-t{font-size:15px;line-height:1.2}
-    .tp-v{display:none}
-    .tp-k{font-size:11px}
-    .ev-foot{grid-area:foot;padding:12px 14px 14px}
-    .period{font-size:12.5px;white-space:normal}
-    .acts{flex-wrap:wrap}
-    .hidden-btn{border-left:1px solid var(--line2);padding-left:12px;margin-bottom:13px;padding-bottom:0}
-    .card.big .ph{flex:none;min-height:0;aspect-ratio:4/3}
-    .card.big .cityph{aspect-ratio:4/3}
-    .card.big .t{font-size:19px}
-    .card.typo.big .t{font-size:28px}
-    .card.big .cityph .cn{font-size:40px}
-    .tabs{gap:18px}
+    .mast{align-items:stretch}
+    .search{width:100%}
+    .tabs{gap:20px}
     .tab{min-height:44px}
-    .books .cover{padding:14px 12px 12px 22px}
-    .books .cover::before{width:8px}
-    .books .cover .ct{font-size:18px}
-    .books .body{padding:12px 10px 12px}
-    .books .why{font-size:13px;padding:8px 10px}
-    .books .acts{flex-wrap:wrap}
-    .books .b{padding:0 8px;font-size:12px}
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px var(--gap)}
+    .grid.tall{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cb .t{font-size:14.5px}
+    .card.big .cb .t{font-size:17px}
+    .tp{padding:10px 10px 12px} .tp .tt{font-size:17px} .card.big .tp .tt{font-size:26px} .tp .ts{display:none}
+    .star{width:32px;height:32px;font-size:15px;right:6px;top:6px}
+    .frow.sortrow{flex-wrap:wrap}
+    .trip-h h2{font-size:21px}
+    /* 폰: 상세는 전체 화면 시트, 아래로 끌면 닫힘 */
+    .shell.open{grid-template-columns:minmax(0,1fr)}
+    .shell.open .gridwrap{padding-right:0}
+    .panel{position:fixed;inset:0;height:auto;z-index:50;border-left:0;transition:transform .28s cubic-bezier(.2,.7,.2,1)}
+    .grab{display:block;width:40px;height:4px;background:var(--line2);margin:0 auto}
+    .pn-head{padding:10px 16px;flex-wrap:wrap}
+    .pn-head .grab{flex-basis:100%;margin-bottom:6px}
+    .pn-body{padding:0 16px 20px}
+    .gal{margin:0 -16px}
+    .thumbs{padding:4px 16px 0}
+    .pn-title{font-size:23px}
+    .pn-acts{padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+    .links{margin-left:0;width:100%;justify-content:flex-end;order:2}
+    body.sheet{overflow:hidden}
   }
+  @media (max-width:420px){ .grid{gap:20px 10px} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important} }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="mast">
-    <h1>Taste</h1>
-    <div class="feed" id="feed">X · Threads · Instagram에서 매주 월·목</div>
+    <div>
+      <h1>Taste</h1>
+      <div class="feed" id="feed">X · Threads · Instagram에서 매주 월·목</div>
+    </div>
+    <label class="search" id="searchBox"><span class="sr">검색</span>
+      <input id="q" type="search" placeholder="이름 · 동네 · 태그 · 이유 검색" autocomplete="off">
+      <button class="x" id="qx" type="button" aria-label="검색어 지우기">×</button>
+    </label>
   </header>
-  <div class="tabsrow">
-    <nav class="tabs" id="tabs" role="tablist"></nav>
-    <button class="hidden-btn" id="hiddenBtn" type="button"></button>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="종류"></nav>
+  <div class="filters" id="filters"></div>
+  <div class="shell" id="shell">
+    <div class="gridwrap"><div id="view"><div class="grid" aria-hidden="true">
+      <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
+    </div></div></div>
+    <aside class="panel" id="panel" aria-label="자세히" tabindex="-1"></aside>
   </div>
-  <main id="view"></main>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -266,396 +270,425 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
 
 /* 데이터는 아이맥 수집기(scripts/taste/)가 tasteItems 에 쓴다. 이 화면은 status·statusAt 만 쓴다. */
 const TABS = [
-  { id:'place', label:'Places' },
-  { id:'stay',  label:'Stays' },
-  { id:'culture', label:'Culture' },
-  { id:'book',  label:'Books' },
-  { id:'city',  label:'Cities' },
-  { id:'saved', label:'★ Saved' }
+  { id:'place', label:'Places' }, { id:'stay', label:'Stays' },
+  { id:'exhibition', label:'Exhibitions' }, { id:'performance', label:'Stage' },
+  { id:'film', label:'Films' }, { id:'book', label:'Books' }, { id:'city', label:'Cities' },
+  { id:'saved', label:'★', aria:'Saved' }
 ];
-const SRC = { x:'X', threads:'Threads', instagram:'Instagram', stayfolio:'Stayfolio', curated:'Curated', web:'Web' };
-let items = [];
-let tab = 'place';
-let showHidden = false;
-let latestBatch = '';
-let cultureSub = 'all';
-let cultureScope = 'home';
-try { const k = localStorage.getItem('atelier_taste_culture_kind'); if (['all','exhibition','performance','film'].includes(k)) cultureSub = k; } catch (e) {}
-try { const k = localStorage.getItem('atelier_taste_culture_scope'); if (k === 'home' || k === 'trip') cultureScope = k; } catch (e) {}
-let showPast = false;
-const CULTURE = ['exhibition','performance','film'];
+const KINDS = ['place','stay','exhibition','performance','film','book','city'];
 const EVENT = ['exhibition','performance'];
-const SUBS = [['all','전체'],['exhibition','전시'],['performance','공연'],['film','영화']];
-const pad2 = n => String(n).padStart(2,'0');
-const _d = new Date(); const TODAY = _d.getFullYear() + '-' + pad2(_d.getMonth()+1) + '-' + pad2(_d.getDate());
-const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
-const isDate = x => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}/.test(x);
-const isPast = it => { if (!EVENT.includes(it.kind)) return false; const m = it.meta || {}; if (m.permanent && !(m.trip && isDate(m.trip.end) && m.trip.end.slice(0,10) < TODAY)) return false;
-  return (!m.permanent && isDate(m.end) && m.end.slice(0,10) < TODAY) || !!(m.trip && isDate(m.trip.end) && m.trip.end.slice(0,10) < TODAY); };
-try { const t = localStorage.getItem('atelier_taste_tab'); if (TABS.some(x => x.id === t)) tab = t; } catch (e) {}
+const KIND_WORD = { place:'공간', stay:'스테이', exhibition:'전시', performance:'공연', film:'영화', book:'책', city:'도시' };
+const SRC = { x:'X', threads:'Threads', instagram:'Instagram', stayfolio:'Stayfolio', curated:'Curated', web:'Web', naver:'Naver', youtube:'YouTube' };
+const PAGE = 40;
 
+let items = [], byId = new Map();
+let tab = 'place', q = '', region = '', tag = '', sort = 'rec', scope = 'home';
+let showHidden = false, showPast = false, openId = '', galIdx = 0, limit = PAGE, loaded = false;
+const ls = { get(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
+if (TABS.some(t => t.id === ls.get('atelier_taste_tab'))) tab = ls.get('atelier_taste_tab');
+if (['home','trip'].includes(ls.get('atelier_taste_culture_scope'))) scope = ls.get('atelier_taste_culture_scope');
+if (['rec','new','due'].includes(ls.get('atelier_taste_sort'))) sort = ls.get('atelier_taste_sort');
+
+/* ── 작은 도구 */
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl = u => (typeof u === 'string' && /^https?:\/\//i.test(u)) ? u : '';
 const safeImg = u => (typeof u === 'string' && (/^https:\/\//i.test(u) || /^data:image\/(jpeg|png|webp);base64,/i.test(u))) ? u : '';
 const st = it => it.status || 'new';
-const fmtLikes = n => { n = Number(n); if (!isFinite(n) || n <= 0) return ''; if (n >= 10000) return (n/1000).toFixed(0)+'K'; if (n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/,'')+'K'; return String(n); };
-const md = b => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(b || ''); return m ? (+m[1]) + '/' + m[2] : (b || '날짜 없음'); };
-const hash = s => { let h = 0; for (const c of String(s)) h = (h*31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
-
-function toast(msg){ const o = document.querySelector('.toast'); if (o) o.remove(); const el = document.createElement('div'); el.className = 'toast'; el.setAttribute('role','status'); el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
-
-function visible(list){ return list.filter(it => showHidden ? st(it) === 'nope' : st(it) !== 'nope'); }
-function ofTab(id){
-  if (id === 'saved') return items.filter(it => st(it) === 'saved');
-  if (id === 'culture') return items.filter(it => CULTURE.includes(it.kind));
-  return items.filter(it => it.kind === id);
-}
-
-function renderHead(){
-  document.getElementById('tabs').innerHTML = TABS.map(t => {
-    const n = t.id === 'saved' ? ofTab('saved').length : ofTab(t.id).filter(it => st(it) !== 'nope' && !isPast(it)).length;
-    return `<button class="tab${t.id === tab ? ' on' : ''}" role="tab" aria-selected="${t.id === tab}" data-tab="${t.id}">${esc(t.label)}<span class="n">${n}</span></button>`;
-  }).join('');
-  const hb = document.getElementById('hiddenBtn');
-  const nHidden = tab === 'saved' ? 0 : ofTab(tab).filter(it => st(it) === 'nope').length;
-  hb.style.display = (nHidden || showHidden) && tab !== 'saved' ? '' : 'none';
-  hb.textContent = showHidden ? '← 돌아가기' : `숨긴 것 ${nHidden}`;
-  hb.classList.toggle('on', showHidden);
-  const f = document.getElementById('feed');
-  f.innerHTML = 'X · Threads · Instagram에서 매주 월·목' + (latestBatch ? ` · 마지막 <b>${esc(md(latestBatch))}</b>` : '');
-}
-
-function srcChip(it){
-  const s = it.src || {};
-  const parts = [SRC[s.type] || s.type || ''];
-  if (s.author) parts.push(String(s.author).startsWith('@') || s.type === 'curated' || s.type === 'web' ? s.author : '@' + s.author);
-  const lk = fmtLikes(s.likes); if (lk) parts.push('♥' + lk);
-  const label = parts.filter(Boolean).map(esc).join(' · ');
-  if (!label) return '';
-  const u = safeUrl(s.url);
-  return u ? `<a class="src" href="${esc(u)}" target="_blank" rel="noopener noreferrer"><i></i>${label}</a>` : `<span class="src"><i></i>${label}</span>`;
-}
-function actions(it){
-  const s = st(it);
-  const doneLabel = it.kind === 'book' ? '읽음' : CULTURE.includes(it.kind) ? '봤음' : '가 봄';
-  const map = safeUrl(it.mapUrl);
-  const ticket = safeUrl((it.meta || {}).ticketUrl);
-  return `<div class="acts">
-    <button class="b${s === 'saved' ? ' on-saved' : ''}" data-set="saved" data-id="${esc(it._id)}" aria-pressed="${s === 'saved'}">★ 저장</button>
-    <button class="b${s === 'done' ? ' on-done' : ''}" data-set="done" data-id="${esc(it._id)}" aria-pressed="${s === 'done'}">${doneLabel}</button>
-    <button class="b${s === 'nope' ? ' on-nope' : ''}" data-set="nope" data-id="${esc(it._id)}" aria-pressed="${s === 'nope'}">별로</button>
-    ${ticket || map ? `<span class="links">${ticket ? `<a class="map" href="${esc(ticket)}" target="_blank" rel="noopener noreferrer">예매 ↗</a>` : ''}${map ? `<a class="map" href="${esc(map)}" target="_blank" rel="noopener noreferrer">지도 ↗</a>` : ''}</span>` : ''}
-  </div>`;
-}
-const isNew = it => latestBatch && it.batch === latestBatch && st(it) === 'new';
-const whyHtml = it => it.why ? `<div class="why">${esc(it.why)}</div>` : '';
-const detailHtml = it => it.detail ? `<div class="detail">${esc(it.detail)}</div>` : '';
-function metaChips(it){
-  const m = it.meta || {}; const out = [];
-  if (it.kind === 'city'){
-    if (m.months) out.push(`<span class="chip sand">${esc(m.months)}</span>`);
-    if (m.temp) out.push(`<span class="chip">${esc(m.temp)}</span>`);
-    if (m.safety) out.push(`<span class="chip">여행경보 ${esc(m.safety)}</span>`);
-    if (m.flight) out.push(`<span class="chip">✈ ${esc(m.flight)}</span>`);
-  } else if (it.kind === 'stay'){
-    if (m.region) out.push(`<span class="chip">${esc(m.region)}</span>`);
-    if (m.price) out.push(`<span class="chip">${esc(m.price)}</span>`);
-  }
-  return out.length ? `<div class="chips">${out.join('')}</div>` : '';
-}
-
-function cardPlace(it, big){
-  const img = safeImg(it.image);
-  const nw = isNew(it);
-  return `<article class="card${big ? ' big' : ''}${img ? '' : ' typo'}">
-    ${img ? `<div class="ph"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.closest('.ph').remove()">${nw ? '<span class="new">NEW</span>' : ''}</div>` : ''}
-    <div class="body">
-      <div>${!img && nw ? '<span class="new inline">NEW</span>' : ''}<h3 class="t">${esc(it.title)}</h3>${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}</div>
-      ${srcChip(it)}
-      ${whyHtml(it)}
-      ${metaChips(it)}
-      ${detailHtml(it)}
-      ${actions(it)}
-    </div>
-  </article>`;
-}
-function cardBook(it){
-  const img = safeImg(it.image);
-  const m = it.meta || {};
-  const nw = isNew(it);
-  const meta = [m.year, m.pages ? m.pages + '쪽' : ''].filter(Boolean).map(esc).join(' · ');
-  const cover = img
-    ? `<div class="cover img"><img src="${esc(img)}" alt="" loading="lazy">${nw ? '<span class="new">NEW</span>' : ''}</div>`
-    : `<div class="cover c${hash(it._id) % 3}">${nw ? '<span class="new" style="top:0">NEW</span>' : ''}
-        <div class="ct"${nw ? ' style="margin-top:16px"' : ''}>${esc(it.title)}</div>
-        ${it.subtitle ? `<div class="ca">${esc(it.subtitle)}</div>` : ''}
-        ${meta ? `<div class="cm">${meta}</div>` : ''}
-      </div>`;
-  return `<article class="card">
-    ${cover}
-    <div class="body">
-      ${img ? `<div><h3 class="t">${esc(it.title)}</h3>${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}</div>` : ''}
-      ${whyHtml(it)}
-      ${srcChip(it)}
-      ${detailHtml(it)}
-      ${actions(it)}
-    </div>
-  </article>`;
-}
-function cardCity(it, big){
-  const img = safeImg(it.image);
-  const nw = isNew(it);
-  const top = img
-    ? `<div class="ph"><img src="${esc(img)}" alt="" loading="lazy">${nw ? '<span class="new">NEW</span>' : ''}</div>`
-    : `<div class="cityph">${nw ? '<span class="new">NEW</span>' : ''}<div class="cn">${esc(it.title)}</div>${it.subtitle ? `<div class="cc">${esc(it.subtitle)}</div>` : ''}</div>`;
-  return `<article class="card${big ? ' big' : ''}">
-    ${top}
-    <div class="body">
-      ${img ? `<div><h3 class="t">${esc(it.title)}</h3>${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}</div>` : ''}
-      ${metaChips(it)}
-      ${whyHtml(it)}
-      ${srcChip(it)}
-      ${detailHtml(it)}
-      ${actions(it)}
-    </div>
-  </article>`;
-}
-
-/* ── Culture ── 전시·공연은 지역(국내) 또는 여행(여행지)으로 묶고, 영화는 포스터 판 */
-const d10 = x => isDate(x) ? x.slice(0,10) : '';
-const full = x => { x = d10(x); return x ? x.replace(/-/g, '.') : ''; };
+const pad2 = n => String(n).padStart(2, '0');
+const _d = new Date(); const TODAY = _d.getFullYear() + '-' + pad2(_d.getMonth() + 1) + '-' + pad2(_d.getDate());
+const isDate = x => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}/.test(x);
+const d10 = x => isDate(x) ? x.slice(0, 10) : '';
+const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+const full = x => d10(x).replace(/-/g, '.');
 const mdS = x => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(x || ''); return m ? (+m[1]) + '/' + (+m[2]) : ''; };
-const kindWord = k => k === 'exhibition' ? '전시' : k === 'performance' ? '공연' : '영화';
-function eventState(it){
-  const m = it.meta || {};
-  const start = d10(m.start), end = d10(m.end);
-  if (m.permanent) return { k:2, sort:'', html:'<span class="chip ink">상설</span>' };
-  if (end && end < TODAY) return { k:4, sort:end, html:'<span class="chip">끝남</span>' };
-  if (start && start > TODAY) return { k:1, sort:start, html:`<span class="chip line">${esc(mdS(start))} 시작</span>` };
-  if (end){ const d = dayDiff(TODAY, end); if (d <= 7) return { k:0, sort:end, html:`<span class="chip due">${d === 0 ? '오늘 마감' : '마감 D-' + d}</span>` }; }
-  return { k:0, sort:end || '9999', html:'<span class="chip on">진행 중</span>' };
+const kfmt = n => { n = Number(n); if (!isFinite(n) || n <= 0) return ''; if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M'; if (n >= 1e4) return Math.round(n / 1000) + 'K'; if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K'; return String(n); };
+const hash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
+const tall = it => it.kind === 'film' || it.kind === 'book';
+function toast(msg){ const o = document.querySelector('.toast'); if (o) o.remove(); const el = document.createElement('div'); el.className = 'toast'; el.setAttribute('role', 'status'); el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
+
+/* ── 옛 문서·새 문서를 한 모양으로 */
+function norm(raw, id){
+  const it = Object.assign({}, raw, { _id: id });
+  it.meta = it.meta || {}; it.info = it.info || {}; it.loc = it.loc || {};
+  const imgs = Array.isArray(it.images) ? it.images.filter(safeImg) : [];
+  if (!imgs.length && safeImg(it.image)) imgs.push(it.image);
+  it._imgs = imgs;
+  it._srcs = Array.isArray(it.sources) && it.sources.length ? it.sources : (it.src && (it.src.type || it.src.url) ? [it.src] : []);
+  it._tags = Array.isArray(it.tags) ? it.tags.filter(t => typeof t === 'string' && t.trim()).map(t => t.replace(/^#/, '').trim()) : [];
+  it._score = Number(it.score) || 0;
+  it._added = String(it.addedAt || it.batch || '');
+  const m = it.meta, L = it.loc;
+  const country = L.country || m.country || (it.kind === 'city' ? it.subtitle : '') || '';
+  it._abroad = !!country && !/^(한국|대한민국|korea|south korea)$/i.test(String(country).trim());
+  it._country = it._abroad ? String(country).trim() : '';
+  let rg = L.region || m.region || '';
+  if (!rg && !it._abroad){ rg = L.city || m.city || ''; if (!rg && (it.kind === 'place' || it.kind === 'stay') && it.subtitle) rg = String(it.subtitle).split(/\s*·\s*/)[0]; }
+  it._region = it._abroad ? '' : String(rg || '').trim();
+  it._hay = [it.title, it.subtitle, it.why, it.detail, it._tags.join(' '), L.country, L.city, L.region, L.area, m.venue, m.director, m.author, m.region, m.city, it.info.address].filter(Boolean).join(' ').toLowerCase();
+  return it;
 }
-function timeline(it){
-  const m = it.meta || {}; const s = d10(m.start), e = d10(m.end);
-  if (m.permanent || !s || !e || e <= s || e < TODAY) return '';
-  const p = Math.max(0, Math.min(100, dayDiff(s, TODAY) / dayDiff(s, e) * 100));
-  return `<div class="tl" aria-hidden="true"><i style="width:${p.toFixed(1)}%"></i>${TODAY >= s ? `<b style="left:${p.toFixed(1)}%"></b>` : ''}</div>`;
+const isPast = it => {
+  if (!EVENT.includes(it.kind)) return false; const m = it.meta;
+  const tripOver = !!(m.trip && d10(m.trip.end) && d10(m.trip.end) < TODAY);
+  if (m.permanent) return tripOver;
+  return (!!d10(m.end) && d10(m.end) < TODAY) || tripOver;
+};
+const hasTrip = it => !!(it.meta.trip && (it.meta.trip.name || it.meta.trip.id));
+
+function eventState(it){
+  const m = it.meta, s = d10(m.start), e = d10(m.end);
+  if (m.permanent) return { k:2, sort:'~', html:'<span class="chip ink">상설</span>' };
+  if (e && e < TODAY) return { k:4, sort:e, html:'<span class="chip">끝남</span>' };
+  if (s && s > TODAY) return { k:1, sort:s, html:`<span class="chip line">${esc(mdS(s))} 시작</span>` };
+  if (e){ const d = dayDiff(TODAY, e); if (d <= 7) return { k:0, sort:e, html:`<span class="chip due">${d === 0 ? '오늘 마감' : 'D-' + d + ' 마감'}</span>` }; }
+  return { k:0, sort:e || '9999', html:'<span class="chip on">진행 중</span>' };
 }
 function tripOverlap(it){
-  const m = it.meta || {}, t = m.trip || {};
+  const m = it.meta, t = m.trip || {};
   if (m.permanent) return { k:1, html:'<span class="chip ink">상설 · 언제 가도</span>' };
   const ts = d10(t.start), te = d10(t.end), s = d10(m.start) || ts, e = d10(m.end) || te;
   if (!ts || !te) return { k:2, html:'' };
   const a = s > ts ? s : ts, b = e < te ? e : te;
-  if (a <= b) return { k:0, html:`<span class="chip due">여행 중 진행 · ${esc(mdS(a))}${a === b ? '' : '–' + esc(mdS(b))} 겹침</span>` };
+  if (a <= b) return { k:0, html:`<span class="chip due">여행 중 · ${esc(mdS(a))}${a === b ? '' : '–' + esc(mdS(b))} 겹침</span>` };
   return { k:3, html:'<span class="chip line">여행 때는 안 함</span>' };
 }
-function periodHtml(it){
-  const m = it.meta || {};
-  if (m.permanent) return '<div class="period">상설 · 언제 가도</div>';
-  const s = full(m.start), e = full(m.end);
-  if (!s && !e) return '';
-  return `<div class="period">${esc(s)}<span class="dash">—</span>${esc(e)}</div>`;
+function cardChip(it, inTrip){
+  const m = it.meta;
+  if (EVENT.includes(it.kind)) return inTrip ? tripOverlap(it).html : eventState(it).html;
+  if (it.kind === 'film'){
+    const out = [];
+    if (d10(m.release) > TODAY) out.push(`<span class="chip line">${esc(mdS(m.release))} 개봉</span>`);
+    if (m.where) out.push(`<span class="chip ${m.where === '극장' ? 'due' : 'on'}">${esc(m.where)}</span>`);
+    return out.join('');
+  }
+  if (it.kind === 'city' && m.months) return `<span class="chip sand">${esc(m.months)}</span>`;
+  return '';
 }
-function cardEvent(it, inTrip){
-  const img = safeImg(it.image); const m = it.meta || {}; const nw = isNew(it);
-  const state = inTrip ? tripOverlap(it).html : eventState(it).html;
-  const venue = m.venue || it.subtitle || '';
-  const chips = [];
-  if (m.price) chips.push(`<span class="chip">${esc(m.price)}</span>`);
-  const sc = srcChip(it); if (sc) chips.push(sc);
-  const poster = img
-    ? `<div class="ph"><img src="${esc(img)}" alt="" loading="lazy">${nw ? '<span class="new">NEW</span>' : ''}</div>`
-    : `<div class="ph tp c${hash(it._id) % 3}" aria-hidden="true">${nw ? '<span class="new">NEW</span>' : ''}<span class="tp-k">${kindWord(it.kind)}</span><div><div class="tp-t">${esc(it.title)}</div>${venue ? `<div class="tp-v">${esc(venue)}</div>` : ''}</div></div>`;
-  return `<article class="card ev">
-    ${poster}
-    <div class="ev-head">
-      <div class="ev-top">${state}<span class="ev-kind">${kindWord(it.kind)}</span></div>
-      <h3 class="t">${esc(it.title)}</h3>
-      ${venue ? `<div class="venue">${esc(venue)}</div>` : ''}
-      ${periodHtml(it)}
-      ${inTrip ? '' : timeline(it)}
-    </div>
-    <div class="ev-foot">
-      ${chips.length ? `<div class="chips row">${chips.join('')}</div>` : ''}
-      ${whyHtml(it)}
-      ${detailHtml(it)}
-      ${actions(it)}
-    </div>
-  </article>`;
+function subLine(it){
+  const m = it.meta, L = it.loc;
+  if (EVENT.includes(it.kind)) return [m.venue, it._abroad ? (L.city || m.city) : (L.area || it._region)].filter(Boolean).join(' · ') || it.subtitle || '';
+  if (it.kind === 'film') return [m.director, m.year].filter(Boolean).join(' · ') || it.subtitle || '';
+  if (it.kind === 'book') return [m.author, m.publisher].filter(Boolean).join(' · ') || it.subtitle || '';
+  return it.subtitle || [L.area, L.city].filter(Boolean).join(' · ');
 }
-function cardFilm(it){
-  const img = safeImg(it.image); const m = it.meta || {}; const nw = isNew(it);
-  const rt = m.runtime ? (/^\d+$/.test(String(m.runtime)) ? m.runtime + '분' : m.runtime) : '';
-  const by = [m.director, m.year, rt].filter(Boolean).map(esc).join(' · ') || esc(it.subtitle || '');
-  const chips = [];
-  if (m.where) chips.push(`<span class="chip${m.where === '극장' ? ' due' : ' on'}">${esc(m.where)}</span>`);
-  if (d10(m.release) > TODAY) chips.push(`<span class="chip line">${esc(mdS(m.release))} 개봉</span>`);
+
+/* ── 고르기·정렬 */
+function inTab(it, t){
+  if (t === 'saved') return st(it) === 'saved';
+  return it.kind === t;
+}
+const matchQ = it => !q || q.split(/\s+/).every(w => it._hay.includes(w));
+function baseList(t){
+  return items.filter(it => inTab(it, t) && matchQ(it)
+    && (t === 'saved' || (showHidden ? st(it) === 'nope' : st(it) !== 'nope'))
+    && (showPast ? isPast(it) : !isPast(it)));
+}
+const regionKey = it => it._abroad ? '@' + it._country : it._region;
+function scoped(list){
+  if (!EVENT.includes(tab) || showPast || showHidden) return list;
+  return list.filter(it => (scope === 'trip') === hasTrip(it));
+}
+function filtered(){
+  let l = scoped(baseList(tab));
+  if (region) l = l.filter(it => region === '@해외' ? it._abroad : regionKey(it) === region);
+  if (tag) l = l.filter(it => it._tags.includes(tag));
+  return l;
+}
+function sortList(l){
+  const s = (sort === 'due' && !EVENT.includes(tab)) ? 'rec' : sort;
+  const byAdded = (a, b) => b._added.localeCompare(a._added);
+  if (s === 'new') return l.slice().sort(byAdded);
+  if (s === 'due') return l.slice().sort((a, b) => { const x = eventState(a), y = eventState(b); return x.k - y.k || String(x.sort).localeCompare(String(y.sort)) || byAdded(a, b); });
+  return l.slice().sort((a, b) => (b.editorPick ? 1 : 0) - (a.editorPick ? 1 : 0) || b._score - a._score || byAdded(a, b));
+}
+
+/* ── 그리기: 머리 */
+function renderTabs(){
+  document.getElementById('tabs').innerHTML = TABS.map(t => {
+    const n = items.filter(it => inTab(it, t.id) && matchQ(it) && st(it) !== 'nope' && !isPast(it)).length;
+    return `<button class="tab${t.id === tab ? ' on' : ''}" role="tab" aria-selected="${t.id === tab}" data-tab="${t.id}"${t.aria ? ` aria-label="${t.aria} ${n}"` : ''}>${esc(t.label)}<span class="n">${n}</span></button>`;
+  }).join('');
+  const latest = items.reduce((m, it) => it._added > m ? it._added : m, '');
+  document.getElementById('feed').innerHTML = 'X · Threads · Instagram에서 매주 월·목' + (latest ? ` · 마지막 <b>${esc(mdS(latest))}</b>` : '') + (items.length ? ` · 모두 <b>${items.filter(it => st(it) !== 'nope').length}</b>` : '');
+}
+function renderFilters(){
+  const el = document.getElementById('filters');
+  if (!items.length){ el.innerHTML = ''; return; }
+  const base = scoped(baseList(tab));
+  const rows = [];
+  // 1줄: (전시·공연) 국내/여행지 + 지역
+  const r1 = [];
+  if (EVENT.includes(tab) && !showPast && !showHidden){
+    const all = baseList(tab);
+    const n = sc => all.filter(it => (sc === 'trip') === hasTrip(it)).length;
+    r1.push(`<div class="seg scope" role="group" aria-label="어디">${[['home','서울·국내'],['trip','여행지']].map(([k, l]) => `<button class="${scope === k ? 'on' : ''}" data-scope="${k}" aria-pressed="${scope === k}">${l}<span class="n">${n(k)}</span></button>`).join('')}</div>`);
+  }
+  if (!['film','book'].includes(tab) && !(EVENT.includes(tab) && scope === 'trip' && !showPast)){
+    const dom = new Map(), abr = new Map();
+    base.forEach(it => { if (it._abroad) abr.set(it._country, (abr.get(it._country) || 0) + 1); else if (it._region) dom.set(it._region, (dom.get(it._region) || 0) + 1); });
+    const sortE = m => [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko'));
+    if (dom.size + abr.size > 1){
+      const c = (key, label, n) => `<button class="fchip${region === key ? ' on' : ''}" data-region="${esc(key)}" aria-pressed="${region === key}">${esc(label)}<span class="n">${n}</span></button>`;
+      let h = `<button class="fchip${!region ? ' on' : ''}" data-region="" aria-pressed="${!region}">전체</button>`;
+      h += sortE(dom).map(([k, n]) => c(k, k, n)).join('');
+      if (abr.size){ h += (dom.size ? `<span class="fsep">해외</span>` : '') + (abr.size > 1 && dom.size ? c('@해외', '해외 전체', [...abr.values()].reduce((a, b) => a + b, 0)) : '') + sortE(abr).map(([k, n]) => c('@' + k, k, n)).join(''); }
+      r1.push(`<div class="chiprow" role="group" aria-label="지역">${h}</div>`);
+    }
+  }
+  if (r1.length) rows.push(`<div class="frow">${r1.join('')}</div>`);
+  // 2줄: 분위기 태그 + 정렬 + 숨긴 것·지난 것
+  const freq = new Map(); base.forEach(it => it._tags.forEach(t => freq.set(t, (freq.get(t) || 0) + 1)));
+  const tops = [...freq.entries()].filter(([, n]) => n >= 1).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko')).slice(0, 10);
+  if (tag && !tops.some(([t]) => t === tag)) tops.unshift([tag, freq.get(tag) || 0]);
+  const tagHtml = tops.length > 1 ? `<div class="chiprow" role="group" aria-label="분위기">${tops.map(([t]) => `<button class="fchip tag${tag === t ? ' on' : ''}" data-tag="${esc(t)}" aria-pressed="${tag === t}">#${esc(t)}</button>`).join('')}</div>` : '<div style="flex:1"></div>';
+  const sorts = [['rec','추천순'],['new','최근 추가']].concat(EVENT.includes(tab) ? [['due','마감 임박']] : []);
+  const curSort = (sort === 'due' && !EVENT.includes(tab)) ? 'rec' : sort;
+  const sortHtml = (EVENT.includes(tab) && scope === 'trip' && !showPast) ? '' : `<div class="seg" role="group" aria-label="정렬">${sorts.map(([k, l]) => `<button class="${curSort === k ? 'on' : ''}" data-sort="${k}" aria-pressed="${curSort === k}">${l}</button>`).join('')}</div>`;
+  const nHidden = tab === 'saved' ? 0 : items.filter(it => inTab(it, tab) && st(it) === 'nope').length;
+  const nPast = items.filter(it => inTab(it, tab) && isPast(it) && st(it) !== 'nope').length;
+  const extra = [
+    (nHidden || showHidden) ? `<button class="ghost${showHidden ? ' on' : ''}" data-hidden="1">${showHidden ? '← 돌아가기' : '숨긴 것 ' + nHidden}</button>` : '',
+    (nPast || showPast) ? `<button class="ghost${showPast ? ' on' : ''}" data-past="1">${showPast ? '← 돌아가기' : '지난 것 ' + nPast}</button>` : ''
+  ].join('');
+  rows.push(`<div class="frow sortrow">${tagHtml}${sortHtml}${extra}</div>`);
+  el.innerHTML = rows.join('');
+}
+
+/* ── 그리기: 카드 */
+function card(it, opts){
+  opts = opts || {};
+  const img = it._imgs[0];
+  const big = !opts.noBig && (it.editorPick || it._score >= 90);
+  const saved = st(it) === 'saved', done = st(it) === 'done';
+  const sub = subLine(it);
   const cover = img
-    ? `<div class="ph film"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.closest('.ph').remove()">${nw ? '<span class="new">NEW</span>' : ''}</div>`
-    : `<div class="ph film tp c${hash(it._id) % 3}" aria-hidden="true">${nw ? '<span class="new">NEW</span>' : ''}<span class="tp-k">영화</span><div><div class="tp-t">${esc(it.title)}</div>${m.director ? `<div class="tp-v">${esc(m.director)}</div>` : ''}</div></div>`;
-  return `<article class="card">
-    ${cover}
-    <div class="body">
-      <div><h3 class="t">${esc(it.title)}</h3>${by ? `<div class="film-by">${by}</div>` : ''}</div>
-      ${chips.length ? `<div class="chips row">${chips.join('')}</div>` : ''}
-      ${whyHtml(it)}
-      ${srcChip(it)}
-      ${actions(it)}
-    </div>
+    ? `<img src="${esc(img)}" alt="" loading="lazy" decoding="async" width="${big ? 960 : 480}" height="600" onerror="this.remove()">`
+    : `<div class="tp c${hash(it._id) % 3}"><span class="k">${KIND_WORD[it.kind] || ''}</span><div><div class="tt">${esc(it.title)}</div>${sub ? `<div class="ts">${esc(sub)}</div>` : ''}</div></div>`;
+  const badge = it.editorPick ? '<span class="pick">Editor’s Pick</span>' : '';
+  const corner = done ? `<span class="donemark">✓ ${doneWord(it)}</span>` : (it._imgs.length > 1 ? `<span class="cnt">${it._imgs.length}장</span>` : '');
+  const chip = cardChip(it, opts.inTrip);
+  const kw = (tab === 'saved' || opts.showKind) ? `<span class="kw">${KIND_WORD[it.kind] || ''}</span>` : '';
+  return `<article class="card${big ? ' big' : ''}${tall(it) ? ' tl2' : ''}${openId === it._id ? ' sel' : ''}" data-open="${esc(it._id)}" tabindex="0" role="button" aria-label="${esc(it.title)} 자세히">
+    <div class="cv">${cover}${badge}${corner}
+      <button class="star${saved ? ' on' : ''}" data-set="saved" data-id="${esc(it._id)}" aria-pressed="${saved}" aria-label="${saved ? '저장 취소' : '저장'}">★</button></div>
+    <div class="cb">${chip || kw ? `<div class="top">${chip}${kw}</div>` : ''}<h3 class="t">${esc(it.title)}</h3>${sub ? `<div class="s">${esc(sub)}</div>` : ''}</div>
   </article>`;
 }
-function sortEvents(list){
-  return list.slice().sort((a, b) => { const x = eventState(a), y = eventState(b); return x.k - y.k || String(x.sort || '').localeCompare(String(y.sort || '')); });
-}
-const filmsSorted = l => l.filter(it => it.kind === 'film').sort((a, b) => (d10((b.meta||{}).release) > TODAY) - (d10((a.meta||{}).release) > TODAY) || String(b.batch || '').localeCompare(String(a.batch || '')));
-const groupBy = (list, key) => { const g = new Map(); list.forEach(it => { const k = key(it); if (!g.has(k)) g.set(k, []); g.get(k).push(it); }); return [...g.entries()]; };
-const regionOf = it => { const m = it.meta || {}; return m.region || m.city || '기타'; };
+const doneWord = it => it.kind === 'book' ? '읽음' : ['exhibition','performance','film'].includes(it.kind) ? '봤음' : '가 봄';
 
-function domesticHtml(list){
-  const ev = list.filter(it => EVENT.includes(it.kind));
-  const groups = groupBy(ev, regionOf).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'ko'));
-  let out = groups.map(([r, l]) => {
-    const due = l.filter(it => eventState(it).html.includes('chip due')).length;
-    return `<section class="rg"><div class="rg-h"><h2>${esc(r)}</h2><span class="c">${l.length}</span>${due ? `<span class="r">곧 마감 ${due}</span>` : ''}</div>
-      <div class="grid evg">${sortEvents(l).map(it => cardEvent(it, false)).join('')}</div></section>`;
-  }).join('');
-  const fl = filmsSorted(list);
-  if (fl.length) out += `<section class="rg"><div class="rg-h"><h2>영화</h2><span class="c">${fl.length}</span></div><div class="grid books">${fl.map(cardFilm).join('')}</div></section>`;
-  return out;
-}
-function tripsHtml(list){
-  const trips = groupBy(list, it => (it.meta.trip.id || it.meta.trip.name || '여행'))
-    .map(([id, l]) => ({ id, l, t: l[0].meta.trip }))
-    .sort((a, b) => String(d10(a.t.start) || '9999').localeCompare(String(d10(b.t.start) || '9999')));
-  return trips.map(({ l, t }) => {
-    const ts = d10(t.start), te = d10(t.end);
-    const dates = ts ? `${full(ts)}<span class="dash" style="margin:0 6px">—</span>${te ? (te.slice(0,4) === ts.slice(0,4) ? te.slice(5).replace('-', '.') : full(te)) : ''}` : '';
-    const dd = ts ? dayDiff(TODAY, ts) : null;
-    const chip = dd == null ? '' : dd > 0 ? `<span class="chip on">D-${dd}</span>` : (te && te >= TODAY ? '<span class="chip due">여행 중</span>' : '');
-    const cities = groupBy(l, it => (it.meta || {}).city || regionOf(it)).sort((a, b) => b[1].length - a[1].length);
-    return `<section class="trip"><div class="trip-h"><h2>${esc(t.name || '여행')}</h2>${dates ? `<span class="d">${dates}</span>` : ''}${chip}</div>
-      ${cities.map(([c, cl]) => `<div class="city-h"><h3>${esc(c)}</h3><span class="c">${cl.length}</span></div>
-        <div class="grid evg">${cl.slice().sort((a, b) => tripOverlap(a).k - tripOverlap(b).k || String(d10((a.meta||{}).end) || '9999').localeCompare(String(d10((b.meta||{}).end) || '9999'))).map(it => cardEvent(it, true)).join('')}</div>`).join('')}
-    </section>`;
-  }).join('');
-}
-function cultureHtml(list){
-  const ev = sortEvents(list.filter(it => EVENT.includes(it.kind)));
-  const fl = filmsSorted(list);
-  return (ev.length ? `<div class="grid evg">${ev.map(it => cardEvent(it, false)).join('')}</div>` : '')
-    + (fl.length ? `<div class="grid books"${ev.length ? ' style="margin-top:20px"' : ''}>${fl.map(cardFilm).join('')}</div>` : '');
-}
-const hasTrip = it => !!(it.meta && it.meta.trip && (it.meta.trip.name || it.meta.trip.id));
-function renderCulture(v){
-  const all = ofTab('culture');
-  if (!all.length){ v.innerHTML = '<p class="empty">첫 문화 수집은 다음 월요일 아침에 들어와요</p>'; return; }
-  const base = all.filter(it => showHidden ? st(it) === 'nope' : st(it) !== 'nope');
-  const live = base.filter(it => !isPast(it));
-  const inScope = (it, sc) => it.kind === 'film' ? sc === 'home' : (sc === 'trip') === hasTrip(it);
-  const scopeN = sc => live.filter(it => inScope(it, sc) && (cultureSub === 'all' || it.kind === cultureSub)).length;
-  const kindN = k => live.filter(it => (k === 'all' || it.kind === k) && (k === 'film' || inScope(it, cultureScope))).length;
-  const showScope = cultureSub !== 'film';
-  const scopeSeg = showScope ? `<div class="seg scope" role="group" aria-label="어디">${[['home','서울·국내'],['trip','여행지']].map(([k, l]) => `<button class="${cultureScope === k ? 'on' : ''}" data-scope="${k}" aria-pressed="${cultureScope === k}">${l}<span class="n">${scopeN(k)}</span></button>`).join('')}</div>` : '<div></div>';
-  const kindSeg = `<div class="seg" role="group" aria-label="종류">${SUBS.map(([k, l]) => `<button class="${cultureSub === k ? 'on' : ''}" data-sub="${k}" aria-pressed="${cultureSub === k}">${l}<span class="n">${kindN(k)}</span></button>`).join('')}</div>`;
-  const pick = l => l.filter(it => (cultureSub === 'all' || it.kind === cultureSub) && (cultureSub === 'film' ? it.kind === 'film' : inScope(it, cultureScope)));
-  const main = pick(live), past = pick(base.filter(isPast));
-  const emptyMsg = showHidden ? '숨긴 것이 없어요' : (cultureScope === 'trip' && showScope ? '잡힌 여행에 맞춘 전시·공연이 아직 없어요' : '지금 볼 만한 게 없어요 · 월·목 아침에 채워져요');
-  let html = `<div class="cul-ctl">${scopeSeg}${kindSeg}</div>`;
-  html += main.length ? (cultureScope === 'trip' && showScope ? tripsHtml(main) : domesticHtml(main)) : `<p class="empty">${emptyMsg}</p>`;
-  if (past.length){
-    html += `<button class="past-btn" data-past="1">${showPast ? '지난 것 접기' : '지난 것 ' + past.length}</button>`;
-    if (showPast) html += `<div class="past" style="margin-top:20px">${cultureHtml(past)}</div>`;
-  }
-  v.innerHTML = html;
+function emptyMsg(){
+  const anyFilter = q || region || tag;
+  if (anyFilter) return `<p class="empty">조건에 맞는 게 없어요<button data-clear="1">필터 지우기</button></p>`;
+  if (showHidden) return '<p class="empty">숨긴 것이 없어요</p>';
+  if (showPast) return '<p class="empty">지난 것이 없어요</p>';
+  if (tab === 'saved') return '<p class="empty">사진 모서리의 ★ 를 누르면 여기 모여요</p>';
+  if (['exhibition','performance','film'].includes(tab)) return (EVENT.includes(tab) && scope === 'trip') ? '<p class="empty">잡힌 여행에 맞춘 것이 아직 없어요</p>' : '<p class="empty">첫 문화 수집은 다음 월요일 아침에 들어와요</p>';
+  return '<p class="empty">이 칸은 아직 비어 있어요 · 월·목 아침에 채워져요</p>';
 }
 
-function gridFor(kind, list, withHero){
-  if (kind === 'culture') return cultureHtml(list);
-
-  if (kind === 'book') return `<div class="grid books">${list.map(cardBook).join('')}</div>`;
-  // 사진 있는 것 하나를 크게 (2칸), 나머지는 작게
-  let ordered = list;
-  if (withHero && list.length > 2){
-    const hi = list.findIndex(it => safeImg(it.image)); const h = hi < 0 ? 0 : hi;
-    ordered = [list[h]].concat(list.filter((_, i) => i !== h));
-  }
-  const fn = kind === 'city' ? cardCity : cardPlace;
-  return `<div class="grid">${ordered.map((it, i) => fn(it, withHero && list.length > 2 && i === 0)).join('')}</div>`;
-}
-
-function byBatch(list){
-  const g = new Map();
-  list.slice().sort((a, b) => String(b.batch || '').localeCompare(String(a.batch || '')) || String(b.addedAt || '').localeCompare(String(a.addedAt || '')))
-    .forEach(it => { const k = it.batch || ''; if (!g.has(k)) g.set(k, []); g.get(k).push(it); });
-  return [...g.entries()];
-}
-
-function render(){
-  renderHead();
+let io = null;
+function renderView(){
   const v = document.getElementById('view');
+  if (io){ io.disconnect(); io = null; }
   if (!items.length){ v.innerHTML = '<p class="empty">첫 수집은 월요일 아침에 들어와요</p>'; return; }
-  if (tab === 'saved'){
-    const saved = ofTab('saved');
-    if (!saved.length){ v.innerHTML = '<p class="empty">★ 저장을 누르면 여기 모여요</p>'; return; }
-    v.innerHTML = TABS.filter(t => t.id !== 'saved').map(t => {
-      const l = saved.filter(it => t.id === 'culture' ? CULTURE.includes(it.kind) : it.kind === t.id)
-        .sort((a, b) => String(b.batch || '').localeCompare(String(a.batch || '')));
-      if (!l.length) return '';
-      return `<section><div class="kind-h"><h2>${esc(t.label)}</h2><span class="c">${l.length}</span></div>${gridFor(t.id, l, false)}</section>`;
+  const list = filtered();
+  if (!list.length){ v.innerHTML = emptyMsg(); return; }
+  // 여행지: 여행 → 도시
+  if (EVENT.includes(tab) && scope === 'trip' && !showPast && !showHidden){
+    const trips = new Map(); list.forEach(it => { const k = it.meta.trip.id || it.meta.trip.name; if (!trips.has(k)) trips.set(k, []); trips.get(k).push(it); });
+    v.innerHTML = [...trips.values()].sort((a, b) => (d10(a[0].meta.trip.start) || '9999').localeCompare(d10(b[0].meta.trip.start) || '9999')).map(l => {
+      const t = l[0].meta.trip, ts = d10(t.start), te = d10(t.end);
+      const dates = ts ? `${full(ts)} — ${te ? (te.slice(0, 4) === ts.slice(0, 4) ? te.slice(5).replace('-', '.') : full(te)) : ''}` : '';
+      const dd = ts ? dayDiff(TODAY, ts) : null;
+      const chip = dd == null ? '' : dd > 0 ? `<span class="chip on">D-${dd}</span>` : (te >= TODAY ? '<span class="chip due">여행 중</span>' : '');
+      const cities = new Map(); l.forEach(it => { const c = it.loc.city || it.meta.city || it._country || '기타'; if (!cities.has(c)) cities.set(c, []); cities.get(c).push(it); });
+      return `<section class="trip"><div class="trip-h"><h2>${esc(t.name || '여행')}</h2>${dates ? `<span class="d">${esc(dates)}</span>` : ''}${chip}</div>
+        ${[...cities.entries()].sort((a, b) => b[1].length - a[1].length).map(([c, cl]) => `<div class="city-h"><h3>${esc(c)}</h3><span class="c">${cl.length}</span></div>
+          <div class="grid">${cl.sort((a, b) => tripOverlap(a).k - tripOverlap(b).k || b._score - a._score).map(it => card(it, { inTrip:true, noBig:true })).join('')}</div>`).join('')}</section>`;
     }).join('');
     return;
   }
-  if (tab === 'culture'){ renderCulture(v); return; }
-  const list = visible(ofTab(tab));
-  if (!list.length){ v.innerHTML = `<p class="empty">${showHidden ? '숨긴 것이 없어요' : '이 칸은 아직 비어 있어요 · 월·목 아침에 채워져요'}</p>`; return; }
-  v.innerHTML = byBatch(list).map(([b, l]) =>
-    `<section class="batch"><div class="batch-h"><h2>${esc(md(b))} 들어온 것</h2><span class="c">${l.length}</span></div>${gridFor(tab, l, !showHidden)}</section>`
-  ).join('');
+  const sorted = sortList(list);
+  const shown = sorted.slice(0, limit);
+  const isTall = ['film','book'].includes(tab);
+  const unit = { film:'편', book:'권', exhibition:'개', performance:'개', saved:'개' }[tab] || '곳';
+  v.innerHTML = `<p class="resultline"><b>${sorted.length}</b>${unit}${region ? ' · ' + esc(region === '@해외' ? '해외' : region.replace(/^@/, '')) : ''}${tag ? ' · #' + esc(tag) : ''}${q ? ` · “${esc(q)}”` : ''}</p>`
+    + `<div class="grid${isTall ? ' tall' : ''}">${shown.map(it => card(it)).join('')}</div>`
+    + (sorted.length > limit ? '<div class="more" id="more"></div>' : '');
+  const more = document.getElementById('more');
+  if (more){
+    io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ limit += PAGE; renderView(); } }, { rootMargin:'800px 0px' });
+    io.observe(more);
+  }
 }
+function render(){ renderTabs(); renderFilters(); renderView(); if (openId) renderPanel(); }
 
+/* ── 상세 판 */
+function infoRows(it){
+  const I = it.info, m = it.meta, rows = [];
+  const add = (k, v, raw) => { if (v != null && String(v).trim() !== '') rows.push(`<div><dt>${k}</dt><dd>${raw ? v : esc(v)}</dd></div>`); };
+  if (EVENT.includes(it.kind)){
+    add('장소', m.venue);
+    if (m.permanent) add('기간', '상설 · 언제 가도');
+    else if (d10(m.start) || d10(m.end)){
+      const s = d10(m.start), e = d10(m.end);
+      let tl = '';
+      if (s && e && e > s && e >= TODAY){ const p = Math.max(0, Math.min(100, dayDiff(s, TODAY) / dayDiff(s, e) * 100)); tl = `<div class="tl" aria-hidden="true"><i style="width:${p.toFixed(1)}%"></i>${TODAY >= s ? `<b style="left:${p.toFixed(1)}%"></b>` : ''}</div>`; }
+      add('기간', `<span class="period">${esc(full(s))} — ${esc(full(e))}</span>${tl}`, true);
+    }
+    if (hasTrip(it)){ const o = tripOverlap(it); add('여행', `${esc(m.trip.name || '')}${o.html ? '<div style="margin-top:6px">' + o.html + '</div>' : ''}`, true); }
+  }
+  if (it.kind === 'film'){ add('감독', m.director); add('연도', m.year); add('상영', m.runtime ? (/^\d+$/.test(String(m.runtime)) ? m.runtime + '분' : m.runtime) : ''); add('어디서', m.where); if (d10(m.release)) add('개봉', full(m.release)); }
+  if (it.kind === 'book'){ add('저자', m.author); add('출판사', m.publisher); add('쪽수', m.pages ? m.pages + '쪽' : ''); add('출간', m.year); }
+  if (it.kind === 'city'){ add('좋은 달', m.months); add('기온', m.temp); add('비행', m.flight); add('여행경보', m.safety); }
+  add('주소', I.address);
+  add('운영', I.hours);
+  add('가격', I.price || m.price);
+  if (!EVENT.includes(it.kind)) add('기간', I.period);
+  add('예약', I.reservation);
+  add('전화', I.phone);
+  add('팁', I.tip);
+  const w = safeUrl(I.website); if (w) add('웹사이트', `<a href="${esc(w)}" target="_blank" rel="noopener noreferrer">${esc(w.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))} ↗</a>`, true);
+  return rows.length ? `<dl class="info">${rows.join('')}</dl>` : '';
+}
+function sourcesHtml(it){
+  if (!it._srcs.length) return '';
+  return `<section class="srcs"><h3>출처 ${it._srcs.length}</h3>${it._srcs.map(s => {
+    const u = safeUrl(s.url); const nm = s.name || (s.author ? (String(s.author).startsWith('@') || ['curated','web'].includes(s.type) ? s.author : '@' + s.author) : (SRC[s.type] || '링크'));
+    const stat = [kfmt(s.followers) ? '팔로워 ' + kfmt(s.followers) : '', kfmt(s.likes) ? '♥ ' + kfmt(s.likes) : ''].filter(Boolean).join(' · ');
+    const inner = `<span class="ty">${esc(SRC[s.type] || s.type || '')}</span><span class="nm">${esc(nm)}</span>${stat ? `<span class="st">${esc(stat)}</span>` : ''}${u ? '<span class="go">↗</span>' : ''}`;
+    return u ? `<a class="src" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${inner}</a>` : `<div class="src">${inner}</div>`;
+  }).join('')}</section>`;
+}
+function renderPanel(){
+  const p = document.getElementById('panel'), shell = document.getElementById('shell');
+  const it = byId.get(openId);
+  if (!it){ shell.classList.remove('open'); document.body.classList.remove('sheet'); p.innerHTML = ''; return; }
+  shell.classList.add('open');
+  if (matchMedia('(max-width:768px)').matches) document.body.classList.add('sheet');
+  const imgs = it._imgs; if (galIdx >= imgs.length) galIdx = 0;
+  const s = st(it), m = it.meta;
+  const gal = imgs.length ? `<div class="gal"><div class="gal-main${tall(it) ? ' tl2' : ''}" data-gal="next" role="button" aria-label="다음 사진"><img src="${esc(imgs[galIdx])}" alt="${esc(it.title)} 사진 ${galIdx + 1}" decoding="async">${imgs.length > 1 ? `<span class="idx">${galIdx + 1} / ${imgs.length}</span><button class="gal-nav p" data-gal="prev" aria-label="이전 사진">←</button><button class="gal-nav n" data-gal="next" aria-label="다음 사진">→</button>` : ''}</div>
+    ${imgs.length > 1 ? `<div class="thumbs">${imgs.slice(0, 6).map((u, i) => `<button class="${i === galIdx ? 'on' : ''}" data-gal="${i}" aria-label="사진 ${i + 1}"><img src="${esc(u)}" alt="" loading="lazy" width="120" height="120">${i === 5 && imgs.length > 6 ? `<span class="plus">+${imgs.length - 6}장</span>` : ''}</button>`).join('')}</div>` : ''}</div>` : '';
+  const chips = [cardChip(it, false), it.editorPick ? '<span class="chip due">Editor’s Pick</span>' : ''].filter(Boolean).join('');
+  const ticket = safeUrl(m.ticketUrl) || (['exhibition','performance'].includes(it.kind) ? safeUrl(it.info.reservation) : '');
+  const map = safeUrl(it.mapUrl);
+  p.innerHTML = `<div class="pn-head"><span class="grab" aria-hidden="true"></span><span class="kw">${esc(KIND_WORD[it.kind] || '')}${it._region || it._country ? ' · ' + esc(it._region || it._country) : ''}</span><button class="pn-close" data-close="1">닫기 ✕</button></div>
+    <div class="pn-body">${gal}
+      <h2 class="pn-title">${esc(it.title)}</h2>
+      ${subLine(it) ? `<div class="pn-sub">${esc(subLine(it))}</div>` : ''}
+      ${chips ? `<div class="pn-chips">${chips}</div>` : ''}
+      ${it.why ? `<div class="why">${esc(it.why)}</div>` : ''}
+      ${it.detail ? `<div class="detail">${esc(it.detail)}</div>` : ''}
+      ${infoRows(it)}
+      ${it._tags.length ? `<div class="tags">${it._tags.map(t => `<span>#${esc(t)}</span>`).join('')}</div>` : ''}
+      ${sourcesHtml(it)}
+    </div>
+    <div class="pn-acts">
+      <button class="b${s === 'saved' ? ' on-saved' : ''}" data-set="saved" data-id="${esc(it._id)}" aria-pressed="${s === 'saved'}">★ 저장</button>
+      <button class="b${s === 'done' ? ' on-done' : ''}" data-set="done" data-id="${esc(it._id)}" aria-pressed="${s === 'done'}">${doneWord(it)}</button>
+      <button class="b${s === 'nope' ? ' on-nope' : ''}" data-set="nope" data-id="${esc(it._id)}" aria-pressed="${s === 'nope'}">별로</button>
+      ${ticket || map ? `<span class="links">${ticket ? `<a href="${esc(ticket)}" target="_blank" rel="noopener noreferrer">예매 ↗</a>` : ''}${map ? `<a href="${esc(map)}" target="_blank" rel="noopener noreferrer">지도 ↗</a>` : ''}</span>` : ''}
+    </div>`;
+  document.querySelectorAll('.card.sel').forEach(c => c.classList.remove('sel'));
+  const c = document.querySelector(`.card[data-open="${CSS.escape(openId)}"]`); if (c) c.classList.add('sel');
+}
+function openItem(id, push){
+  if (!byId.has(id)) return;
+  openId = id; galIdx = 0;
+  if (push && location.hash.slice(1) !== id) location.hash = id; // 뒤로 가기로 닫히게
+  renderPanel();
+  const p = document.getElementById('panel'); p.scrollTop = 0; p.style.transform = '';
+  try { p.focus({ preventScroll:true }); } catch (e) {}
+}
+function closePanel(){
+  if (location.hash.length > 1) history.back(); // hashchange 가 닫음
+  else { openId = ''; renderPanel(); }
+}
+window.addEventListener('hashchange', () => {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (id && byId.has(id)){ if (id !== openId) openItem(id, false); }
+  else if (openId){ const prev = openId; openId = ''; renderPanel(); const c = document.querySelector(`.card[data-open="${CSS.escape(prev)}"]`); if (c) c.classList.remove('sel'); }
+});
+
+/* ── 손가락·자판 */
 document.getElementById('tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
-  tab = b.dataset.tab; showHidden = false;
-  try { localStorage.setItem('atelier_taste_tab', tab); } catch (e2) {}
-  render(); window.scrollTo(0, 0);
+  tab = b.dataset.tab; region = ''; tag = ''; showHidden = false; showPast = false; limit = PAGE;
+  ls.set('atelier_taste_tab', tab); render(); window.scrollTo(0, 0);
 });
-document.getElementById('hiddenBtn').addEventListener('click', () => { showHidden = !showHidden; render(); });
-document.getElementById('view').addEventListener('click', async e => {
-  const sb = e.target.closest('[data-sub]'); if (sb){ cultureSub = sb.dataset.sub; try { localStorage.setItem('atelier_taste_culture_kind', cultureSub); } catch (e2) {} render(); return; }
-  const sc = e.target.closest('[data-scope]'); if (sc){ cultureScope = sc.dataset.scope; try { localStorage.setItem('atelier_taste_culture_scope', cultureScope); } catch (e2) {} render(); return; }
-  if (e.target.closest('[data-past]')){ showPast = !showPast; render(); return; }
-  const b = e.target.closest('[data-set]'); if (!b) return;
-  const it = items.find(x => x._id === b.dataset.id); if (!it) return;
-  const prev = it.status;
-  const next = st(it) === b.dataset.set ? 'new' : b.dataset.set;
+document.getElementById('filters').addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  if ('scope' in t.dataset){ scope = t.dataset.scope; region = ''; ls.set('atelier_taste_culture_scope', scope); }
+  else if ('region' in t.dataset) region = t.dataset.region === region ? '' : t.dataset.region;
+  else if ('tag' in t.dataset) tag = t.dataset.tag === tag ? '' : t.dataset.tag;
+  else if ('sort' in t.dataset){ sort = t.dataset.sort; ls.set('atelier_taste_sort', sort); }
+  else if ('hidden' in t.dataset){ showHidden = !showHidden; showPast = false; }
+  else if ('past' in t.dataset){ showPast = !showPast; showHidden = false; }
+  else return;
+  limit = PAGE; render();
+});
+async function setStatus(id, want){
+  const it = byId.get(id); if (!it) return;
+  const prev = it.status; const next = st(it) === want ? 'new' : want;
   it.status = next; render();
   try {
-    await db.collection('tasteItems').doc(it._id).update({ status: next, statusAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('tasteItems').doc(id).update({ status: next, statusAt: firebase.firestore.FieldValue.serverTimestamp() });
     if (next === 'nope') toast('숨겼어요 · 「숨긴 것」에서 되돌릴 수 있어요');
-  } catch (err) {
-    it.status = prev; render(); toast('저장 못 했어요 · 다시 눌러 주세요');
-  }
+    else if (next === 'saved') toast('★ 에 담았어요');
+  } catch (err) { it.status = prev; render(); toast('저장 못 했어요 · 다시 눌러 주세요'); }
+}
+document.addEventListener('click', e => {
+  const s = e.target.closest('[data-set]'); if (s){ e.stopPropagation(); setStatus(s.dataset.id, s.dataset.set); return; }
+  if (e.target.closest('[data-close]')){ closePanel(); return; }
+  if (e.target.closest('[data-clear]')){ q = ''; region = ''; tag = ''; document.getElementById('q').value = ''; document.getElementById('searchBox').classList.remove('has'); limit = PAGE; render(); return; }
+  const g = e.target.closest('[data-gal]');
+  if (g){ const it = byId.get(openId); if (!it) return; const n = it._imgs.length; const v = g.dataset.gal;
+    galIdx = v === 'next' ? (galIdx + 1) % n : v === 'prev' ? (galIdx - 1 + n) % n : +v; e.stopPropagation(); renderPanel(); return; }
+  const c = e.target.closest('[data-open]'); if (c && !e.target.closest('a')){ openItem(c.dataset.open, true); }
 });
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input')) { if (e.key === 'Escape'){ e.target.value = ''; e.target.dispatchEvent(new Event('input')); } return; }
+  const c = e.target.closest && e.target.closest('[data-open]');
+  if (c && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); openItem(c.dataset.open, true); return; }
+  if (!openId) return;
+  if (e.key === 'Escape') closePanel();
+  const it = byId.get(openId); const n = it ? it._imgs.length : 0;
+  if (n > 1 && e.key === 'ArrowRight'){ galIdx = (galIdx + 1) % n; renderPanel(); }
+  if (n > 1 && e.key === 'ArrowLeft'){ galIdx = (galIdx - 1 + n) % n; renderPanel(); }
+});
+let qt = 0;
+document.getElementById('q').addEventListener('input', e => {
+  clearTimeout(qt);
+  document.getElementById('searchBox').classList.toggle('has', !!e.target.value);
+  qt = setTimeout(() => { q = e.target.value.trim().toLowerCase(); limit = PAGE; region = ''; render(); }, 140);
+});
+document.getElementById('qx').addEventListener('click', e => { e.preventDefault(); const i = document.getElementById('q'); i.value = ''; i.dispatchEvent(new Event('input')); i.focus(); });
+// 폰 시트: 맨 위에서 아래로 끌면 닫힘
+(function(){
+  const p = document.getElementById('panel'); let y0 = null, dy = 0;
+  p.addEventListener('touchstart', e => { if (p.scrollTop <= 0 && matchMedia('(max-width:768px)').matches){ y0 = e.touches[0].clientY; dy = 0; } else y0 = null; }, { passive:true });
+  p.addEventListener('touchmove', e => { if (y0 == null) return; dy = e.touches[0].clientY - y0; if (dy > 0){ p.style.transition = 'none'; p.style.transform = `translateY(${dy}px)`; } }, { passive:true });
+  p.addEventListener('touchend', () => { if (y0 == null) return; p.style.transition = ''; if (dy > 110){ p.style.transform = 'translateY(100%)'; setTimeout(() => { p.style.transform = ''; closePanel(); }, 220); } else p.style.transform = ''; y0 = null; });
+})();
 
+/* ── 불러오기 */
 async function load(){
   try {
     const snap = await db.collection('tasteItems').get();
-    items = snap.docs.map(d => Object.assign({}, d.data(), { _id: d.id }))
-      .filter(it => ['place','stay','book','city'].concat(CULTURE).includes(it.kind) && it.title);
-    latestBatch = items.reduce((m, it) => (it.batch || '') > m ? it.batch : m, '');
+    items = snap.docs.map(d => norm(d.data(), d.id)).filter(it => KINDS.includes(it.kind) && it.title);
+    byId = new Map(items.map(it => [it._id, it]));
+    loaded = true;
     render();
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (h && byId.has(h)){ const it = byId.get(h); if (!inTab(it, tab)){ tab = it.kind; render(); } openItem(h, false); }
   } catch (err) {
     document.getElementById('view').innerHTML = '<p class="empty">불러오지 못했어요 · 새로고침해 주세요</p>';
   }
 }
-
-renderHead();
+renderTabs();
 auth.onAuthStateChanged(user => {
-  if (!user || user.email !== ALLOWED_EMAIL){
-    document.getElementById('view').innerHTML = '<p class="empty">메인 화면에서 로그인하면 보여요</p>';
-    return;
-  }
+  if (!user || user.email !== ALLOWED_EMAIL){ document.getElementById('view').innerHTML = '<p class="empty">메인 화면에서 로그인하면 보여요</p>'; return; }
   load();
 });
 </script>
