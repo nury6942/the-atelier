@@ -28260,8 +28260,16 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   var LS_ENGLISH_STATUS_KEY = 'atelier_english_status';
   var LS_ENGLISH_DELETED_KEY = 'atelier_english_deleted_defaults'; // 사용자가 삭제한 default 회차 날짜 set
   var LS_ENGLISH_REVIEWDONE_KEY = 'atelier_english_review_done';   // 리뷰를 실제로 복습했는지 (누리 수동 체크, 11/07)
+  // 메모리 값이 정본, localStorage 는 있으면 쓰는 보조 (Chrome 은 저장 공간이 꽉 차 setItem 이 터질 수 있음 — 11/07 Aside 만 되던 원인)
+  var _engReviewDone = null;
   function getEnglishReviewDone() {
-    try { return JSON.parse(localStorage.getItem(LS_ENGLISH_REVIEWDONE_KEY) || '{}') || {}; } catch(e) { return {}; }
+    if (_engReviewDone) return _engReviewDone;
+    try { _engReviewDone = JSON.parse(localStorage.getItem(LS_ENGLISH_REVIEWDONE_KEY) || '{}') || {}; } catch(e) { _engReviewDone = {}; }
+    return _engReviewDone;
+  }
+  function setEnglishReviewDoneMap(m) {
+    _engReviewDone = m;
+    try { localStorage.setItem(LS_ENGLISH_REVIEWDONE_KEY, JSON.stringify(m)); } catch(e) { console.warn('review-done LS 저장 실패(무시):', e && e.name); }
   }
 
   function getEnglishStatusOverrides() {
@@ -28288,7 +28296,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
       var fbReview = (doc.exists && doc.data().reviewDone) || {};
       // 서버에 reviewDone 이 있으면 서버가 정본 (합집합이면 다른 기기에서 해제한 게 되살아남)
       var mergedReview = (doc.exists && doc.data().reviewDone) ? fbReview : getEnglishReviewDone();
-      localStorage.setItem(LS_ENGLISH_REVIEWDONE_KEY, JSON.stringify(mergedReview));
+      setEnglishReviewDoneMap(mergedReview);
       // Union (deletedDefaults는 모든 디바이스의 삭제 합집합)
       var mergedDeleted = Object.assign({}, fbDeleted, lsDeleted);
       // statusOverrides는 FB 우선 (가장 최근 중앙 저장 상태)
@@ -28340,11 +28348,14 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
   };
 
   function toggleEnglishReviewDone(date) {
-    var m = getEnglishReviewDone();
+    var m = Object.assign({}, getEnglishReviewDone());
     if (m[date]) delete m[date]; else m[date] = true;
-    localStorage.setItem(LS_ENGLISH_REVIEWDONE_KEY, JSON.stringify(m));
-    saveEnglishMetaToFirebase();
-    renderEnglishTable();
+    setEnglishReviewDoneMap(m);
+    try { renderEnglishTable(); } catch(e) { console.warn('renderEnglishTable:', e); }
+    // 화면이 다시 안 그려져도 누른 버튼만은 바로 바뀌게
+    // update 는 reviewDone 칸을 통째로 바꿔서 해제도 지워짐 (set merge 는 지도 안을 합쳐서 해제가 안 지워짐)
+    db.collection('englishMeta').doc('state').update({ reviewDone: m, _updatedAt: firebase.firestore.FieldValue.serverTimestamp() })
+      .catch(function(e){ console.warn('reviewDone 저장 실패:', e); if (typeof showSyncToast === 'function') showSyncToast('리뷰 완료 저장 실패 — 다시 눌러 주세요'); });
   }
   window.toggleEnglishReviewDone = toggleEnglishReviewDone;
 

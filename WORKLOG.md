@@ -1,3 +1,7 @@
+## 2026-11-07 (맥북) — 리뷰 완료: Chrome 에서만 안 눌림
+- Aside 는 되는데 Chrome 은 안 됨 → Chrome 은 사이트 localStorage 가 꽉 차 setItem 이 터져 toggle 이 중간에 멈춘 것으로 추정
+- 메모리 값이 정본, localStorage 는 try 로 보조만. 서버 저장은 reviewDone 칸만 update(해제도 지워지게)
+
 ## 2026-11-07 (맥북) — 리뷰 완료: 서버가 정본
 - 합집합 병합이면 한 기기에서 해제한 체크가 다른 기기 localStorage 때문에 되살아남 → 서버 reviewDone 이 있으면 서버 값 그대로
 - Aside 실측: 클릭 → 코발트+체크, Firestore reviewDone 저장·해제 모두 확인
