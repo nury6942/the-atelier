@@ -332,7 +332,7 @@
       var ps = w.publish_start || (P._publishing && P._publishing.start), pe = w.publish_end || (P._publishing && P._publishing.end);
       if (ps) o.ph.publishing = { s: ps, e: pe || ps };
     });
-    (window.plannerData || []).forEach(function(r) {
+    ((typeof plannerData !== 'undefined' && plannerData) || []).forEach(function(r) {
       var m = /work_id:([^|]+)(?:\|series_id:([^|]+))?\|phase:(\w+)/.exec((r[4] || '') + ''); if (!m) return;
       var o = by[m[1]] || (by[m[1]] = { id: m[1], title: '', series: '', sid: m[2] || '', eps: 0, ph: {}, pubs: [] });
       var d = (r[0] || '') + '', e = ((r[5] || '') + '') || d; if (!d) return;
@@ -361,7 +361,7 @@
     var order = ['R', 'B'].concat(Object.keys(tracks).filter(function(k) { return k !== 'R' && k !== 'B'; }));
     // 머리 글자
     var big = document.getElementById('wbc-big'), rng = document.getElementById('wbc-range'), yr = document.getElementById('wbc-year');
-    if (big) big.textContent = 'RM'; if (rng) rng.textContent = 'Roadmap';
+    if (big) big.textContent = ''; if (rng) rng.textContent = 'Roadmap';
     if (yr) yr.textContent = months[0].getFullYear() + '.' + (months[0].getMonth() + 1) + ' – ' + months[ROAD_MONTHS - 1].getFullYear() + '.' + (months[ROAD_MONTHS - 1].getMonth() + 1);
     document.querySelectorAll('#wbc .wbc-mode button').forEach(function(b) { b.classList.toggle('on', b.getAttribute('data-mode') === 'roadmap'); });
     var todayP = pct(today()), showToday = today() >= sDs && today() <= eDs;
@@ -1025,7 +1025,9 @@
     '.wbc.is-road .wbc-wds, .wbc.is-road .wbc-agenda, .wbc.is-road #wbc-agenda { display:none !important; }',
     '.wbc.is-road .wbc-body { grid-template-columns:1fr !important; }',
     '.wbc-grid.roadmap { display:block !important; border:0 !important; }',
-    '.rm { --rm-lab:190px; position:relative; border:1px solid #D4D4D8; background:#fff; }',
+    '.rm { --rm-lab:190px; position:relative; border:1px solid #D4D4D8; background:#fff; max-width:100%; overflow:hidden; }',
+    '.wbc.is-road .wbc-body > .min-w-0 { width:100%; min-width:0; }',
+    '.wbc.is-road .wbc-title .big { display:none; }',
     '.rm-row { display:grid; grid-template-columns:var(--rm-lab) 1fr; border-bottom:1px solid #E4E4E9; }',
     '.rm-row:last-of-type { border-bottom:0; }',
     '.rm-lab { padding:12px 14px; border-right:1px solid #E4E4E9; display:flex; flex-direction:column; gap:2px; justify-content:center; }',
@@ -1033,9 +1035,9 @@
     '.rm-lab b { font-size:15px; font-weight:800; color:#16161A; }',
     '.rm-lab span { font-size:12.5px; font-weight:600; color:#1A3FB5; }',
     '.rm-lane { position:relative; }',
-    '.rm-head .rm-lane { height:40px; background:#FAFAFC; }',
+    '.rm-head .rm-lane { height:50px; background:#FAFAFC; }',
     '.rm-m { position:absolute; top:0; bottom:0; display:flex; align-items:flex-end; padding:0 0 8px 8px; font-size:13px; font-weight:700; color:#16161A; border-left:1px solid #E4E4E9; gap:4px; }',
-    '.rm-m b { font-size:11.5px; font-weight:800; color:#1A3FB5; position:absolute; top:5px; left:8px; }',
+    '.rm-m b { font-size:11.5px; font-weight:800; color:#1A3FB5; position:absolute; top:6px; left:8px; line-height:1; }',
     '.rm-m.y { border-left:2px solid #16161A; }',
     '.rm-track .rm-lane { height:calc(var(--lanes) * 58px + 14px); background-image:linear-gradient(to right, #F1F1F4 1px, transparent 1px); background-size:calc(100% / ' + 15 + ') 100%; }',
     '.rm-work { position:absolute; margin-top:8px; }',
@@ -1058,7 +1060,7 @@
     '.rm-goal { position:absolute; left:0; right:0; border-top:2px dashed #DC2626; pointer-events:none; margin-bottom:22px; }',
     '.rm-goal em { position:absolute; right:6px; top:-20px; font-style:normal; font-size:12px; font-weight:800; color:#DC2626; background:#fff; padding:0 4px; }',
     '.rm-today { position:absolute; top:0; bottom:44px; width:0; border-left:2px solid #DC2626; pointer-events:none; }',
-    '.rm-today em { position:absolute; top:2px; left:4px; font-style:normal; font-size:11.5px; font-weight:800; color:#fff; background:#DC2626; padding:1px 5px; }',
+    '.rm-today em { position:absolute; top:2px; left:4px; font-style:normal; font-size:11.5px; font-weight:800; color:#fff; background:#DC2626; padding:1px 5px; white-space:nowrap; }',
     '.rm-legend { display:flex; flex-wrap:wrap; gap:8px 16px; padding:12px 14px; border-top:1px solid #E4E4E9; font-size:13px; font-weight:700; color:#16161A; }',
     '.rm-legend i { display:inline-block; width:18px; height:10px; margin-right:6px; vertical-align:-1px; }',
     '.rm-legend i.tk { background:#15803D; box-shadow:inset 8px 0 0 #15803D, inset 9px 0 0 #fff; }',
