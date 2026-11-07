@@ -1,3 +1,10 @@
+## 2026-11-07 (맥북) — Taste 수집기(아이맥 월·목 07:30)
+- scripts/taste/collect.js: Aside 로 X 검색(7일·인기순)·Threads 검색·Instagram 키워드·스테이폴리오 목록 → 좋아요 많은 글은 원문까지 → `claude -p`(구독, 사진은 Read 로 확인)가 취향 프로필로 걸러 → Firestore tasteItems 에 새 카드 10개쯤(장소 ≤7 · 숙소 ≤4)
+- 사진은 원글 사진만 480px JPEG(80KB 아래), 없으면 생략. 새 문서만 쓰고 status·statusAt 은 안 건드림. 실행 기록은 tasteRuns/<날짜>
+- 취향 프로필은 아이맥 ~/.config/atelier-taste/profile.md (chmod 600, 저장소·로그에 안 남김)
+- ssh 로는 claude 로그인(키체인)이 안 보임 → 손으로 돌릴 때도 `launchctl kickstart gui/$(id -u)/com.nuri.atelier-taste`. 로그 ~/Library/Logs/atelier-taste.log
+- Instagram 은 아이맥 Aside 에 로그인돼 있어 키워드 검색·게시물 읽기 됨
+
 ## 2026-11-07 (맥북) — Taste 책 표지 높이
 - 글자 표지가 3:4 라 빈 색 덩어리가 너무 길었음 → 글자 표지는 높이 170, 실제 표지 사진일 때만 3:4
 
