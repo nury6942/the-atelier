@@ -40,6 +40,7 @@ const summary = {
   themes3m: view(D.themes, 3, 12),
   topAuthors: { 리쿠: authorBrief(P['리쿠']), 변백현: authorBrief(P['변백현']), 사쿠야: authorBrief(P['사쿠야']), 유우시: authorBrief(P['유우시']), 오시온: authorBrief(P['오시온']) },
   playbook: { freeEps: st.freeEps, price: st.price, eps: st.eps, gapDays: st.gapDays, charsPerEp: st.charsPerEp, paidCharsPerEp: st.paidCharsPerEp, pricePer10k: st.pricePer10k, paidRatio: st.paidRatio, membership: st.membership, weekday_일월화수목금토: st.weekday, focusBuckets: st.focusBuckets, created: st.created, fresh: st.fresh, freshInTop: (st.freshInTop || []).slice(0, 8) },
+  peers_누리방식성공채널: (D.peers || []).map(p => ({ title: p.title, created: p.createdAt, firstPost: p.firstPost, subs: p.subscribers, estRev1y: Math.round(p.estRev / 1e4) + '만', totalPosts: p.totalPosts, postsPerMonth: p.postsPerMonth, freeBeforeFirstPaid: p.freeBeforeFirstPaid, paid: p.paidPosts, free: p.freePosts, adultPaidRatio: p.adultPaidRatio + '%', price: p.medPrice, gapDays: p.medGapDays, paidChars: p.medPaidChars, pricePer10k: p.pricePer10k, hasExternalLinks: (p.links || []).length > 0, people: p.people, series: (p.series || []).slice(0, 3).map(s => s.title + ' ' + s.eps + '편 ' + (s.adult ? '19' : '전연령')) })),
   mine: D.authors.filter(a => a.mine).map(a => ({ title: a.title, subs: a.subscribers, estRev: a.estRev, posts: a.posts, people: a.people, focus: a.focus, rank: D.authors.indexOf(a) + 1 })),
 };
 const prevInsights = D.prevInsights ? JSON.stringify(D.prevInsights.cards?.map(c => c.title + ': ' + c.summary)) : '(없음)';
@@ -50,7 +51,7 @@ const prompt = `너는 포스타입 '나페스'(아이돌 RPF 드림) 시장 분
 - 채널 2개: 고요한 다락방(@bichu-attic, 백현/EXO, 구독 1.2만), 요란한 옥탑방(@hotnncold, 리쿠/NCT WISH, 구독 300여)
 - 목표: 포스타입 월 400만 원 안정 → 2028년 말 퇴사
 - 계획: 리쿠 장편 「미친개 길들이기」(센티넬 AU, 22화) 12월 말 옥탑방 연재 · 다락방 백현 신작은 2027년
-- 지금 방식: 주 1회 금 21시, 1~3화 무료, 약 1만 자 500P
+- 지금 방식: 주 1회 금 21시, 1~3화 무료, 약 1만 자 500P. 다 써 놓고 주 1회 장편 연재가 본인 방식이고 바꿀 생각 없음(매일 썰·톡글은 못 함/싫어함). 조언은 이 틀 안에서, Peers(누리 방식 성공 채널)를 기준으로.
 
 ## 규칙
 - 숫자는 요약에 있는 것만. 없는 숫자·작가·작품을 지어내지 않는다. 추정 매출은 '추정'이라고 쓴다(실제보다 낮게 나오는 편, estimateCheck 참고).
@@ -62,13 +63,13 @@ const prompt = `너는 포스타입 '나페스'(아이돌 RPF 드림) 시장 분
 {
   "headline": "이번 분석 한 줄 (40자 안쪽)",
   "cards": [
-    {"section": "market|idols|keywords|authors|playbook|me", "title": "카드 제목 (20자 안쪽)", "verdict": "up|down|flat|watch|do",
+    {"section": "peers|market|idols|keywords|authors|playbook|me", "title": "카드 제목 (20자 안쪽)", "verdict": "up|down|flat|watch|do",
      "stat": {"value": "1.6억", "label": "리쿠 3달 추정 매출"}, "summary": "한 문장 결론",
      "points": ["근거 한 줄", "근거 한 줄", "최대 4개"], "refs": ["리쿠", "센티넬"]}
   ],
   "actions": [{"text": "누리가 이번에 할 일 (40자 안쪽)", "why": "근거 한 줄"}]
 }
-카드는 10~14장: 시장 흐름 1~2, 인물(뜨는·지는·누리 관련 리쿠·백현) 3~4, 키워드·결 2~3, 상위 작가 패턴 1~2, Playbook(가격·주기·무료·길이) 1~2, 누리 위치·채널 전략 1~2. actions 는 3~5개.
+카드는 10~14장: Peers(누리 방식으로 성공한 채널 패턴) 1~2, 시장 흐름 1~2, 인물(뜨는·지는·누리 관련 리쿠·백현) 3~4, 키워드·결 2~3, 상위 작가 패턴 1~2, Playbook(가격·주기·무료·길이) 1~2, 누리 위치·채널 전략 1~2. actions 는 3~5개.
 
 ## 요약
 ${JSON.stringify(summary)}`;

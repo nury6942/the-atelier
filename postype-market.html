@@ -130,6 +130,22 @@
   .icard .refs button{font-size:11.5px;font-weight:600;padding:2px 7px;border:1px solid var(--line2);margin:0 4px 4px 0}
   .icard .refs button:hover{border-color:var(--accent);color:var(--accent)}
   @media (max-width:860px){.icards{grid-template-columns:1fr}.ins-head h2{font-size:19px}}
+  .pcards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:12px}
+  .pcard{border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:12px}
+  .pcard{min-width:0}
+  .pstats b{overflow-wrap:anywhere}
+  .ptl svg{max-width:100%}
+  .pcard .ph b{font-size:16px}
+  .pcard .ph .sub{display:block;font-size:12px;color:var(--ink2);margin-top:2px}
+  .pstats{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:12.5px}
+  .pstats div{display:flex;flex-direction:column}
+  .pstats span{color:var(--ink2);font-size:11.5px}
+  .pstats b{font-weight:700}
+  .pser{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px;font-size:13px}
+  .pser span{color:var(--ink2);font-size:12px}
+  .pser p{margin:2px 0 0;font-size:12px;color:var(--mut)}
+  .ptl .sub{display:block;font-size:11.5px;color:var(--ink2)}
+  @media (max-width:860px){.pcards{grid-template-columns:1fr}}
   .acards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
   .acard{border:1px solid var(--line);padding:14px}
   .acard.mine{border-color:var(--ink)}
@@ -199,7 +215,7 @@ if (!LOCAL) {
 }
 const ALLOWED_EMAIL = 'nury6942@gmail.com';
 const MY = ['bichu-attic', 'hotnncold'];
-const TABS = [['insights','Insights'],['overview','Overview'],['idols','Idols'],['playbook','Playbook'],['authors','Authors'],['series','Series'],['me','Me vs Market']];
+const TABS = [['insights','Insights'],['peers','Peers'],['overview','Overview'],['idols','Idols'],['playbook','Playbook'],['authors','Authors'],['series','Series'],['me','Me vs Market']];
 const WD = ['일','월','화','수','목','금','토'];
 let D = null, tab = 'insights', HIST = [], histSel = null;
 const UI = { idolMode: 'people', sort: {}, open: {}, q: {} };
@@ -265,7 +281,7 @@ function renderTabs(){
 function render(){
   renderTabs();
   if (!D) return;
-  ({ insights, overview, idols, playbook, authors, series, me })[tab]();
+  ({ insights, peers, overview, idols, playbook, authors, series, me })[tab]();
 }
 document.getElementById('tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
@@ -302,7 +318,7 @@ function spark(vals, { w = 120, h = 28, color = 'var(--accent)' } = {}){
 }
 
 /* ───────── Insights — 월·목 분석 카드 (insights.mjs 가 claude 로 씀) */
-const SECT = { market: 'Market', idols: 'Idols', keywords: 'Keywords', authors: 'Authors', playbook: 'Playbook', me: 'Me' };
+const SECT = { peers: 'Peers', market: 'Market', idols: 'Idols', keywords: 'Keywords', authors: 'Authors', playbook: 'Playbook', me: 'Me' };
 const VD = { up: '▲ 뜸', down: '▼ 짐', flat: '● 유지', watch: '◎ 지켜볼 것', do: '✓ 할 일' };
 UI.insSec = 'all';
 function insights(){
@@ -325,6 +341,40 @@ function insights(){
       ${(c.refs || []).length ? `<div class="refs">${c.refs.map(r => `<button data-ref="${esc(r)}">${esc(r)} →</button>`).join('')}</div>` : ''}
     </article>`).join('')}</div>
     <p class="note">분석 글은 월·목 아침 갱신 때 Claude 가 이 페이지의 숫자만 보고 써요. 숫자는 추정이라 실제보다 낮게 나오는 편이에요.</p>`);
+}
+
+/* ───────── Peers — 누리 방식(주 1회 안팎·400P 이상·적게 써서 버는)으로 성공한 새 채널 */
+UI.peerSort = 'estRev';
+function peers(){
+  const L = D.peers || [];
+  if (!L.length) { view('<p class="empty">아직 자료가 없어요</p>'); return; }
+  const k = UI.peerSort;
+  const rows = [...L].sort((a, b) => (b[k] ?? -1) - (a[k] ?? -1));
+  const fmtD = s => s ? s.slice(2).replace(/-/g, '.') : '—';
+  const pill = (t, cls = '') => `<span class="chip ${cls}">${t}</span>`;
+  const medAll = (f) => { const v = L.map(f).filter(x => x != null).sort((a, b) => a - b); return v.length ? v[v.length >> 1] : null; };
+  view(`
+    <div class="callout">2024년 이후 만든 채널 중 <b>글 간격 4일 이상 · 400~1,500P · 1년 추정 300만 원 이상</b>인 곳 ${L.length}곳이에요. 채널 전체 글(나페스 태그 없는 글까지)을 받아서 봤어요.</div>
+    <div class="kpis">
+      <div class="kpi"><div class="l">한 달에 올리는 글</div><div class="v num">${medAll(p => p.postsPerMonth) ?? '—'}편</div><div class="s">가운데값</div></div>
+      <div class="kpi"><div class="l">첫 유료 전 무료 글</div><div class="v num">${medAll(p => p.freeBeforeFirstPaid) ?? '—'}편</div><div class="s">${L.filter(p => p.freeBeforeFirstPaid === 0).length}곳은 첫 글부터 유료</div></div>
+      <div class="kpi"><div class="l">유료 글 중 19금</div><div class="v num">${medAll(p => p.adultPaidRatio) ?? '—'}%</div><div class="s">19금 절반 미만인 곳 ${L.filter(p => (p.adultPaidRatio ?? 100) < 50).length}곳</div></div>
+      <div class="kpi"><div class="l">1만 자당 가격</div><div class="v num">${fmtN(medAll(p => p.pricePer10k && p.pricePer10k < 5000 ? p.pricePer10k : null))}P</div><div class="s">유료 글 글자 수 표본 기준</div></div>
+    </div>
+    <div class="tools" style="margin-top:20px"><div class="seg" role="group" aria-label="정렬">${[['estRev', '매출'], ['subscribers', '구독자'], ['postsPerMonth', '글 많은 순'], ['adultPaidRatio', '19금 비율']].map(([kk, l]) => `<button class="${kk === k ? 'on' : ''}" data-psort="${kk}">${l}</button>`).join('')}</div><span class="hint">X·질문함 링크가 있으면 바깥에서 데려온 독자가 있을 가능성이 커요</span></div>
+    <div class="pcards">${rows.map(p => `<article class="pcard">
+      <div class="ph"><a class="lnk" href="${chUrl(p.channelName)}" target="_blank" rel="noopener"><b>${esc(p.title)}</b></a><span class="sub">${esc(p.author || '')}${p.bio ? ' · ' + esc(p.bio.slice(0, 40)) : ''}</span></div>
+      <div class="pstats">
+        <div><span>1년 추정</span><b>${won(p.estRev)}</b></div><div><span>구독자</span><b>${fmtN(p.subscribers)}</b></div>
+        <div><span>개설 · 첫 글</span><b>${fmtD(p.createdAt)} · ${fmtD(p.firstPost)}</b></div><div><span>전체 글</span><b>${fmtN(p.totalPosts)}편 · 월 ${p.postsPerMonth ?? '—'}편</b></div>
+        <div><span>유료 / 무료</span><b>${fmtN(p.paidPosts)} / ${fmtN(p.freePosts)}</b></div><div><span>첫 유료 전</span><b>${p.freeBeforeFirstPaid ? '무료 ' + p.freeBeforeFirstPaid + '편 (' + p.daysToFirstPaid + '일)' : '첫 글부터 유료'}</b></div>
+        <div><span>가격 · 간격</span><b>${p.medPrice ? fmtN(p.medPrice) + 'P' : '—'} · ${p.medGapDays ?? '—'}일</b></div><div><span>회당 글자</span><b>${p.medPaidChars ? fmtN(Math.round(p.medPaidChars)) + '자' : '—'}${p.pricePer10k && p.pricePer10k < 5000 ? ' · 1만 자 ' + fmtN(p.pricePer10k) + 'P' : ''}</b></div>
+      </div>
+      <div>${pill('유료 중 19금 ' + (p.adultPaidRatio ?? '—') + '%', (p.adultPaidRatio ?? 100) < 50 ? 'acc' : '')}${(p.people || []).slice(0, 4).map(x => pill(esc(x))).join('')}${(p.links || []).length ? pill('바깥 링크 ' + p.links.length + '개', 'acc') : ''}</div>
+      <div class="pser">${(p.series || []).slice(0, 4).map(s => `<div><b>${esc(s.title)}</b> <span>${s.eps}편 · ${s.price ? fmtN(s.price) + 'P' : '무료'}${s.adult ? ' · 19' : ''} · ${won(s.estRev)}</span>${s.summary ? `<p>${esc(s.summary.slice(0, 90))}</p>` : ''}</div>`).join('')}</div>
+      <div class="ptl" aria-label="글 올린 흐름">${spark((p.timeline || []).map(t => t[3]), { w: 300, h: 34, color: 'var(--ink)' })}<span class="sub">글마다 조회 · 왼쪽이 첫 글</span></div>
+      ${(p.links || []).length ? `<div class="sub">${p.links.map(l => esc(String(l).replace(/^https?:\/\//, '').replace(/\?.*/, ''))).join(' · ')}</div>` : ''}
+    </article>`).join('')}</div>`);
 }
 
 /* ───────── Overview */
@@ -398,6 +448,8 @@ function table(id, rows, cols, { rowClass, detail, keyOf } = {}){
 document.getElementById('view').addEventListener('click', e => {
   const th = e.target.closest('[data-sort]');
   if (th) { const [id, k] = th.dataset.sort.split('|'); const s = UI.sort[id]; if (s.k === k) s.asc = !s.asc; else { s.k = k; s.asc = false; } render(); return; }
+  const psb = e.target.closest('[data-psort]');
+  if (psb) { UI.peerSort = psb.dataset.psort; render(); return; }
   const isb = e.target.closest('[data-insec]');
   if (isb) { UI.insSec = isb.dataset.insec; render(); return; }
   const rf = e.target.closest('[data-ref]');

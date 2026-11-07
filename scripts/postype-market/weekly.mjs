@@ -53,6 +53,7 @@ try {
     const mk = path.join(OUT, 'market.json'); const D = JSON.parse(fs.readFileSync(mk, 'utf8'));
     D.prevInsights = JSON.parse(fs.readFileSync(path.join(curDir, 'insights.json'), 'utf8')); fs.writeFileSync(mk, JSON.stringify(D));
   }
+  try { run([path.join(HERE, 'peers.mjs'), OUT], 'Peers'); } catch (e) { log('Peers 건너뜀:', e.message); }
   run([path.join(HERE, 'insights.mjs'), OUT], '분석 글');
   run([path.join(HERE, 'publish.mjs'), OUT], '게시');
 
