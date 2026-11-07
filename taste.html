@@ -543,6 +543,7 @@ function infoRows(it){
   if (it.kind === 'city'){ add('좋은 달', m.months); add('기온', m.temp); add('비행', m.flight); add('여행경보', m.safety); }
   add('주소', I.address);
   add('운영', I.hours);
+  add('주차', I.parking);
   add('가격', I.price || m.price);
   if (!EVENT.includes(it.kind)) add('기간', I.period);
   add('예약', I.reservation);
