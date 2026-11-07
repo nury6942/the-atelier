@@ -30,12 +30,24 @@ const NO_KOREA = ARGS.includes('--no-korea');
 const CAP = { exhibition: 5, performance: 4, film: 4 };
 const ABROAD_CAP = { exhibition: 3, performance: 2 };          // 도시마다
 const KINDS = Object.keys(CAP);
+const TRIED_FILE = path.join(os.homedir(), '.cache/atelier-taste/abroad-tried.json');   // 해외 도시를 언제 훑었는지 (아이맥 로컬)
 const WORK = fs.mkdtempSync(path.join(os.tmpdir(), 'atelier-culture-'));
 const T0 = Date.now();
 const left = (dl) => dl - Date.now();
 const JX_RX = /JX|김재중|김준수|KIM\s*JAE\s*JOONG|JAEJOONG|XIA|준수|JUNSU|JYJ|동방신기/i;
 const SEOUL_REGIONS = ['종로·서촌·북촌', '용산·한남·이태원', '강남·청담·서초', '성수·성동', '마포·홍대·연남', '송파·잠실', '여의도·영등포', '서울 그 외'];
 
+// 티켓 사이트 랭킹 (Aside 로 열어 확인한 주소)
+// 티켓링크는 상품 링크가 스크립트라 못 읽어서 뺌 (2026-11-07)
+const TICKET_RANKS = [
+  'https://nol.yanolja.com/ticket/display/ranking/concert',
+  'https://nol.yanolja.com/ticket/display/ranking/exhibition',
+  'https://nol.yanolja.com/ticket/display/ranking/classic',
+  'https://nol.yanolja.com/ticket/display/ranking/play',
+  'https://nol.yanolja.com/ticket/display/ranking/musical',
+  'https://ticket.melon.com/ranking/index.htm',
+  'https://ticket.yes24.com/Rank/All',
+];
 // 미술관 '현재 전시' 페이지 (Aside 로 열어 확인한 주소)
 const MUSEUM_PAGES = [
   'https://www.mmca.go.kr/exhibitions/progressList.do',          // 국립현대미술관
@@ -45,7 +57,7 @@ const MUSEUM_PAGES = [
   'https://www.daelimmuseum.org/',                                // 대림미술관·디뮤지엄
   'https://www.leeumhoam.org/leeum/exhibition',                   // 리움
 ];
-// 인스타 전시·공연 큐레이터 — 프로필을 직접 열어 확인한 계정만 (팔로워 2026-11-07, 5만 이상). 공연 전문은 5만 넘는 곳을 못 찾음
+// 인스타 전시·공연 큐레이터 — 프로필을 직접 열어 확인한 계정만 (팔로워 2026-11-07, 5만 이상)
 const CULTURE_CURATORS = [
   // CULTURE_CURATORS_START
   'artart.today',          // 915K 아트아트
@@ -53,6 +65,12 @@ const CULTURE_CURATORS = [
   'halmi.art',             // 173K 할미아트
   'dayoff_mag',            // 72K  데이오프 — 전시·팝업·디자인·공간
   'artlamp_org',           // 53K  아트램프
+  // 내한 공연·음악
+  'fastpapermag',          // 1M   패스트페이퍼 (내한 소식)
+  'bandking.mag',          // 73K  밴드킹 매거진
+  'moodcloud.official',    // 69K  무드 클라우드 (내한 공연)
+  // 영화
+  'insight_movie',         // 124K 인사이트 무비
   // CULTURE_CURATORS_END
 ];
 
@@ -86,7 +104,7 @@ async function verify(picks, byId, dl, today) {
   const urlOf = (p) => {
     const c = byId[p.cand] || {};
     if (p.kind === 'film') return 'https://search.naver.com/search.naver?query=' + encodeURIComponent('영화 ' + p.title);
-    if (/nol\.yanolja\.com\/ticket\/products/.test(c.url || '')) return c.url;
+    if (c.tag === 'ticket' || /nol\.yanolja\.com\/ticket\/products/.test(c.url || '')) return c.url;
     if (p.detailUrl && /^https?:/.test(p.detailUrl)) return p.detailUrl;
     return 'https://search.naver.com/search.naver?query=' + encodeURIComponent(p.title + ' ' + (p.venue || ''));
   };
@@ -94,8 +112,8 @@ async function verify(picks, byId, dl, today) {
   const pages = {};
   const focus = {};
   for (const p of picks) { const u = urlOf(p); if (/search\.naver/.test(u)) focus[u] = p.title.replace(/[［\[].*?[］\]]\s*/g, '').slice(0, 12); }
-  for (let i = 0; i < urls.length && left(dl) > 120e3; i += 12) {
-    for (const r of await L.aside({ mode: 'pages', urls: urls.slice(i, i + 12), chars: 4500, scroll: true, focus, wait: 4000 })) pages[r.url] = r;
+  for (let i = 0; i < urls.length && left(dl) > 100e3; i += 6) {
+    for (const r of await L.aside({ mode: 'pages', urls: urls.slice(i, i + 6), chars: 3000, scroll: true, focus, wait: 4000 })) pages[r.url] = r;
   }
   log('[culture] 상세 페이지', Object.keys(pages).length, '/', urls.length);
   const rows = picks.map((p, i) => {
@@ -123,15 +141,17 @@ async function korea(db, existing, ctx) {
   const sources = {};
   const cands = [];
   const add = (list, tag) => { for (const c of list) if (c && (c.text || '').length > 8) cands.push(Object.assign({ tag }, c)); sources[tag] = (sources[tag] || 0) + list.length; };
-  add(await L.aside({ mode: 'nol', genres: ['exhibition', 'concert', 'classic', 'play'], max: 15 }), 'nol');
+  // 티켓 사이트 랭킹이 주 소스 (포스터·장소·기간이 다 있음, 가격은 상세 페이지에서 확인)
+  add(await L.aside({ mode: 'ticket-rank', urls: TICKET_RANKS.slice(0, 5), max: 15 }), 'ticket');
+  add(await L.aside({ mode: 'ticket-rank', urls: TICKET_RANKS.slice(5), max: 15 }), 'ticket');
   add(await L.aside({ mode: 'naver-list', queries: [{ q: '서울 전시회', pages: 4 }, { q: '내한공연', pages: 2 }, { q: '김재중 콘서트' }, { q: '김준수 콘서트' }, { q: 'JX 콘서트' }] }), 'naver');
   add(await L.aside({ mode: 'naver-list', queries: [{ q: '현재상영영화', pages: 3 }, { q: '개봉예정영화', pages: 2 }] }), 'naver');
-  log('[culture] NOL', sources.nol || 0, '· 네이버', sources.naver || 0);
+  log('[culture] 티켓 랭킹', sources.ticket || 0, '· 네이버', sources.naver || 0);
   if (left(dl) > 9 * 60e3) add(await L.aside({ mode: 'pages', urls: MUSEUM_PAGES, links: true }), 'museum');
   if (left(dl) > 8.5 * 60e3) add(await L.aside({ mode: 'x-search', q: '넷플릭스 영화 추천', since: new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10), scrolls: 2 }), 'x');
   if (left(dl) > 8 * 60e3) add(await L.aside({ mode: 'threads-search', q: '영화 추천 왓챠 넷플릭스', scrolls: 2 }), 'threads');
-  if (CULTURE_CURATORS.length && left(dl) > 7.5 * 60e3) {
-    const got = await L.aside({ mode: 'ig-profile', handles: CULTURE_CURATORS, n: 10, skip: Object.keys(igSeen) });
+  for (let i = 0; i < CULTURE_CURATORS.length && left(dl) > 7.5 * 60e3; i += 5) {
+    const got = await L.aside({ mode: 'ig-profile', handles: CULTURE_CURATORS.slice(i, i + 5), n: 10, skip: Object.keys(igSeen) });
     for (const c of got) igSeen[c.url] = new Date().toISOString();
     add(got, 'curator');
   }
@@ -203,7 +223,7 @@ ${candText}`;
       if (!start || !end || !v.price || !v.venue || end < today || start > horizon) { log('  - 기간·가격 안 맞아 뺌:', p.title, start, end, v.price); return; }
       if (p.kind === 'performance' && v.city !== '서울') { log('  - 서울 밖 공연이라 뺌:', p.title, v.city); return; }
       meta = { venue: v.venue, start, end, price: v.price, country: v.country || '한국', city: v.city || '서울', region: v.region || '서울 그 외',
-        ticketUrl: /nol\.yanolja|ticket|museum|\.kr|\.org/.test(c.url || '') && c.tag !== 'naver' ? c.url : (p.detailUrl || '') };
+        ticketUrl: ['ticket', 'nol', 'museum'].includes(c.tag) ? c.url : (p.detailUrl || '') };
     }
     const doc = {
       kind: p.kind, title: String(p.title).trim(),
@@ -232,9 +252,10 @@ async function abroad(db, existing, ctx) {
   (await db.collection('trip_cities').get()).forEach((d) => { const c = d.data(); const t = trips.find((x) => x.id === c.trip_id); if (t && c.name && c.start_date) cities.push(Object.assign({ trip: t }, c)); });
   cities.sort((a, b) => a.start_date.localeCompare(b.start_date));
   // 한 번에 다 돌면 길어서, 아직 카드가 적은 도시부터 5곳씩 (다음 실행이 나머지)
-  const covered = (c) => existing.filter((e) => e.meta && e.meta.trip && e.meta.city === c.name).length;
+  const covered = (c) => existing.filter((e) => e.meta && e.meta.trip && e.meta.city === c.name).length + (ctx.tried[c.name] ? 100 : 0);
   const chosen = new Set([...cities].sort((a, b) => covered(a) - covered(b) || a.start_date.localeCompare(b.start_date)).slice(0, ctx.abroadCities || 5).map((c) => c.name));
   cities.splice(0, cities.length, ...cities.filter((c) => chosen.has(c.name)));
+  if (!DRY) { for (const c of cities) ctx.tried[c.name] = today; fs.mkdirSync(path.dirname(TRIED_FILE), { recursive: true }); fs.writeFileSync(TRIED_FILE, JSON.stringify(ctx.tried)); }
   const tripMeta = (t) => ({ id: t.id, name: t.start_date.slice(0, 7).replace('-', '.') + ' ' + String(t.name || '').replace(/^\d{4}\s*/, '').replace(/\s*여행$/, ''), start: t.start_date, end: t.end_date });
   log('[abroad] 여행', trips.map((t) => tripMeta(t).name).join(' / '), '· 도시', cities.length);
 
@@ -249,8 +270,8 @@ async function abroad(db, existing, ctx) {
   const urls = [...new Set(places.flatMap((p) => [p.listUrl, p.visitUrl].filter((u) => /^https?:/.test(u || ''))))].slice(0, 40);
   log('[abroad] 미술관·공연장', places.length, '· 열 페이지', urls.length);
   const pages = {};
-  for (let i = 0; i < urls.length && left(dl) > 5 * 60e3; i += 10) {
-    for (const r of await L.aside({ mode: 'pages', urls: urls.slice(i, i + 10), chars: 4000, scroll: true })) pages[r.url] = r;
+  for (let i = 0; i < urls.length && left(dl) > 5 * 60e3; i += 7) {
+    for (const r of await L.aside({ mode: 'pages', urls: urls.slice(i, i + 7), chars: 3500, scroll: true, wait: 5000 })) pages[r.url] = r;
   }
   const opened = places.filter((p) => pages[p.listUrl] && pages[p.listUrl].text.length > 200);
   log('[abroad] 실제로 열린 곳', opened.length);
@@ -315,6 +336,7 @@ async function main() {
   const today = L.kstDate();
   const ctx = {
     today, profile: L.profileSection(4), igSeen: L.loadSeen(), abroadCities: ABROAD_CITIES,
+    tried: (() => { try { const t = JSON.parse(fs.readFileSync(TRIED_FILE, 'utf8')); for (const [k, v] of Object.entries(t)) if (Date.parse(v) < Date.now() - 30 * 864e5) delete t[k]; return t; } catch (e) { return {}; } })(),
     seenTitle: new Set(existing.map((e) => norm(e.title))),
     ex: (st) => existing.filter((e) => KINDS.includes(e.kind) && st.includes(e.status)).slice(-25)
       .map((e) => '- [' + e.kind + '] ' + e.title + (e.subtitle ? ' (' + e.subtitle + ')' : '')).join('\n') || '(아직 없음)',
@@ -330,7 +352,7 @@ async function main() {
   const abroadCities = new Set(existing.filter((e) => e.meta && e.meta.trip).map((e) => e.meta.city));
   const tripCities = [];
   (await db.collection('trip_cities').get()).forEach((x) => { const c = x.data(); if ((c.start_date || '') > today && (c.start_date || '') <= L.kstDate(new Date(Date.now() + 365 * 864e5))) tripCities.push(c.name); });
-  const uncovered = tripCities.filter((n) => !abroadCities.has(n)).length;
+  const uncovered = tripCities.filter((n) => !abroadCities.has(n) && !ctx.tried[n]).length;
   if (FORCE_ABROAD || uncovered || (d.getUTCDay() === 1 && d.getUTCDate() <= 7)) {
     try { const a = await abroad(db, existing, ctx); all.push(...a.docs); run.abroad = a.docs.length; }
     catch (e) { log('[abroad] 실패', e.message); run.abroadError = e.message; }

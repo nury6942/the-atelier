@@ -249,6 +249,47 @@ if (JOB.mode === 'yes24') {
   }
 }
 
+// 티켓 사이트 랭킹(NOL·티켓링크·예스24·멜론티켓 공통): 상품 링크마다 그 줄의 글(제목·기간·장소)과 포스터
+if (JOB.mode === 'ticket-rank') {
+  const t0 = Date.now();
+  for (const u of JOB.urls) {
+    if (Date.now() - t0 > 95000) break;
+    try {
+      const page = await openTab(u);
+      await sleep(5500);
+      await page.evaluate(() => window.scrollBy(0, 3000));
+      await sleep(1500);
+      const items = await page.evaluate(() => {
+        const RX = /ticket\/products\/\d+|ticketlink\.co\.kr\/product\/\d+|ticket\.yes24\.com\/Perf\/\d+|prodId=\d+/i;
+        const DATE = /20\d\d[.\-]\s?\d{1,2}[.\-]\s?\d{1,2}|\d{2}\.\d{2}\.\d{2}/;
+        const res = [], seen = {};
+        document.querySelectorAll('a[href]').forEach((a) => {
+          const m = a.href.match(RX); if (!m) return;
+          const key = m[0];
+          if (seen[key]) return;
+          let box = a;
+          for (let k = 0; k < 7 && box.parentElement; k++) {
+            const up = box.parentElement;
+            const keys = new Set([...up.querySelectorAll('a[href]')].map((x) => (x.href.match(RX) || [])[0]).filter(Boolean));
+            if (keys.size > 1) break;
+            box = up;
+            if (DATE.test(box.innerText) && box.querySelector('img')) break;
+          }
+          const text = box.innerText.replace(/\s*\n+\s*/g, ' | ').trim();
+          if (!DATE.test(text)) return;
+          seen[key] = 1;
+          const img = [...box.querySelectorAll('img')].filter((x) => (x.naturalWidth || 0) >= 80).map((x) => x.currentSrc || x.src).find((s) => !/logo|icon|badge/i.test(s));
+          res.push({ url: a.href.split('#')[0], text: text.slice(0, 350), images: img ? [img] : [] });
+        });
+        return res;
+      });
+      await page.close();
+      const site = new URL(u).hostname.replace(/^www\.|^ticket\./, '');
+      out.push(...items.slice(0, JOB.max || 20).map((x) => Object.assign({ src: 'ticket', site, list: u }, x)));
+    } catch (e) {}
+  }
+}
+
 // NOL(인터파크) 장르별 랭킹: 제목·장소·기간·포스터
 if (JOB.mode === 'nol') {
   for (const g of JOB.genres) {

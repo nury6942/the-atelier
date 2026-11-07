@@ -57,7 +57,7 @@ function aside(job, timeoutMs = 125000) {
         const arr = JSON.parse(line.slice(11));
         for (const d of arr.filter((x) => x && x.debug)) log('  aside 진단:', JSON.stringify(d));
         resolve(arr.filter((x) => !(x && x.debug)));
-      } catch (e) { resolve([]); }
+      } catch (e) { log('  aside 결과 해석 실패:', job.mode, line.length + '자', e.message.slice(0, 80)); resolve([]); }
     });
     child.on('error', () => { clearTimeout(timer); resolve([]); });
   });
