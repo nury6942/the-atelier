@@ -16890,6 +16890,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     "planner": { "title": "Calendar" },
     "packing": { "title": "Travel" },
     "reference": { "title": "Memo" },
+    "taste": { "title": "Taste" },
     "jobhunt": { "title": "Job Hunt" },
     "aibrief": { "title": "AI Brief" },
     "deals": { "title": "Flight Deals" },

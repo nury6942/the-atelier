@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=434" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=435" as="script">
   <link rel="preload" href="js/app-2-init.js?v=198" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/app-5-ledger-export.js?v=164" as="script">
@@ -11743,6 +11743,10 @@
       <span class="material-symbols-outlined text-[19px] transition-colors">menu_book</span>
       <span class="text-[13.5px] font-medium">Memo</span>
     </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-taste" onclick="navigate('taste'); return false;">
+      <span class="material-symbols-outlined text-[19px] transition-colors">interests</span>
+      <span class="text-[13.5px] font-medium">Taste</span>
+    </a>
     <div class="nav-group">Money</div>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-finance-hub" onclick="navigate('finance-hub'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">monitoring</span>
@@ -11883,6 +11887,7 @@
             <h2>Everyday</h2>
             <a href="#" onclick="navigate('planner');return false;">Calendar</a>
             <a href="#" onclick="navigate('reference');return false;">Memo</a>
+            <a href="#" onclick="navigate('taste');return false;">Taste</a>
           </div>
           <div class="atl-home-col">
             <h2>Money</h2>
@@ -16770,7 +16775,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script src="js/public-data.js?v=2" defer></script>
-<script src="js/app-1-pages.js?v=434" defer></script>
+<script src="js/app-1-pages.js?v=435" defer></script>
 <script src="js/flight-deals.js?v=12" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17452,6 +17457,7 @@
           <div><dt><a href="#" onclick="navigate('home');return false;">Home</a></dt><dd>그림 한 장과 전체 메뉴. 여기서 어디로든 간다.</dd></div>
           <div><dt><a href="#" onclick="navigate('planner');return false;">Calendar</a></dt><dd>업무·개인·연차 일정. 연차 잔여와 연장근무도 위에 보인다.</dd></div>
           <div><dt><a href="#" onclick="navigate('reference');return false;">Memo</a></dt><dd>짧은 메모와 자료. 위 칸에서 검색.</dd></div>
+          <div><dt><a href="#" onclick="navigate('taste');return false;">Taste</a></dt><dd>내 취향에 맞는 공간·스테이·책·도시. 월·목 아침 아이맥이 모아 온다.</dd></div>
           <div><dt><a href="#" onclick="navigate('finance-hub');return false;">Money › Assets</a></dt><dd>월별 수입·지출·저축과 총 자산.</dd></div>
           <div><dt><a href="#" onclick="navigate('ledger');return false;">Money › Ledger</a></dt><dd>하루하루 가계부와 이달 전략 보드. 폰에선 전용 화면으로 열린다.</dd></div>
           <div><dt><a href="#" onclick="navigate('income');return false;">Money › Side Jobs</a></dt><dd>부업 수입(포스타입 등) 기록과 정산.</dd></div>
@@ -17506,6 +17512,11 @@
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
     <script>/* 매일 바뀌는 페이지라 브라우저 캐시(10분)에 옛 화면이 남지 않게 매번 새 주소로 */
       document.getElementById('aibrief-frame').src='./ai-brief.html?t='+Date.now();</script>
+  </div>
+  <!-- ════════ TASTE — 취향 추천 아카이브 (taste.html, 데이터 Firestore tasteItems 는 아이맥 scripts/taste/ 가 월·목) ════════ -->
+  <div id="page-taste" class="page" style="display:none;padding:0;background:#fff">
+    <iframe id="taste-frame" title="Taste" loading="lazy" src="./taste.html?v=1"
+      style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
   </div>
   <div id="page-jobhunt" class="page" style="display:none;padding:0;background:#fff">
     <iframe src="./job-hunt.html" title="Job Hunt" loading="lazy"

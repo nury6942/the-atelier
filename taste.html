@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 남의 사진(X·Threads·Instagram)을 원래 주소로 걸 때 출처를 안 보내야 막히지 않는다 -->
+<meta name="referrer" content="no-referrer">
+<title>Taste</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  /* 아뜰리에 정본(DESIGN.md): 흰 바탕·직각·코발트 하나·Pretendard·그림자 없음·연회색 글자 없음 */
+  :root{
+    --accent:#1F4BD8; --accent-ink:#1A3FB5; --accent-soft:#EEF2FD;
+    --ink:#16161A; --ink2:#5B5B66; --mut:#475569;
+    --line:#ECECF0; --line2:#DCDCE3; --surface:#F8F8FA;
+    --sand:#F0A647; --red:#DC2626;
+  }
+  *{box-sizing:border-box;border-radius:0}
+  html,body{margin:0;background:#fff;color:var(--ink)}
+  body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    -webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+  h1,h2,h3{text-wrap:balance;margin:0}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 24px 96px}
+
+  /* 머리 */
+  .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 24px;flex-wrap:wrap}
+  .mast h1{font-size:24px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+  .mast .feed{font-size:12.5px;font-weight:500;color:var(--ink2)}
+  .mast .feed b{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+
+  /* 큰 탭 (atl-tabs + travel-tab-btn 과 같은 모양) */
+  .tabsrow{display:flex;align-items:flex-end;gap:16px;border-bottom:1px solid var(--line);margin-top:20px}
+  .tabs{display:flex;gap:24px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;padding:10px 0 12px;margin-bottom:-1px;border-bottom:2px solid transparent;font-size:14px;font-weight:600;color:var(--ink2);white-space:nowrap}
+  .tab:hover{color:var(--ink)}
+  .tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+  .tab .n{font-weight:500;margin-left:5px;font-variant-numeric:tabular-nums;color:var(--ink2)}
+  .tab.on .n{color:var(--accent)}
+  .hidden-btn{flex:none;font-size:12.5px;font-weight:600;color:var(--ink2);padding:0 0 13px;white-space:nowrap}
+  .hidden-btn:hover{color:var(--ink)}
+  .hidden-btn.on{color:var(--accent)}
+
+  /* 배치 묶음 */
+  .batch{margin-top:40px}
+  .batch-h{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
+  .batch-h h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .batch-h .c{font-size:12.5px;font-weight:500;color:var(--ink2);font-variant-numeric:tabular-nums}
+  .batch-h::after{content:'';flex:1;height:1px;background:var(--line);align-self:center}
+
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .grid.books{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+  /* 카드 */
+  .card{display:flex;flex-direction:column;border:1px solid var(--line);background:#fff;min-width:0}
+  .card.big{grid-column:span 2;grid-row:span 2}
+  .ph{position:relative;aspect-ratio:4/3;background:var(--surface);overflow:hidden;flex:none}
+  .card.big .ph{aspect-ratio:auto;flex:1 1 auto;min-height:340px}
+  .card.big .body{flex:none}
+  .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+  .card:hover .ph img{transform:scale(1.025)}
+  .new{position:absolute;top:0;left:0;background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.02em;padding:4px 8px;line-height:1}
+  .new.inline{position:static;display:inline-block;vertical-align:middle;margin-right:8px}
+  .body{display:flex;flex-direction:column;gap:10px;padding:16px 16px 14px;flex:1}
+  .t{font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+  .card.big .t{font-size:22px}
+  .card.typo .t{font-size:26px;font-weight:800;line-height:1.15;letter-spacing:-.02em}
+  .card.typo{border-top:4px solid var(--ink)}
+  .card.typo.big .t{font-size:34px}
+  .sub{font-size:13px;font-weight:500;color:var(--ink2);margin-top:3px}
+  .src{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;max-width:100%;font-size:11.5px;font-weight:600;color:var(--ink2);background:var(--surface);height:24px;padding:0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  a.src:hover{color:var(--ink);background:var(--line)}
+  .src i{font-style:normal;width:6px;height:6px;background:currentColor;flex:none}
+  .why{background:var(--accent-soft);color:var(--accent);font-size:14px;font-weight:600;line-height:1.45;padding:10px 12px}
+  .detail{font-size:13px;line-height:1.55;color:var(--mut);white-space:pre-line}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{display:inline-flex;align-items:center;height:24px;padding:0 9px;font-size:12px;font-weight:600;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+  .chip.sand{background:var(--sand);color:var(--ink)}
+  .acts{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:4px}
+  .b{height:32px;padding:0 11px;border:1px solid var(--line2);background:#fff;font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+  .b:hover{border-color:var(--ink)}
+  .b.on-saved{background:var(--accent);border-color:var(--accent);color:#fff}
+  .b.on-done{background:var(--ink);border-color:var(--ink);color:#fff}
+  .b.on-nope{border-color:var(--red);color:var(--red)}
+  .map{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  .map:hover{color:var(--accent-ink);text-decoration:underline}
+
+  /* 책: 표지처럼 */
+  .cover{position:relative;aspect-ratio:3/4;padding:18px 18px 16px 30px;display:flex;flex-direction:column;overflow:hidden}
+  .cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:12px;background:rgba(0,0,0,.18)}
+  .cover.c0{background:var(--ink);color:#fff}
+  .cover.c1{background:var(--accent);color:#fff}
+  .cover.c2{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
+  .cover.c2::before{background:var(--ink)}
+  .cover.img{padding:0;background:var(--surface)}
+  .cover.img::before{display:none}
+  .cover.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .cover .ct{font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-.02em}
+  .cover .ca{font-size:13px;font-weight:600;margin-top:10px;opacity:.85}
+  .cover .cm{margin-top:auto;font-size:12px;font-weight:600;opacity:.8;font-variant-numeric:tabular-nums}
+  .cover .new{left:12px}
+  .cover.img .new{left:0}
+
+  /* 도시: 사진 없으면 흰 바탕 + 코발트 1px + 모래 지평선 6px (DESIGN.md 빈 도시 카드) */
+  .cityph{position:relative;aspect-ratio:4/3;border:1px solid var(--accent);border-bottom:6px solid var(--sand);margin:-1px -1px 0;display:flex;flex-direction:column;justify-content:flex-end;padding:18px}
+  .card.big .cityph{aspect-ratio:auto;flex:1 1 auto;min-height:340px}
+  .cityph .cn{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .card.big .cityph .cn{font-size:56px}
+  .cityph .cc{font-size:14px;font-weight:600;color:var(--ink2);margin-top:6px}
+
+  /* Saved 의 종류 머리 */
+  .kind-h{display:flex;align-items:baseline;gap:10px;margin:40px 0 16px}
+  .kind-h h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .kind-h .c{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
+
+  .empty{margin-top:56px;font-size:15px;font-weight:500;color:var(--ink2)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:10px 14px;z-index:9}
+
+  @media (max-width:1024px){
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.books{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
+  @media (max-width:768px){
+    .wrap{padding:20px 16px 72px}
+    .mast .feed{width:100%}
+    .grid{grid-template-columns:minmax(0,1fr);gap:16px}
+    .grid.books{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .card.big{grid-column:auto;grid-row:auto}
+    .card.big .body{flex:1}
+    .hidden-btn{border-left:1px solid var(--line2);padding-left:12px;margin-bottom:13px;padding-bottom:0}
+    .card.big .ph{flex:none;min-height:0;aspect-ratio:4/3}
+    .card.big .cityph{aspect-ratio:4/3}
+    .card.big .t{font-size:19px}
+    .card.typo.big .t{font-size:28px}
+    .card.big .cityph .cn{font-size:40px}
+    .tabs{gap:18px}
+    .tab{min-height:44px}
+    .books .cover{padding:14px 12px 12px 22px}
+    .books .cover::before{width:8px}
+    .books .cover .ct{font-size:18px}
+    .books .body{padding:12px 10px 12px}
+    .books .why{font-size:13px;padding:8px 10px}
+    .books .acts{flex-wrap:wrap}
+    .books .b{padding:0 8px;font-size:12px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <h1>Taste</h1>
+    <div class="feed" id="feed">X · Threads · Instagram에서 매주 월·목</div>
+  </header>
+  <div class="tabsrow">
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <button class="hidden-btn" id="hiddenBtn" type="button"></button>
+  </div>
+  <main id="view"></main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ",
+  authDomain: "the-atelier-99b8c.firebaseapp.com",
+  projectId: "the-atelier-99b8c",
+  storageBucket: "the-atelier-99b8c.firebasestorage.app",
+  messagingSenderId: "820580020945",
+  appId: "1:820580020945:web:d8d8d284e9e21e83eccbf0"
+});
+const db = firebase.firestore();
+const auth = firebase.auth();
+const ALLOWED_EMAIL = 'nury6942@gmail.com';
+
+/* 데이터는 아이맥 수집기(scripts/taste/)가 tasteItems 에 쓴다. 이 화면은 status·statusAt 만 쓴다. */
+const TABS = [
+  { id:'place', label:'Places' },
+  { id:'stay',  label:'Stays' },
+  { id:'book',  label:'Books' },
+  { id:'city',  label:'Cities' },
+  { id:'saved', label:'★ Saved' }
+];
+const SRC = { x:'X', threads:'Threads', instagram:'Instagram', stayfolio:'Stayfolio', curated:'Curated', web:'Web' };
+let items = [];
+let tab = 'place';
+let showHidden = false;
+let latestBatch = '';
+try { const t = localStorage.getItem('atelier_taste_tab'); if (TABS.some(x => x.id === t)) tab = t; } catch (e) {}
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = u => (typeof u === 'string' && /^https?:\/\//i.test(u)) ? u : '';
+const safeImg = u => (typeof u === 'string' && (/^https:\/\//i.test(u) || /^data:image\/(jpeg|png|webp);base64,/i.test(u))) ? u : '';
+const st = it => it.status || 'new';
+const fmtLikes = n => { n = Number(n); if (!isFinite(n) || n <= 0) return ''; if (n >= 10000) return (n/1000).toFixed(0)+'K'; if (n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/,'')+'K'; return String(n); };
+const md = b => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(b || ''); return m ? (+m[1]) + '/' + m[2] : (b || '날짜 없음'); };
+const hash = s => { let h = 0; for (const c of String(s)) h = (h*31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
+
+function toast(msg){ const o = document.querySelector('.toast'); if (o) o.remove(); const el = document.createElement('div'); el.className = 'toast'; el.setAttribute('role','status'); el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
+
+function visible(list){ return list.filter(it => showHidden ? st(it) === 'nope' : st(it) !== 'nope'); }
+function ofTab(id){
+  if (id === 'saved') return items.filter(it => st(it) === 'saved');
+  return items.filter(it => it.kind === id);
+}
+
+function renderHead(){
+  document.getElementById('tabs').innerHTML = TABS.map(t => {
+    const n = t.id === 'saved' ? ofTab('saved').length : ofTab(t.id).filter(it => st(it) !== 'nope').length;
+    return `<button class="tab${t.id === tab ? ' on' : ''}" role="tab" aria-selected="${t.id === tab}" data-tab="${t.id}">${esc(t.label)}<span class="n">${n}</span></button>`;
+  }).join('');
+  const hb = document.getElementById('hiddenBtn');
+  const nHidden = tab === 'saved' ? 0 : ofTab(tab).filter(it => st(it) === 'nope').length;
+  hb.style.display = (nHidden || showHidden) && tab !== 'saved' ? '' : 'none';
+  hb.textContent = showHidden ? '← 돌아가기' : `숨긴 것 ${nHidden}`;
+  hb.classList.toggle('on', showHidden);
+  const f = document.getElementById('feed');
+  f.innerHTML = 'X · Threads · Instagram에서 매주 월·목' + (latestBatch ? ` · 마지막 <b>${esc(md(latestBatch))}</b>` : '');
+}
+
+function srcChip(it){
+  const s = it.src || {};
+  const parts = [SRC[s.type] || s.type || ''];
+  if (s.author) parts.push(String(s.author).startsWith('@') || s.type === 'curated' || s.type === 'web' ? s.author : '@' + s.author);
+  const lk = fmtLikes(s.likes); if (lk) parts.push('♥' + lk);
+  const label = parts.filter(Boolean).map(esc).join(' · ');
+  if (!label) return '';
+  const u = safeUrl(s.url);
+  return u ? `<a class="src" href="${esc(u)}" target="_blank" rel="noopener noreferrer"><i></i>${label}</a>` : `<span class="src"><i></i>${label}</span>`;
+}
+function actions(it){
+  const s = st(it);
+  const doneLabel = it.kind === 'book' ? '읽음' : '가 봄';
+  const map = safeUrl(it.mapUrl);
+  return `<div class="acts">
+    <button class="b${s === 'saved' ? ' on-saved' : ''}" data-set="saved" data-id="${esc(it._id)}" aria-pressed="${s === 'saved'}">★ 저장</button>
+    <button class="b${s === 'done' ? ' on-done' : ''}" data-set="done" data-id="${esc(it._id)}" aria-pressed="${s === 'done'}">${doneLabel}</button>
+    <button class="b${s === 'nope' ? ' on-nope' : ''}" data-set="nope" data-id="${esc(it._id)}" aria-pressed="${s === 'nope'}">별로</button>
+    ${map ? `<a class="map" href="${esc(map)}" target="_blank" rel="noopener noreferrer">지도 ↗</a>` : ''}
+  </div>`;
+}
+const isNew = it => latestBatch && it.batch === latestBatch && st(it) === 'new';
+const whyHtml = it => it.why ? `<div class="why">${esc(it.why)}</div>` : '';
+const detailHtml = it => it.detail ? `<div class="detail">${esc(it.detail)}</div>` : '';
+function metaChips(it){
+  const m = it.meta || {}; const out = [];
+  if (it.kind === 'city'){
+    if (m.months) out.push(`<span class="chip sand">${esc(m.months)}</span>`);
+    if (m.temp) out.push(`<span class="chip">${esc(m.temp)}</span>`);
+    if (m.safety) out.push(`<span class="chip">여행경보 ${esc(m.safety)}</span>`);
+    if (m.flight) out.push(`<span class="chip">✈ ${esc(m.flight)}</span>`);
+  } else if (it.kind === 'stay'){
+    if (m.region) out.push(`<span class="chip">${esc(m.region)}</span>`);
+    if (m.price) out.push(`<span class="chip">${esc(m.price)}</span>`);
+  }
+  return out.length ? `<div class="chips">${out.join('')}</div>` : '';
+}
+
+function cardPlace(it, big){
+  const img = safeImg(it.image);
+  const nw = isNew(it);
+  return `<article class="card${big ? ' big' : ''}${img ? '' : ' typo'}">
+    ${img ? `<div class="ph"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.closest('.ph').remove()">${nw ? '<span class="new">NEW</span>' : ''}</div>` : ''}
+    <div class="body">
+      <div>${!img && nw ? '<span class="new inline">NEW</span>' : ''}<h3 class="t">${esc(it.title)}</h3>${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}</div>
+      ${srcChip(it)}
+      ${whyHtml(it)}
+      ${metaChips(it)}
+      ${detailHtml(it)}
+      ${actions(it)}
+    </div>
+  </article>`;
+}
+function cardBook(it){
+  const img = safeImg(it.image);
+  const m = it.meta || {};
+  const nw = isNew(it);
+  const meta = [m.year, m.pages ? m.pages + '쪽' : ''].filter(Boolean).map(esc).join(' · ');
+  const cover = img
+    ? `<div class="cover img"><img src="${esc(img)}" alt="" loading="lazy">${nw ? '<span class="new">NEW</span>' : ''}</div>`
+    : `<div class="cover c${hash(it._id) % 3}">${nw ? '<span class="new" style="top:0">NEW</span>' : ''}
+        <div class="ct"${nw ? ' style="margin-top:16px"' : ''}>${esc(it.title)}</div>
+        ${it.subtitle ? `<div class="ca">${esc(it.subtitle)}</div>` : ''}
+        ${meta ? `<div class="cm">${meta}</div>` : ''}
+      </div>`;
+  return `<article class="card">
+    ${cover}
+    <div class="body">
+      ${img ? `<div><h3 class="t">${esc(it.title)}</h3>${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}</div>` : ''}
+      ${whyHtml(it)}
+      ${srcChip(it)}
+      ${detailHtml(it)}
+      ${actions(it)}
+    </div>
+  </article>`;
+}
+function cardCity(it, big){
+  const img = safeImg(it.image);
+  const nw = isNew(it);
+  const top = img
+    ? `<div class="ph"><img src="${esc(img)}" alt="" loading="lazy">${nw ? '<span class="new">NEW</span>' : ''}</div>`
+    : `<div class="cityph">${nw ? '<span class="new">NEW</span>' : ''}<div class="cn">${esc(it.title)}</div>${it.subtitle ? `<div class="cc">${esc(it.subtitle)}</div>` : ''}</div>`;
+  return `<article class="card${big ? ' big' : ''}">
+    ${top}
+    <div class="body">
+      ${img ? `<div><h3 class="t">${esc(it.title)}</h3>${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}</div>` : ''}
+      ${metaChips(it)}
+      ${whyHtml(it)}
+      ${srcChip(it)}
+      ${detailHtml(it)}
+      ${actions(it)}
+    </div>
+  </article>`;
+}
+
+function gridFor(kind, list, withHero){
+  if (kind === 'book') return `<div class="grid books">${list.map(cardBook).join('')}</div>`;
+  // 사진 있는 것 하나를 크게 (2칸), 나머지는 작게
+  let ordered = list;
+  if (withHero && list.length > 2){
+    const hi = list.findIndex(it => safeImg(it.image)); const h = hi < 0 ? 0 : hi;
+    ordered = [list[h]].concat(list.filter((_, i) => i !== h));
+  }
+  const fn = kind === 'city' ? cardCity : cardPlace;
+  return `<div class="grid">${ordered.map((it, i) => fn(it, withHero && list.length > 2 && i === 0)).join('')}</div>`;
+}
+
+function byBatch(list){
+  const g = new Map();
+  list.slice().sort((a, b) => String(b.batch || '').localeCompare(String(a.batch || '')) || String(b.addedAt || '').localeCompare(String(a.addedAt || '')))
+    .forEach(it => { const k = it.batch || ''; if (!g.has(k)) g.set(k, []); g.get(k).push(it); });
+  return [...g.entries()];
+}
+
+function render(){
+  renderHead();
+  const v = document.getElementById('view');
+  if (!items.length){ v.innerHTML = '<p class="empty">첫 수집은 월요일 아침에 들어와요</p>'; return; }
+  if (tab === 'saved'){
+    const saved = ofTab('saved');
+    if (!saved.length){ v.innerHTML = '<p class="empty">★ 저장을 누르면 여기 모여요</p>'; return; }
+    v.innerHTML = TABS.filter(t => t.id !== 'saved').map(t => {
+      const l = saved.filter(it => it.kind === t.id)
+        .sort((a, b) => String(b.batch || '').localeCompare(String(a.batch || '')));
+      if (!l.length) return '';
+      return `<section><div class="kind-h"><h2>${esc(t.label)}</h2><span class="c">${l.length}</span></div>${gridFor(t.id, l, false)}</section>`;
+    }).join('');
+    return;
+  }
+  const list = visible(ofTab(tab));
+  if (!list.length){ v.innerHTML = `<p class="empty">${showHidden ? '숨긴 것이 없어요' : '이 칸은 아직 비어 있어요 · 월·목 아침에 채워져요'}</p>`; return; }
+  v.innerHTML = byBatch(list).map(([b, l]) =>
+    `<section class="batch"><div class="batch-h"><h2>${esc(md(b))} 들어온 것</h2><span class="c">${l.length}</span></div>${gridFor(tab, l, !showHidden)}</section>`
+  ).join('');
+}
+
+document.getElementById('tabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]'); if (!b) return;
+  tab = b.dataset.tab; showHidden = false;
+  try { localStorage.setItem('atelier_taste_tab', tab); } catch (e2) {}
+  render(); window.scrollTo(0, 0);
+});
+document.getElementById('hiddenBtn').addEventListener('click', () => { showHidden = !showHidden; render(); });
+document.getElementById('view').addEventListener('click', async e => {
+  const b = e.target.closest('[data-set]'); if (!b) return;
+  const it = items.find(x => x._id === b.dataset.id); if (!it) return;
+  const prev = it.status;
+  const next = st(it) === b.dataset.set ? 'new' : b.dataset.set;
+  it.status = next; render();
+  try {
+    await db.collection('tasteItems').doc(it._id).update({ status: next, statusAt: firebase.firestore.FieldValue.serverTimestamp() });
+    if (next === 'nope') toast('숨겼어요 · 「숨긴 것」에서 되돌릴 수 있어요');
+  } catch (err) {
+    it.status = prev; render(); toast('저장 못 했어요 · 다시 눌러 주세요');
+  }
+});
+
+async function load(){
+  try {
+    const snap = await db.collection('tasteItems').get();
+    items = snap.docs.map(d => Object.assign({}, d.data(), { _id: d.id }))
+      .filter(it => ['place','stay','book','city'].includes(it.kind) && it.title);
+    latestBatch = items.reduce((m, it) => (it.batch || '') > m ? it.batch : m, '');
+    render();
+  } catch (err) {
+    document.getElementById('view').innerHTML = '<p class="empty">불러오지 못했어요 · 새로고침해 주세요</p>';
+  }
+}
+
+renderHead();
+auth.onAuthStateChanged(user => {
+  if (!user || user.email !== ALLOWED_EMAIL){
+    document.getElementById('view').innerHTML = '<p class="empty">메인 화면에서 로그인하면 보여요</p>';
+    return;
+  }
+  load();
+});
+</script>
+</body>
+</html>
