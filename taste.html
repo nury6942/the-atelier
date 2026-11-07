@@ -115,34 +115,108 @@
   .kind-h h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
   .kind-h .c{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
 
-  /* Culture: 보기 전환 토글 + 기간 칩 */
-  .seg{display:inline-flex;background:var(--surface);padding:3px;gap:2px;margin-top:24px}
-  .seg button{height:30px;padding:0 12px;font-size:13px;font-weight:600;color:var(--ink2);border:1px solid transparent}
-  .seg button .n{font-weight:500;margin-left:4px;font-variant-numeric:tabular-nums}
+  /* ── Culture (전시·공연·영화) ── 프로그램 안내지처럼: 지역 머리 → 포스터 카드 */
+  .cul-ctl{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-top:24px}
+  .seg{display:inline-flex;background:var(--surface);padding:3px;gap:2px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+  .seg::-webkit-scrollbar{display:none}
+  .seg button{flex:none;height:32px;padding:0 14px;font-size:13px;font-weight:600;color:var(--ink2);border:1px solid transparent;white-space:nowrap}
+  .seg button:hover{color:var(--ink)}
+  .seg button .n{font-weight:500;margin-left:5px;font-variant-numeric:tabular-nums}
   .seg button.on{background:#fff;border-color:var(--ink);color:var(--ink)}
-  .ph.poster{aspect-ratio:4/5}
-  .ph.film{aspect-ratio:2/3}
+  .seg.scope button{height:36px;padding:0 18px;font-size:14px;font-weight:700}
+  .seg.scope button.on .n{color:var(--accent)}
+
+  .rg{margin-top:44px}
+  .rg-h{position:sticky;top:0;z-index:3;background:#fff;display:flex;align-items:baseline;gap:10px;padding:14px 0 10px;border-bottom:2px solid var(--ink);margin-bottom:20px}
+  .rg-h h2{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+  .rg-h .c{font-size:13px;font-weight:600;color:var(--ink2);font-variant-numeric:tabular-nums}
+  .rg-h .r{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  /* 여행 머리: 여행 이름 크게 + 날짜 + D-day */
+  .trip{margin-top:48px}
+  .trip-h{position:sticky;top:0;z-index:3;background:#fff;padding:16px 0 14px;border-bottom:2px solid var(--ink);display:flex;align-items:flex-end;gap:8px 16px;flex-wrap:wrap}
+  .trip-h h2{font-size:26px;font-weight:800;letter-spacing:-.025em;line-height:1.15}
+  .trip-h .d{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .trip-h .chip{margin-left:auto}
+  .city-h{display:flex;align-items:baseline;gap:8px;margin:24px 0 14px}
+  .city-h h3{font-size:15px;font-weight:700}
+  .city-h .c{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
+  .city-h::after{content:'';flex:1;height:1px;background:var(--line);align-self:center}
+
+  /* 전시·공연 카드 */
+  .ev{display:flex;flex-direction:column}
+  .ev .ph{aspect-ratio:4/5}
+  .grid.evg{grid-template-columns:repeat(4,minmax(0,1fr))}
+  /* 사진 없는 전시·공연 = 글자 포스터 (먹 · 코발트 · 흰 돌림) */
+  .ph.tp{display:flex;flex-direction:column;justify-content:space-between;padding:16px 16px 18px}
+  .ph.tp.c0{background:var(--ink);color:#fff}
+  .ph.tp.c1{background:var(--accent);color:#fff}
+  .ph.tp.c2{background:#fff;color:var(--ink);border-bottom:1px solid var(--line);border-top:8px solid var(--ink)}
+  .tp-k{font-size:12px;font-weight:700;letter-spacing:.02em}
+  .tp-t{font-size:26px;font-weight:800;line-height:1.12;letter-spacing:-.025em;word-break:keep-all}
+  .tp-v{font-size:12.5px;font-weight:600;margin-top:10px;opacity:.85}
+  .ph.tp .new{left:auto;right:0}
+  .ev-head{padding:16px 16px 0;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .ev-foot{padding:12px 16px 14px;display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+  .ev-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ev-kind{font-size:12px;font-weight:600;color:var(--ink2)}
+  .venue{font-size:13px;font-weight:500;color:var(--ink2)}
+  .period{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.01em;white-space:nowrap}
+  .period .dash{color:var(--ink2);margin:0 6px;font-weight:400}
+  .tl{position:relative;height:3px;background:var(--line);margin:6px 0 2px}
+  .tl i{position:absolute;left:0;top:0;bottom:0;background:var(--accent)}
+  .tl b{position:absolute;top:-4px;width:2px;height:11px;background:var(--ink);transform:translateX(-1px)}
   .chip.due{background:var(--accent);color:#fff}
   .chip.on{background:var(--accent-soft);color:var(--accent-ink)}
-  .when{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:6px}
-  .past-btn{display:block;margin-top:40px;font-size:12.5px;font-weight:600;color:var(--ink2)}
+  .chip.line{background:#fff;border:1px solid var(--line2)}
+  .chip.ink{background:#fff;border:1px solid var(--ink)}
+  .chips.row{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .chips.row::-webkit-scrollbar{display:none}
+  .chips.row > *{flex:none}
+  .acts .links{margin-left:auto;display:flex;gap:12px}
+  .ev .acts{flex-wrap:wrap;row-gap:8px}
+  .ev .b{padding:0 9px}
+  .acts .links .map{margin-left:0}
+
+  /* 영화: 2:3 포스터 */
+  .ph.film{aspect-ratio:2/3}
+  .film-by{font-size:12.5px;font-weight:500;color:var(--ink2);font-variant-numeric:tabular-nums}
+
+  .past-btn{display:block;margin-top:48px;padding-top:14px;border-top:1px solid var(--line);width:100%;text-align:left;font-size:13px;font-weight:600;color:var(--ink2)}
   .past-btn:hover{color:var(--ink)}
-  .past .card{opacity:.75}
+  .past .card{opacity:.7}
   .empty{margin-top:56px;font-size:15px;font-weight:500;color:var(--ink2)}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:10px 14px;z-index:9}
 
   @media (max-width:1024px){
     .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .grid.books{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid.evg{grid-template-columns:repeat(3,minmax(0,1fr))}
   }
   @media (max-width:768px){
     .wrap{padding:20px 16px 72px}
     .mast .feed{width:100%}
-    .grid{grid-template-columns:minmax(0,1fr);gap:16px}
+    .grid,.grid.evg{grid-template-columns:minmax(0,1fr);gap:16px}
     .grid.books{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .card.big{grid-column:auto;grid-row:auto}
     .card.big .body{flex:1}
-    .ph.poster{aspect-ratio:1/1}
+    .cul-ctl{flex-direction:column;align-items:stretch;gap:10px}
+    .seg{width:max-content}
+    .rg{margin-top:32px}
+    .rg-h h2{font-size:19px}
+    .trip-h h2{font-size:21px}
+    /* 폰: 전시 카드는 포스터 왼쪽 + 정보 오른쪽, 아래로 나머지 */
+    .ev{display:grid;grid-template-columns:116px minmax(0,1fr);grid-template-areas:"ph head" "foot foot"}
+    .ev .ph{grid-area:ph;aspect-ratio:4/5}
+    .ev-head{grid-area:head;padding:12px 12px 0 14px;gap:5px}
+    .ev-head .t{font-size:16px}
+    .ph.tp{padding:10px 10px 12px}
+    .tp-t{font-size:15px;line-height:1.2}
+    .tp-v{display:none}
+    .tp-k{font-size:11px}
+    .ev-foot{grid-area:foot;padding:12px 14px 14px}
+    .period{font-size:12.5px;white-space:normal}
+    .acts{flex-wrap:wrap}
     .hidden-btn{border-left:1px solid var(--line2);padding-left:12px;margin-bottom:13px;padding-bottom:0}
     .card.big .ph{flex:none;min-height:0;aspect-ratio:4/3}
     .card.big .cityph{aspect-ratio:4/3}
@@ -205,6 +279,9 @@ let tab = 'place';
 let showHidden = false;
 let latestBatch = '';
 let cultureSub = 'all';
+let cultureScope = 'home';
+try { const k = localStorage.getItem('atelier_taste_culture_kind'); if (['all','exhibition','performance','film'].includes(k)) cultureSub = k; } catch (e) {}
+try { const k = localStorage.getItem('atelier_taste_culture_scope'); if (k === 'home' || k === 'trip') cultureScope = k; } catch (e) {}
 let showPast = false;
 const CULTURE = ['exhibition','performance','film'];
 const EVENT = ['exhibition','performance'];
@@ -213,7 +290,8 @@ const pad2 = n => String(n).padStart(2,'0');
 const _d = new Date(); const TODAY = _d.getFullYear() + '-' + pad2(_d.getMonth()+1) + '-' + pad2(_d.getDate());
 const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
 const isDate = x => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}/.test(x);
-const isPast = it => EVENT.includes(it.kind) && isDate((it.meta||{}).end) && it.meta.end.slice(0,10) < TODAY;
+const isPast = it => { if (!EVENT.includes(it.kind)) return false; const m = it.meta || {}; if (m.permanent && !(m.trip && isDate(m.trip.end) && m.trip.end.slice(0,10) < TODAY)) return false;
+  return (!m.permanent && isDate(m.end) && m.end.slice(0,10) < TODAY) || !!(m.trip && isDate(m.trip.end) && m.trip.end.slice(0,10) < TODAY); };
 try { const t = localStorage.getItem('atelier_taste_tab'); if (TABS.some(x => x.id === t)) tab = t; } catch (e) {}
 
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -266,8 +344,7 @@ function actions(it){
     <button class="b${s === 'saved' ? ' on-saved' : ''}" data-set="saved" data-id="${esc(it._id)}" aria-pressed="${s === 'saved'}">★ 저장</button>
     <button class="b${s === 'done' ? ' on-done' : ''}" data-set="done" data-id="${esc(it._id)}" aria-pressed="${s === 'done'}">${doneLabel}</button>
     <button class="b${s === 'nope' ? ' on-nope' : ''}" data-set="nope" data-id="${esc(it._id)}" aria-pressed="${s === 'nope'}">별로</button>
-    ${ticket ? `<a class="map" href="${esc(ticket)}" target="_blank" rel="noopener noreferrer">예매 ↗</a>` : ''}
-    ${map ? `<a class="map"${ticket ? ' style="margin-left:10px"' : ''} href="${esc(map)}" target="_blank" rel="noopener noreferrer">지도 ↗</a>` : ''}
+    ${ticket || map ? `<span class="links">${ticket ? `<a class="map" href="${esc(ticket)}" target="_blank" rel="noopener noreferrer">예매 ↗</a>` : ''}${map ? `<a class="map" href="${esc(map)}" target="_blank" rel="noopener noreferrer">지도 ↗</a>` : ''}</span>` : ''}
   </div>`;
 }
 const isNew = it => latestBatch && it.batch === latestBatch && st(it) === 'new';
@@ -344,27 +421,64 @@ function cardCity(it, big){
   </article>`;
 }
 
+/* ── Culture ── 전시·공연은 지역(국내) 또는 여행(여행지)으로 묶고, 영화는 포스터 판 */
+const d10 = x => isDate(x) ? x.slice(0,10) : '';
+const full = x => { x = d10(x); return x ? x.replace(/-/g, '.') : ''; };
+const mdS = x => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(x || ''); return m ? (+m[1]) + '/' + (+m[2]) : ''; };
+const kindWord = k => k === 'exhibition' ? '전시' : k === 'performance' ? '공연' : '영화';
 function eventState(it){
   const m = it.meta || {};
-  const start = isDate(m.start) ? m.start.slice(0,10) : '', end = isDate(m.end) ? m.end.slice(0,10) : '';
-  if (end && end < TODAY) return { k:3, html:'<span class="chip">지난 것</span>' };
-  if (start && start > TODAY) return { k:1, sort:start, html:`<span class="chip">곧 시작 ${esc(md(start))}</span>` };
-  if (end){ const d = dayDiff(TODAY, end); if (d <= 7) return { k:0, sort:end, html:`<span class="chip due">${d === 0 ? '오늘 마감' : 'D-' + d + ' 마감'}</span>` }; }
+  const start = d10(m.start), end = d10(m.end);
+  if (m.permanent) return { k:2, sort:'', html:'<span class="chip ink">상설</span>' };
+  if (end && end < TODAY) return { k:4, sort:end, html:'<span class="chip">끝남</span>' };
+  if (start && start > TODAY) return { k:1, sort:start, html:`<span class="chip line">${esc(mdS(start))} 시작</span>` };
+  if (end){ const d = dayDiff(TODAY, end); if (d <= 7) return { k:0, sort:end, html:`<span class="chip due">${d === 0 ? '오늘 마감' : '마감 D-' + d}</span>` }; }
   return { k:0, sort:end || '9999', html:'<span class="chip on">진행 중</span>' };
 }
-function cardEvent(it){
+function timeline(it){
+  const m = it.meta || {}; const s = d10(m.start), e = d10(m.end);
+  if (m.permanent || !s || !e || e <= s || e < TODAY) return '';
+  const p = Math.max(0, Math.min(100, dayDiff(s, TODAY) / dayDiff(s, e) * 100));
+  return `<div class="tl" aria-hidden="true"><i style="width:${p.toFixed(1)}%"></i>${TODAY >= s ? `<b style="left:${p.toFixed(1)}%"></b>` : ''}</div>`;
+}
+function tripOverlap(it){
+  const m = it.meta || {}, t = m.trip || {};
+  if (m.permanent) return { k:1, html:'<span class="chip ink">상설 · 언제 가도</span>' };
+  const ts = d10(t.start), te = d10(t.end), s = d10(m.start) || ts, e = d10(m.end) || te;
+  if (!ts || !te) return { k:2, html:'' };
+  const a = s > ts ? s : ts, b = e < te ? e : te;
+  if (a <= b) return { k:0, html:`<span class="chip due">여행 중 진행 · ${esc(mdS(a))}${a === b ? '' : '–' + esc(mdS(b))} 겹침</span>` };
+  return { k:3, html:'<span class="chip line">여행 때는 안 함</span>' };
+}
+function periodHtml(it){
+  const m = it.meta || {};
+  if (m.permanent) return '<div class="period">상설 · 언제 가도</div>';
+  const s = full(m.start), e = full(m.end);
+  if (!s && !e) return '';
+  return `<div class="period">${esc(s)}<span class="dash">—</span>${esc(e)}</div>`;
+}
+function cardEvent(it, inTrip){
   const img = safeImg(it.image); const m = it.meta || {}; const nw = isNew(it);
-  const place = [m.venue, m.area].filter(Boolean).map(esc).join(' · ');
-  const period = [m.start, m.end].filter(isDate).map(md).join('–');
-  const extra = m.price ? `<div class="chips"><span class="chip">${esc(m.price)}</span></div>` : '';
-  return `<article class="card${img ? '' : ' typo'}">
-    ${img ? `<div class="ph poster"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.closest('.ph').remove()">${nw ? '<span class="new">NEW</span>' : ''}</div>` : ''}
-    <div class="body">
-      <div class="chips">${!img && nw ? '<span class="new inline">NEW</span>' : ''}${eventState(it).html}</div>
-      <div><h3 class="t">${esc(it.title)}</h3>${place ? `<div class="sub">${place}</div>` : (it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : '')}${period ? `<div class="when">${esc(period)}</div>` : ''}</div>
-      ${srcChip(it)}
+  const state = inTrip ? tripOverlap(it).html : eventState(it).html;
+  const venue = m.venue || it.subtitle || '';
+  const chips = [];
+  if (m.price) chips.push(`<span class="chip">${esc(m.price)}</span>`);
+  const sc = srcChip(it); if (sc) chips.push(sc);
+  const poster = img
+    ? `<div class="ph"><img src="${esc(img)}" alt="" loading="lazy">${nw ? '<span class="new">NEW</span>' : ''}</div>`
+    : `<div class="ph tp c${hash(it._id) % 3}" aria-hidden="true">${nw ? '<span class="new">NEW</span>' : ''}<span class="tp-k">${kindWord(it.kind)}</span><div><div class="tp-t">${esc(it.title)}</div>${venue ? `<div class="tp-v">${esc(venue)}</div>` : ''}</div></div>`;
+  return `<article class="card ev">
+    ${poster}
+    <div class="ev-head">
+      <div class="ev-top">${state}<span class="ev-kind">${kindWord(it.kind)}</span></div>
+      <h3 class="t">${esc(it.title)}</h3>
+      ${venue ? `<div class="venue">${esc(venue)}</div>` : ''}
+      ${periodHtml(it)}
+      ${inTrip ? '' : timeline(it)}
+    </div>
+    <div class="ev-foot">
+      ${chips.length ? `<div class="chips row">${chips.join('')}</div>` : ''}
       ${whyHtml(it)}
-      ${extra}
       ${detailHtml(it)}
       ${actions(it)}
     </div>
@@ -372,22 +486,21 @@ function cardEvent(it){
 }
 function cardFilm(it){
   const img = safeImg(it.image); const m = it.meta || {}; const nw = isNew(it);
-  const by = [m.director, m.year].filter(Boolean).map(esc).join(' · ') || esc(it.subtitle || '');
+  const rt = m.runtime ? (/^\d+$/.test(String(m.runtime)) ? m.runtime + '분' : m.runtime) : '';
+  const by = [m.director, m.year, rt].filter(Boolean).map(esc).join(' · ') || esc(it.subtitle || '');
   const chips = [];
-  if (m.where) chips.push(`<span class="chip${m.where === '극장' ? ' on' : ''}">${esc(m.where)}</span>`);
-  if (isDate(m.release) && m.release.slice(0,10) > TODAY) chips.push(`<span class="chip">개봉 ${esc(md(m.release))}</span>`);
-  if (m.runtime) chips.push(`<span class="chip">${esc(/^\d+$/.test(String(m.runtime)) ? m.runtime + '분' : m.runtime)}</span>`);
+  if (m.where) chips.push(`<span class="chip${m.where === '극장' ? ' due' : ' on'}">${esc(m.where)}</span>`);
+  if (d10(m.release) > TODAY) chips.push(`<span class="chip line">${esc(mdS(m.release))} 개봉</span>`);
   const cover = img
     ? `<div class="ph film"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.closest('.ph').remove()">${nw ? '<span class="new">NEW</span>' : ''}</div>`
-    : `<div class="cover c${hash(it._id) % 3}">${nw ? '<span class="new" style="top:0">NEW</span>' : ''}<div class="ct"${nw ? ' style="margin-top:16px"' : ''}>${esc(it.title)}</div>${by ? `<div class="ca">${by}</div>` : ''}</div>`;
+    : `<div class="ph film tp c${hash(it._id) % 3}" aria-hidden="true">${nw ? '<span class="new">NEW</span>' : ''}<span class="tp-k">영화</span><div><div class="tp-t">${esc(it.title)}</div>${m.director ? `<div class="tp-v">${esc(m.director)}</div>` : ''}</div></div>`;
   return `<article class="card">
     ${cover}
     <div class="body">
-      ${img ? `<div><h3 class="t">${esc(it.title)}</h3>${by ? `<div class="sub">${by}</div>` : ''}</div>` : ''}
-      ${chips.length ? `<div class="chips">${chips.join('')}</div>` : ''}
+      <div><h3 class="t">${esc(it.title)}</h3>${by ? `<div class="film-by">${by}</div>` : ''}</div>
+      ${chips.length ? `<div class="chips row">${chips.join('')}</div>` : ''}
       ${whyHtml(it)}
       ${srcChip(it)}
-      ${detailHtml(it)}
       ${actions(it)}
     </div>
   </article>`;
@@ -395,34 +508,71 @@ function cardFilm(it){
 function sortEvents(list){
   return list.slice().sort((a, b) => { const x = eventState(a), y = eventState(b); return x.k - y.k || String(x.sort || '').localeCompare(String(y.sort || '')); });
 }
-function cultureHtml(list, heads){
-  const ev = sortEvents(list.filter(it => EVENT.includes(it.kind)));
-  const fl = list.filter(it => it.kind === 'film').sort((a, b) => String(b.batch || '').localeCompare(String(a.batch || '')));
-  const h = (t, n) => heads ? `<div class="batch-h"><h2>${t}</h2><span class="c">${n}</span></div>` : '';
-  let out = '';
-  if (ev.length) out += `<section class="batch">${h('전시·공연', ev.length)}<div class="grid">${ev.map(cardEvent).join('')}</div></section>`;
-  if (fl.length) out += `<section class="batch">${h('영화', fl.length)}<div class="grid books">${fl.map(cardFilm).join('')}</div></section>`;
+const filmsSorted = l => l.filter(it => it.kind === 'film').sort((a, b) => (d10((b.meta||{}).release) > TODAY) - (d10((a.meta||{}).release) > TODAY) || String(b.batch || '').localeCompare(String(a.batch || '')));
+const groupBy = (list, key) => { const g = new Map(); list.forEach(it => { const k = key(it); if (!g.has(k)) g.set(k, []); g.get(k).push(it); }); return [...g.entries()]; };
+const regionOf = it => { const m = it.meta || {}; return m.region || m.city || '기타'; };
+
+function domesticHtml(list){
+  const ev = list.filter(it => EVENT.includes(it.kind));
+  const groups = groupBy(ev, regionOf).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'ko'));
+  let out = groups.map(([r, l]) => {
+    const due = l.filter(it => eventState(it).html.includes('chip due')).length;
+    return `<section class="rg"><div class="rg-h"><h2>${esc(r)}</h2><span class="c">${l.length}</span>${due ? `<span class="r">곧 마감 ${due}</span>` : ''}</div>
+      <div class="grid evg">${sortEvents(l).map(it => cardEvent(it, false)).join('')}</div></section>`;
+  }).join('');
+  const fl = filmsSorted(list);
+  if (fl.length) out += `<section class="rg"><div class="rg-h"><h2>영화</h2><span class="c">${fl.length}</span></div><div class="grid books">${fl.map(cardFilm).join('')}</div></section>`;
   return out;
 }
+function tripsHtml(list){
+  const trips = groupBy(list, it => (it.meta.trip.id || it.meta.trip.name || '여행'))
+    .map(([id, l]) => ({ id, l, t: l[0].meta.trip }))
+    .sort((a, b) => String(d10(a.t.start) || '9999').localeCompare(String(d10(b.t.start) || '9999')));
+  return trips.map(({ l, t }) => {
+    const ts = d10(t.start), te = d10(t.end);
+    const dates = ts ? `${full(ts)}<span class="dash" style="margin:0 6px">—</span>${te ? (te.slice(0,4) === ts.slice(0,4) ? te.slice(5).replace('-', '.') : full(te)) : ''}` : '';
+    const dd = ts ? dayDiff(TODAY, ts) : null;
+    const chip = dd == null ? '' : dd > 0 ? `<span class="chip on">D-${dd}</span>` : (te && te >= TODAY ? '<span class="chip due">여행 중</span>' : '');
+    const cities = groupBy(l, it => (it.meta || {}).city || regionOf(it)).sort((a, b) => b[1].length - a[1].length);
+    return `<section class="trip"><div class="trip-h"><h2>${esc(t.name || '여행')}</h2>${dates ? `<span class="d">${dates}</span>` : ''}${chip}</div>
+      ${cities.map(([c, cl]) => `<div class="city-h"><h3>${esc(c)}</h3><span class="c">${cl.length}</span></div>
+        <div class="grid evg">${cl.slice().sort((a, b) => tripOverlap(a).k - tripOverlap(b).k || String(d10((a.meta||{}).end) || '9999').localeCompare(String(d10((b.meta||{}).end) || '9999'))).map(it => cardEvent(it, true)).join('')}</div>`).join('')}
+    </section>`;
+  }).join('');
+}
+function cultureHtml(list){
+  const ev = sortEvents(list.filter(it => EVENT.includes(it.kind)));
+  const fl = filmsSorted(list);
+  return (ev.length ? `<div class="grid evg">${ev.map(it => cardEvent(it, false)).join('')}</div>` : '')
+    + (fl.length ? `<div class="grid books"${ev.length ? ' style="margin-top:20px"' : ''}>${fl.map(cardFilm).join('')}</div>` : '');
+}
+const hasTrip = it => !!(it.meta && it.meta.trip && (it.meta.trip.name || it.meta.trip.id));
 function renderCulture(v){
   const all = ofTab('culture');
   if (!all.length){ v.innerHTML = '<p class="empty">첫 문화 수집은 다음 월요일 아침에 들어와요</p>'; return; }
   const base = all.filter(it => showHidden ? st(it) === 'nope' : st(it) !== 'nope');
   const live = base.filter(it => !isPast(it));
-  const cnt = k => live.filter(it => k === 'all' || it.kind === k).length;
-  const seg = `<div class="seg" role="group">${SUBS.map(([k, l]) => `<button class="${cultureSub === k ? 'on' : ''}" data-sub="${k}" aria-pressed="${cultureSub === k}">${l}<span class="n">${cnt(k)}</span></button>`).join('')}</div>`;
-  const pick = l => l.filter(it => cultureSub === 'all' || it.kind === cultureSub);
+  const inScope = (it, sc) => it.kind === 'film' ? sc === 'home' : (sc === 'trip') === hasTrip(it);
+  const scopeN = sc => live.filter(it => inScope(it, sc) && (cultureSub === 'all' || it.kind === cultureSub)).length;
+  const kindN = k => live.filter(it => (k === 'all' || it.kind === k) && (k === 'film' || inScope(it, cultureScope))).length;
+  const showScope = cultureSub !== 'film';
+  const scopeSeg = showScope ? `<div class="seg scope" role="group" aria-label="어디">${[['home','서울·국내'],['trip','여행지']].map(([k, l]) => `<button class="${cultureScope === k ? 'on' : ''}" data-scope="${k}" aria-pressed="${cultureScope === k}">${l}<span class="n">${scopeN(k)}</span></button>`).join('')}</div>` : '<div></div>';
+  const kindSeg = `<div class="seg" role="group" aria-label="종류">${SUBS.map(([k, l]) => `<button class="${cultureSub === k ? 'on' : ''}" data-sub="${k}" aria-pressed="${cultureSub === k}">${l}<span class="n">${kindN(k)}</span></button>`).join('')}</div>`;
+  const pick = l => l.filter(it => (cultureSub === 'all' || it.kind === cultureSub) && (cultureSub === 'film' ? it.kind === 'film' : inScope(it, cultureScope)));
   const main = pick(live), past = pick(base.filter(isPast));
-  let html = seg + (main.length ? cultureHtml(main, cultureSub === 'all') : `<p class="empty">${showHidden ? '숨긴 것이 없어요' : '지금 볼 만한 게 없어요 · 월·목 아침에 채워져요'}</p>`);
+  const emptyMsg = showHidden ? '숨긴 것이 없어요' : (cultureScope === 'trip' && showScope ? '잡힌 여행에 맞춘 전시·공연이 아직 없어요' : '지금 볼 만한 게 없어요 · 월·목 아침에 채워져요');
+  let html = `<div class="cul-ctl">${scopeSeg}${kindSeg}</div>`;
+  html += main.length ? (cultureScope === 'trip' && showScope ? tripsHtml(main) : domesticHtml(main)) : `<p class="empty">${emptyMsg}</p>`;
   if (past.length){
     html += `<button class="past-btn" data-past="1">${showPast ? '지난 것 접기' : '지난 것 ' + past.length}</button>`;
-    if (showPast) html += `<div class="past">${cultureHtml(past, false)}</div>`;
+    if (showPast) html += `<div class="past" style="margin-top:20px">${cultureHtml(past)}</div>`;
   }
   v.innerHTML = html;
 }
 
 function gridFor(kind, list, withHero){
-  if (kind === 'culture') return cultureHtml(list, false);
+  if (kind === 'culture') return cultureHtml(list);
+
   if (kind === 'book') return `<div class="grid books">${list.map(cardBook).join('')}</div>`;
   // 사진 있는 것 하나를 크게 (2칸), 나머지는 작게
   let ordered = list;
@@ -472,7 +622,8 @@ document.getElementById('tabs').addEventListener('click', e => {
 });
 document.getElementById('hiddenBtn').addEventListener('click', () => { showHidden = !showHidden; render(); });
 document.getElementById('view').addEventListener('click', async e => {
-  const sb = e.target.closest('[data-sub]'); if (sb){ cultureSub = sb.dataset.sub; render(); return; }
+  const sb = e.target.closest('[data-sub]'); if (sb){ cultureSub = sb.dataset.sub; try { localStorage.setItem('atelier_taste_culture_kind', cultureSub); } catch (e2) {} render(); return; }
+  const sc = e.target.closest('[data-scope]'); if (sc){ cultureScope = sc.dataset.scope; try { localStorage.setItem('atelier_taste_culture_scope', cultureScope); } catch (e2) {} render(); return; }
   if (e.target.closest('[data-past]')){ showPast = !showPast; render(); return; }
   const b = e.target.closest('[data-set]'); if (!b) return;
   const it = items.find(x => x._id === b.dataset.id); if (!it) return;
