@@ -17,7 +17,7 @@
   var KEY_MODE = 'wbc_mode';
 
   var _mode = 'month';
-  try { if (localStorage.getItem(KEY_MODE) === 'week') _mode = 'week'; } catch(e) {}
+  try { var _km = localStorage.getItem(KEY_MODE); if (_km === 'week' || _km === 'roadmap') _mode = _km; } catch(e) {}
   var _anchor = null;   // week 모드 기준일 (Date)
   var _sel = _dFmt(new Date());
 
@@ -313,6 +313,105 @@
   }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
+
+
+  // ─────────────── Roadmap (2026-11-07) ───────────────
+  //   같은 캘린더 데이터(plannerData 의 work_id/phase 표시 + 작품 목록 atelier_works + 연도별 시리즈 표 atelier_series_YYYY)로
+  //   작품마다 시놉·초고·퇴고·연재 막대, 연재 회차 눈금, 시리즈별 연재/공백 달, 계획 매출 vs 월 목표를 한 화면에.
+  //   ‹ › 는 3달씩. 막대를 누르면 그 단계 시작 달의 Month 보기로.
+  var ROAD_MONTHS = 15;
+  var ROAD_GOAL = 2500000;   // 아뜰리에 2027 목표 포타 3,000만 → 월 250만 (입금 기준)
+  var ROAD_TRACK = { 'R': { name: '리쿠 · WISH 채널', hex: '#0D9488' }, 'B': { name: '백현 · 고요한 다락방', hex: '#1F4BD8' } };
+  var PH = [['synopsis', '시놉', '#E3E8FB', '#16161A'], ['draft', '초고', '#9DB0EE', '#16161A'], ['revision', '퇴고', '#4E6FE0', '#fff'], ['rest', '휴식', '#ECECF0', '#16161A'], ['publishing', '연재', '#15803D', '#fff']];
+  function roadWorks() {
+    var list = []; try { list = JSON.parse(localStorage.getItem('atelier_works') || '[]'); } catch (e) {}
+    var by = {};
+    list.forEach(function(w) { if (w && w.id) by[w.id] = { id: w.id, title: w.title || '', series: w.series_name || '', sid: w.series_id || '', eps: w.total_episodes || 0, ph: {}, pubs: [] };
+      var o = by[w.id], P = w.phases || {};
+      ['synopsis', 'draft', 'revision', 'rest'].forEach(function(k) { if (P[k] && P[k].start) o.ph[k] = { s: P[k].start, e: P[k].end || P[k].start }; });
+      var ps = w.publish_start || (P._publishing && P._publishing.start), pe = w.publish_end || (P._publishing && P._publishing.end);
+      if (ps) o.ph.publishing = { s: ps, e: pe || ps };
+    });
+    (window.plannerData || []).forEach(function(r) {
+      var m = /work_id:([^|]+)(?:\|series_id:([^|]+))?\|phase:(\w+)/.exec((r[4] || '') + ''); if (!m) return;
+      var o = by[m[1]] || (by[m[1]] = { id: m[1], title: '', series: '', sid: m[2] || '', eps: 0, ph: {}, pubs: [] });
+      var d = (r[0] || '') + '', e = ((r[5] || '') + '') || d; if (!d) return;
+      var k = m[3]; var cur = o.ph[k];
+      o.ph[k] = cur ? { s: d < cur.s ? d : cur.s, e: e > cur.e ? e : cur.e } : { s: d, e: e };
+      if (k === 'publishing') o.pubs.push(d);
+      if (!o.title) { var t = ((r[1] || '') + '').match(/\(([^)]+)\)\s*$/); if (t) o.series = o.series || t[1]; }
+    });
+    return Object.keys(by).map(function(k) { var o = by[k]; o.pubs.sort(); o.start = Object.keys(o.ph).map(function(x) { return o.ph[x].s; }).sort()[0]; o.end = Object.keys(o.ph).map(function(x) { return o.ph[x].e; }).sort().slice(-1)[0];
+      o.key = (o.series || '').charAt(0).toUpperCase(); return o; }).filter(function(o) { return o.start; });
+  }
+  function roadPlanRev(y, m) {
+    var tot = 0, any = false;
+    try { (getSeriesData(y) || []).forEach(function(sr) { var c = sr && sr.monthly && sr.monthly[String(m)]; if (c && c.rev) { tot += Number(c.rev) || 0; any = true; } }); } catch (e) {}
+    return any ? tot : null;
+  }
+  function renderRoadmap(grid) {
+    var y0 = plannerYear, m0 = plannerMonth - 1;
+    var start = new Date(y0, m0, 1), end = new Date(y0, m0 + ROAD_MONTHS, 1);
+    var span = end - start, pct = function(ds) { var t = new Date(ds + 'T00:00:00') - start; return Math.max(0, Math.min(100, t / span * 100)); };
+    var months = []; for (var i = 0; i < ROAD_MONTHS; i++) months.push(new Date(y0, m0 + i, 1));
+    var mKey = function(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+    var sDs = _dFmt(start), eDs = _dFmt(new Date(end - 864e5));
+    var works = roadWorks().filter(function(w) { return w.end >= sDs && w.start <= eDs; });
+    var tracks = {}; works.forEach(function(w) { (tracks[w.key || '?'] = tracks[w.key || '?'] || []).push(w); });
+    var order = ['R', 'B'].concat(Object.keys(tracks).filter(function(k) { return k !== 'R' && k !== 'B'; }));
+    // 머리 글자
+    var big = document.getElementById('wbc-big'), rng = document.getElementById('wbc-range'), yr = document.getElementById('wbc-year');
+    if (big) big.textContent = 'RM'; if (rng) rng.textContent = 'Roadmap';
+    if (yr) yr.textContent = months[0].getFullYear() + '.' + (months[0].getMonth() + 1) + ' – ' + months[ROAD_MONTHS - 1].getFullYear() + '.' + (months[ROAD_MONTHS - 1].getMonth() + 1);
+    document.querySelectorAll('#wbc .wbc-mode button').forEach(function(b) { b.classList.toggle('on', b.getAttribute('data-mode') === 'roadmap'); });
+    var todayP = pct(today()), showToday = today() >= sDs && today() <= eDs;
+    var h = '<div class="rm">';
+    // 달 머리
+    h += '<div class="rm-row rm-head"><div class="rm-lab"></div><div class="rm-lane">' + months.map(function(d, i) {
+      return '<span class="rm-m' + (d.getMonth() === 0 ? ' y' : '') + '" style="left:' + (i / ROAD_MONTHS * 100) + '%;width:' + (100 / ROAD_MONTHS) + '%">' + (d.getMonth() === 0 || i === 0 ? '<b>' + d.getFullYear() + '</b>' : '') + (d.getMonth() + 1) + '월</span>'; }).join('') + '</div></div>';
+    order.forEach(function(k) {
+      var L = tracks[k]; if (!L) return;
+      var info = ROAD_TRACK[k] || { name: L[0].series || k, hex: '#16161A' };
+      // 겹치면 줄 나눔
+      var lanes = []; L.sort(function(a, b) { return a.start < b.start ? -1 : 1; }).forEach(function(w) {
+        for (var i = 0; i < lanes.length; i++) if (lanes[i] < w.start) { lanes[i] = w.end; w.lane = i; return; }
+        w.lane = lanes.length; lanes.push(w.end); });
+      h += '<div class="rm-row rm-track" style="--lanes:' + Math.max(1, lanes.length) + '"><div class="rm-lab"><i style="background:' + info.hex + '"></i><b>' + esc((L[0].series || k)) + '</b><span>' + esc(info.name) + '</span></div><div class="rm-lane">';
+      L.forEach(function(w) {
+        var left = pct(w.start), right = pct(w.end), top = w.lane * 58;
+        h += '<div class="rm-work" style="left:' + left + '%;width:' + Math.max(0.6, right - left) + '%;top:' + top + 'px">';
+        h += '<div class="rm-wt" title="' + esc(w.title) + '">' + esc(w.title || w.series) + (w.eps ? ' <em>' + w.eps + '화</em>' : '') + '</div><div class="rm-bar">';
+        PH.forEach(function(p) { var r = w.ph[p[0]]; if (!r || r.e < sDs || r.s > eDs) return;
+          var a = (pct(r.s) - left) / Math.max(0.001, right - left) * 100, b = (pct(r.e) - left) / Math.max(0.001, right - left) * 100;
+          h += '<button type="button" class="rm-seg" style="left:' + a + '%;width:' + Math.max(0.8, b - a) + '%;background:' + p[2] + ';color:' + p[3] + '" title="' + esc(p[1] + ' ' + r.s + ' ~ ' + r.e) + '" onclick="wbcRoadOpen(\'' + r.s + '\')">' + ((b - a) > 7 ? p[1] : '') + '</button>'; });
+        if (w.ph.publishing) w.pubs.forEach(function(d) { if (d < sDs || d > eDs) return; var x = (pct(d) - left) / Math.max(0.001, right - left) * 100; h += '<span class="rm-tick" style="left:' + x + '%" title="연재 ' + d + '"></span>'; });
+        h += '</div></div>';
+      });
+      h += '</div></div>';
+      // 연재 / 공백 달
+      h += '<div class="rm-row rm-gap"><div class="rm-lab"><span>연재 있는 달</span></div><div class="rm-lane">' + months.map(function(d, i) {
+        var mk = mKey(d), on = L.some(function(w) { return w.pubs.some(function(x) { return x.slice(0, 7) === mk; }) || (w.ph.publishing && !w.pubs.length && w.ph.publishing.s.slice(0, 7) <= mk && w.ph.publishing.e.slice(0, 7) >= mk); });
+        return '<span class="rm-g ' + (on ? 'on' : 'off') + '" style="left:' + (i / ROAD_MONTHS * 100) + '%;width:' + (100 / ROAD_MONTHS) + '%">' + (on ? '연재' : '공백') + '</span>'; }).join('') + '</div></div>';
+    });
+    // 계획 매출 (Side Jobs 연도 표의 R·B 월 매출 합) vs 월 목표
+    var revs = months.map(function(d) { return roadPlanRev(d.getFullYear(), d.getMonth()); });
+    var maxR = Math.max(ROAD_GOAL * 1.2, Math.max.apply(null, revs.map(function(v) { return v || 0; })));
+    h += '<div class="rm-row rm-money"><div class="rm-lab"><b>계획 매출</b><span>Side Jobs 표 · 목표 월 250만</span></div><div class="rm-lane">';
+    h += '<span class="rm-goal" style="bottom:' + (ROAD_GOAL / maxR * 100) + '%"><em>월 250만</em></span>';
+    revs.forEach(function(v, i) { var hp = v ? v / maxR * 100 : 0;
+      h += '<span class="rm-rv" style="left:' + (i / ROAD_MONTHS * 100) + '%;width:' + (100 / ROAD_MONTHS) + '%"><i class="' + (v == null ? 'na' : v >= ROAD_GOAL ? 'ok' : 'lo') + '" style="height:' + hp + '%"></i><b>' + (v == null ? '—' : Math.round(v / 1e4)) + '</b></span>'; });
+    h += '</div></div>';
+    if (showToday) h += '<div class="rm-today" style="left:calc(var(--rm-lab) + (100% - var(--rm-lab)) * ' + (todayP / 100) + ')"><em>오늘</em></div>';
+    h += '<div class="rm-legend">' + PH.map(function(p) { return '<span><i style="background:' + p[2] + '"></i>' + p[1] + '</span>'; }).join('') + '<span><i class="tk"></i>연재 회차</span><span class="hint">막대를 누르면 그 날짜의 Month 로 · ‹ › 는 3달씩</span></div>';
+    h += '</div>';
+    grid.className = 'wbc-grid roadmap';
+    grid.innerHTML = h;
+  }
+  window.wbcRoadOpen = function(ds) {
+    var d = new Date(ds + 'T00:00:00'); plannerYear = d.getFullYear(); plannerMonth = d.getMonth(); _sel = ds; selectedPlannerDate = ds;
+    _mode = 'month'; try { localStorage.setItem(KEY_MODE, 'month'); } catch (e) {}
+    renderCalendarWb(); try { updatePlannerTracks(); } catch (e) {}
+  };
 
   // ─────────────── 화면에 보일 날짜들 ───────────────
   function visibleDays() {
@@ -805,6 +904,9 @@
       return;
     }
     placePhoneChrome(false);
+    var wbcEl = document.getElementById('wbc');
+    if (wbcEl) wbcEl.classList.toggle('is-road', _mode === 'roadmap');
+    if (_mode === 'roadmap') { renderRoadmap(grid); renderHeaderStats(); return; }
     var days = visibleDays();
     renderHeader(days);
     var lanes = computeLanes(_dFmt(days[0]), _dFmt(days[days.length - 1]));
@@ -826,7 +928,11 @@
   window.calNavToday = function() { wbcToday(); };
   window.wbcGo = function(dir) {
     _mFrom = null;
-    if (_mode === 'week' && !isPhone()) {
+    if (_mode === 'roadmap' && !isPhone()) {
+      plannerMonth += dir * 3;
+      while (plannerMonth < 0) { plannerMonth += 12; plannerYear--; }
+      while (plannerMonth > 11) { plannerMonth -= 12; plannerYear++; }
+    } else if (_mode === 'week' && !isPhone()) {
       var s0 = startOfWeek(_anchor || new Date());
       _anchor = addDays(s0, dir * 7);
       var mid = addDays(_anchor, 3);
@@ -888,7 +994,7 @@
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var el = pickerEl(); if (el && !el.hidden) wbcPickerClose(); } });
 
   window.wbcSetMode = function(m) {
-    _mode = m === 'week' ? 'week' : 'month';
+    _mode = m === 'week' ? 'week' : m === 'roadmap' ? 'roadmap' : 'month';
     try { localStorage.setItem(KEY_MODE, _mode); } catch(e) {}
     if (_mode === 'week') {
       var sd = new Date(_sel + 'T00:00:00');
@@ -915,6 +1021,48 @@
 
   // ─────────────── (2026-11-06 3차) 화면 다듬기 CSS — index.html 대신 여기서 넣는다 ───────────────
   var R3_CSS = [
+    /* ── Roadmap ── */
+    '.wbc.is-road .wbc-wds, .wbc.is-road .wbc-agenda, .wbc.is-road #wbc-agenda { display:none !important; }',
+    '.wbc.is-road .wbc-body { grid-template-columns:1fr !important; }',
+    '.wbc-grid.roadmap { display:block !important; border:0 !important; }',
+    '.rm { --rm-lab:190px; position:relative; border:1px solid #D4D4D8; background:#fff; }',
+    '.rm-row { display:grid; grid-template-columns:var(--rm-lab) 1fr; border-bottom:1px solid #E4E4E9; }',
+    '.rm-row:last-of-type { border-bottom:0; }',
+    '.rm-lab { padding:12px 14px; border-right:1px solid #E4E4E9; display:flex; flex-direction:column; gap:2px; justify-content:center; }',
+    '.rm-lab i { width:22px; height:5px; display:block; margin-bottom:4px; }',
+    '.rm-lab b { font-size:15px; font-weight:800; color:#16161A; }',
+    '.rm-lab span { font-size:12.5px; font-weight:600; color:#1A3FB5; }',
+    '.rm-lane { position:relative; }',
+    '.rm-head .rm-lane { height:40px; background:#FAFAFC; }',
+    '.rm-m { position:absolute; top:0; bottom:0; display:flex; align-items:flex-end; padding:0 0 8px 8px; font-size:13px; font-weight:700; color:#16161A; border-left:1px solid #E4E4E9; gap:4px; }',
+    '.rm-m b { font-size:11.5px; font-weight:800; color:#1A3FB5; position:absolute; top:5px; left:8px; }',
+    '.rm-m.y { border-left:2px solid #16161A; }',
+    '.rm-track .rm-lane { height:calc(var(--lanes) * 58px + 14px); background-image:linear-gradient(to right, #F1F1F4 1px, transparent 1px); background-size:calc(100% / ' + 15 + ') 100%; }',
+    '.rm-work { position:absolute; margin-top:8px; }',
+    '.rm-wt { font-size:13.5px; font-weight:800; color:#16161A; white-space:nowrap; overflow:visible; margin-bottom:4px; }',
+    '.rm-wt em { font-style:normal; font-weight:600; color:#2A2A30; font-size:12.5px; }',
+    '.rm-bar { position:relative; height:24px; }',
+    '.rm-seg { position:absolute; top:0; bottom:0; border:0; padding:0 6px; font:inherit; font-size:12px; font-weight:800; text-align:left; white-space:nowrap; overflow:hidden; cursor:pointer; }',
+    '.rm-seg:hover { filter:brightness(.95); outline:2px solid #16161A; outline-offset:-2px; }',
+    '.rm-tick { position:absolute; top:4px; bottom:4px; width:2px; background:rgba(255,255,255,.9); pointer-events:none; }',
+    '.rm-gap .rm-lane { height:30px; }',
+    '.rm-g { position:absolute; top:5px; bottom:5px; margin:0 2px; display:grid; place-items:center; font-size:12px; font-weight:800; }',
+    '.rm-g.on { background:#E8F5EC; color:#166534; }',
+    '.rm-g.off { background:#FDECEC; color:#B91C1C; }',
+    '.rm-gap .rm-lab span { color:#2A2A30; font-weight:700; }',
+    '.rm-money .rm-lane { height:120px; }',
+    '.rm-rv { position:absolute; bottom:22px; top:10px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; }',
+    '.rm-rv i { width:46%; display:block; background:#9DB0EE; }',
+    '.rm-rv i.ok { background:#15803D; } .rm-rv i.lo { background:#4E6FE0; } .rm-rv i.na { background:transparent; }',
+    '.rm-rv b { position:absolute; bottom:-19px; font-size:12.5px; font-weight:800; color:#16161A; }',
+    '.rm-goal { position:absolute; left:0; right:0; border-top:2px dashed #DC2626; pointer-events:none; margin-bottom:22px; }',
+    '.rm-goal em { position:absolute; right:6px; top:-20px; font-style:normal; font-size:12px; font-weight:800; color:#DC2626; background:#fff; padding:0 4px; }',
+    '.rm-today { position:absolute; top:0; bottom:44px; width:0; border-left:2px solid #DC2626; pointer-events:none; }',
+    '.rm-today em { position:absolute; top:2px; left:4px; font-style:normal; font-size:11.5px; font-weight:800; color:#fff; background:#DC2626; padding:1px 5px; }',
+    '.rm-legend { display:flex; flex-wrap:wrap; gap:8px 16px; padding:12px 14px; border-top:1px solid #E4E4E9; font-size:13px; font-weight:700; color:#16161A; }',
+    '.rm-legend i { display:inline-block; width:18px; height:10px; margin-right:6px; vertical-align:-1px; }',
+    '.rm-legend i.tk { background:#15803D; box-shadow:inset 8px 0 0 #15803D, inset 9px 0 0 #fff; }',
+    '.rm-legend .hint { font-weight:600; color:#2A2A30; margin-left:auto; }',
     /* 제목: NOVEMBER 2026 ▾ → November 2026 + 눌리는 네모 꺾쇠 */
     '.wbc .wbc-title .cap { flex-direction:row; align-items:baseline; gap:8px; padding-bottom:4px; }',
     '.wbc .wbc-title .cap b { font-size:20px; font-weight:600; letter-spacing:0; }',
