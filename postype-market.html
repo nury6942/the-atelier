@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<title>Postype Market</title>
+<title>Market</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
   /* 아뜰리에 정본(DESIGN.md): 흰 바탕·직각·코발트 하나·Pretendard·그림자 없음·연회색 글자 없음
@@ -338,8 +338,8 @@
   <div class="pm-top">
   <header class="mast">
     <div>
-      <h1>Postype Market</h1>
-      <div class="feed" id="feed">포스타입 '나페스' 시장 — 누구로 써야 돈이 되나</div>
+      <h1>Market</h1>
+      <div class="feed" id="feed">'나페스' 시장 — 누구로 써야 돈이 되나</div>
     </div>
   </header>
   <div class="tabsrow"><nav class="tabs" id="tabs" role="tablist"></nav></div>
@@ -420,7 +420,7 @@ async function load(){
     D.seriesById = Object.fromEntries((D.series || []).map(s => [s.id, s]));
     if (!LOCAL) { try { const hs = await db.collection('postypeMarketInsights').orderBy(firebase.firestore.FieldPath.documentId(), 'desc').limit(16).get(); HIST = hs.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { console.warn(e); } }
     const m = D.meta;
-    document.getElementById('feed').innerHTML = `포스타입 '나페스' 검색 · <b>${esc(m.from)} ~ ${esc(m.to)}</b> · 글 <b>${fmtN(m.posts)}</b>개 · 수집 <b>${esc((m.collectedAt||'').slice(0,10))}</b>`;
+    document.getElementById('feed').innerHTML = `'나페스' 검색 · <b>${esc(m.from)} ~ ${esc(m.to)}</b> · 글 <b>${fmtN(m.posts)}</b>개 · 수집 <b>${esc((m.collectedAt||'').slice(0,10))}</b>`;
     render();
   } catch (e) { console.error(e); view('<p class="empty">불러오지 못했어요 · ' + esc(e.message) + '</p>'); }
 }

@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=436" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=437" as="script">
   <link rel="preload" href="js/app-2-init.js?v=198" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/app-5-ledger-export.js?v=164" as="script">
@@ -11762,7 +11762,7 @@
     </a>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-market" onclick="navigate('market'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">query_stats</span>
-      <span class="text-[13.5px] font-medium">Postype Market</span>
+      <span class="text-[13.5px] font-medium">Market</span>
     </a>
     <div class="nav-group">Travel</div>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-journey" onclick="navigate('journey'); return false;">
@@ -11898,7 +11898,7 @@
             <a href="#" onclick="navigate('finance-hub');return false;">Money</a>
             <a href="#" onclick="navigate('ledger');return false;">Daily Ledger</a>
             <a href="#" onclick="navigate('income');return false;">Side Jobs</a>
-            <a href="#" onclick="navigate('market');return false;">Postype Market</a>
+            <a href="#" onclick="navigate('market');return false;">Market</a>
           </div>
           <div class="atl-home-col">
             <h2>Travel</h2>
@@ -16780,7 +16780,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script src="js/public-data.js?v=2" defer></script>
-<script src="js/app-1-pages.js?v=436" defer></script>
+<script src="js/app-1-pages.js?v=437" defer></script>
 <script src="js/flight-deals.js?v=12" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17466,7 +17466,7 @@
           <div><dt><a href="#" onclick="navigate('finance-hub');return false;">Money › Assets</a></dt><dd>월별 수입·지출·저축과 총 자산.</dd></div>
           <div><dt><a href="#" onclick="navigate('ledger');return false;">Money › Ledger</a></dt><dd>하루하루 가계부와 이달 전략 보드. 폰에선 전용 화면으로 열린다.</dd></div>
           <div><dt><a href="#" onclick="navigate('income');return false;">Money › Side Jobs</a></dt><dd>부업 수입(포스타입 등) 기록과 정산.</dd></div>
-          <div><dt><a href="#" onclick="navigate('market');return false;">Postype Market</a></dt><dd>포스타입 '나페스' 시장 1년치 — 어떤 아이돌·결이 돈이 되는지, 작가·시리즈 순위. 아이맥 Aside 가 모아 온다.</dd></div>
+          <div><dt><a href="#" onclick="navigate('market');return false;">Market</a></dt><dd>'나페스' 시장 1년치 — 어떤 아이돌·결이 돈이 되는지, 작가·시리즈 순위. 아이맥 Aside 가 모아 온다.</dd></div>
           <div><dt><a href="#" onclick="navigate('tax');return false;">Money › Tax</a></dt><dd>올해 소득분 세금 세 번(연말정산·5월 종소세·퇴직)과 연금저축 효과.</dd></div>
           <div><dt><a href="#" onclick="navigate('journey');return false;">Travel</a></dt><dd>여행 하나의 일정·스팟·예약·예산·체크리스트·Atlas.</dd></div>
           <div><dt><a href="#" onclick="navigate('deals');return false;">Flight Deals</a></dt><dd>관심 도시 항공권 특가.</dd></div>
@@ -17521,7 +17521,7 @@
   </div>
   <!-- ════════ POSTYPE MARKET — 나페스 시장 리서치 (postype-market.html, 데이터 Firestore postypeMarket/latest_* 는 아이맥 scripts/postype-market/) ════════ -->
   <div id="page-market" class="page" style="display:none;padding:0;background:#fff">
-    <iframe id="market-frame" title="Postype Market" loading="lazy" src="./postype-market.html?v=7"
+    <iframe id="market-frame" title="Market" loading="lazy" src="./postype-market.html?v=8"
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
   </div>
   <!-- ════════ TASTE — 취향 추천 아카이브 (taste.html, 데이터 Firestore tasteItems 는 아이맥 scripts/taste/ 가 월·목) ════════ -->
