@@ -1,3 +1,6 @@
+## 2026-11-07 (맥북) — Taste 책 표지 높이
+- 글자 표지가 3:4 라 빈 색 덩어리가 너무 길었음 → 글자 표지는 높이 170, 실제 표지 사진일 때만 3:4
+
 ## 2026-11-07 (맥북) — Taste 페이지 (취향 추천 아카이브)
 - 사이드바 Everyday › Memo 밑에 Taste(아이콘 interests), 홈 메뉴·Help 한 줄도 추가. 화면은 별도 taste.html 을 iframe 으로(page-taste)
 - 탭: Places · Stays · Books · Cities · ★ Saved (숫자 붙음), 탭 안은 「11/07 들어온 것」 배치별, 첫 장(사진 있는 것)은 2칸×2줄 크게
