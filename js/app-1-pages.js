@@ -28254,8 +28254,24 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     ['25회차','2026-09-02'],['26회차','2026-09-09'],['27회차','2026-09-16'],['28회차','2026-09-23'],
     ['29회차','2026-09-30'],['30회차','2026-10-21'],['31회차','2026-10-28'],['32회차','2026-11-04'],
     ['33회차','2026-11-11'],['34회차','2026-11-18'],['35회차','2026-11-25'],['36회차','2026-12-02'],
-    ['37회차','2026-12-09'],['38회차','2026-12-16']
+    ['37회차','2026-12-09'],['38회차','2026-12-16'],
+    // 2027: 1/6(수)부터 2주마다 수요일 (누리 11/07)
+    ['1회차','2027-01-06'],['2회차','2027-01-20'],['3회차','2027-02-03'],['4회차','2027-02-17'],['5회차','2027-03-03'],['6회차','2027-03-17'],['7회차','2027-03-31'],['8회차','2027-04-14'],['9회차','2027-04-28'],['10회차','2027-05-12'],['11회차','2027-05-26'],['12회차','2027-06-09'],['13회차','2027-06-23'],['14회차','2027-07-07'],['15회차','2027-07-21'],['16회차','2027-08-04'],['17회차','2027-08-18'],['18회차','2027-09-01'],['19회차','2027-09-15'],['20회차','2027-09-29'],['21회차','2027-10-13'],['22회차','2027-10-27'],['23회차','2027-11-10'],['24회차','2027-11-24'],['25회차','2027-12-08'],['26회차','2027-12-22']
   ];
+  // 수업 트래커는 한 해씩 본다 — 처음엔 오늘 날짜의 해
+  var engYear = String(new Date().getFullYear());
+  function engRowYear(r){ return (r && r[1] ? String(r[1]).slice(0,4) : ''); }
+  function engYearRows(){ return englishData.filter(function(r){ return engRowYear(r) === engYear; }); }
+  window.setEngYear = function(y){ engYear = String(y); renderEnglishTable(); updateEnglishStats(); };
+  function renderEngYearTabs(){
+    var box = document.getElementById('english-year-tabs'); if (!box) return;
+    var cnt = {}; cnt[String(new Date().getFullYear())] = 0;
+    englishData.forEach(function(r){ var y = engRowYear(r); if (/^\d{4}$/.test(y)) cnt[y] = (cnt[y]||0) + (r[2] === '취소' ? 0 : 1); });
+    box.innerHTML = Object.keys(cnt).sort().map(function(y){
+      var on = y === engYear;
+      return '<button onclick="setEngYear(\'' + y + '\')" class="eng-year-btn' + (on ? ' on' : '') + '">' + y + '<span>' + cnt[y] + '</span></button>';
+    }).join('');
+  }
 
   var LS_ENGLISH_STATUS_KEY = 'atelier_english_status';
   var LS_ENGLISH_DELETED_KEY = 'atelier_english_deleted_defaults'; // 사용자가 삭제한 default 회차 날짜 set
@@ -28587,7 +28603,9 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     var colCount = 7;
 
     // 날짜 오름차순 정렬
-    var sorted = englishData.map(function(row, i) { return { row: row, origIdx: i }; });
+    renderEngYearTabs();
+    var sorted = englishData.map(function(row, i) { return { row: row, origIdx: i }; })
+      .filter(function(e){ return engRowYear(e.row) === engYear; });
     sorted.sort(function(a, b) {
       var da = a.row[1] || '', db = b.row[1] || '';
       if (!da && db) return 1; if (da && !db) return -1;
@@ -28673,15 +28691,16 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
         '<td style="background:rgba(53,99,223,0.04);"></td><td style="background:rgba(53,99,223,0.04);"></td>';
       tbody.appendChild(subtotalTr);
     });
-    document.getElementById('english-status').textContent = sorted.length + '개 수업';
+    document.getElementById('english-status').textContent = engYear + '년 · ' + sorted.length + '개 수업';
   }
 
   function updateEnglishStats() {
-    const cancelled = englishData.filter(function(r){ return r[2]==='취소'; }).length;
-    const total = englishData.length - cancelled;
-    const done = englishData.filter(function(r){ return r[2]==='완료'; }).length;
-    const inprog = englishData.filter(function(r){ return r[2]==='진행 중'; }).length;
-    const scheduled = englishData.filter(function(r){ return r[2]==='예정'; });
+    const yr = engYearRows();   // 진행률·연간 누적은 보고 있는 해 기준
+    const cancelled = yr.filter(function(r){ return r[2]==='취소'; }).length;
+    const total = yr.length - cancelled;
+    const done = yr.filter(function(r){ return r[2]==='완료'; }).length;
+    const inprog = yr.filter(function(r){ return r[2]==='진행 중'; }).length;
+    const scheduled = yr.filter(function(r){ return r[2]==='예정'; });
     const pct = total > 0 ? Math.round((done/total)*100) : 0;
 
     document.getElementById('english-total').textContent = total;
@@ -28706,7 +28725,7 @@ window._msi = function(n, sz) { return '<span class="material-symbols-outlined a
     englishData.forEach(function(r){
       const f = parseFloat((r[4]||'').toString().replace(/[^0-9.]/g,''));
       if(!isNaN(f)) {
-        feeAnnual += f;
+        if (engRowYear(r) === engYear) feeAnnual += f;
         const d = r[1] ? new Date(r[1]) : null;
         if(d && d.getMonth() === nowMonth && d.getFullYear() === nowYear) feeTotal += f;
       }
