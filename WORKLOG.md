@@ -1,3 +1,10 @@
+## 2026-11-07 (맥북) — Taste 수집기 2차: 타래·큐레이터·사진 필수·문화생활(국내+여행지)
+- X·Threads 원문은 작성자 타래(본인 답글)까지 내리며 모아 읽음 → 장소 이름(📍)·사진을 타래에서 찾음. `--url` 로 특정 글 강제 포함
+- 인스타 큐레이터 20개(트립고잉 @_tripgoing 963K 등, Aside 로 프로필 열어 팔로워 5만↑ 확인) 최신 12개씩, 회차마다 8개 돌림, 본 글은 아이맥 ~/.cache/atelier-taste/seen.json
+- 사진 필수: 원글 → 캐러셀/타래 → 상세 페이지 og:image → 이름으로 인스타·네이버 → 위키백과, claude 가 Read 로 확인. 못 찾으면 카드를 안 씀. backfill.js 로 기존 카드(책·도시 포함) image 만 채움
+- culture.js 신설: 국내 전시·공연·영화(NOL·네이버·미술관·X/Threads·전시 큐레이터 5) → 상세 페이지로 기간·가격·장소 확인, 공연은 서울만, JX·김재중·김준수 항상. 해외는 trips·trip_cities 여행 도시 날짜에 맞춰 미술관(상설 permanent)·공연
+- 공통 코드 lib.js, launchd 는 run.sh(collect → culture) 를 부름. 위치는 scripts/taste/
+
 ## 2026-11-07 (아이맥) — Postype Market (나페스 시장 리서치)
 - 누리 질문: "나페스에서 누구로 써야 돈이 되나"(NCT로 좁히지 않음). Money › Postype Market 새 페이지(postype-market.html, iframe page-market). 탭: Overview(Who Makes Money · Rising · Groups · 월별 · Themes) / Idols(People·Groups·Themes 표, 줄 누르면 작가·시리즈) / Authors / Series / Me vs Market(추정 vs 실제)
 - 수집 scripts/postype-market/collect.mjs: 아이맥 Aside REPL 로 포스타입 내부 검색 API(`api/v3/post:search`, size 100, 반달 단위) → '나페스' 1년치 11.4만 글, 상위 시리즈 800 회차·채널 800 구독자. 요청 사이 1.2초, 막히면 멈추고 state.json 에서 이어감
