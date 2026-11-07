@@ -130,6 +130,17 @@
   .icard .refs button{font-size:11.5px;font-weight:600;padding:2px 7px;border:1px solid var(--line2);margin:0 4px 4px 0}
   .icard .refs button:hover{border-color:var(--accent);color:var(--accent)}
   @media (max-width:860px){.icards{grid-template-columns:1fr}.ins-head h2{font-size:19px}}
+  .scn{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .scard{border:1px solid var(--line);padding:14px;min-width:0}
+  .scard .l{font-size:12.5px;font-weight:700;color:var(--ink2)}
+  .scard .v{font-size:26px;font-weight:800}
+  .scard .s{font-size:12px;color:var(--mut);margin-bottom:8px}
+  .scard .ex{margin-top:8px;font-size:13px}
+  .scard .ex .sub{display:block;font-size:11.5px;color:var(--ink2)}
+  @media (max-width:860px){.scn{grid-template-columns:1fr}}
+  .ptn{display:flex;flex-wrap:wrap;gap:1px;margin-top:3px}
+  .ptn i{width:7px;height:9px;background:var(--line)}
+  .ptn i.on{background:var(--ink)}
   .pcards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:12px}
   .pcard{border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:12px}
   .pcard{min-width:0}
@@ -563,6 +574,11 @@ function playbook(){
       </div>
       <p class="note">내 기준(약 1만 자 500P)과 비교해 보세요. 화수 가운데값은 ${S.eps.med ?? '—'}화(가운데 50% ${S.eps.p25 ?? '—'}~${S.eps.p75 ?? '—'}화).</p>
     </section>
+    ${S.adultMix ? `<section class="sec card"><div class="sech"><h2>Scenes</h2><p>유료 시리즈(8화 이상)를 회차마다 붙은 19금 표시로 나눔 · 19금 표시는 작가가 성인 인증을 건 회차</p></div>
+      <div class="scn">${[['all', '전부 19금'], ['part', '필요한 회차만 19금'], ['none', '19금 없음']].map(([k, l]) => { const g = S.adultMix[k]; return `<div class="scard">
+        <div class="l">${l}</div><div class="v num">${g.revShare}%</div><div class="s">매출 점유 · 시리즈 ${g.n}개(${g.seriesShare}%) · 시리즈당 ${won(g.revMed)}</div>
+        ${g.examples.map(x => `<div class="ex"><a class="lnk" href="${chUrl(x.channelName)}/series/${x.id}" target="_blank" rel="noopener">${esc(x.title)}</a><span class="sub">${esc(x.channel)} · ${x.eps}화 · 19금 ${x.adultEpRatio}% · ${x.price}P</span><div class="ptn">${String(x.pattern).split('').map(c => `<i class="${c === '1' ? 'on' : ''}"></i>`).join('')}</div></div>`).join('')}
+      </div>`; }).join('')}</div><p class="note">작은 칸 하나가 한 화예요(앞 30화). 진한 칸이 19금 회차.</p></section>` : ''}
     <section class="sec grid2">
       <div class="card"><div class="sech"><h2>Cadence</h2><p>연재 간격 가운데값 ${S.gapDays.med ?? '—'}일 (가운데 50% ${S.gapDays.p25 ?? '—'}~${S.gapDays.p75 ?? '—'}일)</p></div>
         <h3 style="font-size:12.5px;color:var(--ink2);margin:6px 0">유료 시리즈가 주로 올라오는 요일</h3>${cols(S.weekday, WD)}

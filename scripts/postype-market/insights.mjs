@@ -39,6 +39,7 @@ const summary = {
   keywordsFalling3m: view(D.keywords || [], 3, 200, 10).filter(k => k.growth != null && parseFloat(k.growth) < 0).sort((a, b) => parseFloat(a.growth) - parseFloat(b.growth)).slice(0, 10),
   themes3m: view(D.themes, 3, 12),
   topAuthors: { 리쿠: authorBrief(P['리쿠']), 변백현: authorBrief(P['변백현']), 사쿠야: authorBrief(P['사쿠야']), 유우시: authorBrief(P['유우시']), 오시온: authorBrief(P['오시온']) },
+  sceneMix: st.adultMix ? Object.fromEntries(Object.entries(st.adultMix).map(([k, g]) => [k, { series: g.n, seriesShare: g.seriesShare + '%', revShare: g.revShare + '%', revMed: Math.round(g.revMed / 1e4) + '만', examples: g.examples.map(x => x.title + '(19금 ' + x.adultEpRatio + '%)') }])) : null,
   playbook: { freeEps: st.freeEps, price: st.price, eps: st.eps, gapDays: st.gapDays, charsPerEp: st.charsPerEp, paidCharsPerEp: st.paidCharsPerEp, pricePer10k: st.pricePer10k, paidRatio: st.paidRatio, membership: st.membership, weekday_일월화수목금토: st.weekday, focusBuckets: st.focusBuckets, created: st.created, fresh: st.fresh, freshInTop: (st.freshInTop || []).slice(0, 8) },
   peers_누리방식성공채널: (D.peers || []).map(p => ({ title: p.title, created: p.createdAt, firstPost: p.firstPost, subs: p.subscribers, estRev1y: Math.round(p.estRev / 1e4) + '만', totalPosts: p.totalPosts, postsPerMonth: p.postsPerMonth, freeBeforeFirstPaid: p.freeBeforeFirstPaid, paid: p.paidPosts, free: p.freePosts, adultPaidRatio: p.adultPaidRatio + '%', price: p.medPrice, gapDays: p.medGapDays, paidChars: p.medPaidChars, pricePer10k: p.pricePer10k, hasExternalLinks: (p.links || []).length > 0, people: p.people, series: (p.series || []).slice(0, 3).map(s => s.title + ' ' + s.eps + '편 ' + (s.adult ? '19' : '전연령')) })),
   mine: D.authors.filter(a => a.mine).map(a => ({ title: a.title, subs: a.subscribers, estRev: a.estRev, posts: a.posts, people: a.people, focus: a.focus, rank: D.authors.indexOf(a) + 1 })),
@@ -51,7 +52,7 @@ const prompt = `너는 포스타입 '나페스'(아이돌 RPF 드림) 시장 분
 - 채널 2개: 고요한 다락방(@bichu-attic, 백현/EXO, 구독 1.2만), 요란한 옥탑방(@hotnncold, 리쿠/NCT WISH, 구독 300여)
 - 목표: 포스타입 월 400만 원 안정 → 2028년 말 퇴사
 - 계획: 리쿠 장편 「미친개 길들이기」(센티넬 AU, 22화) 12월 말 옥탑방 연재 · 다락방 백현 신작은 2027년
-- 지금 방식: 주 1회 금 21시, 1~3화 무료, 약 1만 자 500P. 다 써 놓고 주 1회 장편 연재가 본인 방식이고 바꿀 생각 없음(매일 썰·톡글은 못 함/싫어함). 조언은 이 틀 안에서, Peers(누리 방식 성공 채널)를 기준으로.
+- 지금 방식: 주 1회 금 21시, 1~3화 무료, 약 1만 자 500P. 다 써 놓고 주 1회 장편 연재가 본인 방식이고 바꿀 생각 없음(매일 썰·톡글은 못 함/싫어함). 조언은 이 틀 안에서, Peers(누리 방식 성공 채널)를 기준으로. 수위 위주 글도 안 씀 — 씬은 이야기에 꼭 필요한 회차에만(필요한 회차만 19금). Peers 중 19금 비율이 높은 곳은 그 점을 밝히고, 누리에게 맞는 사례(19금 비율 낮은 곳)를 우선.
 
 ## 규칙
 - 숫자는 요약에 있는 것만. 없는 숫자·작가·작품을 지어내지 않는다. 추정 매출은 '추정'이라고 쓴다(실제보다 낮게 나오는 편, estimateCheck 참고).

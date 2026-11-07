@@ -161,7 +161,7 @@ for (const [id, s] of Object.entries(series)) {
     id: Number(id), title: f.seriesTitle, channelName: f.channelName, channelTitle: f.channelTitle, author: f.author,
     eps: eps.length, start: day(f.publishedAt), last: day(l.publishedAt), daysSinceLast: Math.round((Date.now() / 1000 - l.publishedAt) / 86400),
     medGapDays: r1(median(gaps)), weekday: modeOf(eps.map(e => new Date((e.publishedAt + KST) * 1000).getUTCDay())), hour: modeOf(eps.map(e => new Date((e.publishedAt + KST) * 1000).getUTCHours())),
-    freeEps: eps.length - paidEps.length, firstPaidEp: firstPaid >= 0 ? firstPaid + 1 : null, medPrice: median(paidEps.map(e => e.price)), adult: eps.some(e => e.adult),
+    freeEps: eps.length - paidEps.length, firstPaidEp: firstPaid >= 0 ? firstPaid + 1 : null, medPrice: median(paidEps.map(e => e.price)), adult: eps.some(e => e.adult), adultEpRatio: Math.round(100 * eps.filter(e => e.adult).length / eps.length), adultPattern: eps.slice(0, 30).map(e => e.adult ? 1 : 0).join(''),
     views: sum(eps, e => e.views), likes: sum(eps, e => e.likes), comments: sum(eps, e => e.comments),
     estRev: Math.round(sum(eps, estRev)), retention: eps[0].views ? r1(100 * l.views / eps[0].views) : null,
     curve: eps.map(e => [e.views, e.likes, e.comments, e.price]),
@@ -237,6 +237,10 @@ const strategy = (() => {
   const yr = {}; for (const a of top) if (a.createdAt) yr[a.createdAt.slice(0, 4)] = (yr[a.createdAt.slice(0, 4)] || 0) + 1;
   return {
     topN: top.length, seriesN: ts.length, paidSeriesN: paidTs.length,
+    adultMix: (() => { const L = seriesList.filter(x => !x.mine && x.eps >= 8 && x.medPrice); const tot = L.reduce((q, x) => q + x.estRev, 0) || 1;
+      const g = (f) => { const v = L.filter(f); return { n: v.length, seriesShare: Math.round(100 * v.length / L.length), revShare: Math.round(100 * v.reduce((q, x) => q + x.estRev, 0) / tot), revMed: median(v.map(x => x.estRev)),
+        examples: [...v].sort((a, b) => b.estRev - a.estRev).slice(0, 4).map(x => ({ title: x.title, channel: x.channelTitle, channelName: x.channelName, id: x.id, eps: x.eps, adultEpRatio: x.adultEpRatio, price: x.medPrice, estRev: x.estRev, pattern: x.adultPattern, themes: x.themes.slice(0, 2) })) }; };
+      return { all: g(x => x.adultEpRatio >= 95), part: g(x => x.adultEpRatio > 0 && x.adultEpRatio < 95), none: g(x => x.adultEpRatio === 0) }; })(),
     freeEps: dist(paidTs.map(s => s.firstPaidEp ? s.firstPaidEp - 1 : null)),
     price: dist(paidTs.map(s => s.medPrice)),
     eps: dist(ts.map(s => s.eps)),
