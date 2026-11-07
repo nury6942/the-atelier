@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-const CACHE_NAME = 'atelier-v1710';
-=======
-const CACHE_NAME = 'atelier-v1709';
->>>>>>> Stashed changes
+const CACHE_NAME = 'atelier-v1711';
 const urlsToCache = [
   '/the-atelier/',
   '/the-atelier/index.html',
